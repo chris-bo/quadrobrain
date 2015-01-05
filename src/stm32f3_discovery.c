@@ -89,8 +89,8 @@
  * @{
  */
 GPIO_TypeDef* LED_PORT[LEDn] = { LED3_GPIO_PORT, LED4_GPIO_PORT, LED5_GPIO_PORT,
-		LED6_GPIO_PORT,
-		LED7_GPIO_PORT, LED8_GPIO_PORT, LED9_GPIO_PORT, LED10_GPIO_PORT };
+LED6_GPIO_PORT,
+LED7_GPIO_PORT, LED8_GPIO_PORT, LED9_GPIO_PORT, LED10_GPIO_PORT };
 
 const uint16_t LED_PIN[LEDn] = { LED3_PIN, LED4_PIN, LED5_PIN, LED6_PIN,
 LED7_PIN, LED8_PIN, LED9_PIN, LED10_PIN };
@@ -121,7 +121,7 @@ uint32_t I2cxTimeout = I2Cx_TIMEOUT_MAX; /*<! Value of Timeout when I2C communic
 static void I2Cx_Init(void);
 static void I2Cx_WriteData(uint16_t Addr, uint8_t Reg, uint8_t Value);
 static uint8_t I2Cx_ReadData(uint16_t Addr, uint8_t Reg);
-static void I2Cx_Error (void);
+static void I2Cx_Error(void);
 static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c);
 #endif
 
@@ -144,7 +144,8 @@ void GYRO_IO_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);
 /* Link function for COMPASS / ACCELEROMETER peripheral */
 void COMPASSACCELERO_IO_Init(void);
 void COMPASSACCELERO_IO_ITConfig(void);
-void COMPASSACCELERO_IO_Write(uint16_t DeviceAddr, uint8_t RegisterAddr, uint8_t Value);
+void COMPASSACCELERO_IO_Write(uint16_t DeviceAddr, uint8_t RegisterAddr,
+		uint8_t Value);
 uint8_t COMPASSACCELERO_IO_Read(uint16_t DeviceAddr, uint8_t RegisterAddr);
 #endif
 
@@ -328,8 +329,7 @@ uint32_t BSP_PB_GetState(Button_TypeDef Button) {
  * @param hi2c I2C handle
  * @retval None
  */
-static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c)
-{
+static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c) {
 
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -353,10 +353,8 @@ static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c)
  * @param None
  * @retval None
  */
-static void I2Cx_Init(void)
-{
-	if(HAL_I2C_GetState(&I2cHandle) == HAL_I2C_STATE_RESET)
-	{
+static void I2Cx_Init(void) {
+	if (HAL_I2C_GetState(&I2cHandle) == HAL_I2C_STATE_RESET) {
 		I2cHandle.Instance = DISCOVERY_I2Cx;
 		I2cHandle.Init.OwnAddress1 = ACCELERO_I2C_ADDRESS;
 		I2cHandle.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -378,15 +376,14 @@ static void I2Cx_Init(void)
  * @param  Value: The target register value to be written 
  * @retval  None
  */
-static void I2Cx_WriteData(uint16_t Addr, uint8_t Reg, uint8_t Value)
-{
+static void I2Cx_WriteData(uint16_t Addr, uint8_t Reg, uint8_t Value) {
 	HAL_StatusTypeDef status = HAL_OK;
 
-	status = HAL_I2C_Mem_Write(&I2cHandle, Addr, (uint16_t)Reg, I2C_MEMADD_SIZE_8BIT, &Value, 1, I2cxTimeout);
+	status = HAL_I2C_Mem_Write(&I2cHandle, Addr, (uint16_t) Reg,
+	I2C_MEMADD_SIZE_8BIT, &Value, 1, I2cxTimeout);
 
 	/* Check the communication status */
-	if(status != HAL_OK)
-	{
+	if (status != HAL_OK) {
 		/* Execute user timeout callback */
 		I2Cx_Error();
 	}
@@ -398,16 +395,15 @@ static void I2Cx_WriteData(uint16_t Addr, uint8_t Reg, uint8_t Value)
  * @param  Reg: The target register address to write
  * @retval Data read at register @
  */
-static uint8_t I2Cx_ReadData(uint16_t Addr, uint8_t Reg)
-{
+static uint8_t I2Cx_ReadData(uint16_t Addr, uint8_t Reg) {
 	HAL_StatusTypeDef status = HAL_OK;
 	uint8_t value = 0;
 
-	status = HAL_I2C_Mem_Read(&I2cHandle, Addr, Reg, I2C_MEMADD_SIZE_8BIT, &value, 1, I2cxTimeout);
+	status = HAL_I2C_Mem_Read(&I2cHandle, Addr, Reg, I2C_MEMADD_SIZE_8BIT,
+			&value, 1, I2cxTimeout);
 
 	/* Check the communication status */
-	if(status != HAL_OK)
-	{
+	if (status != HAL_OK) {
 		/* Execute user timeout callback */
 		I2Cx_Error();
 
@@ -420,8 +416,7 @@ static uint8_t I2Cx_ReadData(uint16_t Addr, uint8_t Reg)
  * @param None
  * @retval None
  */
-static void I2Cx_Error (void)
-{
+static void I2Cx_Error(void) {
 	/* De-initialize the I2C comunication BUS */
 	HAL_I2C_DeInit(&I2cHandle);
 
@@ -641,8 +636,7 @@ void GYRO_IO_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead)
  * @param  None
  * @retval None
  */
-void COMPASSACCELERO_IO_Init(void)
-{
+void COMPASSACCELERO_IO_Init(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* Enable DRDY clock */
@@ -677,8 +671,7 @@ void COMPASSACCELERO_IO_Init(void)
  * @param  None
  * @retval None
  */
-void COMPASSACCELERO_IO_ITConfig(void)
-{
+void COMPASSACCELERO_IO_ITConfig(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* Enable INT1 & INT2 GPIO clock */
@@ -704,8 +697,8 @@ void COMPASSACCELERO_IO_ITConfig(void)
  * @param  Value : Data to be written
  * @retval   None
  */
-void COMPASSACCELERO_IO_Write(uint16_t DeviceAddr, uint8_t RegisterAddr, uint8_t Value)
-{
+void COMPASSACCELERO_IO_Write(uint16_t DeviceAddr, uint8_t RegisterAddr,
+		uint8_t Value) {
 	/* call I2Cx Read data bus function */
 	I2Cx_WriteData(DeviceAddr, RegisterAddr, Value);
 }
@@ -716,8 +709,7 @@ void COMPASSACCELERO_IO_Write(uint16_t DeviceAddr, uint8_t RegisterAddr, uint8_t
  * @param  RegisterAddr : specifies the COMPASS / ACCELEROMETER internal address register to read from
  * @retval ACCELEROMETER register value
  */
-uint8_t COMPASSACCELERO_IO_Read(uint16_t DeviceAddr, uint8_t RegisterAddr)
-{
+uint8_t COMPASSACCELERO_IO_Read(uint16_t DeviceAddr, uint8_t RegisterAddr) {
 	/* call I2Cx Read data bus function */
 	return I2Cx_ReadData(DeviceAddr, RegisterAddr);
 }

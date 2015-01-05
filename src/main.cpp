@@ -35,6 +35,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
 #include "diag/Trace.h"
+#include "i2c.h"
 #include "tim.h"
 #include "gpio.h"
 
@@ -44,7 +45,7 @@
 #include "Task.h"
 #include "LedBlink.h"
 //#include "TestTask.h"
-//#include "RCreceiver.h"
+#include "RCreceiver.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -52,6 +53,7 @@
 /* USER CODE BEGIN PV */
 Status status;
 Scheduler scheduler(&status, &htim2);
+RCreceiver rcReceiver(&status, 3, &htim4);
 
 /* USER CODE END PV */
 
@@ -82,7 +84,10 @@ int main(void) {
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
+	MX_I2C1_Init();
 	MX_TIM2_Init();
+	MX_TIM4_Init();
+
 	/* USER CODE BEGIN 2 */
 	LedBlink led3(&status, 5);
 	led3.setLED(LED3);
@@ -138,6 +143,7 @@ void SystemClock_Config(void) {
 
 	RCC_OscInitTypeDef RCC_OscInitStruct;
 	RCC_ClkInitTypeDef RCC_ClkInitStruct;
+	RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
 	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
@@ -154,6 +160,10 @@ void SystemClock_Config(void) {
 	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
+	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1;
+	PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
+	HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+
 	__SYSCFG_CLK_ENABLE();
 
 }
@@ -169,8 +179,22 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	if (htim->Instance == SCHEDULER_TIMER) {
 		scheduler.timerIRQ();
 	}
+	if (htim->Instance == RC_RECEIVER_TIMER) {
+		rcReceiver.overrunIRQ();
+	}
 
 }
+/**
+ * @brief  Input Capture callback in non blocking mode
+ * @param  htim : TIM IC handle
+ * @retval None
+ */
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+	if (htim->Instance == RC_RECEIVER_TIMER) {
+		rcReceiver.captureIRQ();
+	}
+}
+
 /* USER CODE END 4 */
 //
 //#ifdef USE_FULL_ASSERT

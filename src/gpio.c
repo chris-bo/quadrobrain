@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  * File Name          : gpio.c
- * Date               : 04/01/2015 05:45:22
+ * Date               : 05/01/2015 10:47:37
  * Description        : This file provides code for the configuration
  *                      of all used GPIO pins.
  ******************************************************************************
@@ -57,8 +57,6 @@
  PA7   ------> SPI1_MOSI
  PA11   ------> USB_DM
  PA12   ------> USB_DP
- PB6   ------> I2C1_SCL
- PB7   ------> I2C1_SDA
  */
 void MX_GPIO_Init(void) {
 
@@ -111,14 +109,6 @@ void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
 	GPIO_InitStruct.Alternate = GPIO_AF14_USB;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-	/*Configure GPIO pins : PB6 PB7 */
-	GPIO_InitStruct.Pin = GPIO_PIN_6 | GPIO_PIN_7;
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-	GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 

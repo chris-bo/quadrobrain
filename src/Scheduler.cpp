@@ -116,7 +116,7 @@ void Scheduler::timerIRQ() {
 }
 
 Scheduler::~Scheduler() {
-	// TODO Auto-generated destructor stub
+
 }
 
 void Scheduler::checkTaskDurations(uint8_t taskIndex) {

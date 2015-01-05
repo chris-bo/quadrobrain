@@ -23,14 +23,22 @@
  * Input capture
  */
 #define RC_RECEIVER_TIMER				TIM4
-#define RC_RECEIVER_TIMER_CLOCK 		RCC_APB1Periph_TIM4
-#define RC_RECEIVERTIMER_IRQn			TIM4_IRQn
+#define RC_RECEIVER_INPUT_CHANNEL		TIM_CHANNEL_3
+//#define RC_RECEIVER_TIMER_CLOCK 		RCC_APB1Periph_TIM4
+//#define RC_RECEIVERTIMER_IRQn			TIM4_IRQn
 
 #define RC_RECEIVER_GPIO_PORT			GPIOB
-#define RC_RECEIVER_GPIO_PORT_CLOCK		RCC_AHBPeriph_GPIOB
+//#define RC_RECEIVER_GPIO_PORT_CLOCK		RCC_AHBPeriph_GPIOB
 #define RC_RECEIVER_GPIO_PIN			GPIO_Pin_8	// TIM4 CH3 (CH1 and CH2 used by I2C1)
-#define RC_RECEIVER_GPIO_PIN_SOURCE   	GPIO_PinSource8
-#define RC_RECEIVER_GPIO_PIN_AF			GPIO_AF_2
+//#define RC_RECEIVER_GPIO_PIN_SOURCE   	GPIO_PinSource8
+//#define RC_RECEIVER_GPIO_PIN_AF			GPIO_AF_2
+
+/* signal detection defines */
+#define RC_RECEIVER_OverrunTime_us				3500
+
+#define RC_RECEIVER_MinHighTime_us				1000
+#define RC_RECEIVER_MaxHighTime_us				1700
+#define RC_RECEIVER_SyncTime_us					300		// time between two pulses
 
 
 

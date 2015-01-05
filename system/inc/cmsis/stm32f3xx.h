@@ -210,7 +210,8 @@ typedef enum {
  */
 
 #ifdef __cplusplus
-}#endif /* __cplusplus */
+}
+#endif /* __cplusplus */
 
 #endif /* __STM32F3xx_H */
 /**

@@ -244,13 +244,12 @@ extern "C" {
 /** \brief  Union type to access the Application Program Status Register (APSR).
  */
 typedef union
-{
-	struct
+{ 	struct
 	{
 #if (__CORTEX_M != 0x04)
 		uint32_t _reserved0:27; /*!< bit:  0..26  Reserved                           */
 #else
-		uint32_t _reserved0:16; /*!< bit:  0..15  Reserved                           */
+uint32_t		_reserved0:16; /*!< bit:  0..15  Reserved                           */
 		uint32_t GE:4; /*!< bit: 16..19  Greater than or Equal flags        */
 		uint32_t _reserved1:7; /*!< bit: 20..26  Reserved                           */
 #endif

@@ -1,14 +1,12 @@
 /**
   ******************************************************************************
-  * @file    stm32f3xx_hal_opamp_ex.h
-  * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    12-Sept-2014
-  * @brief   Header file of OPAMP HAL Extended module.
+  * File Name          : I2C.h
+  * Date               : 05/01/2015 10:47:38
+  * Description        : This file provides code for the configuration
+  *                      of the I2C instances.
   ******************************************************************************
-  * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
+  * COPYRIGHT(c) 2015 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -34,74 +32,31 @@
   *
   ******************************************************************************
   */
-
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F3xx_HAL_OPAMP_EX_H
-#define __STM32F3xx_HAL_OPAMP_EX_H
-
+#ifndef __i2c_H
+#define __i2c_H
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f3xx_hal_def.h"
+#include "stm32f3xx_hal.h"
 
-/** @addtogroup STM32F3xx_HAL_Driver
-  * @{
-  */
+extern I2C_HandleTypeDef hi2c1;
 
-/** @addtogroup OPAMPEx OPAMP Extended HAL module driver
-  * @{
-  */
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-/** @addtogroup OPAMPEx_Exported_Functions OPAMP Extended Exported Functions
-  * @{
-  */
-
-/** @addtogroup OPAMPEx_Exported_Functions_Group1 Extended Input and Output operation functions
-  * @{
-  */
-
-/* I/O operation functions  *****************************************************/
-
-#if defined(STM32F302xE) || \
-    defined(STM32F302xC)
-
-HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPAMP_HandleTypeDef *hopamp2); 
-
-#endif /* STM32F302xE || */
-       /* STM32F302xC    */
-
-#if defined(STM32F303xE) || defined(STM32F398xx) || \
-    defined(STM32F303xC) || defined(STM32F358xx) 
-HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPAMP_HandleTypeDef *hopamp2, OPAMP_HandleTypeDef *hopamp3, OPAMP_HandleTypeDef *hopamp4);
-#endif /* STM32F303xE || STM32F398xx || */
-       /* STM32F303xC || STM32F358xx    */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
+void MX_I2C1_Init(void);
 
 #ifdef __cplusplus
 }
 #endif
+#endif /*__ i2c_H */
 
+/**
+  * @}
+  */
 
-#endif /* __STM32F3xx_HAL_OPAMP_EX_H */
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

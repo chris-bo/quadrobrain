@@ -1,69 +1,69 @@
 /**
- ******************************************************************************
- * @file    stm32f3xx_hal.h
- * @author  MCD Application Team
- * @version V1.1.0
- * @date    12-Sept-2014
- * @brief   This file contains all the functions prototypes for the HAL 
- *          module driver.
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *   1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
- *   2. Redistributions in binary form must reproduce the above copyright notice,
- *      this list of conditions and the following disclaimer in the documentation
- *      and/or other materials provided with the distribution.
- *   3. Neither the name of STMicroelectronics nor the names of its contributors
- *      may be used to endorse or promote products derived from this software
- *      without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    stm32f3xx_hal.h
+  * @author  MCD Application Team
+  * @version V1.1.0
+  * @date    12-Sept-2014
+  * @brief   This file contains all the functions prototypes for the HAL 
+  *          module driver.
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
+  *
+  * Redistribution and use in source and binary forms, with or without modification,
+  * are permitted provided that the following conditions are met:
+  *   1. Redistributions of source code must retain the above copyright notice,
+  *      this list of conditions and the following disclaimer.
+  *   2. Redistributions in binary form must reproduce the above copyright notice,
+  *      this list of conditions and the following disclaimer in the documentation
+  *      and/or other materials provided with the distribution.
+  *   3. Neither the name of STMicroelectronics nor the names of its contributors
+  *      may be used to endorse or promote products derived from this software
+  *      without specific prior written permission.
+  *
+  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  *
+  ******************************************************************************
+  */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F3xx_HAL_H
 #define __STM32F3xx_HAL_H
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal_conf.h"
 
 /** @addtogroup STM32F3xx_HAL_Driver
- * @{
- */
+  * @{
+  */
 
 /** @addtogroup HAL
- * @{
- */
+  * @{
+  */ 
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup HAL_Exported_Constants HAL Exported Constants
- * @{
- */
+  * @{
+  */
 /** @defgroup SYSCFG_BitAddress_AliasRegion SYSCFG registers bit address in the alias region
- * @brief SYSCFG registers bit address in the alias region
- * @{
- */
+  * @brief SYSCFG registers bit address in the alias region
+  * @{
+  */
 /* ------------ SYSCFG registers bit address in the alias region -------------*/
 #define SYSCFG_OFFSET                (SYSCFG_BASE - PERIPH_BASE)
 /* --- CFGR2 Register ---*/
@@ -72,18 +72,18 @@ extern "C" {
 #define BYPADDRPAR_BitNumber          0x04
 #define CFGR2_BYPADDRPAR_BB          (PERIPH_BB_BASE + (CFGR2_OFFSET * 32) + (BYPADDRPAR_BitNumber * 4))
 /**
- * @}
- */
+  * @}
+  */
 
 #if defined(SYSCFG_CFGR1_DMA_RMP)
 /** @defgroup HAL_DMA_Remapping DMA Remapping
- *        Elements values convention: 0xXXYYYYYY
- *           - YYYYYY  : Position in the register
- *           - XX  : Register index
- *                 - 00: CFGR1 register in SYSCFG
- *                 - 01: CFGR3 register in SYSCFG (not available on STM32F373xC/STM32F378xx devices)
- * @{
- */
+  *        Elements values convention: 0xXXYYYYYY
+  *           - YYYYYY  : Position in the register
+  *           - XX  : Register index
+  *                 - 00: CFGR1 register in SYSCFG
+  *                 - 01: CFGR3 register in SYSCFG (not available on STM32F373xC/STM32F378xx devices)
+  * @{
+  */
 #define HAL_REMAPDMA_ADC24_DMA2_CH34         ((uint32_t)0x00000100) /*!< ADC24 DMA remap (STM32F303xB/C/E, STM32F358xx and STM32F398xx devices)
                                                                           1: Remap (ADC24 DMA requests mapped on DMA2 channels 3 and 4) */
 #define HAL_REMAPDMA_TIM16_DMA1_CH6          ((uint32_t)0x00000800) /*!< TIM16 DMA request remap
@@ -166,18 +166,18 @@ extern "C" {
                               (((RMP) & HAL_REMAPDMA_TIM18_DAC2_CH1_DMA1_CH5) == HAL_REMAPDMA_TIM18_DAC2_CH1_DMA1_CH5))
 #endif /* SYSCFG_CFGR3_DMA_RMP && SYSCFG_CFGR1_DMA_RMP*/
 /**
- * @}
- */
+  * @}
+  */
 #endif /* SYSCFG_CFGR1_DMA_RMP */
 
 /** @defgroup HAL_Trigger_Remapping Trigger Remapping
- *        Elements values convention: 0xXXYYYYYY
- *           - YYYYYY  : Position in the register
- *           - XX  : Register index
- *                 - 00: CFGR1 register in SYSCFG
- *                 - 01: CFGR3 register in SYSCFG
- * @{
- */
+  *        Elements values convention: 0xXXYYYYYY
+  *           - YYYYYY  : Position in the register
+  *           - XX  : Register index
+  *                 - 00: CFGR1 register in SYSCFG
+  *                 - 01: CFGR3 register in SYSCFG
+  * @{
+  */
 #define HAL_REMAPTRIGGER_DAC1_TRIG         ((uint32_t)0x00000080)  /*!< DAC trigger remap (when TSEL = 001 on STM32F303xB/C and STM32F358xx devices)
                                                                         0: No remap (DAC trigger is TIM8_TRGO)
                                                                         1: Remap (DAC trigger is TIM3_TRGO) */
@@ -203,13 +203,13 @@ extern "C" {
                                   (((RMP) & HAL_REMAPTRIGGER_TIM1_ITR3)  == HAL_REMAPTRIGGER_TIM1_ITR3))
 #endif /* SYSCFG_CFGR3_TRIGGER_RMP */
 /**
- * @}
- */
+  * @}
+  */
 
 #if defined (STM32F303xE) || defined (STM32F398xx)
 /** @defgroup HAL_ADC_Trigger_Remapping ADC Trigger Remapping
- * @{
- */
+  * @{
+  */
 #define HAL_REMAPADCTRIGGER_ADC12_EXT2        SYSCFG_CFGR4_ADC12_EXT2_RMP   /*!< Input trigger of ADC12 regular channel EXT2
                                                                                  0: No remap (TIM1_CC3)
                                                                                  1: Remap (TIM20_TRGO) */
@@ -268,13 +268,13 @@ extern "C" {
                                       (((RMP) & HAL_REMAPADCTRIGGER_ADC34_JEXT11) == HAL_REMAPADCTRIGGER_ADC34_JEXT11) || \
                                       (((RMP) & HAL_REMAPADCTRIGGER_ADC34_JEXT14) == HAL_REMAPADCTRIGGER_ADC34_JEXT14))
 /**
- * @}
- */
+  * @}
+  */
 #endif /* STM32F303xE || STM32F398xx */
 
 /** @defgroup HAL_FastModePlus_I2C I2C Fast Mode Plus
- * @{
- */
+  * @{
+  */
 #if defined(SYSCFG_CFGR1_I2C1_FMP)
 #define HAL_SYSCFG_FASTMODEPLUS_I2C1       ((uint32_t)SYSCFG_CFGR1_I2C1_FMP)  /*!< I2C1 fast mode Plus driving capability activation
                                                                                    0: FM+ mode is not enabled on I2C1 pins selected through AF selection bits
@@ -340,14 +340,14 @@ extern "C" {
                                                    (((CONFIG) & HAL_SYSCFG_FASTMODEPLUS_I2C_PB9) == HAL_SYSCFG_FASTMODEPLUS_I2C_PB9))
 #endif /* SYSCFG_CFGR1_I2C1_FMP && SYSCFG_CFGR1_I2C2_FMP && SYSCFG_CFGR3_I2C1_FMP */
 /**
- * @}
- */
+  * @}
+  */
 
 #if defined(SYSCFG_RCR_PAGE0)
 /* CCM-SRAM defined */
 /** @defgroup HAL_Page_Write_Protection CCM RAM page write protection
- * @{
- */
+  * @{
+  */
 #define HAL_SYSCFG_WP_PAGE0                    (SYSCFG_RCR_PAGE0)  /*!< ICODE SRAM Write protection page 0 */
 #define HAL_SYSCFG_WP_PAGE1                    (SYSCFG_RCR_PAGE1)  /*!< ICODE SRAM Write protection page 1 */
 #define HAL_SYSCFG_WP_PAGE2                    (SYSCFG_RCR_PAGE2)  /*!< ICODE SRAM Write protection page 2 */
@@ -378,13 +378,13 @@ extern "C" {
 #define IS_HAL_SYSCFG_WP_PAGE(__PAGE__)        (((__PAGE__) > 0) && ((__PAGE__) <= (uint32_t)0x000F))
 #endif /* SYSCFG_RCR_PAGE8 */      
 /**
- * @}
- */
+  * @}
+  */
 #endif /* SYSCFG_RCR_PAGE0 */
 
 /** @defgroup HAL_SYSCFG_Interrupts SYSCFG Interrupts
- * @{
- */
+  * @{
+  */
 #define HAL_SYSCFG_IT_FPU_IOC                  (SYSCFG_CFGR1_FPU_IE_0)  /*!< Floating Point Unit Invalid operation Interrupt */
 #define HAL_SYSCFG_IT_FPU_DZC                  (SYSCFG_CFGR1_FPU_IE_1)  /*!< Floating Point Unit Divide-by-zero Interrupt */
 #define HAL_SYSCFG_IT_FPU_UFC                  (SYSCFG_CFGR1_FPU_IE_2)  /*!< Floating Point Unit Underflow Interrupt */
@@ -400,21 +400,21 @@ extern "C" {
                                                 (((__INTERRUPT__) & SYSCFG_CFGR1_FPU_IE_5) == SYSCFG_CFGR1_FPU_IE_5))
 
 /**
- * @}
- */
-
+  * @}
+  */
+  
 /**
  * @}
- */
+ */ 
 
 /* Exported macro ------------------------------------------------------------*/
 /** @defgroup HAL_Exported_Macros HAL Exported Macros
- * @{
- */
+  * @{
+  */
 
 /** @defgroup Debug_MCU_APB1_Freeze Freeze/Unfreeze APB1 Peripherals in Debug mode
- * @{
- */
+  * @{
+  */
 #if defined(DBGMCU_APB1_FZ_DBG_TIM2_STOP)
 #define __HAL_FREEZE_TIM2_DBGMCU()           (DBGMCU->APB1FZ |= (DBGMCU_APB1_FZ_DBG_TIM2_STOP))
 #define __HAL_UNFREEZE_TIM2_DBGMCU()         (DBGMCU->APB1FZ &= ~(DBGMCU_APB1_FZ_DBG_TIM2_STOP))
@@ -502,10 +502,10 @@ extern "C" {
 /**
  * @}
  */
-
+ 
 /** @defgroup Debug_MCU_APB2_Freeze Freeze/Unfreeze APB2 Peripherals in Debug mode
- * @{
- */
+  * @{
+  */
 #if defined(DBGMCU_APB2_FZ_DBG_TIM1_STOP)
 #define __HAL_FREEZE_TIM1_DBGMCU()           (DBGMCU->APB2FZ |= (DBGMCU_APB2_FZ_DBG_TIM1_STOP))
 #define __HAL_UNFREEZE_TIM1_DBGMCU()           (DBGMCU->APB2FZ &= ~(DBGMCU_APB2_FZ_DBG_TIM1_STOP))
@@ -545,17 +545,17 @@ extern "C" {
  */
 
 /** @defgroup Memory_Mapping_Selection Memory Mapping Selection
- * @{
- */
+  * @{
+  */
 #if defined(SYSCFG_CFGR1_MEM_MODE)
 /** @brief  Main Flash memory mapped at 0x00000000
- */
+  */
 #define __HAL_REMAPMEMORY_FLASH()        (SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_MEM_MODE))
 #endif /* SYSCFG_CFGR1_MEM_MODE */
 
 #if defined(SYSCFG_CFGR1_MEM_MODE_0)
 /** @brief  System Flash memory mapped at 0x00000000
- */
+  */
 #define __HAL_REMAPMEMORY_SYSTEMFLASH()  do {SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_MEM_MODE); \
                                              SYSCFG->CFGR1 |= SYSCFG_CFGR1_MEM_MODE_0;  \
                                             }while(0)
@@ -563,7 +563,7 @@ extern "C" {
 
 #if defined(SYSCFG_CFGR1_MEM_MODE_0) && defined(SYSCFG_CFGR1_MEM_MODE_1)
 /** @brief  Embedded SRAM mapped at 0x00000000
- */
+  */
 #define __HAL_REMAPMEMORY_SRAM()         do {SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_MEM_MODE); \
                                              SYSCFG->CFGR1 |= (SYSCFG_CFGR1_MEM_MODE_0 | SYSCFG_CFGR1_MEM_MODE_1); \
                                             }while(0)
@@ -577,19 +577,19 @@ extern "C" {
 /**
  * @}
  */
-
+ 
 /** @defgroup Encoder_Mode Encoder Mode
- * @{
- */
+  * @{
+  */
 #if defined(SYSCFG_CFGR1_ENCODER_MODE)
 /** @brief  No Encoder mode
- */
+  */
 #define __HAL_REMAPENCODER_NONE()        (SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_ENCODER_MODE))
 #endif /* SYSCFG_CFGR1_ENCODER_MODE */
 
 #if defined(SYSCFG_CFGR1_ENCODER_MODE_0)
 /** @brief  Encoder mode : TIM2 IC1 and TIM2 IC2 are connected to TIM15 IC1 and TIM15 IC2 respectively
- */
+  */
 #define __HAL_REMAPENCODER_TIM2()        do {SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_ENCODER_MODE); \
                                              SYSCFG->CFGR1 |= SYSCFG_CFGR1_ENCODER_MODE_0;  \
                                             }while(0)
@@ -597,7 +597,7 @@ extern "C" {
 
 #if defined(SYSCFG_CFGR1_ENCODER_MODE_1)
 /** @brief  Encoder mode : TIM3 IC1 and TIM3 IC2 are connected to TIM15 IC1 and TIM15 IC2 respectively
- */
+  */
 #define __HAL_REMAPENCODER_TIM3()        do {SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_ENCODER_MODE); \
                                              SYSCFG->CFGR1 |= SYSCFG_CFGR1_ENCODER_MODE_1;  \
                                             }while(0)
@@ -605,7 +605,7 @@ extern "C" {
 
 #if defined(SYSCFG_CFGR1_ENCODER_MODE_0) && defined(SYSCFG_CFGR1_ENCODER_MODE_1)
 /** @brief  Encoder mode : TIM4 IC1 and TIM4 IC2 are connected to TIM15 IC1 and TIM15 IC2 (STM32F303xB/C and STM32F358xx devices)
- */
+  */
 #define __HAL_REMAPENCODER_TIM4()        do {SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_ENCODER_MODE); \
                                              SYSCFG->CFGR1 |= (SYSCFG_CFGR1_ENCODER_MODE_0 | SYSCFG_CFGR1_ENCODER_MODE_1);  \
                                             }while(0)
@@ -613,14 +613,14 @@ extern "C" {
 /**
  * @}
  */
-
+ 
 /** @defgroup DMA_Remap_Enable DMA Remap Enable
- * @{
- */
+  * @{
+  */
 #if defined(SYSCFG_CFGR3_DMA_RMP) && defined(SYSCFG_CFGR1_DMA_RMP)
 /** @brief  DMA remapping enable/disable macros
- * @param __DMA_REMAP__: This parameter can be a value of @ref HAL_DMA_Remapping
- */
+  * @param __DMA_REMAP__: This parameter can be a value of @ref HAL_DMA_Remapping
+  */
 #define __HAL_REMAPDMA_CHANNEL_ENABLE(__DMA_REMAP__)   do {assert_param(IS_HAL_REMAPDMA((__DMA_REMAP__)));                  \
                                                            (((__DMA_REMAP__) & HAL_REMAP_CFGR3_MASK) ?                      \
                                                              (SYSCFG->CFGR3 |= ((__DMA_REMAP__) & ~HAL_REMAP_CFGR3_MASK)) : \
@@ -633,8 +633,8 @@ extern "C" {
                                                          }while(0)
 #elif defined(SYSCFG_CFGR1_DMA_RMP)
 /** @brief  DMA remapping enable/disable macros
- * @param __DMA_REMAP__: This parameter can be a value of @ref HAL_DMA_Remapping
- */
+  * @param __DMA_REMAP__: This parameter can be a value of @ref HAL_DMA_Remapping
+  */
 #define __HAL_REMAPDMA_CHANNEL_ENABLE(__DMA_REMAP__)   do {assert_param(IS_HAL_REMAPDMA((__DMA_REMAP__)));                  \
                                                            SYSCFG->CFGR1 |= (__DMA_REMAP__);                                \
                                                          }while(0)
@@ -645,13 +645,13 @@ extern "C" {
 /**
  * @}
  */
-
+ 
 /** @defgroup I2C2_Fast_Mode_Plus_Enable I2C2 Fast Mode Plus Enable
- * @{
- */
+  * @{
+  */
 /** @brief  Fast mode Plus driving capability enable/disable macros
- * @param __FASTMODEPLUS__: This parameter can be a value of @ref HAL_FastModePlus_I2C
- */
+  * @param __FASTMODEPLUS__: This parameter can be a value of @ref HAL_FastModePlus_I2C
+  */
 #define __HAL_SYSCFG_FASTMODEPLUS_ENABLE(__FASTMODEPLUS__)  do {assert_param(IS_HAL_SYSCFG_FASTMODEPLUS_CONFIG((__FASTMODEPLUS__))); \
                                                                 SYSCFG->CFGR1 |= (__FASTMODEPLUS__);                                 \
                                                                }while(0)
@@ -664,11 +664,11 @@ extern "C" {
  */
 
 /** @defgroup Floating_Point_Unit_Interrupts_Enable Floating Point Unit Interrupts Enable
- * @{
- */
+  * @{
+  */
 /** @brief  SYSCFG interrupt enable/disable macros
- * @param __INTERRUPT__: This parameter can be a value of @ref HAL_SYSCFG_Interrupts
- */
+  * @param __INTERRUPT__: This parameter can be a value of @ref HAL_SYSCFG_Interrupts
+  */
 #define __HAL_SYSCFG_INTERRUPT_ENABLE(__INTERRUPT__)        do {assert_param(IS_HAL_SYSCFG_INTERRUPT((__INTERRUPT__))); \
                                                                 SYSCFG->CFGR1 |= (__INTERRUPT__);                       \
                                                                }while(0)
@@ -679,41 +679,41 @@ extern "C" {
 /**
  * @}
  */
-
+ 
 #if defined(SYSCFG_CFGR1_USB_IT_RMP)
 /** @defgroup USB_Interrupt_Remap USB Interrupt Remap
- * @{
- */
+  * @{
+  */ 
 /** @brief  USB interrupt remapping enable/disable macros
- */
+  */
 #define __HAL_REMAPINTERRUPT_USB_ENABLE()              (SYSCFG->CFGR1 |= (SYSCFG_CFGR1_USB_IT_RMP))
 #define __HAL_REMAPINTERRUPT_USB_DISABLE()             (SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_USB_IT_RMP))
 /**
  * @}
  */
 #endif /* SYSCFG_CFGR1_USB_IT_RMP */
-
+ 
 #if defined(SYSCFG_CFGR1_VBAT)
 /** @defgroup VBAT_Monitoring_Enable VBAT Monitoring Enable
- * @{
- */
+  * @{
+  */  
 /** @brief  SYSCFG interrupt enable/disable macros
- */
+  */
 #define __HAL_SYSCFG_VBAT_MONITORING_ENABLE()          (SYSCFG->CFGR1 |= (SYSCFG_CFGR1_VBAT))
 #define __HAL_SYSCFG_VBAT_MONITORING_DISABLE()         (SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_VBAT))
 /**
  * @}
  */
 #endif /* SYSCFG_CFGR1_VBAT */
-
+ 
 #if defined(SYSCFG_CFGR2_LOCKUP_LOCK)
 /** @defgroup Cortex_Lockup_Enable Cortex Lockup Enable
- * @{
- */
+  * @{
+  */
 /** @brief  SYSCFG Break Lockup lock
- *         Enables and locks the connection of Cortex-M4 LOCKUP (Hardfault) output to TIM1/15/16/17 Break input
- * @note   The selected configuration is locked and can be unlocked by system reset
- */
+  *         Enables and locks the connection of Cortex-M4 LOCKUP (Hardfault) output to TIM1/15/16/17 Break input
+  * @note   The selected configuration is locked and can be unlocked by system reset
+  */
 #define __HAL_SYSCFG_BREAK_LOCKUP_LOCK()   do {SYSCFG->CFGR2 &= ~(SYSCFG_CFGR2_LOCKUP_LOCK); \
                                                SYSCFG->CFGR2 |= SYSCFG_CFGR2_LOCKUP_LOCK;    \
                                               }while(0)
@@ -721,15 +721,15 @@ extern "C" {
  * @}
  */
 #endif /* SYSCFG_CFGR2_LOCKUP_LOCK */
-
+ 
 #if defined(SYSCFG_CFGR2_PVD_LOCK)
 /** @defgroup PVD_Lock_Enable PVD Lock
- * @{
- */
+  * @{
+  */
 /** @brief  SYSCFG Break PVD lock
- *         Enables and locks the PVD connection with Timer1/8/15/16/17 Break Input, , as well as the PVDE and PLS[2:0] in the PWR_CR register
- * @note   The selected configuration is locked and can be unlocked by system reset
- */
+  *         Enables and locks the PVD connection with Timer1/8/15/16/17 Break Input, , as well as the PVDE and PLS[2:0] in the PWR_CR register
+  * @note   The selected configuration is locked and can be unlocked by system reset
+  */
 #define __HAL_SYSCFG_BREAK_PVD_LOCK()      do {SYSCFG->CFGR2 &= ~(SYSCFG_CFGR2_PVD_LOCK); \
                                                SYSCFG->CFGR2 |= SYSCFG_CFGR2_PVD_LOCK;    \
                                               }while(0)
@@ -740,12 +740,12 @@ extern "C" {
 
 #if defined(SYSCFG_CFGR2_SRAM_PARITY_LOCK)
 /** @defgroup SRAM_Parity_Lock SRAM Parity Lock
- * @{
- */
+  * @{
+  */
 /** @brief  SYSCFG Break SRAM PARITY lock
- *         Enables and locks the SRAM_PARITY error signal with Break Input of TIMER1/8/15/16/17
- * @note   The selected configuration is locked and can be unlocked by system reset
- */
+  *         Enables and locks the SRAM_PARITY error signal with Break Input of TIMER1/8/15/16/17
+  * @note   The selected configuration is locked and can be unlocked by system reset
+  */
 #define __HAL_SYSCFG_BREAK_SRAMPARITY_LOCK() do {SYSCFG->CFGR2 &= ~(SYSCFG_CFGR2_SRAM_PARITY_LOCK); \
                                                  SYSCFG->CFGR2 |= SYSCFG_CFGR2_SRAM_PARITY_LOCK;    \
                                                 }while(0)
@@ -753,14 +753,14 @@ extern "C" {
  * @}
  */
 #endif /* SYSCFG_CFGR2_SRAM_PARITY_LOCK */
-
+ 
 /** @defgroup Trigger_Remapping_Enable Trigger Remapping Enable
- * @{
- */
+  * @{
+  */
 #if defined(SYSCFG_CFGR3_TRIGGER_RMP)
 /** @brief  Trigger remapping enable/disable macros
- * @param __TRIGGER_REMAP__: This parameter can be a value of @ref HAL_Trigger_Remapping
- */
+  * @param __TRIGGER_REMAP__: This parameter can be a value of @ref HAL_Trigger_Remapping
+  */
 #define __HAL_REMAPTRIGGER_ENABLE(__TRIGGER_REMAP__)   do {assert_param(IS_HAL_REMAPTRIGGER((__TRIGGER_REMAP__)));             \
                                                            (((__TRIGGER_REMAP__) & HAL_REMAP_CFGR3_MASK) ?                     \
                                                              (SYSCFG->CFGR3 |= ((__TRIGGER_REMAP__) & ~HAL_REMAP_CFGR3_MASK)) : \
@@ -773,8 +773,8 @@ extern "C" {
                                                          }while(0)
 #else
 /** @brief  Trigger remapping enable/disable macros
- * @param __TRIGGER_REMAP__: This parameter can be a value of @ref HAL_Trigger_Remapping
- */
+  * @param __TRIGGER_REMAP__: This parameter can be a value of @ref HAL_Trigger_Remapping
+  */
 #define __HAL_REMAPTRIGGER_ENABLE(__TRIGGER_REMAP__)   do {assert_param(IS_HAL_REMAPTRIGGER((__TRIGGER_REMAP__)));             \
                                                            (SYSCFG->CFGR1 |= (__TRIGGER_REMAP__));                           \
                                                          }while(0)
@@ -785,14 +785,14 @@ extern "C" {
 /**
  * @}
  */
-
+ 
 #if defined (STM32F302xE) || defined (STM32F303xE) || defined (STM32F398xx)
 /** @defgroup ADC_Trigger_Remapping_Enable ADC Trigger Remapping Enable
- * @{
- */
+  * @{
+  */
 /** @brief  ADC trigger remapping enable/disable macros
- * @param __ADCTRIGGER_REMAP__: This parameter can be a value of @ref HAL_ADC_Trigger_Remapping
- */
+  * @param __ADCTRIGGER_REMAP__: This parameter can be a value of @ref HAL_ADC_Trigger_Remapping
+  */
 #define __HAL_REMAPADCTRIGGER_ENABLE(__ADCTRIGGER_REMAP__)   do {assert_param(IS_HAL_REMAPADCTRIGGER((__ADCTRIGGER_REMAP__)));   \
                                                              (SYSCFG->CFGR4 |= (__ADCTRIGGER_REMAP__));                          \
                                                          }while(0)
@@ -803,30 +803,30 @@ extern "C" {
  * @}
  */
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx */
-
+                                                           
 #if defined(SYSCFG_CFGR2_BYP_ADDR_PAR)
 /** @defgroup RAM_Parity_Check_Disable RAM Parity Check Disable
- * @{
- */
+  * @{
+  */
 /**
- * @brief  Parity check on RAM disable macro
- * @note   Disabling the parity check on RAM locks the configuration bit.
- *         To re-enable the parity check on RAM perform a system reset.
- */
+  * @brief  Parity check on RAM disable macro
+  * @note   Disabling the parity check on RAM locks the configuration bit.
+  *         To re-enable the parity check on RAM perform a system reset.
+  */
 #define __HAL_SYSCFG_RAM_PARITYCHECK_DISABLE()         (*(__IO uint32_t *) CFGR2_BYPADDRPAR_BB = (uint32_t)0x00000001)
 /**
  * @}
  */
 #endif /* SYSCFG_CFGR2_BYP_ADDR_PAR */
-
+ 
 #if defined(SYSCFG_RCR_PAGE0)
 /** @defgroup CCM_RAM_Page_Write_Protection_Enable CCM RAM page write protection enable
- * @{
- */
+  * @{
+  */
 /** @brief  CCM RAM page write protection enable macro
- * @param __PAGE_WP__: This parameter can be a value of @ref HAL_Page_Write_Protection
- * @note   write protection can only be disabled by a system reset
- */
+  * @param __PAGE_WP__: This parameter can be a value of @ref HAL_Page_Write_Protection
+  * @note   write protection can only be disabled by a system reset
+  */
 #define __HAL_SYSCFG_SRAM_WRP_ENABLE(__PAGE_WP__)      do {assert_param(IS_HAL_SYSCFG_WP_PAGE((__PAGE_WP__))); \
                                                            SYSCFG->RCR |= (__PAGE_WP__);                       \
                                                           }while(0)
@@ -834,14 +834,14 @@ extern "C" {
  * @}
  */
 #endif /* SYSCFG_RCR_PAGE0 */
-
+ 
 /**
  * @}
- */
+ */ 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup HAL_Exported_Functions HAL Exported Functions
- * @{
- */
+  * @{
+  */
 
 /** @addtogroup HAL_Exported_Functions_Group1 Initialization and de-initialization Functions 
  *  @brief    Initialization and de-initialization functions
@@ -856,26 +856,26 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority);
 /**
  * @}
  */
-
+ 
 /** @addtogroup HAL_Exported_Functions_Group2 HAL Control functions 
  *  @brief    HAL Control functions
  * @{
  */
 /* Peripheral Control functions  ************************************************/
-void HAL_IncTick(void);
-void HAL_Delay(__IO uint32_t Delay);
-void HAL_SuspendTick(void);
-void HAL_ResumeTick(void);
+void     HAL_IncTick(void);
+void     HAL_Delay(__IO uint32_t Delay);
+void     HAL_SuspendTick(void);
+void     HAL_ResumeTick(void);
 uint32_t HAL_GetTick(void);
 uint32_t HAL_GetHalVersion(void);
 uint32_t HAL_GetREVID(void);
 uint32_t HAL_GetDEVID(void);
-void HAL_EnableDBGSleepMode(void);
-void HAL_DisableDBGSleepMode(void);
-void HAL_EnableDBGStopMode(void);
-void HAL_DisableDBGStopMode(void);
-void HAL_EnableDBGStandbyMode(void);
-void HAL_DisableDBGStandbyMode(void);
+void     HAL_EnableDBGSleepMode(void);
+void     HAL_DisableDBGSleepMode(void);
+void     HAL_EnableDBGStopMode(void);
+void     HAL_DisableDBGStopMode(void);
+void     HAL_EnableDBGStandbyMode(void);
+void     HAL_DisableDBGStandbyMode(void);
 /**
  * @}
  */
@@ -885,13 +885,13 @@ void HAL_DisableDBGStandbyMode(void);
  */
 
 /**
- * @}
- */
+  * @}
+  */ 
 
 /**
- * @}
- */
-
+  * @}
+  */ 
+  
 #ifdef __cplusplus
 }
 #endif
