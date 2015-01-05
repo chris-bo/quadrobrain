@@ -45,7 +45,7 @@ void LedBlink::setFrequency(float freq) {
 }
 
 void LedBlink::setOffset(uint8_t percentage) {
-	uint32_t tmp =((toggle * percentage) / 100);
+	uint32_t tmp = ((toggle * percentage) / 100);
 	counter = (uint8_t) tmp;
 
 }

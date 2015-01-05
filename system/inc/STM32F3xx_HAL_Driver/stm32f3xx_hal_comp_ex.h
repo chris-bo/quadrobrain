@@ -1,70 +1,70 @@
 /**
-  ******************************************************************************
-  * @file    stm32f3xx_hal_comp_ex.h
-  * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    12-Sept-2014
-  * @brief   Header file of COMP HAL Extended module.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
-  */
+ ******************************************************************************
+ * @file    stm32f3xx_hal_comp_ex.h
+ * @author  MCD Application Team
+ * @version V1.1.0
+ * @date    12-Sept-2014
+ * @brief   Header file of COMP HAL Extended module.
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *   1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *   2. Redistributions in binary form must reproduce the above copyright notice,
+ *      this list of conditions and the following disclaimer in the documentation
+ *      and/or other materials provided with the distribution.
+ *   3. Neither the name of STMicroelectronics nor the names of its contributors
+ *      may be used to endorse or promote products derived from this software
+ *      without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ ******************************************************************************  
+ */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F3xx_HAL_COMP_EX_H
 #define __STM32F3xx_HAL_COMP_EX_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal_def.h"
 
 /** @addtogroup STM32F3xx_HAL_Driver
-  * @{
-  */
+ * @{
+ */
 
 /** @defgroup COMPEx COMP Extended HAL module driver
-  * @{
-  */ 
+ * @{
+ */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup COMPEx_Exported_Constants COMP Extended Exported Constants
-  * @{
-  */
+ * @{
+ */
 
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx) || \
     defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx)
-   /** @defgroup COMPEx_InvertingInput  COMP Extended InvertingInput (STM32F302xE/STM32F303xE/STM32F398xx/STM32F302xC/STM32F303xC/STM32F358xx Product devices)
-  * @{
-  */
+/** @defgroup COMPEx_InvertingInput  COMP Extended InvertingInput (STM32F302xE/STM32F303xE/STM32F398xx/STM32F302xC/STM32F303xC/STM32F358xx Product devices)
+ * @{
+ */
 #define COMP_INVERTINGINPUT_1_4VREFINT       ((uint32_t)0x00000000)                        /*!< 1/4 VREFINT connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_1_2VREFINT       COMP_CSR_COMPxINSEL_0                         /*!< 1/2 VREFINT connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_3_4VREFINT       COMP_CSR_COMPxINSEL_1                         /*!< 3/4 VREFINT connected to comparator inverting input */
@@ -89,12 +89,12 @@
                                        ((INPUT) == COMP_INVERTINGINPUT_IO1)              || \
                                        ((INPUT) == COMP_INVERTINGINPUT_IO2))
 /**
-  * @}
-  */ 
+ * @}
+ */
 #elif defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 /** @defgroup COMPEx_InvertingInput COMP Extended InvertingInput (STM32F301x8/STM32F302x8/STM32F318xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_INVERTINGINPUT_1_4VREFINT     ((uint32_t)0x00000000)                        /*!< 1/4 VREFINT connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_1_2VREFINT     COMP_CSR_COMPxINSEL_0                         /*!< 1/2 VREFINT connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_3_4VREFINT     COMP_CSR_COMPxINSEL_1                         /*!< 3/4 VREFINT connected to comparator inverting input */
@@ -112,12 +112,12 @@
                                        ((INPUT) == COMP_INVERTINGINPUT_DAC1_CH1)         || \
                                        ((INPUT) == COMP_INVERTINGINPUT_IO1))
 /**
-  * @}
-  */
+ * @}
+ */
 #elif defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx)
 /** @defgroup COMPEx_InvertingInput COMP Extended InvertingInput (STM32F303x8/STM32F334x8/STM32F328xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_INVERTINGINPUT_1_4VREFINT     ((uint32_t)0x00000000)                        /*!< 1/4 VREFINT connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_1_2VREFINT     COMP_CSR_COMPxINSEL_0                         /*!< 1/2 VREFINT connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_3_4VREFINT     COMP_CSR_COMPxINSEL_1                         /*!< 3/4 VREFINT connected to comparator inverting input */
@@ -140,12 +140,12 @@
                                        ((INPUT) == COMP_INVERTINGINPUT_IO1)              || \
                                        ((INPUT) == COMP_INVERTINGINPUT_DAC2_CH1))
 /**
-  * @}
-  */
+ * @}
+ */
 #elif defined(STM32F373xC) || defined(STM32F378xx)
 /** @defgroup COMPEx_InvertingInput COMP Extended InvertingInput (STM32F373xC/STM32F378xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_INVERTINGINPUT_1_4VREFINT  ((uint32_t)0x00000000)                        /*!< 1/4 VREFINT connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_1_2VREFINT  ((uint32_t)COMP_CSR_COMPxINSEL_0)             /*!< 1/2 VREFINT connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_3_4VREFINT  ((uint32_t)COMP_CSR_COMPxINSEL_1)             /*!< 3/4 VREFINT connected to comparator inverting input */
@@ -167,15 +167,15 @@
                                        ((INPUT) == COMP_INVERTINGINPUT_IO1)              || \
                                        ((INPUT) == COMP_INVERTINGINPUT_DAC2_CH1))
 /**
-  * @}
-  */
+ * @}
+ */
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
-       /* STM32F302xC || STM32F303xC || STM32F358xx */
+/* STM32F302xC || STM32F303xC || STM32F358xx */
 
 #if defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx)
 /** @defgroup COMPEx_NonInvertingInput  COMP Extended NonInvertingInput (STM32F302xC/STM32F303xC/STM32F358xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_NONINVERTINGINPUT_IO1               ((uint32_t)0x00000000) /*!< I/O1 (PA1 for COMP1, PA7 for COMP2, PB14 for COMP3, 
                                                                              PB0 for COMP4, PD12 for COMP5, PD11 for COMP6,
                                                                              PA0 for COMP7) connected to comparator non inverting input */
@@ -199,12 +199,12 @@
 
 #define COMP_CSR_COMPxNONINSEL_MASK            (COMP_CSR_COMPxNONINSEL | COMP1_CSR_COMP1SW1) /*!< COMP_CSR_COMPxNONINSEL mask */
 /**
-  * @}
-  */ 
+ * @}
+ */
 #elif defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 /** @defgroup COMPEx_NonInvertingInput COMP Extended NonInvertingInput (STM32F301x8/STM32F302x8/STM32F318xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_NONINVERTINGINPUT_IO1               ((uint32_t)0x00000000) /*!< I/O1 (PA7 for COMP2, PB0 for COMP4, PB11 for COMP6)
                                                                              connected to comparator non inverting input */
 #define COMP_NONINVERTINGINPUT_DAC1SWITCHCLOSED  COMP2_CSR_COMP2INPDAC  /*!< DAC ouput connected to comparator COMP2 non inverting input */
@@ -222,12 +222,12 @@
 
 #define COMP_CSR_COMPxNONINSEL_MASK              (COMP2_CSR_COMP2INPDAC) /*!< COMP_CSR_COMPxNONINSEL mask */
 /**
-  * @}
-  */ 
+ * @}
+ */
 #elif defined(STM32F373xC) || defined(STM32F378xx)
 /** @defgroup COMPEx_NonInvertingInput COMP Extended NonInvertingInput (STM32F373xC/STM32F378xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_NONINVERTINGINPUT_IO1               ((uint32_t)0x00000000) /*!< I/O1 (PA1 for COMP1, PA3 for COMP2) 
                                                                              connected to comparator non inverting input */
 #define COMP_NONINVERTINGINPUT_DAC1SWITCHCLOSED  COMP_CSR_COMP1SW1  /*!< DAC ouput connected to comparator COMP1 non inverting input */
@@ -245,12 +245,12 @@
 
 #define COMP_CSR_COMPxNONINSEL_MASK              (COMP_CSR_COMP1SW1) /*!< COMP_CSR_COMPxNONINSEL mask */
 /**
-  * @}
-  */
+ * @}
+ */
 #elif defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)
 /** @defgroup COMPEx_NonInvertingInput  COMP Extended NonInvertingInput (STM32F302xE/STM32F303xE/STM32F398xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_NONINVERTINGINPUT_IO1             ((uint32_t)0x00000000)   /*!< I/O1 (PA1 for COMP1, PA7 for COMP2, PB14 for COMP3, 
                                                                             PB0 for COMP4, PD12 for COMP5, PD11 for COMP6,
                                                                             PA0 for COMP7) connected to comparator non inverting input */
@@ -269,12 +269,12 @@
 
 #define COMP_CSR_COMPxNONINSEL_MASK            (COMP1_CSR_COMP1SW1) /*!< COMP_CSR_COMPxNONINSEL mask */
 /**
-  * @}
-  */ 
+ * @}
+ */
 #else
 /** @defgroup COMPEx_NonInvertingInput COMP Extended NonInvertingInput (Other Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_NONINVERTINGINPUT_IO1             ((uint32_t)0x00000000) /*!< I/O1 (PA7 for COMP2, PB0 for COMP4, PB11 for COMP6) 
                                                                            connected to comparator non inverting input */
 /*!< Non inverting input not available */
@@ -284,14 +284,14 @@
 
 #define COMP_CSR_COMPxNONINSEL_MASK           ((uint32_t)0x00000000) /*!< Mask empty: feature not available */
 /**
-  * @}
-  */
+ * @}
+ */
 #endif /* STM32F302xC || STM32F303xC || STM32F358xx */
 
 #if  defined(STM32F302xC)
 /** @defgroup COMPEx_Output COMP Extended Output (STM32F302xC Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_OUTPUT_NONE                             ((uint32_t)0x00000000)   /*!< COMP output isn't connected to other peripherals */
 /* Output Redirection common for all comparators COMP1, COMP2, COMP4, COMP6 */
 #define COMP_OUTPUT_TIM1BKIN                         COMP_CSR_COMPxOUTSEL_0   /*!< COMP output connected to TIM1 Break Input (BKIN) */
@@ -337,12 +337,12 @@
                                 ((OUTPUT) == COMP_OUTPUT_TIM16IC1)            || \
                                 ((OUTPUT) == COMP_OUTPUT_TIM4IC4))
 /**
-  * @}
-  */ 
+ * @}
+ */
 #elif  defined(STM32F303xC) || defined(STM32F358xx)
 /** @defgroup COMPEx_Output COMP Extended Output (STM32F303xC/STM32F358xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_OUTPUT_NONE                  ((uint32_t)0x00000000)   /*!< COMP output isn't connected to other peripherals */
 /* Output Redirection common for all comparators COMP1...COMP7 */
 #define COMP_OUTPUT_TIM1BKIN              COMP_CSR_COMPxOUTSEL_0   /*!< COMP output connected to TIM1 Break Input (BKIN) */
@@ -427,12 +427,12 @@
                                 ((OUTPUT) == COMP_OUTPUT_TIM17IC1)            || \
                                 ((OUTPUT) == COMP_OUTPUT_TIM17OCREFCLR))
 /**
-  * @}
-  */ 
+ * @}
+ */
 #elif defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 /** @defgroup COMPEx_Output COMP Extended Output (STM32F301x8/STM32F302x8/STM32F318xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_OUTPUT_NONE                  ((uint32_t)0x00000000)   /*!< COMP output isn't connected to other peripherals */
 /* Output Redirection common for all comparators COMP2, COMP4 and COMP6 */
 #define COMP_OUTPUT_TIM1BKIN              COMP_CSR_COMPxOUTSEL_0   /*!< COMP output connected to TIM1 Break Input (BKIN) */
@@ -465,12 +465,12 @@
                                 ((OUTPUT) == COMP_OUTPUT_TIM16IC1)            || \
                                 ((OUTPUT) == COMP_OUTPUT_TIM16OCREFCLR))
 /**
-  * @}
-  */ 
+ * @}
+ */
 #elif  defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx)
 /** @defgroup COMPEx_Output COMP Extended Output (STM32F303x8/STM32F334x8/STM32F328xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_OUTPUT_NONE                  ((uint32_t)0x00000000)   /*!< COMP output isn't connected to other peripherals */
 /* Output Redirection common for all comparators COMP2, COMP4 and COMP6 */
 #define COMP_OUTPUT_TIM1BKIN              COMP_CSR_COMPxOUTSEL_0   /*!< COMP output connected to TIM1 Break Input (BKIN) */
@@ -510,12 +510,12 @@
                                 ((OUTPUT) == COMP_OUTPUT_TIM16IC1)            || \
                                 ((OUTPUT) == COMP_OUTPUT_TIM16OCREFCLR))
 /**
-  * @}
-  */ 
+ * @}
+ */
 #elif  defined(STM32F373xC) || defined(STM32F378xx)
 /** @defgroup COMPEx_Output COMP Extended Output (STM32F373xC/STM32F378xx Product devices)
-  * @{
-  */
+ * @{
+ */
 /* Output Redirection common for all comparators COMP1 and COMP2 */
 #define COMP_OUTPUT_NONE                  ((uint32_t)0x0000)   /*!< COMP output isn't connected to other peripherals */
 #define COMP_OUTPUT_TIM3IC1               ((uint32_t)0x0200)   /*!< COMP output connected to TIM1 Input Capture 1 */
@@ -543,12 +543,12 @@
                                 ((OUTPUT) == COMP_OUTPUT_TIM15BKIN)           || \
                                 ((OUTPUT) == COMP_OUTPUT_TIM16BKIN))
 /**
-  * @}
-  */ 
+ * @}
+ */
 #elif defined(STM32F302xE)
 /** @defgroup COMPEx_Output COMP Extended Output (STM32F302xE Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_OUTPUT_NONE                             ((uint32_t)0x00000000)   /*!< COMP output isn't connected to other peripherals */
 /* Output Redirection common for all comparators COMP1, COMP2, COMP4, COMP6 */
 #define COMP_OUTPUT_TIM1BKIN                         COMP_CSR_COMPxOUTSEL_0   /*!< COMP output connected to TIM1 Break Input (BKIN) */
@@ -594,12 +594,12 @@
                                 ((OUTPUT) == COMP_OUTPUT_TIM4IC4))
 
 /**
-  * @}
-  */ 
+ * @}
+ */
 #elif defined(STM32F303xE) || defined(STM32F398xx)
 /** @defgroup COMPEx_Output COMP Extended Output (STM32F303xE/STM32F398xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_OUTPUT_NONE                             ((uint32_t)0x00000000)   /*!< COMP output isn't connected to other peripherals */
 /* Output Redirection common for all comparators COMP1...COMP7 */
 #define COMP_OUTPUT_TIM1BKIN                         COMP_CSR_COMPxOUTSEL_0   /*!< COMP output connected to TIM1 Break Input (BKIN) */
@@ -685,14 +685,14 @@
                                 ((OUTPUT) == COMP_OUTPUT_TIM17BKIN)           || \
                                 ((OUTPUT) == COMP_OUTPUT_TIM17OCREFCLR))
 /**
-  * @}
-  */ 
+ * @}
+ */
 #endif /* STM32F302xC */
 
 #if  defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx)
 /** @defgroup COMPEx_WindowMode COMP Extended WindowMode (STM32F302xC/STM32F303xC/STM32F358xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_WINDOWMODE_DISABLED               ((uint32_t)0x00000000)  /*!< Window mode disabled */
 #define COMP_WINDOWMODE_ENABLED                COMP_CSR_COMPxWNDWEN    /*!< Window mode enabled: non inverting input of comparator X (x=2,4,6)
                                                                             is connected to the non inverting input of comparator X-1 */
@@ -701,12 +701,12 @@
 
 #define COMP_CSR_COMPxWNDWEN_MASK              COMP_CSR_COMPxWNDWEN /*!< COMP_CSR_COMPxWNDWEN mask */
 /**
-  * @}
-  */
+ * @}
+ */
 #elif defined(STM32F373xC) || defined(STM32F378xx)
 /** @defgroup COMPEx_WindowMode COMP Extended WindowMode (STM32F373xC/STM32F378xx Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_WINDOWMODE_DISABLED               ((uint32_t)0x00000000)  /*!< Window mode disabled */
 #define COMP_WINDOWMODE_ENABLED                ((uint32_t)COMP_CSR_COMPxWNDWEN) /*!< Window mode enabled: non inverting input of comparator 2
                                                                             is connected to the non inverting input of comparator 1 (PA1) */
@@ -715,30 +715,30 @@
 
 #define COMP_CSR_COMPxWNDWEN_MASK              COMP_CSR_COMPxWNDWEN /*!< COMP_CSR_COMPxWNDWEN mask */
 /**
-  * @}
-  */
+ * @}
+ */
 #else
 /** @defgroup COMPEx_WindowMode COMP Extended WindowMode (Other Product devices)
-  * @{
-  */
+ * @{
+ */
 #define COMP_WINDOWMODE_DISABLED               ((uint32_t)0x00000000)  /*!< Window mode disabled (not available) */
 
 #define IS_COMP_WINDOWMODE(WINDOWMODE) ((WINDOWMODE) == (WINDOWMODE)) /*!< Not available: check always true */
 
 #define COMP_CSR_COMPxWNDWEN_MASK              ((uint32_t)0x00000000) /*!< Mask empty: feature not available */
 /**
-  * @}
-  */
+ * @}
+ */
 #endif /* STM32F302xC || STM32F303xC || STM32F358xx */
 
 /** @defgroup COMPEx_Mode COMP Extended Mode
-  * @{
-  */
+ * @{
+ */
 #if defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx) || \
     defined(STM32F373xC) || defined(STM32F378xx)
 
 /* Please refer to the electrical characteristics in the device datasheet for
-   the power consumption values */
+ the power consumption values */
 #define COMP_MODE_HIGHSPEED               ((uint32_t)0x00000000) /*!< High Speed */
 #define COMP_MODE_MEDIUMSPEED             COMP_CSR_COMPxMODE_0   /*!< Medium Speed */
 #define COMP_MODE_LOWPOWER                COMP_CSR_COMPxMODE_1   /*!< Low power mode */
@@ -759,14 +759,14 @@
 #define COMP_CSR_COMPxMODE_MASK           ((uint32_t)0x00000000) /*!< Mask empty: feature not available */
 
 #endif /* STM32F302xC || STM32F303xC || STM32F358xx || */
-       /* STM32F373xC || STM32F378xx */
+/* STM32F373xC || STM32F378xx */
 /**
-  * @}
-  */
+ * @}
+ */
 
 /** @defgroup COMPEx_Hysteresis COMP Extended Hysteresis
-  * @{
-  */
+ * @{
+ */
 #if defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx) || \
     defined(STM32F373xC) || defined(STM32F378xx)
 
@@ -791,16 +791,16 @@
 #define COMP_CSR_COMPxHYST_MASK           ((uint32_t)0x00000000) /*!< Mask empty: feature not available */
 
 #endif /* STM32F302xC || STM32F303xC || STM32F358xx || */
-       /* STM32F373xC || STM32F378xx */
+/* STM32F373xC || STM32F378xx */
 /**
-  * @}
-  */
+ * @}
+ */
 
 #if defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx) || \
     defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx)
 /** @defgroup COMPEx_BlankingSrce  COMP Extended Blanking Source (STM32F301x8/STM32F302x8/STM32F303x8/STM32F334x8/STM32F318xx/STM32F328xx Product devices)
-  * @{
-  */
+ * @{
+ */
 /* No blanking source can be selected for all comparators */
 #define COMP_BLANKINGSRCE_NONE                 ((uint32_t)0x00000000)    /*!< No blanking source */
 /* Blanking source for COMP2 */
@@ -843,18 +843,18 @@
 #define COMP_CSR_COMPxBLANKING_MASK            COMP_CSR_COMPxBLANKING /*!< COMP_CSR_COMPxBLANKING mask */
 
 /**
-  * @}
-  */
+ * @}
+ */
 
 /** @defgroup COMPEx_ExtiLineEvent COMP Extended EXTI Line Event (STM32F301x8/STM32F302x8/STM32F303x8/STM32F334x8/STM32F318xx/STM32F328xx Product devices)
-  *        Elements values convention: XXXXZYYY
-  *           - XXXX : Interrupt mask in the register list where Z equal 0x0
-  *           - YYY : Interrupt mask in the register list where Z equal 0x1
-  *           - Z  : register index(4bits)
-  *                 - 0x0: EMR/IMR/RTSR/FTSR register
-  *                 - 0x1: EMR2/IMR2/RTSR2/FTSR2 register
-  * @{
-  */  
+ *        Elements values convention: XXXXZYYY
+ *           - XXXX : Interrupt mask in the register list where Z equal 0x0
+ *           - YYY : Interrupt mask in the register list where Z equal 0x1
+ *           - Z  : register index(4bits)
+ *                 - 0x0: EMR/IMR/RTSR/FTSR register
+ *                 - 0x1: EMR2/IMR2/RTSR2/FTSR2 register
+ * @{
+ */
 #define COMP_EXTI_LINE_MASK                    ((uint32_t)0xffff0fff)  /*!< Mask on possible line values */
 #define COMP_EXTI_LINE_REG_MASK                ((uint32_t)0x00001000)  /*!< Mask on possible register values */
 #define COMP_EXTI_LINE_COMP2_EVENT             ((uint32_t)0x00400000)  /*!< External interrupt line 22 Connected to COMP2 */
@@ -862,16 +862,16 @@
 #define COMP_EXTI_LINE_COMP6_EVENT             ((uint32_t)0x00001001)  /*!< External interrupt line 32 Connected to COMP6 */
 
 /**
-  * @}
-  */
+ * @}
+ */
 #endif /* STM32F301x8 || STM32F302x8 || STM32F318xx || */
-       /* STM32F303x8 || STM32F334x8 || STM32F328xx */
+/* STM32F303x8 || STM32F334x8 || STM32F328xx */
 
 #if defined(STM32F302xE) ||\
     defined(STM32F302xC)
 /** @defgroup COMPEx_BlankingSrce COMP Extended Blanking Source (STM32F302xE/STM32F302xC Product devices)
-  * @{
-  */
+ * @{
+ */
 /* No blanking source can be selected for all comparators */
 #define COMP_BLANKINGSRCE_NONE                 ((uint32_t)0x00000000)    /*!< No blanking source */
 /* Blanking source common for COMP1 and COMP2 */
@@ -917,18 +917,18 @@
 #define COMP_CSR_COMPxBLANKING_MASK            COMP_CSR_COMPxBLANKING /*!< COMP_CSR_COMPxBLANKING mask */
 
 /**
-  * @}
-  */
+ * @}
+ */
 
 /** @defgroup COMPEx_ExtiLineEvent COMP Extended EXTI Line Event (STM32F302xC Product devices)
-  *        Elements values convention: XXXXZYYY
-  *           - XXXX : Interrupt mask in the register list where Z equal 0x0
-  *           - YYY : Interrupt mask in the register list where Z equal 0x1
-  *           - Z  : register index(4bits)
-  *                 - 0x0: EMR/IMR/RTSR/FTSR register
-  *                 - 0x1: EMR2/IMR2/RTSR2/FTSR2 register
-  * @{
-  */  
+ *        Elements values convention: XXXXZYYY
+ *           - XXXX : Interrupt mask in the register list where Z equal 0x0
+ *           - YYY : Interrupt mask in the register list where Z equal 0x1
+ *           - Z  : register index(4bits)
+ *                 - 0x0: EMR/IMR/RTSR/FTSR register
+ *                 - 0x1: EMR2/IMR2/RTSR2/FTSR2 register
+ * @{
+ */
 #define COMP_EXTI_LINE_MASK                    ((uint32_t)0xffff0fff)  /*!< Mask on possible line values */
 #define COMP_EXTI_LINE_REG_MASK                ((uint32_t)0x00001000)  /*!< Mask on possible register values */
 #define COMP_EXTI_LINE_COMP1_EVENT             ((uint32_t)0x00200000)  /*!< External interrupt line 21 Connected to COMP1 */
@@ -937,16 +937,16 @@
 #define COMP_EXTI_LINE_COMP6_EVENT             ((uint32_t)0x00001001)  /*!< External interrupt line 32 Connected to COMP6 */
 
 /**
-  * @}
-  */
+ * @}
+ */
 #endif /* STM32F302xE || */
-       /* STM32F302xC    */
-   
+/* STM32F302xC    */
+
 #if defined(STM32F303xE) || defined(STM32F398xx) || \
     defined(STM32F303xC) || defined(STM32F358xx)
 /** @defgroup COMPEx_BlankingSrce COMP Extended Blanking Source (STM32F303xE/STM32F398xx/STM32F303xC/STM32F358xx Product devices)
-  * @{
-  */
+ * @{
+ */
 /* No blanking source can be selected for all comparators */
 #define COMP_BLANKINGSRCE_NONE                 ((uint32_t)0x00000000)    /*!< No blanking source */
 /* Blanking source common for COMP1, COMP2, COMP3 and COMP7 */
@@ -1010,22 +1010,22 @@
       ((BLANKINGSRCE) == COMP_BLANKINGSRCE_TIM1OC5) ||        \
       ((BLANKINGSRCE) == COMP_BLANKINGSRCE_TIM8OC5) ||        \
       ((BLANKINGSRCE) == COMP_BLANKINGSRCE_TIM15OC2))))
-     
+
 #define COMP_CSR_COMPxBLANKING_MASK            COMP_CSR_COMPxBLANKING /*!< COMP_CSR_COMPxBLANKING mask */
 
 /**
-  * @}
-  */
+ * @}
+ */
 
 /** @defgroup COMPEx_ExtiLineEvent COMP Extended EXTI Line Event (STM32F303xE/STM32F398xx/STM32F303xC/STM32F358xx Product devices)
-  *        Elements values convention: XXXXZYYY
-  *           - XXXX : Interrupt mask in the register list where Z equal 0x0
-  *           - YYY : Interrupt mask in the register list where Z equal 0x1
-  *           - Z  : register index(4bits)
-  *                 - 0x0: EMR/IMR/RTSR/FTSR register
-  *                 - 0x1: EMR2/IMR2/RTSR2/FTSR2 register
-  * @{
-  */  
+ *        Elements values convention: XXXXZYYY
+ *           - XXXX : Interrupt mask in the register list where Z equal 0x0
+ *           - YYY : Interrupt mask in the register list where Z equal 0x1
+ *           - Z  : register index(4bits)
+ *                 - 0x0: EMR/IMR/RTSR/FTSR register
+ *                 - 0x1: EMR2/IMR2/RTSR2/FTSR2 register
+ * @{
+ */
 #define COMP_EXTI_LINE_MASK                    ((uint32_t)0xffff0fff)  /*!< Mask on possible line values */
 #define COMP_EXTI_LINE_REG_MASK                ((uint32_t)0x00001000)  /*!< Mask on possible register values */
 #define COMP_EXTI_LINE_COMP1_EVENT             ((uint32_t)0x00200000)  /*!< External interrupt line 21 Connected to COMP1 */
@@ -1037,15 +1037,15 @@
 #define COMP_EXTI_LINE_COMP7_EVENT             ((uint32_t)0x00001002)  /*!< External interrupt line 33 Connected to COMP7 */
 
 /**
-  * @}
-  */
+ * @}
+ */
 #endif /* STM32F303xE || STM32F398xx || */
-       /* STM32F303xC || STM32F358xx    */
+/* STM32F303xC || STM32F358xx    */
 
 #if defined(STM32F373xC) ||defined(STM32F378xx)
 /** @defgroup COMPEx_BlankingSrce COMP Extended Blanking Source (STM32F373xC/STM32F378xx Product devices)
-  * @{
-  */
+ * @{
+ */
 /* No blanking source can be selected for all comparators */
 #define COMP_BLANKINGSRCE_NONE                 ((uint32_t)0x00000000)     /*!< No blanking source */
 
@@ -1059,32 +1059,32 @@
 #define COMP_CSR_COMPxBLANKING_MASK            ((uint32_t)0x00000000) /*!< Mask empty: feature not available */
 
 /**
-  * @}
-  */
+ * @}
+ */
 
 /** @defgroup COMPEx_ExtiLineEvent COMP Extended EXTI Line Event (STM32F373xC/STM32F378xx Product devices)
-  *        Elements values convention: XXXX0000
-  *           - XXXX : Interrupt mask in the EMR/IMR/RTSR/FTSR register
-  * @{   
-  */  
+ *        Elements values convention: XXXX0000
+ *           - XXXX : Interrupt mask in the EMR/IMR/RTSR/FTSR register
+ * @{   
+ */
 #define COMP_EXTI_LINE_COMP1_EVENT             ((uint32_t)0x00200000)  /*!< External interrupt line 21 Connected to COMP1 */
 #define COMP_EXTI_LINE_COMP2_EVENT             ((uint32_t)0x00400000)  /*!< External interrupt line 22 Connected to COMP2 */
 
 /**
-  * @}
-  */
+ * @}
+ */
 #endif /* STM32F373xC || STM32F378xx */
 
 #if  defined(STM32F373xC) || defined(STM32F378xx)
-/* CSR register reset value */ 
+/* CSR register reset value */
 #define COMP_CSR_RESET_VALUE                  ((uint32_t)0x00000000)
 #define COMP_CSR_RESET_PARAMETERS_MASK        ((uint32_t)0x00003FFF)
 #define COMP_CSR_UPDATE_PARAMETERS_MASK       ((uint32_t)0x00003FFE)
-/* CSR COMP1/COMP2 shift */ 
+/* CSR COMP1/COMP2 shift */
 #define COMP_CSR_COMP1_SHIFT                  0U
 #define COMP_CSR_COMP2_SHIFT                  16U
 #else
-/* CSR register reset value */ 
+/* CSR register reset value */
 #define COMP_CSR_RESET_VALUE                  ((uint32_t)0x00000000)
 #endif /* STM32F373xC || STM32F378xx */
 /* CSR masks redefinition for internal use */
@@ -1093,84 +1093,84 @@
 #define COMP_CSR_COMPxPOL_MASK                COMP_CSR_COMPxPOL     /*!< COMP_CSR_COMPxPOL Mask   */
 
 /**
-  * @}
-  */
+ * @}
+ */
 
 /* Exported macro ------------------------------------------------------------*/
 /** @defgroup USARTEx_Exported_Macros USART Extended Exported Macros
-  * @{
-  */
+ * @{
+ */
 #if defined(STM32F373xC) ||defined(STM32F378xx)
 /**
-  * @brief  Checks whether the specified EXTI line flag is set or not.
-  * @param  __FLAG__: specifies the COMP Exti sources to be checked.
-  *          This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval The state of __FLAG__ (SET or RESET).
-  */
+ * @brief  Checks whether the specified EXTI line flag is set or not.
+ * @param  __FLAG__: specifies the COMP Exti sources to be checked.
+ *          This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval The state of __FLAG__ (SET or RESET).
+ */
 #define __HAL_COMP_EXTI_GET_FLAG(__FLAG__)  (EXTI->PR & (__FLAG__))
-     
+
 /**
-  * @brief Clear the COMP Exti flags.
-  * @param  __FLAG__: specifies the COMP Exti sources to be cleared.
-  *          This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */
+ * @brief Clear the COMP Exti flags.
+ * @param  __FLAG__: specifies the COMP Exti sources to be cleared.
+ *          This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_CLEAR_FLAG(__FLAG__)   (EXTI->PR = (__FLAG__))
 
 /**
-  * @brief  Enable the COMP Exti Line.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Enable the COMP Exti Line.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_ENABLE_IT(__EXTILINE__)   (EXTI->IMR |= (__EXTILINE__))
-                                             
+
 /**
-  * @brief  Disable the COMP Exti Line.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */
+ * @brief  Disable the COMP Exti Line.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_DISABLE_IT(__EXTILINE__)  (EXTI->IMR &= ~(__EXTILINE__))
 
 /**
-  * @brief  Enable the Exti Line rising edge trigger.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Enable the Exti Line rising edge trigger.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_RISING_IT_ENABLE(__EXTILINE__) (EXTI->RTSR |= (__EXTILINE__))
 
 /**
-  * @brief  Disable the Exti Line rising edge trigger.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Disable the Exti Line rising edge trigger.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_RISING_IT_DISABLE(__EXTILINE__) (EXTI->RTSR &= ~(__EXTILINE__))
 
 /**
-  * @brief  Enable the Exti Line falling edge trigger.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Enable the Exti Line falling edge trigger.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_FALLING_IT_ENABLE(__EXTILINE__) (EXTI->FTSR |= (__EXTILINE__))
 
 /**
-  * @brief  Disable the Exti Line falling edge trigger.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Disable the Exti Line falling edge trigger.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_FALLING_IT_DISABLE(__EXTILINE__) (EXTI->FTSR &= ~(__EXTILINE__))
 
 /**
-  * @brief  Init a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @note   The common output selection is checked versus the COMP instance to set the right output configuration
-  * @retval None.
-  */                                         
+ * @brief  Init a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @note   The common output selection is checked versus the COMP instance to set the right output configuration
+ * @retval None.
+ */
 #define COMP_OUTPUT_COMP2_TIM2IC4         ((uint32_t)0x0400)   /*!< COMP2 output connected to TIM2 Input Capture 4 */
 #define COMP_OUTPUT_COMP2_TIM2OCREFCLR    ((uint32_t)0x0500)   /*!< COMP2 output connected to TIM4 OCREF Clear */
 #define COMP_OUTPUT_COMP2_TIM3IC1         ((uint32_t)0x0600)   /*!< COMP2 output connected to TIM3 Input Capture 1 */
@@ -1221,10 +1221,10 @@
         } while(0)
 
 /**
-  * @brief  DeInit a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @retval None.
-  */                                         
+ * @brief  DeInit a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @retval None.
+ */
 #define COMP_DEINIT(__HANDLE__)                                                \
         do {                                                                   \
           uint32_t regshift = COMP_CSR_COMP1_SHIFT;                            \
@@ -1239,10 +1239,10 @@
         } while(0)
 
 /**
-  * @brief  Start a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @retval None.
-  */                                         
+ * @brief  Start a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @retval None.
+ */
 #define COMP_START(__HANDLE__)                                                 \
         do {                                                                   \
           uint32_t regshift = COMP_CSR_COMP1_SHIFT;                            \
@@ -1255,10 +1255,10 @@
         } while(0)
 
 /**
-  * @brief  Stop a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @retval None.
-  */                                         
+ * @brief  Stop a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @retval None.
+ */
 #define COMP_STOP(__HANDLE__)                                                  \
         do {                                                                   \
           uint32_t regshift = COMP_CSR_COMP1_SHIFT;                            \
@@ -1269,12 +1269,12 @@
           }                                                                    \
           CLEAR_BIT(COMP->CSR, (uint32_t)COMP_CSR_COMPxEN << regshift);                  \
         } while(0)
-  
+
 /**
-  * @brief  Lock a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @retval None.
-  */                                         
+ * @brief  Lock a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @retval None.
+ */
 #define COMP_LOCK(__HANDLE__)                                                  \
         do {                                                                   \
           uint32_t regshift = COMP_CSR_COMP1_SHIFT;                            \
@@ -1288,83 +1288,82 @@
 
 #else
 /**
-  * @brief  Checks whether the specified EXTI line flag is set or not.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be checked.
-  *          This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval The state of __FLAG__ (SET or RESET).
-  */
+ * @brief  Checks whether the specified EXTI line flag is set or not.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be checked.
+ *          This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval The state of __FLAG__ (SET or RESET).
+ */
 #define __HAL_COMP_EXTI_GET_FLAG(__EXTILINE__)     \
               ((((__EXTILINE__) & COMP_EXTI_LINE_REG_MASK) != RESET) ? (EXTI->PR2 & (__EXTILINE__)) : (EXTI->PR & (__EXTILINE__)))
-     
+
 /**
-  * @brief Clear the COMP Exti flags.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be cleared.
-  *          This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */
+ * @brief Clear the COMP Exti flags.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be cleared.
+ *          This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_CLEAR_FLAG(__EXTILINE__)   \
               ((((__EXTILINE__) & COMP_EXTI_LINE_REG_MASK) != RESET) ? (EXTI->PR2 = (__EXTILINE__)) : (EXTI->PR = (__EXTILINE__)))
 
 /**
-  * @brief  Enable the COMP Exti Line.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Enable the COMP Exti Line.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_ENABLE_IT(__EXTILINE__)   \
               ((((__EXTILINE__) & COMP_EXTI_LINE_REG_MASK) != RESET) ? (EXTI->IMR2 |= (__EXTILINE__)) : (EXTI->IMR |= (__EXTILINE__)))
-                                             
+
 /**
-  * @brief  Disable the COMP Exti Line.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */
+ * @brief  Disable the COMP Exti Line.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_DISABLE_IT(__EXTILINE__)   \
               ((((__EXTILINE__) & COMP_EXTI_LINE_REG_MASK) != RESET) ? (EXTI->IMR2 &= ~(__EXTILINE__)) : (EXTI->IMR &= ~(__EXTILINE__)))
 
 /**
-  * @brief  Enable the Exti Line rising edge trigger.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Enable the Exti Line rising edge trigger.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_RISING_IT_ENABLE(__EXTILINE__)   \
               ((((__EXTILINE__) & COMP_EXTI_LINE_REG_MASK) != RESET) ? (EXTI->RTSR2 |= (__EXTILINE__)) : (EXTI->RTSR |= (__EXTILINE__)))
 
 /**
-  * @brief  Disable the Exti Line rising edge trigger.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Disable the Exti Line rising edge trigger.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_RISING_IT_DISABLE(__EXTILINE__)   \
               ((((__EXTILINE__) & COMP_EXTI_LINE_REG_MASK) != RESET) ? (EXTI->RTSR2 &= ~(__EXTILINE__)) : (EXTI->RTSR &= ~(__EXTILINE__)))
 
 /**
-  * @brief  Enable the Exti Line falling edge trigger.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Enable the Exti Line falling edge trigger.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be enabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_FALLING_IT_ENABLE(__EXTILINE__)  \
               ((((__EXTILINE__) & COMP_EXTI_LINE_REG_MASK) != RESET) ? (EXTI->FTSR2 |= (__EXTILINE__)) : (EXTI->FTSR |= (__EXTILINE__)))
 
 /**
-  * @brief  Disable the Exti Line falling edge trigger.
-  * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
-  *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
-  * @retval None.
-  */                                         
+ * @brief  Disable the Exti Line falling edge trigger.
+ * @param  __EXTILINE__: specifies the COMP Exti sources to be disabled.
+ *         This parameter can be a value of @ref COMPEx_ExtiLineEvent 
+ * @retval None.
+ */
 #define __HAL_COMP_EXTI_FALLING_IT_DISABLE(__EXTILINE__)  \
               ((((__EXTILINE__) & COMP_EXTI_LINE_REG_MASK) != RESET) ? (EXTI->FTSR2 &= ~(__EXTILINE__)) : (EXTI->FTSR &= ~(__EXTILINE__)))
 
-
 /**
-  * @brief  Init a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @retval None.
-  */                                         
+ * @brief  Init a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @retval None.
+ */
 #define COMP_INIT(__HANDLE__)                                                                    \
         do {                                                                                     \
           __IO uint32_t     csrreg = 0;                                                          \
@@ -1382,31 +1381,31 @@
         } while(0)
 
 /**
-  * @brief  DeInit a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @retval None.
-  */                                         
+ * @brief  DeInit a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @retval None.
+ */
 #define COMP_DEINIT(__HANDLE__)    WRITE_REG((__HANDLE__)->Instance->CSR, COMP_CSR_RESET_VALUE)
 
 /**
-  * @brief  Start a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @retval None.
-  */                                         
+ * @brief  Start a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @retval None.
+ */
 #define COMP_START(__HANDLE__)     SET_BIT((__HANDLE__)->Instance->CSR, COMP_CSR_COMPxEN)
 
 /**
-  * @brief  Stop a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @retval None.
-  */                                         
+ * @brief  Stop a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @retval None.
+ */
 #define COMP_STOP(__HANDLE__)      CLEAR_BIT((__HANDLE__)->Instance->CSR, COMP_CSR_COMPxEN)
 
 /**
-  * @brief  Lock a comparator instance
-  * @param  __HANDLE__: specifies the COMP handle
-  * @retval None.
-  */                                         
+ * @brief  Lock a comparator instance
+ * @param  __HANDLE__: specifies the COMP handle
+ * @retval None.
+ */
 #define COMP_LOCK(__HANDLE__)      SET_BIT((__HANDLE__)->Instance->CSR, COMP_CSR_COMPxLOCK)
 
 #endif /* STM32F373xC || STM32F378xx */
@@ -1414,37 +1413,37 @@
 #if defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx) || \
     defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx)
 /**
-  * @brief  Get the specified EXTI line for a comparator instance
-  * @param  __INSTANCE__: specifies the COMP instance.
-  * @retval value of @ref COMPEx_ExtiLineEvent
-  */
+ * @brief  Get the specified EXTI line for a comparator instance
+ * @param  __INSTANCE__: specifies the COMP instance.
+ * @retval value of @ref COMPEx_ExtiLineEvent
+ */
 #define __HAL_COMP_GET_EXTI_LINE(__INSTANCE__) (((__INSTANCE__) == COMP2) ? COMP_EXTI_LINE_COMP2_EVENT : \
                                                 ((__INSTANCE__) == COMP4) ? COMP_EXTI_LINE_COMP4_EVENT : \
                                                 COMP_EXTI_LINE_COMP6_EVENT)
 #endif /* STM32F301x8 || STM32F302x8 || STM32F318xx || */
-       /* STM32F303x8 || STM32F334x8 || STM32F328xx */
+/* STM32F303x8 || STM32F334x8 || STM32F328xx */
 
 #if defined(STM32F302xE) || \
     defined(STM32F302xC)
 /**
-  * @brief  Get the specified EXTI line for a comparator instance
-  * @param  __INSTANCE__: specifies the COMP instance.
-  * @retval value of @ref COMPEx_ExtiLineEvent
-  */
+ * @brief  Get the specified EXTI line for a comparator instance
+ * @param  __INSTANCE__: specifies the COMP instance.
+ * @retval value of @ref COMPEx_ExtiLineEvent
+ */
 #define __HAL_COMP_GET_EXTI_LINE(__INSTANCE__) (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1_EVENT : \
                                                 ((__INSTANCE__) == COMP2) ? COMP_EXTI_LINE_COMP2_EVENT : \
                                                 ((__INSTANCE__) == COMP4) ? COMP_EXTI_LINE_COMP4_EVENT : \
                                                 COMP_EXTI_LINE_COMP6_EVENT)
 #endif /* STM32F302xE || */
-       /* STM32F302xC    */
-   
+/* STM32F302xC    */
+
 #if defined(STM32F303xE) || defined(STM32F398xx) || \
     defined(STM32F303xC) || defined(STM32F358xx)
 /**
-  * @brief  Get the specified EXTI line for a comparator instance
-  * @param  __INSTANCE__: specifies the COMP instance.
-  * @retval value of @ref COMPEx_ExtiLineEvent
-  */
+ * @brief  Get the specified EXTI line for a comparator instance
+ * @param  __INSTANCE__: specifies the COMP instance.
+ * @retval value of @ref COMPEx_ExtiLineEvent
+ */
 #define __HAL_COMP_GET_EXTI_LINE(__INSTANCE__) (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1_EVENT : \
                                                 ((__INSTANCE__) == COMP2) ? COMP_EXTI_LINE_COMP2_EVENT : \
                                                 ((__INSTANCE__) == COMP3) ? COMP_EXTI_LINE_COMP3_EVENT : \
@@ -1453,22 +1452,22 @@
                                                 ((__INSTANCE__) == COMP6) ? COMP_EXTI_LINE_COMP6_EVENT : \
                                                 COMP_EXTI_LINE_COMP7_EVENT)
 #endif /* STM32F303xE || STM32F398xx || */
-       /* STM32F303xC || STM32F358xx    */
-                                                 
+/* STM32F303xC || STM32F358xx    */
+
 #if defined(STM32F373xC) ||defined(STM32F378xx)
 /**
-  * @brief  Get the specified EXTI line for a comparator instance
-  * @param  __INSTANCE__: specifies the COMP instance.
-  * @retval value of @ref COMPEx_ExtiLineEvent
-  */
+ * @brief  Get the specified EXTI line for a comparator instance
+ * @param  __INSTANCE__: specifies the COMP instance.
+ * @retval value of @ref COMPEx_ExtiLineEvent
+ */
 #define __HAL_COMP_GET_EXTI_LINE(__INSTANCE__) (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1_EVENT : \
                                                 COMP_EXTI_LINE_COMP2_EVENT)
 #endif /* STM32F373xC || STM32F378xx */
 
 /**
-  * @}
-  */
-  
+ * @}
+ */
+
 /* Exported functions --------------------------------------------------------*/
 
 /* Initialization and de-initialization functions  ****************************/
@@ -1477,16 +1476,15 @@
 /* Peripheral State and Error functions ***************************************/
 
 /**
-  * @}
-  */ 
+ * @}
+ */
 
 /**
-  * @}
-  */ 
+ * @}
+ */
 
 #ifdef __cplusplus
-}
-#endif
+}#endif
 
 #endif /* __STM32F3xx_HAL_COMP_EX_H */
 

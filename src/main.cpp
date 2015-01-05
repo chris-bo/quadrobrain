@@ -84,44 +84,44 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_TIM2_Init();
 	/* USER CODE BEGIN 2 */
-		LedBlink led3(&status, 5);
-			led3.setLED(LED3);
-			led3.setFrequency(2);
-			led3.setOffset(0);
-			LedBlink led4(&status, 5);
-			led4.setLED(LED4);
-			led4.setFrequency(2);
-			led4.setOffset(10);
-			LedBlink led5(&status, 5);
-			led5.setLED(LED5);
-			led5.setFrequency(3);
-			led5.setOffset(20);
-			LedBlink led6(&status, 5);
-			led6.setLED(LED6);
-			led6.setFrequency(5);
-			led6.setOffset(30);
-			LedBlink led7(&status, 5);
-			led7.setLED(LED7);
-			led7.setFrequency(0.5);
-			led7.setOffset(50);
-			LedBlink led8(&status, 5);
-			led8.setLED(LED8);
-			led8.setFrequency(3);
-			led8.setOffset(70);
-			LedBlink led9(&status, 5);
-			led9.setLED(LED9);
-			led9.setFrequency(1);
-			led9.setOffset(80);
-		LedBlink led10(&status, 5);
-		led10.setLED(LED10);
-		led10.setFrequency(6);
-		led10.setOffset(90);
+	LedBlink led3(&status, 5);
+	led3.setLED(LED3);
+	led3.setFrequency(2);
+	led3.setOffset(0);
+	LedBlink led4(&status, 5);
+	led4.setLED(LED4);
+	led4.setFrequency(2);
+	led4.setOffset(10);
+	LedBlink led5(&status, 5);
+	led5.setLED(LED5);
+	led5.setFrequency(3);
+	led5.setOffset(20);
+	LedBlink led6(&status, 5);
+	led6.setLED(LED6);
+	led6.setFrequency(5);
+	led6.setOffset(30);
+	LedBlink led7(&status, 5);
+	led7.setLED(LED7);
+	led7.setFrequency(0.5);
+	led7.setOffset(50);
+	LedBlink led8(&status, 5);
+	led8.setLED(LED8);
+	led8.setFrequency(3);
+	led8.setOffset(70);
+	LedBlink led9(&status, 5);
+	led9.setLED(LED9);
+	led9.setFrequency(1);
+	led9.setOffset(80);
+	LedBlink led10(&status, 5);
+	led10.setLED(LED10);
+	led10.setFrequency(6);
+	led10.setOffset(90);
 
-		Task* taskarray[] = { &led3, &led4, &led5, &led6, &led7, &led8, &led9,
-					&led10 };
+	Task* taskarray[] = { &led3, &led4, &led5, &led6, &led7, &led8, &led9,
+			&led10 };
 
-		scheduler.start(taskarray, 8);
-	  /* USER CODE END 2 */
+	scheduler.start(taskarray, 8);
+	/* USER CODE END 2 */
 
 	/* USER CODE BEGIN 3 */
 	/* Infinite loop */
@@ -152,7 +152,7 @@ void SystemClock_Config(void) {
 	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
 	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
 	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
+	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
 	__SYSCFG_CLK_ENABLE();
 
@@ -160,18 +160,15 @@ void SystemClock_Config(void) {
 
 /* USER CODE BEGIN 4 */
 /**
-  * @brief  Period elapsed callback in non blocking mode
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
+ * @brief  Period elapsed callback in non blocking mode
+ * @param  htim : TIM handle
+ * @retval None
+ */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	// overrides default callback function
-	if (htim->Instance == SCHEDULER_TIMER){
+	if (htim->Instance == SCHEDULER_TIMER) {
 		scheduler.timerIRQ();
 	}
-
-
 
 }
 /* USER CODE END 4 */

@@ -30,27 +30,26 @@ __initialize_hardware(void);
 
 void
 __attribute__((weak))
-__initialize_hardware_early(void)
-{
-  // Call the CSMSIS system initialisation routine.
-  SystemInit();
+__initialize_hardware_early(void) {
+	// Call the CSMSIS system initialisation routine.
+	SystemInit();
 
-  // The current version of SystemInit() leaves the value of the clock
-  // in a RAM variable (SystemCoreClock), which will be cleared shortly,
-  // so it needs to be recomputed after the RAM initialisations
-  // are completed.
+	// The current version of SystemInit() leaves the value of the clock
+	// in a RAM variable (SystemCoreClock), which will be cleared shortly,
+	// so it needs to be recomputed after the RAM initialisations
+	// are completed.
 
 #if defined(OS_INCLUDE_STARTUP_INIT_FP) || (defined (__VFP_FP__) && !defined (__SOFTFP__))
 
-  // Normally FP init is done by SystemInit(). In case this is not done
-  // there, it is possible to force its inclusion by defining
-  // OS_INCLUDE_STARTUP_INIT_FP.
+	// Normally FP init is done by SystemInit(). In case this is not done
+	// there, it is possible to force its inclusion by defining
+	// OS_INCLUDE_STARTUP_INIT_FP.
 
-  // Enable the Cortex-M4 FPU only when -mfloat-abi=hard.
-  // Code taken from Section 7.1, Cortex-M4 TRM (DDI0439C)
+	// Enable the Cortex-M4 FPU only when -mfloat-abi=hard.
+	// Code taken from Section 7.1, Cortex-M4 TRM (DDI0439C)
 
-  // Set bits 20-23 to enable CP10 and CP11 coprocessor
-  SCB->CPACR |= (0xF << 20);
+	// Set bits 20-23 to enable CP10 and CP11 coprocessor
+	SCB->CPACR |= (0xF << 20);
 
 #endif // (__VFP_FP__) && !(__SOFTFP__)
 }
@@ -65,11 +64,10 @@ __initialize_hardware_early(void)
 
 void
 __attribute__((weak))
-__initialize_hardware(void)
-{
-  // Call the CSMSIS system clock routine to store the clock frequency
-  // in the SystemCoreClock global RAM location.
-  SystemCoreClockUpdate();
+__initialize_hardware(void) {
+	// Call the CSMSIS system clock routine to store the clock frequency
+	// in the SystemCoreClock global RAM location.
+	SystemCoreClockUpdate();
 }
 
 // ----------------------------------------------------------------------------

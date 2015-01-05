@@ -9,8 +9,7 @@
 // ----------------------------------------------------------------------------
 
 #if defined(__cplusplus)
-extern "C"
-  {
+extern "C" {
 #endif
 
 // External references to cortexm_handlers.c

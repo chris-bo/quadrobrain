@@ -41,7 +41,6 @@ void Scheduler::reset() {
 	HAL_TIM_Base_Stop_IT(scheduler_htim);
 	/* TODO: Timer reset */
 
-
 	/* Timer restart */
 	HAL_TIM_Base_Start_IT(scheduler_htim);
 }
@@ -116,7 +115,6 @@ void Scheduler::timerIRQ() {
 
 }
 
-
 Scheduler::~Scheduler() {
 	// TODO Auto-generated destructor stub
 }
@@ -161,7 +159,7 @@ void Scheduler::checkTaskDurations(uint8_t taskIndex) {
 void Scheduler::initializeTaskDurations() {
 
 	/* Disable Timerinterrupt */
-	__HAL_TIM_DISABLE_IT(scheduler_htim, TIM_IT_UPDATE );
+	__HAL_TIM_DISABLE_IT(scheduler_htim, TIM_IT_UPDATE);
 
 	/* Counter Mode up */
 	scheduler_htim->Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -179,9 +177,8 @@ void Scheduler::initializeTaskDurations() {
 		HAL_TIM_Base_Stop(scheduler_htim);
 	}
 
-
 	/* Counter Mode Down */
 	scheduler_htim->Init.CounterMode = TIM_COUNTERMODE_DOWN;
 	HAL_TIM_Base_Init(scheduler_htim);
-	__HAL_TIM_ENABLE_IT(scheduler_htim, TIM_IT_UPDATE );
+	__HAL_TIM_ENABLE_IT(scheduler_htim, TIM_IT_UPDATE);
 }
