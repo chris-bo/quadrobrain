@@ -23,8 +23,7 @@ RCreceiver::RCreceiver(Status* statusPtr, uint8_t defaultPrio,
 
 	RCreceiver_htim = htim;
 
-	/* initialize timer and interrupts */
-	HAL_TIM_Base_MspInit(RCreceiver_htim);
+
 
 }
 
@@ -165,5 +164,15 @@ void RCreceiver::captureIRQ() {
 			currentChannel++;
 		}
 	}
+
+}
+
+void RCreceiver::initialize() {
+
+
+	/* initialize timer and interrupts
+	 * needs to be called after MX_TIM4_Init();
+	 * */
+	HAL_TIM_Base_MspInit(RCreceiver_htim);
 
 }

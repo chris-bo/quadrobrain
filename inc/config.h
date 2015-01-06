@@ -42,8 +42,9 @@
 
 /* TODO interrupt lines */
 
-#define ACCELEROMETER_RANGE						LSM303DLHC_FULLSCALE_4G
+#define ACCELEROMETER_RANGE						LSM303DLHC_FULLSCALE_2G
 #define ACCELEROMETER_OUTPUT_RATE				LSM303DLHC_ODR_200_HZ
+#define ACCELEROMETER_HR						LSM303DLHC_HR_DISABLE
 /* TODO highpass filter config*/
 
 /* TODO Magnetometer Class */

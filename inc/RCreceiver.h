@@ -28,6 +28,7 @@ public:
 	void update();
 	void overrunIRQ();
 	void captureIRQ();
+	void initialize();
 
 private:
 	void computeValues();

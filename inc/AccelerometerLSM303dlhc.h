@@ -14,9 +14,12 @@
 #include "lsm303dlhc.h"
 #include "i2c.h"
 
+#define ACCEL_INIT_TIMEOUT							0xFFFFF
+
 /* Accelerometer Flags */
 #define ACCEL_FLAG_TRANSFER_RUNNING					0x01
 #define ACCEL_FLAG_TRANSFER_COMPLETE				0x02
+#define ACCEL_FLAG_DATA_PROCESSED					0x04
 
 #define AccelComp_FLAG_ERROR						0x80
 
@@ -31,10 +34,10 @@ public:
 	void receptionCompleteCallback();
 	void transmissionCompleteCallback();
 	void initialize();
-	uint8_t accelerometerFlags;
+	volatile uint8_t accelerometerFlags;
 
 private:
-	int16_t rawAccelerometerValues[3]; /* X,Y,Z */
+	volatile int16_t rawAccelerometerValues[3]; /* X,Y,Z */
 	I2C_HandleTypeDef* accel_i2c;
 
 	void accelerometerInit();

@@ -1,8 +1,9 @@
 #MicroXplorer Configuration settings - do not modify
-#Tue Jan 06 12:25:50 BRT 2015
+#Wed Jan 07 08:39:40 BRT 2015
 File.Version=4
 I2C1.I2C_Speed_Mode-I2C=I2C_Standard
-I2C1.IPParameters=I2C_Speed_Mode-I2C
+I2C1.IPParameters=Timing-I2C,I2C_Speed_Mode-I2C
+I2C1.Timing-I2C=0x2000090E
 KeepUserPlacement=true
 Mcu.Family=STM32F3
 Mcu.IP0=I2C1
@@ -48,6 +49,7 @@ Mcu.Pin9=PA5
 Mcu.PinsNb=31
 Mcu.UserName=STM32F303VCTx
 MxCube.Version=4.5.0
+NVIC.EXTI2_TSC_IRQn=true\:1\:0\:true
 NVIC.EXTI4_IRQn=true\:1\:0\:true
 NVIC.I2C1_ER_IRQn=true\:3\:0\:true
 NVIC.I2C1_EV_IRQn=true\:0\:0\:true
@@ -116,7 +118,7 @@ PB6.GPIO_FM6=__NULL
 PB6.GPIO_Label=I2C1_SCL [LSM303DLHC_SCL]
 PB6.GPIO_Mode=GPIO_MODE_AF_OD
 PB6.GPIO_PuPd=GPIO_NOPULL
-PB6.GPIO_PuPdOD=GPIO_PULLUP
+PB6.GPIO_PuPdOD=GPIO_NOPULL
 PB6.GPIO_Speed=GPIO_SPEED_LOW
 PB6.Locked=true
 PB6.Mode=I2C
@@ -126,7 +128,7 @@ PB7.GPIO_FM7=__NULL
 PB7.GPIO_Label=I2C1_SDA [LSM303DLHC_SDA]
 PB7.GPIO_Mode=GPIO_MODE_AF_OD
 PB7.GPIO_PuPd=GPIO_NOPULL
-PB7.GPIO_PuPdOD=GPIO_PULLUP
+PB7.GPIO_PuPdOD=GPIO_NOPULL
 PB7.GPIO_Speed=GPIO_SPEED_LOW
 PB7.Locked=true
 PB7.Mode=I2C

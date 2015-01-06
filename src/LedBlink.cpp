@@ -32,6 +32,7 @@ void LedBlink::setLED(Led_TypeDef _led) {
 	led = _led;
 	BSP_LED_Init(led);
 	priority = defaultPriority;
+	SET_FLAG(statusFlags,FLAG_ACTIVE);
 
 }
 

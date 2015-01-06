@@ -32,16 +32,15 @@
  ******************************************************************************
  */
 
-
 #include "main.h"
-
 
 /* Private variables ---------------------------------------------------------*/
 
 Status status;
 Scheduler scheduler(&status, &htim2);
 RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
-Accelerometer_LSM303dlhc accelerometer(&status, ACCELEROMETER_DEFAULT_PRIORITY,&hi2c1);
+Accelerometer_LSM303dlhc accelerometer(&status, ACCELEROMETER_DEFAULT_PRIORITY,
+		&hi2c1);
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -108,10 +107,12 @@ int main(void) {
 	led10.setFrequency(6);
 	led10.setOffset(90);
 
-	Task* taskarray[] = { &led3, &led4, &led5, &led6, &led7, &led8, &led9,
-			&led10 };
+	accelerometer.initialize();
 
-	scheduler.start(taskarray, 8);
+	Task* taskarray[] = {  &accelerometer, &led3, &led4, &led5, &led6, &led7, &led8, &led9,
+			&led10};
+
+	scheduler.start(taskarray, 9);
 	/* USER CODE END 2 */
 
 	/* USER CODE BEGIN 3 */

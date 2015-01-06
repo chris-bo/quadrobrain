@@ -175,7 +175,7 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-						<entry excluding="src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
+						<entry excluding="src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -366,7 +366,7 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-						<entry excluding="src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
+						<entry excluding="src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

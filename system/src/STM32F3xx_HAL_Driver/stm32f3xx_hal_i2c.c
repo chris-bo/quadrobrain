@@ -2802,17 +2802,19 @@ static HAL_StatusTypeDef I2C_MasterReceive_ISR(I2C_HandleTypeDef *hi2c)
     /* Clear Configuration Register 2 */
     __HAL_I2C_RESET_CR2(hi2c);
     
-    hi2c->State = HAL_I2C_STATE_READY;
+  //  hi2c->State = HAL_I2C_STATE_READY;
 
     /* Process Unlocked */
     __HAL_UNLOCK(hi2c);
     
     if(hi2c->State == HAL_I2C_STATE_MEM_BUSY_RX)
     {
+    	hi2c->State = HAL_I2C_STATE_READY;
       HAL_I2C_MemRxCpltCallback(hi2c);
     }
     else
     {
+    	hi2c->State = HAL_I2C_STATE_READY;
       HAL_I2C_MasterRxCpltCallback(hi2c);
     }
   }
