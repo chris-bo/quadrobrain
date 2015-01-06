@@ -32,30 +32,16 @@
  ******************************************************************************
  */
 
-/* Includes ------------------------------------------------------------------*/
-#include "stm32f3xx_hal.h"
-#include "diag/Trace.h"
-#include "i2c.h"
-#include "tim.h"
-#include "gpio.h"
 
-/* USER CODE BEGIN Includes */
-#include "config.h"
-#include "Scheduler.h"
-#include "Task.h"
-#include "LedBlink.h"
-//#include "TestTask.h"
-#include "RCreceiver.h"
-/* USER CODE END Includes */
+#include "main.h"
+
 
 /* Private variables ---------------------------------------------------------*/
 
-/* USER CODE BEGIN PV */
 Status status;
 Scheduler scheduler(&status, &htim2);
-RCreceiver rcReceiver(&status, 3, &htim4);
-
-/* USER CODE END PV */
+RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
+Accelerometer_LSM303dlhc accelerometer(&status, ACCELEROMETER_DEFAULT_PRIORITY,&hi2c1);
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -169,32 +155,6 @@ void SystemClock_Config(void) {
 }
 
 /* USER CODE BEGIN 4 */
-/**
- * @brief  Period elapsed callback in non blocking mode
- * @param  htim : TIM handle
- * @retval None
- */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	// overrides default callback function
-	if (htim->Instance == SCHEDULER_TIMER) {
-		scheduler.timerIRQ();
-	}
-	if (htim->Instance == RC_RECEIVER_TIMER) {
-		rcReceiver.overrunIRQ();
-	}
-
-}
-/**
- * @brief  Input Capture callback in non blocking mode
- * @param  htim : TIM IC handle
- * @retval None
- */
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
-	if (htim->Instance == RC_RECEIVER_TIMER) {
-		rcReceiver.captureIRQ();
-	}
-}
-
 /* USER CODE END 4 */
 //
 //#ifdef USE_FULL_ASSERT
