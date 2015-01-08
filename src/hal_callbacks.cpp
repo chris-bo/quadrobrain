@@ -48,7 +48,6 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
 		}
 
 	}
-
 }
 
 /**
@@ -58,7 +57,6 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
  * @retval None
  */
 void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
-
 
 	if (hi2c->Instance == ACCELEROMETER_I2C) {
 
@@ -72,7 +70,7 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	if (GPIO_Pin == GPIO_PIN_4) {
 		/* line 4 */
-		accelerometer.DrdyCallback();
+		accelerometer.getAccelerometerData();
 	}
 
 }

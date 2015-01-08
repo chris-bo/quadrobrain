@@ -76,41 +76,33 @@ int main(void) {
 	/* USER CODE BEGIN 2 */
 	LedBlink led3(&status, 5);
 	led3.setLED(LED3);
-	led3.setFrequency(2);
-	led3.setOffset(0);
+	led3.setOffset(50);
 	LedBlink led4(&status, 5);
 	led4.setLED(LED4);
-	led4.setFrequency(2);
-	led4.setOffset(10);
+	led4.setOffset(25);
 	LedBlink led5(&status, 5);
 	led5.setLED(LED5);
-	led5.setFrequency(3);
-	led5.setOffset(20);
+	led5.setOffset(75);
 	LedBlink led6(&status, 5);
 	led6.setLED(LED6);
-	led6.setFrequency(5);
-	led6.setOffset(30);
+	led6.setOffset(200);
 	LedBlink led7(&status, 5);
 	led7.setLED(LED7);
-	led7.setFrequency(0.5);
-	led7.setOffset(50);
+	led7.setOffset(100);
 	LedBlink led8(&status, 5);
 	led8.setLED(LED8);
-	led8.setFrequency(3);
-	led8.setOffset(70);
+	led8.setOffset(175);
 	LedBlink led9(&status, 5);
 	led9.setLED(LED9);
-	led9.setFrequency(1);
-	led9.setOffset(80);
+	led9.setOffset(125);
 	LedBlink led10(&status, 5);
 	led10.setLED(LED10);
-	led10.setFrequency(6);
-	led10.setOffset(90);
+	led10.setOffset(150);
 
 	accelerometer.initialize();
 
-	Task* taskarray[] = {  &accelerometer, &led3, &led4, &led5, &led6, &led7, &led8, &led9,
-			&led10};
+	Task* taskarray[] = { &accelerometer, &led3, &led4, &led5, &led6, &led7,
+			&led8, &led9, &led10 };
 
 	scheduler.start(taskarray, 9);
 	/* USER CODE END 2 */
@@ -157,26 +149,7 @@ void SystemClock_Config(void) {
 
 /* USER CODE BEGIN 4 */
 /* USER CODE END 4 */
-//
-//#ifdef USE_FULL_ASSERT
-//
-///**
-//   * @brief Reports the name of the source file and the source line number
-//   * where the assert_param error has occurred.
-//   * @param file: pointer to the source file name
-//   * @param line: assert_param error line source number
-//   * @retval None
-//   */
-//void assert_failed(uint8_t* file, uint32_t line)
-//{
-//  /* USER CODE BEGIN 6 */
-//  /* User can add his own implementation to report the file name and line number,
-//    ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-//  /* USER CODE END 6 */
-//
-//}
-//
-//#endif
+
 /**
  * @}
  */

@@ -21,6 +21,8 @@ public:
 	void setLED(Led_TypeDef _led);
 	void setFrequency( float freq);
 	void setOffset(uint8_t percentage);
+	void on();
+	void off();
 
 private:
 	float frequency;

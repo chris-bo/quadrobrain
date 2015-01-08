@@ -23,8 +23,6 @@ RCreceiver::RCreceiver(Status* statusPtr, uint8_t defaultPrio,
 
 	RCreceiver_htim = htim;
 
-
-
 }
 
 RCreceiver::~RCreceiver() {
@@ -40,76 +38,6 @@ void RCreceiver::update() {
 	priority = defaultPriority;
 }
 
-//void RCreceiver::lowLevelInit() {
-//
-//	GPIO_InitTypeDef GPIO_InitStructure;
-//	NVIC_InitTypeDef NVIC_InitStructure;
-//	TIM_ICInitTypeDef TIM_ICInitStructure;
-//	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-//
-//	/* TIM clock enable */
-//	RCC_APB1PeriphClockCmd(RC_RECEIVER_TIMER_CLOCK, ENABLE);
-//
-//	/* GPIO clock enable */
-//	RCC_AHBPeriphClockCmd(RC_RECEIVER_GPIO_PORT_CLOCK, ENABLE);
-//
-//	/*  pin configuration */
-//	GPIO_InitStructure.GPIO_Pin = RC_RECEIVER_GPIO_PIN;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_Init(RC_RECEIVER_GPIO_PORT, &GPIO_InitStructure);
-//
-//	/* Connect TIM pin to AF */
-//	GPIO_PinAFConfig(RC_RECEIVER_GPIO_PORT, RC_RECEIVER_GPIO_PIN_SOURCE,
-//	RC_RECEIVER_GPIO_PIN_AF);
-//
-//	/* Enable the TIM global Interrupt */
-//	NVIC_InitStructure.NVIC_IRQChannel = RC_RECEIVERTIMER_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-//	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&NVIC_InitStructure);
-//
-//	/* Time base configuration
-//	 * Prescaler sets timer clock to 1 MHz -> timings in us
-//	 * */
-//	TIM_TimeBaseStructure.TIM_Period = RC_RECEIVER_OverrunTime_us;
-//	TIM_TimeBaseStructure.TIM_Prescaler = (uint16_t) (SystemCoreClock / 1000000
-//			- 1);
-//	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-//	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-//	TIM_TimeBaseInit(SCHEDULER_TIMER, &TIM_TimeBaseStructure);
-//
-//	TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
-//	TIM_ICInitStructure.TIM_ICPolarity = INPUT_CAPURE_POLARITY;
-//	TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-//	TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
-//	TIM_ICInitStructure.TIM_ICFilter = 0x0;
-//	TIM_ICInit(RC_RECEIVER_TIMER, &TIM_ICInitStructure);
-//
-//	/* TIM enable counter */
-//	TIM_Cmd(RC_RECEIVER_TIMER, ENABLE);
-//
-//	/* Enable the CC3 Interrupt Request */
-//	TIM_ITConfig(RC_RECEIVER_TIMER, TIM_IT_CC3, ENABLE);
-//	/* Enable Overrun Interrupt */
-//	TIM_ITConfig(RC_RECEIVER_TIMER, TIM_IT_Update, ENABLE);
-//
-//}
-
-//void RCreceiver::RCreceiverIRQ() {
-//	/* Interrupt request */
-//	/*
-//	 * if -
-//	 * if
-//	 *
-//	 */
-//
-//
-//}
-
 void RCreceiver::computeValues() {
 	/* raw timer output -> channel control values 0-100% */
 	uint16_t tmp;
@@ -124,6 +52,7 @@ void RCreceiver::computeValues() {
 
 void RCreceiver::sync() {
 	/* TODO: resync ppm to timer */
+
 }
 
 void RCreceiver::overrunIRQ() {
@@ -169,10 +98,13 @@ void RCreceiver::captureIRQ() {
 
 void RCreceiver::initialize() {
 
-
 	/* initialize timer and interrupts
 	 * needs to be called after MX_TIM4_Init();
 	 * */
 	HAL_TIM_Base_MspInit(RCreceiver_htim);
+
+	HAL_TIM_IC_Start_IT(RCreceiver_htim, RC_RECEIVER_INPUT_CHANNEL);
+
+	sync();
 
 }

@@ -18,8 +18,6 @@ Accelerometer_LSM303dlhc::Accelerometer_LSM303dlhc(Status* statusPtr,
 	rawAccelerometerValues[2] = 0;
 	accelerometerFlags = 0;
 
-
-
 #if (ACCELEROMETER_RANGE == LSM303DLHC_FULLSCALE_2G)
 	scale = 0.001f;
 #elif (ACCELEROMETER_RANGE == LSM303DLHC_FULLSCALE_4G)
@@ -40,37 +38,33 @@ Accelerometer_LSM303dlhc::~Accelerometer_LSM303dlhc() {
 
 void Accelerometer_LSM303dlhc::update() {
 
-		status->accelX = rawAccelerometerValues[0] * scale;
-		status->accelY = rawAccelerometerValues[1] * scale;
-		status->accelZ = rawAccelerometerValues[2] * scale;
+	status->accelX = rawAccelerometerValues[0] * scale;
+	status->accelY = rawAccelerometerValues[1] * scale;
+	status->accelZ = rawAccelerometerValues[2] * scale;
 
-		if (GET_FLAG(accelerometerFlags, ACCEL_FLAG_DATA_PROCESSED)) {
-			RESET_FLAG(accelerometerFlags, ACCEL_FLAG_DATA_PROCESSED);
-			getAccelerometerData();
-		}else {
-			SET_FLAG(accelerometerFlags, ACCEL_FLAG_DATA_PROCESSED);
-		}
-}
-
-void Accelerometer_LSM303dlhc::DrdyCallback() {
-
-	getAccelerometerData();
-
+	if (GET_FLAG(accelerometerFlags, ACCEL_FLAG_DATA_PROCESSED)) {
+		RESET_FLAG(accelerometerFlags, ACCEL_FLAG_DATA_PROCESSED);
+		getAccelerometerData();
+	} else {
+		SET_FLAG(accelerometerFlags, ACCEL_FLAG_DATA_PROCESSED);
+	}
+	if (GET_FLAG(accelerometerFlags, ACCEL_FLAG_REQUEST_I2CBUS_GET_DATA)) {
+		getAccelerometerData();
+	}
 }
 
 void Accelerometer_LSM303dlhc::receptionCompleteCallback() {
 
+	/* save Raw Values
+	 * LSB @ lower address
+	 * */
+	rawAccelerometerValues[0] = (int16_t) (buffer[0] | (buffer[1] << 8));
+	rawAccelerometerValues[1] = (int16_t) (buffer[2] | (buffer[3] << 8));
+	rawAccelerometerValues[2] = (int16_t) (buffer[4] | (buffer[5] << 8));
 
-		/* save Raw Values
-		 * LSB @ lower address
-		 * */
-		rawAccelerometerValues[0] = (int16_t) (buffer[0] | (buffer[1] << 8));
-		rawAccelerometerValues[1] = (int16_t) (buffer[2] | (buffer[3] << 8));
-		rawAccelerometerValues[2] = (int16_t) (buffer[4] | (buffer[5] << 8));
-
-		RESET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_RUNNING);
-		SET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
-		RESET_FLAG(accelerometerFlags, ACCEL_FLAG_DATA_PROCESSED);
+	RESET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_RUNNING);
+	SET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
+	RESET_FLAG(accelerometerFlags, ACCEL_FLAG_DATA_PROCESSED);
 
 	/* todo error management */
 }
@@ -88,7 +82,7 @@ void Accelerometer_LSM303dlhc::initialize() {
 	 * */
 	SET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
 
-	 getAccelerometerData();
+	getAccelerometerData();
 }
 
 void Accelerometer_LSM303dlhc::accelerometerInit() {
@@ -106,7 +100,7 @@ void Accelerometer_LSM303dlhc::accelerometerInit() {
 	/* CTRL2
 	 * HighPass Filter
 	 */
-	buffer[1] = (0);
+	buffer[1] = (LSM303DLHC_HPM_NORMAL_MODE);
 
 	/* CTRL3
 	 * DRDY on int1
@@ -128,7 +122,8 @@ void Accelerometer_LSM303dlhc::accelerometerInit() {
 	/* CTRL6 */
 	buffer[5] = 0;
 
-	HAL_I2C_Mem_Write(accel_i2c, ACC_I2C_ADDRESS, (LSM303DLHC_MULTIPLE_BYTE_OPERATION | LSM303DLHC_CTRL_REG1_A),
+	HAL_I2C_Mem_Write(accel_i2c, ACC_I2C_ADDRESS,
+			(LSM303DLHC_MULTIPLE_BYTE_OPERATION | LSM303DLHC_CTRL_REG1_A),
 			I2C_MEMADD_SIZE_8BIT, buffer, 6, ACCEL_INIT_TIMEOUT);
 
 	/* other registers left at default */
@@ -139,20 +134,25 @@ void Accelerometer_LSM303dlhc::accelerometerInit() {
 }
 
 void Accelerometer_LSM303dlhc::getAccelerometerData() {
-	/* TODO check bus idle */
 
-	if (GET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE)) {
-		RESET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
-		SET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_RUNNING);
+	if (accel_i2c->State == HAL_I2C_STATE_READY) {
+		if (GET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE)) {
+			RESET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
+			SET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_RUNNING);
 
-		HAL_I2C_Mem_Read_IT(accel_i2c, ACC_I2C_ADDRESS,
-		(LSM303DLHC_OUT_X_L_A | LSM303DLHC_MULTIPLE_BYTE_OPERATION), I2C_MEMADD_SIZE_8BIT, buffer, 6);
-	} else {
-		/* TODO accel transfer not complete error */
-		if ( accel_i2c->State == HAL_I2C_STATE_READY) {
-			SET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
-			getAccelerometerData();
+			HAL_I2C_Mem_Read_IT(accel_i2c, ACC_I2C_ADDRESS,
+					(LSM303DLHC_OUT_X_L_A | LSM303DLHC_MULTIPLE_BYTE_OPERATION),
+					I2C_MEMADD_SIZE_8BIT, buffer, 6);
+			RESET_FLAG(accelerometerFlags, ACCEL_FLAG_REQUEST_I2CBUS_GET_DATA);
+		} else {
+			/* TODO accel transfer not complete error */
+			/* simple fix -> set flag and recall function*/
+			if (accel_i2c->State == HAL_I2C_STATE_READY) {
+				SET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
+				getAccelerometerData();
+			}
 		}
+	} else {
+		SET_FLAG(accelerometerFlags, ACCEL_FLAG_REQUEST_I2CBUS_GET_DATA);
 	}
-
 }

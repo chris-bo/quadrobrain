@@ -21,7 +21,8 @@
 #define ACCEL_FLAG_TRANSFER_COMPLETE				0x02
 #define ACCEL_FLAG_DATA_PROCESSED					0x04
 
-#define AccelComp_FLAG_ERROR						0x80
+#define ACCEL_FLAG_REQUEST_I2CBUS_GET_DATA			0x40
+#define ACCEL_FLAG_ERROR							0x80
 
 class Accelerometer_LSM303dlhc: public Task {
 public:
@@ -30,18 +31,18 @@ public:
 	virtual ~Accelerometer_LSM303dlhc();
 
 	void update();
-	void DrdyCallback();
 	void receptionCompleteCallback();
 	void transmissionCompleteCallback();
 	void initialize();
-	volatile uint8_t accelerometerFlags;
+	void getAccelerometerData();
+	uint8_t accelerometerFlags;
 
 private:
-	volatile int16_t rawAccelerometerValues[3]; /* X,Y,Z */
+	int16_t rawAccelerometerValues[3]; /* X,Y,Z */
 	I2C_HandleTypeDef* accel_i2c;
 
 	void accelerometerInit();
-	void getAccelerometerData();
+
 
 	float scale;
 

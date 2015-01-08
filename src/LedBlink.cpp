@@ -20,10 +20,12 @@ LedBlink::~LedBlink() {
 }
 
 void LedBlink::update() {
-	counter++;
-	if (counter == toggle) {
-		counter = 0;
-		BSP_LED_Toggle(led);
+	if (frequency > 0.001f) {
+		counter++;
+		if (counter == toggle) {
+			counter = 0;
+			BSP_LED_Toggle(led);
+		}
 	}
 	priority = defaultPriority;
 }
@@ -32,21 +34,45 @@ void LedBlink::setLED(Led_TypeDef _led) {
 	led = _led;
 	BSP_LED_Init(led);
 	priority = defaultPriority;
-	SET_FLAG(statusFlags,FLAG_ACTIVE);
+	SET_FLAG(statusFlags, FLAG_ACTIVE);
+	setFrequency(1);
+	setOffset(0);
 
 }
 
 void LedBlink::setFrequency(float freq) {
 	if (freq < 0.001f) {
-		freq = 0.001f;
+		frequency = 0.001f;
 	} else if (freq > 500 / SCHEDULER_INTERVALL_ms) {
-		freq = (500 / SCHEDULER_INTERVALL_ms);
+		frequency = (500 / SCHEDULER_INTERVALL_ms);
+	} else {
+		frequency = freq;
 	}
-	toggle = (uint8_t) ((500 / SCHEDULER_INTERVALL_ms) / freq - 1);
+	toggle = (uint8_t) ((500 / SCHEDULER_INTERVALL_ms) / frequency - 1);
 }
 
 void LedBlink::setOffset(uint8_t percentage) {
+	if (percentage > 200) {
+		percentage = 200;
+	}
+	if (percentage > 100) {
+		BSP_LED_Toggle(led);
+		percentage -= 100;
+	}
+	if (percentage > 0) {
+		percentage -= 1;
+	}
 	uint32_t tmp = ((toggle * percentage) / 100);
 	counter = (uint8_t) tmp;
 
+}
+
+void LedBlink::on() {
+	frequency = 0;
+	BSP_LED_On(led);
+}
+
+void LedBlink::off() {
+	frequency = 0;
+	BSP_LED_Off(led);
 }
