@@ -43,7 +43,7 @@ private:
 
 	void accelerometerInit();
 
-
+	uint8_t getIdentification();
 	float scale;
 
 };

@@ -13,6 +13,7 @@
 #include "stm32f3xx_hal.h"
 #include "diag/Trace.h"
 #include "i2c.h"
+#include "dma.h"
 #include "tim.h"
 #include "gpio.h"
 

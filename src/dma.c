@@ -1,8 +1,9 @@
 /**
   ******************************************************************************
-  * @file    stm32f3xx_it.h
-  * @date    09/01/2015 04:56:04
-  * @brief   This file contains the headers of the interrupt handlers.
+  * File Name          : dma.c
+  * Date               : 09/01/2015 04:56:03
+  * Description        : This file provides code for the configuration
+  *                      of all the requested memory to memory DMA transfers.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -31,34 +32,45 @@
   *
   ******************************************************************************
   */
-
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F3xx_IT_H
-#define __STM32F3xx_IT_H
-
-#ifdef __cplusplus
- extern "C" {
-#endif 
-
 /* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "dma.h"
 
-void SysTick_Handler(void);
-void TIM2_IRQHandler(void);
-void I2C1_ER_IRQHandler(void);
-void I2C1_EV_IRQHandler(void);
-void EXTI4_IRQHandler(void);
-void EXTI2_TSC_IRQHandler(void);
-void DMA1_Channel7_IRQHandler(void);
-void TIM4_IRQHandler(void);
+/* USER CODE BEGIN 0 */
 
-#ifdef __cplusplus
+/* USER CODE END 0 */
+
+/*----------------------------------------------------------------------------*/
+/* Configure DMA                                                              */
+/*----------------------------------------------------------------------------*/
+
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */
+
+/** 
+  * Enable DMA controller clock
+  */
+void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  HAL_NVIC_SetPriority(DMA1_Channel7_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel7_IRQn);
+
 }
-#endif
 
-#endif /* __STM32F3xx_IT_H */
+/* USER CODE BEGIN 2 */
+
+/* USER CODE END 2 */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

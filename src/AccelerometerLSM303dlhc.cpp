@@ -87,50 +87,54 @@ void Accelerometer_LSM303dlhc::initialize() {
 
 void Accelerometer_LSM303dlhc::accelerometerInit() {
 
-	/* Initialize Accelerometer without IT*/
+	/* Check device */
+	if (getIdentification() == 1) {
 
-	/* CTRL1
-	 * Output Rate
-	 * Power Mode
-	 * Enable all Axes
-	 * */
-	buffer[0] = (ACCELEROMETER_OUTPUT_RATE | LSM303DLHC_NORMAL_MODE
-			| LSM303DLHC_AXES_ENABLE);
+		/* Initialize Accelerometer without IT or DMA*/
+		/* CTRL1
+		 * Output Rate
+		 * Power Mode
+		 * Enable all Axes
+		 * */
+		buffer[0] = (ACCELEROMETER_OUTPUT_RATE | LSM303DLHC_NORMAL_MODE
+				| LSM303DLHC_AXES_ENABLE);
 
-	/* CTRL2
-	 * HighPass Filter
-	 */
-	buffer[1] = (LSM303DLHC_HPM_NORMAL_MODE);
+		/* CTRL2
+		 * HighPass Filter
+		 */
+		buffer[1] = (LSM303DLHC_HPM_NORMAL_MODE);
 
-	/* CTRL3
-	 * DRDY on int1
-	 */
-	buffer[2] = LSM303DLHC_IT1_DRY1;
+		/* CTRL3
+		 * DRDY on int1
+		 */
+		buffer[2] = LSM303DLHC_IT1_DRY1;
 
-	/* CTRL4
-	 * Block data Update
-	 * LSB @ lower address
-	 * Fullscale setting
-	 * HighResolution setting
-	 */
-	buffer[3] = (LSM303DLHC_BlockUpdate_Continous | LSM303DLHC_BLE_LSB
-			| ACCELEROMETER_RANGE | ACCELEROMETER_HR);
+		/* CTRL4
+		 * Block data Update
+		 * LSB @ lower address
+		 * Fullscale setting
+		 * HighResolution setting
+		 */
+		buffer[3] = (LSM303DLHC_BlockUpdate_Continous | LSM303DLHC_BLE_LSB
+				| ACCELEROMETER_RANGE | ACCELEROMETER_HR);
 
-	/* CTRL5 */
-	buffer[4] = 0;
+		/* CTRL5 */
+		buffer[4] = 0;
 
-	/* CTRL6 */
-	buffer[5] = 0;
+		/* CTRL6 */
+		buffer[5] = 0;
 
-	HAL_I2C_Mem_Write(accel_i2c, ACC_I2C_ADDRESS,
-			(LSM303DLHC_MULTIPLE_BYTE_OPERATION | LSM303DLHC_CTRL_REG1_A),
-			I2C_MEMADD_SIZE_8BIT, buffer, 6, ACCEL_INIT_TIMEOUT);
+		HAL_I2C_Mem_Write(accel_i2c, ACC_I2C_ADDRESS,
+				(LSM303DLHC_MULTIPLE_BYTE_OPERATION | LSM303DLHC_CTRL_REG1_A),
+				I2C_MEMADD_SIZE_8BIT, buffer, 6, ACCEL_INIT_TIMEOUT);
 
-	/* other registers left at default */
+		/* other registers left at default */
 
-	/* activate task */
-	SET_FLAG(statusFlags, FLAG_ACTIVE);
+		/* activate task */
+		SET_FLAG(statusFlags, FLAG_ACTIVE);
+	} else {
 
+	}
 }
 
 void Accelerometer_LSM303dlhc::getAccelerometerData() {
@@ -140,7 +144,7 @@ void Accelerometer_LSM303dlhc::getAccelerometerData() {
 			RESET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
 			SET_FLAG(accelerometerFlags, ACCEL_FLAG_TRANSFER_RUNNING);
 
-			HAL_I2C_Mem_Read_IT(accel_i2c, ACC_I2C_ADDRESS,
+			HAL_I2C_Mem_Read_DMA(accel_i2c, ACC_I2C_ADDRESS,
 					(LSM303DLHC_OUT_X_L_A | LSM303DLHC_MULTIPLE_BYTE_OPERATION),
 					I2C_MEMADD_SIZE_8BIT, buffer, 6);
 			RESET_FLAG(accelerometerFlags, ACCEL_FLAG_REQUEST_I2CBUS_GET_DATA);
@@ -154,5 +158,27 @@ void Accelerometer_LSM303dlhc::getAccelerometerData() {
 		}
 	} else {
 		SET_FLAG(accelerometerFlags, ACCEL_FLAG_REQUEST_I2CBUS_GET_DATA);
+	}
+}
+
+uint8_t Accelerometer_LSM303dlhc::getIdentification() {
+
+	uint8_t tmpreg;
+
+	HAL_I2C_Mem_Read(accel_i2c, ACC_I2C_ADDRESS,
+	LSM303DLHC_WHO_AM_I_ADDR,
+	I2C_MEMADD_SIZE_8BIT, &tmpreg, 1, ACCEL_INIT_TIMEOUT);
+
+	if (tmpreg == I_AM_LMS303DLHC) {
+		return 1;
+	} else {
+		/* if not lsm303dlhc */
+		RESET_FLAG(statusFlags, FLAG_ACTIVE);
+		priority = -1;
+		SET_FLAG(accelerometerFlags, ACCEL_FLAG_ERROR);
+		SET_FLAG(status->globalFlags, EMERGENCY_FLAG);
+		/*stop program*/
+		while(1);
+		return 0;
 	}
 }
