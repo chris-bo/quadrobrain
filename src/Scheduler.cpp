@@ -67,7 +67,8 @@ void Scheduler::executeTasks() {
 		for (uint8_t k = 0; k < numberOfTasks; k++) {
 			// Wenn Task aktuelle Priorit�t hat und aktiv (erstes Statusbit) ist
 			if ((taskArray[k]->priority == prio)
-					&& !(GET_FLAG(taskArray[k]->taskStatusFlags, TASK_FLAG_CHECKED))) {
+					&& !(GET_FLAG(taskArray[k]->taskStatusFlags,
+							TASK_FLAG_CHECKED))) {
 				/* increase checkedTasks counter, and set Task as Checked*/
 				checkedTasks++;
 				SET_FLAG(taskArray[k]->taskStatusFlags, TASK_FLAG_CHECKED);
@@ -165,7 +166,6 @@ void Scheduler::initializeTaskDurations() {
 	scheduler_htim->Init.CounterMode = TIM_COUNTERMODE_UP;
 	HAL_TIM_Base_Init(scheduler_htim);
 
-	uint32_t timeTmp = 0;
 	for (uint8_t i = 0; i < numberOfTasks; i++) {
 		/* Set Timer */
 		__HAL_TIM_SetCounter(scheduler_htim, 0);

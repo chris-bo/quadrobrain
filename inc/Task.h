@@ -14,8 +14,6 @@
 #define TASK_FLAG_ACTIVE		0x0001
 #define TASK_FLAG_CHECKED		0x0002
 
-
-
 class Task {
 public:
 
@@ -23,8 +21,7 @@ public:
 	virtual ~Task();
 
 	virtual void update();
-
-
+	virtual void initialize();
 
 	uint32_t maxDuration;
 	int8_t priority;
@@ -36,7 +33,6 @@ public:
 	 * flags handled by scheduler:
 	 * 	|		|free	|free	|free	|free	|free	|checked| active| */
 	uint16_t taskStatusFlags;
-
 
 protected:
 

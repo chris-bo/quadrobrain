@@ -30,10 +30,10 @@
 #define RC_RECEIVER_GPIO_PIN					GPIO_Pin_8	// TIM4 CH3 (CH1 and CH2 used by I2C1)
 
 /* signal detection defines */
-#define RC_RECEIVER_OverrunTime_us				3500
-#define RC_RECEIVER_MinHighTime_us				1000
-#define RC_RECEIVER_MaxHighTime_us				1700
-#define RC_RECEIVER_SyncTime_us					300		// time between two pulses
+#define RC_RECEIVER_OverrunTime_us				4000
+#define RC_RECEIVER_MinHighTime_us				950
+#define RC_RECEIVER_MaxHighTime_us				2050
+//#define RC_RECEIVER_SyncTime_us				300		// included in RC_RECEIVER_MinHighTime_us
 
 /* Accelerometer MAgnetometer
  * LSM303DLHC

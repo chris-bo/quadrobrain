@@ -34,3 +34,11 @@ void Task::update() {
 	/* reset priority to default after execution */
 
 }
+
+void Task::initialize() {
+
+	/* standard initialization function
+	 *
+	 * set task active */
+
+}

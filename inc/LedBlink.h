@@ -25,10 +25,11 @@ public:
 	void off();
 
 private:
+	Led_TypeDef led;
 	float frequency;
 	uint8_t counter;
 	uint8_t toggle;
-	Led_TypeDef led;
+
 
 };
 

@@ -103,11 +103,12 @@ int main(void) {
 
 	accelerometer.initialize();
 	gyro.initialize();
+	rcReceiver.initialize();
 
-	Task* taskarray[] = { &accelerometer, &gyro, &led3, &led4, &led5, &led6,
+	Task* taskarray[] = { &accelerometer, &gyro, &rcReceiver, &led3, &led4, &led5, &led6,
 			&led7, &led8, &led9, &led10 };
 
-	scheduler.start(taskarray, 10);
+	scheduler.start(taskarray, 11);
 	/* USER CODE END 2 */
 
 	/* USER CODE BEGIN 3 */

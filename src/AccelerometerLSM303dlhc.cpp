@@ -58,9 +58,12 @@ void Accelerometer_LSM303dlhc::receptionCompleteCallback() {
 	/* save Raw Values
 	 * LSB @ lower address
 	 * */
-	rawAccelerometerValues[0] = (int16_t) (accel_transfer_buffer[0] | (accel_transfer_buffer[1] << 8));
-	rawAccelerometerValues[1] = (int16_t) (accel_transfer_buffer[2] | (accel_transfer_buffer[3] << 8));
-	rawAccelerometerValues[2] = (int16_t) (accel_transfer_buffer[4] | (accel_transfer_buffer[5] << 8));
+	rawAccelerometerValues[0] = (int16_t) (accel_transfer_buffer[0]
+			| (accel_transfer_buffer[1] << 8));
+	rawAccelerometerValues[1] = (int16_t) (accel_transfer_buffer[2]
+			| (accel_transfer_buffer[3] << 8));
+	rawAccelerometerValues[2] = (int16_t) (accel_transfer_buffer[4]
+			| (accel_transfer_buffer[5] << 8));
 
 	RESET_FLAG(taskStatusFlags, ACCEL_FLAG_TRANSFER_RUNNING);
 	SET_FLAG(taskStatusFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
@@ -96,8 +99,8 @@ void Accelerometer_LSM303dlhc::accelerometerInit() {
 		 * Power Mode
 		 * Enable all Axes
 		 * */
-		accel_transfer_buffer[0] = (ACCELEROMETER_OUTPUT_RATE | LSM303DLHC_NORMAL_MODE
-				| LSM303DLHC_AXES_ENABLE);
+		accel_transfer_buffer[0] = (ACCELEROMETER_OUTPUT_RATE
+				| LSM303DLHC_NORMAL_MODE | LSM303DLHC_AXES_ENABLE);
 
 		/* CTRL2
 		 * HighPass Filter
@@ -115,8 +118,8 @@ void Accelerometer_LSM303dlhc::accelerometerInit() {
 		 * Fullscale setting
 		 * HighResolution setting
 		 */
-		accel_transfer_buffer[3] = (LSM303DLHC_BlockUpdate_Continous | LSM303DLHC_BLE_LSB
-				| ACCELEROMETER_RANGE | ACCELEROMETER_HR);
+		accel_transfer_buffer[3] = (LSM303DLHC_BlockUpdate_Continous
+				| LSM303DLHC_BLE_LSB | ACCELEROMETER_RANGE | ACCELEROMETER_HR);
 
 		/* CTRL5 */
 		accel_transfer_buffer[4] = 0;
@@ -126,7 +129,8 @@ void Accelerometer_LSM303dlhc::accelerometerInit() {
 
 		HAL_I2C_Mem_Write(accel_i2c, ACC_I2C_ADDRESS,
 				(LSM303DLHC_MULTIPLE_BYTE_OPERATION | LSM303DLHC_CTRL_REG1_A),
-				I2C_MEMADD_SIZE_8BIT, accel_transfer_buffer, 6, ACCEL_INIT_TIMEOUT);
+				I2C_MEMADD_SIZE_8BIT, accel_transfer_buffer, 6,
+				ACCEL_INIT_TIMEOUT);
 
 		/* other registers left at default */
 

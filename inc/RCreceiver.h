@@ -13,13 +13,14 @@
 #include "config.h"
 
 /* receiver Flags */
-#define RC_RECEIVER_FLAG_SYNC					0x01
-#define RC_RECEIVER_FLAG_SEQUENCE_COMPLETE 		0x02
+#define RC_RECEIVER_FLAG_SYNC					0x0100
+#define RC_RECEIVER_FLAG_SEQUENCE_COMPLETE 		0x0200
 
-#define RC_RECEIVER_FLAG_SYNC_LOST 		 		0x80
+#define RC_RECEIVER_FLAG_SYNC_LOST 		 		0x0400
+#define RC_RECEIVER_FLAG_ERROR					0x8000
 
 /* number of stored rec channels */
-#define RECEIVER_CHANNELS						5
+#define RECEIVER_CHANNELS						7
 
 class RCreceiver: public Task {
 public:
@@ -32,14 +33,12 @@ public:
 
 private:
 	void computeValues();
-	void sync();
-
-	uint16_t rawReceiverValues[8];
-
-	uint8_t RCreceiverFlags;
-	uint8_t currentChannel;
 
 	TIM_HandleTypeDef* RCreceiver_htim;
+	uint16_t rawReceiverValues[8];
+
+	uint8_t currentChannel;
+	uint8_t signalLostTime;
 
 };
 
