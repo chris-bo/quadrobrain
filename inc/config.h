@@ -10,6 +10,7 @@
 
 #include "stm32f3xx_hal.h"
 #include "lsm303dlhc.h"
+#include "l3gd20.h"
 
 /*********************************************************************************/
 /* Peripheral definitions */
@@ -53,6 +54,22 @@
 
 #define MAGNETOMETER_RANGE						LSM303DLHC_FS_4_0_GA
 #define MAGNETOMETER_OUTPUT_RATE				LSM303DLHC_ODR_220_HZ
+
+
+/* Gyro L3GD20
+ *
+ */
+
+#define GYRO_SPI								SPI1
+#define GYRO_CS_GPIO_PORT						GPIOE
+#define GYRO_CS_PIN								GPIO_PIN_3
+
+#define GYRO_DEFAULT_PRIORITY					0
+
+#define GYRO_RANGE								L3GD20_FULLSCALE_500
+#define GYRO_OUTPUT_RATE						L3GD20_OUTPUT_DATARATE_2
+#define GYRO_BANDWIDTH							L3GD20_BANDWIDTH_3
+
 /*********************************************************************************/
 /*global macros */
 

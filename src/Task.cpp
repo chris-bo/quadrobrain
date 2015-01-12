@@ -20,7 +20,7 @@ Task::Task(Status* statusPtr, int8_t defaultPrio) {
 	defaultPriority = defaultPrio;
 	priority = defaultPriority;
 	maxDuration = 0;
-	statusFlags = 0;
+	taskStatusFlags = 0;
 
 }
 

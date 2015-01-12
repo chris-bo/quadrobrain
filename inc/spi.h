@@ -1,9 +1,9 @@
 /**
   ******************************************************************************
-  * File Name          : dma.h
-  * Date               : 12/01/2015 13:19:52
-  * Description        : This file contains all the function prototypes for
-  *                      the dma.c file
+  * File Name          : SPI.h
+  * Date               : 12/01/2015 13:19:53
+  * Description        : This file provides code for the configuration
+  *                      of the SPI instances.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -33,9 +33,8 @@
   ******************************************************************************
   */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __dma_H
-#define __dma_H
-
+#ifndef __spi_H
+#define __spi_H
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -43,13 +42,18 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
 
-void MX_DMA_Init(void);
+extern SPI_HandleTypeDef hspi1;
+
+void MX_SPI1_Init(void);
 
 #ifdef __cplusplus
 }
 #endif
+#endif /*__ spi_H */
 
-#endif /* __dma_H */
+/**
+  * @}
+  */
 
 /**
   * @}

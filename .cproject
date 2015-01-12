@@ -173,9 +173,14 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1254978189" name="core_cm3.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm3.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1613082213" name="core_sc300.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc300.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.614855770" name="core_sc000.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc000.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1328743450" name="core_cm0.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.804906107" name="core_cm0plus.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0plus.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-						<entry excluding="src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
+						<entry excluding="inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -364,9 +369,14 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.1570538293" name="core_cm3.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm3.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.746373454" name="core_sc300.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc300.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.989445428" name="core_sc000.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc000.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.509947904" name="core_cm0.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.1742780602" name="core_cm0plus.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0plus.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-						<entry excluding="src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
+						<entry excluding="inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

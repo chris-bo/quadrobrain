@@ -129,7 +129,7 @@ static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c);
 /* SPIx bus function */
 static void SPIx_Init(void);
 static uint8_t SPIx_WriteRead(uint8_t byte);
-static void SPIx_Error (void);
+static void SPIx_Error(void);
 static void SPIx_MspInit(SPI_HandleTypeDef *hspi);
 #endif
 
@@ -432,10 +432,8 @@ static void I2Cx_Error(void) {
  * @param None
  * @retval None
  */
-static void SPIx_Init(void)
-{
-	if(HAL_SPI_GetState(&SpiHandle) == HAL_SPI_STATE_RESET)
-	{
+static void SPIx_Init(void) {
+	if (HAL_SPI_GetState(&SpiHandle) == HAL_SPI_STATE_RESET) {
 		/* SPI Config */
 		SpiHandle.Instance = DISCOVERY_SPIx;
 		/* SPI baudrate is set to 5.6 MHz (PCLK2/SPI_BaudRatePrescaler = 90/16 = 5.625 MHz) 
@@ -467,15 +465,14 @@ static void SPIx_Init(void)
  * @param  Byte : Byte send.
  * @retval The received byte value
  */
-static uint8_t SPIx_WriteRead(uint8_t Byte)
-{
+static uint8_t SPIx_WriteRead(uint8_t Byte) {
 
 	uint8_t receivedbyte = 0;
 
 	/* Send a Byte through the SPI peripheral */
 	/* Read byte from the SPI bus */
-	if(HAL_SPI_TransmitReceive(&SpiHandle, (uint8_t*) &Byte, (uint8_t*) &receivedbyte, 1, SpixTimeout) != HAL_OK)
-	{
+	if (HAL_SPI_TransmitReceive(&SpiHandle, (uint8_t*) &Byte,
+			(uint8_t*) &receivedbyte, 1, SpixTimeout) != HAL_OK) {
 		SPIx_Error();
 	}
 
@@ -487,8 +484,7 @@ static uint8_t SPIx_WriteRead(uint8_t Byte)
  * @param None
  * @retval None
  */
-static void SPIx_Error (void)
-{
+static void SPIx_Error(void) {
 	/* De-initialize the SPI comunication BUS */
 	HAL_SPI_DeInit(&SpiHandle);
 
@@ -501,8 +497,7 @@ static void SPIx_Error (void)
  * @param hspi: SPI handle
  * @retval None
  */
-static void SPIx_MspInit(SPI_HandleTypeDef *hspi)
-{
+static void SPIx_MspInit(SPI_HandleTypeDef *hspi) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* Enable SPI1 clock  */
@@ -512,7 +507,8 @@ static void SPIx_MspInit(SPI_HandleTypeDef *hspi)
 	DISCOVERY_SPIx_GPIO_CLK_ENABLE();
 
 	/* configure SPI1 SCK, MOSI and MISO */
-	GPIO_InitStructure.Pin = (DISCOVERY_SPIx_SCK_PIN | DISCOVERY_SPIx_MOSI_PIN | DISCOVERY_SPIx_MISO_PIN);
+	GPIO_InitStructure.Pin = (DISCOVERY_SPIx_SCK_PIN | DISCOVERY_SPIx_MOSI_PIN
+			| DISCOVERY_SPIx_MISO_PIN);
 	GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStructure.Pull = GPIO_NOPULL; /* or GPIO_PULLDOWN */
 	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
@@ -530,8 +526,7 @@ static void SPIx_MspInit(SPI_HandleTypeDef *hspi)
  * @param  None
  * @retval None
  */
-void GYRO_IO_Init(void)
-{
+void GYRO_IO_Init(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* Configure the Gyroscope Control pins ------------------------------------------*/
@@ -551,7 +546,7 @@ void GYRO_IO_Init(void)
 	GPIO_InitStructure.Pin = GYRO_INT1_PIN | GYRO_INT2_PIN;
 	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
-	GPIO_InitStructure.Pull= GPIO_NOPULL;
+	GPIO_InitStructure.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GYRO_INT_GPIO_PORT, &GPIO_InitStructure);
 
 	SPIx_Init();
@@ -564,15 +559,13 @@ void GYRO_IO_Init(void)
  * @param  NumByteToWrite: Number of bytes to write.
  * @retval None
  */
-void GYRO_IO_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite)
-{
+void GYRO_IO_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite) {
 	/* Configure the MS bit: 
 	 - When 0, the address will remain unchanged in multiple read/write commands.
 	 - When 1, the address will be auto incremented in multiple read/write commands.
 	 */
-	if(NumByteToWrite > 0x01)
-	{
-		WriteAddr |= (uint8_t)MULTIPLEBYTE_CMD;
+	if (NumByteToWrite > 0x01) {
+		WriteAddr |= (uint8_t) MULTIPLEBYTE_CMD;
 	}
 	/* Set chip select Low at the start of the transmission */
 	GYRO_CS_LOW();
@@ -581,8 +574,7 @@ void GYRO_IO_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite)
 	SPIx_WriteRead(WriteAddr);
 
 	/* Send the data that will be written into the device (MSB First) */
-	while(NumByteToWrite >= 0x01)
-	{
+	while (NumByteToWrite >= 0x01) {
 		SPIx_WriteRead(*pBuffer);
 		NumByteToWrite--;
 		pBuffer++;
@@ -599,15 +591,11 @@ void GYRO_IO_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite)
  * @param  NumByteToRead : number of bytes to read from the GYROSCOPE.
  * @retval None
  */
-void GYRO_IO_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead)
-{
-	if(NumByteToRead > 0x01)
-	{
-		ReadAddr |= (uint8_t)(READWRITE_CMD | MULTIPLEBYTE_CMD);
-	}
-	else
-	{
-		ReadAddr |= (uint8_t)READWRITE_CMD;
+void GYRO_IO_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead) {
+	if (NumByteToRead > 0x01) {
+		ReadAddr |= (uint8_t) (READWRITE_CMD | MULTIPLEBYTE_CMD);
+	} else {
+		ReadAddr |= (uint8_t) READWRITE_CMD;
 	}
 	/* Set chip select Low at the start of the transmission */
 	GYRO_CS_LOW();
@@ -616,8 +604,7 @@ void GYRO_IO_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead)
 	SPIx_WriteRead(ReadAddr);
 
 	/* Receive the data that will be read from the device (MSB First) */
-	while(NumByteToRead > 0x00)
-	{
+	while (NumByteToRead > 0x00) {
 		/* Send dummy byte (0x00) to generate the SPI clock to GYROSCOPE (Slave device) */
 		*pBuffer = SPIx_WriteRead(DUMMY_BYTE);
 		NumByteToRead--;

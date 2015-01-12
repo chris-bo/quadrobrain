@@ -55,10 +55,10 @@ void Scheduler::executeTasks() {
 	// Alle Tasks auf "unchecked" setzen, ausser Tasks mit Prio -1
 	for (uint8_t i = 0; i < numberOfTasks; i++) {
 		if (taskArray[i]->priority == -1) {
-			SET_FLAG(taskArray[i]->statusFlags, FLAG_CHECKED);
+			SET_FLAG(taskArray[i]->taskStatusFlags, TASK_FLAG_CHECKED);
 			checkedTasks++;
 		} else {
-			RESET_FLAG(taskArray[i]->statusFlags, FLAG_CHECKED);
+			RESET_FLAG(taskArray[i]->taskStatusFlags, TASK_FLAG_CHECKED);
 		}
 	}
 
@@ -67,10 +67,10 @@ void Scheduler::executeTasks() {
 		for (uint8_t k = 0; k < numberOfTasks; k++) {
 			// Wenn Task aktuelle Priorit�t hat und aktiv (erstes Statusbit) ist
 			if ((taskArray[k]->priority == prio)
-					&& !(GET_FLAG(taskArray[k]->statusFlags, FLAG_CHECKED))) {
+					&& !(GET_FLAG(taskArray[k]->taskStatusFlags, TASK_FLAG_CHECKED))) {
 				/* increase checkedTasks counter, and set Task as Checked*/
 				checkedTasks++;
-				SET_FLAG(taskArray[k]->statusFlags, FLAG_CHECKED);
+				SET_FLAG(taskArray[k]->taskStatusFlags, TASK_FLAG_CHECKED);
 				/* check timer and save starting time of task*/
 				uint32_t timerTmp = __HAL_TIM_GetCounter(scheduler_htim);
 				/* check time

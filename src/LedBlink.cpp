@@ -34,7 +34,7 @@ void LedBlink::setLED(Led_TypeDef _led) {
 	led = _led;
 	BSP_LED_Init(led);
 	priority = defaultPriority;
-	SET_FLAG(statusFlags, FLAG_ACTIVE);
+	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 	setFrequency(1);
 	setOffset(0);
 
@@ -57,10 +57,10 @@ void LedBlink::setOffset(uint8_t percentage) {
 	}
 	if (percentage > 100) {
 		BSP_LED_Toggle(led);
-		percentage -= 100;
+		percentage = percentage - 100;
 	}
 	if (percentage > 0) {
-		percentage -= 1;
+		percentage = percentage - 1;
 	}
 	uint32_t tmp = ((toggle * percentage) / 100);
 	counter = (uint8_t) tmp;

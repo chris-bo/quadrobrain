@@ -37,7 +37,7 @@ public:
 	float angleZ;
 
 	/* receiver values */
-	uint8_t RCvalues[5];
+	uint8_t RCvalues[8];
 
 	/* Motor values */
 	uint8_t motorValues[4];
