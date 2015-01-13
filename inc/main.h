@@ -18,6 +18,7 @@
 #include "dma.h"
 #include "tim.h"
 #include "gpio.h"
+#include "usart.h"
 
 
 /* classes  ---------------------------------------------------------*/

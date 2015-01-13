@@ -1,8 +1,9 @@
 /**
   ******************************************************************************
-  * @file    stm32f3xx_it.h
-  * @date    13/01/2015 11:20:40
-  * @brief   This file contains the headers of the interrupt handlers.
+  * File Name          : USART.h
+  * Date               : 13/01/2015 11:20:40
+  * Description        : This file provides code for the configuration
+  *                      of the USART instances.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -31,39 +32,31 @@
   *
   ******************************************************************************
   */
-
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F3xx_IT_H
-#define __STM32F3xx_IT_H
-
+#ifndef __usart_H
+#define __usart_H
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "stm32f3xx_hal.h"
 
-void EXTI1_IRQHandler(void);
-void DMA1_Channel4_IRQHandler(void);
-void DMA1_Channel3_IRQHandler(void);
-void SysTick_Handler(void);
-void TIM2_IRQHandler(void);
-void I2C1_ER_IRQHandler(void);
-void I2C1_EV_IRQHandler(void);
-void EXTI4_IRQHandler(void);
-void DMA1_Channel7_IRQHandler(void);
-void SPI1_IRQHandler(void);
-void DMA1_Channel5_IRQHandler(void);
-void DMA1_Channel2_IRQHandler(void);
-void TIM4_IRQHandler(void);
+extern UART_HandleTypeDef huart1;
+
+void MX_USART1_UART_Init(void);
 
 #ifdef __cplusplus
 }
 #endif
+#endif /*__ usart_H */
 
-#endif /* __STM32F3xx_IT_H */
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
