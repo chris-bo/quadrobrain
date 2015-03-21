@@ -16,13 +16,9 @@ public:
 	MotorTask(Status* statusPtr, uint8_t defaultPrio);
 	virtual ~MotorTask();
 	void update();
-	void lowLevelInit();
+	void initialize();
 
 private:
-	uint8_t throttle[];
-	GPIO_InitTypeDef GPIO_InitStruct;
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-	TIM_OCInitTypeDef TIM_OCInitStructure;
 };
 
 #endif /* MOTORTASK_H_ */
