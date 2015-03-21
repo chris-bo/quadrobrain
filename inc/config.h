@@ -35,6 +35,34 @@
 #define RC_RECEIVER_MaxHighTime_us				2050
 //#define RC_RECEIVER_SyncTime_us				300		// included in RC_RECEIVER_MinHighTime_us
 
+/* PPMGenerator
+ * PWM
+ */
+// TODO: richtige Pinkonfiguration!
+#define PPM_TIMER TIM4
+#define PPM_PERIPH RCC_APB1Periph_TIM4
+#define PPM_PORT_PERIPH RCC_AHBPeriph_GPIOD
+#define PPM_PORT_CHANNEL1 GPIOD
+#define PPM_PIN_CHANNEL1 GPIO_Pin_12
+#define PPM_PINSOURCE_CHANNEL1 GPIO_PinSource12
+#define PPM_PORT_CHANNEL2 GPIOD
+#define PPM_PIN_CHANNEL2 GPIO_Pin_13
+#define PPM_PINSOURCE_CHANNEL2 GPIO_PinSource13
+#define PPM_PORT_CHANNEL3 GPIOD
+#define PPM_PIN_CHANNEL3 GPIO_Pin_14
+#define PPM_PINSOURCE_CHANNEL3 GPIO_PinSource14
+#define PPM_PORT_CHANNEL4 GPIOD
+#define PPM_PIN_CHANNEL4 GPIO_Pin_15
+#define PPM_PINSOURCE_CHANNEL4 GPIO_PinSource15
+//TODO: Dummy-Werte ersetzen
+// Eine Periode ist ~ 20ms lang
+#define PPM_TIMER_PERIOD 20000
+// Minimaler Ausschaltwert bei 1ms
+#define PPM_TIMER_MIN_PULSE_LENGTH 1000
+// Maximaler Ausschaltwert bei 2ms
+#define PPM_TIMER_MAX_PULSE_LENGTH 2000
+#define PPM_TIMER_PRESCALER 1000000
+
 /* Accelerometer MAgnetometer
  * LSM303DLHC
  */
