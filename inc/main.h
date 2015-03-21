@@ -29,9 +29,10 @@
 //#include "TestTask.h"
 #include "RCreceiver.h"
 #include "PPMGenerator.h"
-#include "AccelerometerLSM303dlhc.h"
-#include "GyroL3GD20.h"
+//#include "AccelerometerLSM303dlhc.h"
+//#include "GyroL3GD20.h"
 #include "ComplementaryFilter.h"
+#include "MPU9150.h"
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -39,8 +40,8 @@
 extern Status status;
 extern Scheduler scheduler;
 extern RCreceiver rcReceiver;
-extern Accelerometer_LSM303dlhc accelerometer;
-extern Gyro_L3GD20 gyro;
+//extern Accelerometer_LSM303dlhc accelerometer;
+//extern Gyro_L3GD20 gyro;
 
 
 

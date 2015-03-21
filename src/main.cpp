@@ -39,9 +39,9 @@
 Status status;
 Scheduler scheduler(&status, &htim2);
 RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
-Accelerometer_LSM303dlhc accelerometer(&status, ACCELEROMETER_DEFAULT_PRIORITY,
-		&hi2c1);
-Gyro_L3GD20 gyro(&status, GYRO_DEFAULT_PRIORITY, &hspi1);
+//Accelerometer_LSM303dlhc accelerometer(&status, ACCELEROMETER_DEFAULT_PRIORITY,
+//		&hi2c1);
+//Gyro_L3GD20 gyro(&status, GYRO_DEFAULT_PRIORITY, &hspi1);
 ComplementaryFilter compFilter(&status,0,0.98f);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -111,11 +111,11 @@ int main(void) {
 	led10.setLED(LED10);
 	led10.setOffset(150);
 
-	accelerometer.initialize();
-	gyro.initialize();
+//	accelerometer.initialize();
+//	gyro.initialize();
 	rcReceiver.initialize();
 
-	Task* taskarray[] = { &accelerometer, &gyro, &rcReceiver, &compFilter, &led3, &led4, &led5, &led6,
+	Task* taskarray[] = { &rcReceiver, &compFilter, &led3, &led4, &led5, &led6,
 			&led7, &led8, &led9, &led10 };
 
 	scheduler.start(taskarray, 12);

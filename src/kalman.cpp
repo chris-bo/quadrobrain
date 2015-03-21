@@ -39,8 +39,6 @@ void Kalman::update() {
 	/* Kalman Update sequence */
 
 	/* 1. update angle */
-	angle = angle + dt(rotation - rotation_bias);
-
 
 
 

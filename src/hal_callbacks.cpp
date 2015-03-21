@@ -39,14 +39,14 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
  * @retval None
  */
 void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
-	if (hi2c->Instance == ACCELEROMETER_I2C) {
-
-		if (!GET_FLAG(accelerometer.taskStatusFlags,
-				ACCEL_FLAG_TRANSFER_COMPLETE)) {
-			accelerometer.transmissionCompleteCallback();
-		}
-
-	}
+//	if (hi2c->Instance == ACCELEROMETER_I2C) {
+//
+//		if (!GET_FLAG(accelerometer.taskStatusFlags,
+//				ACCEL_FLAG_TRANSFER_COMPLETE)) {
+//			accelerometer.transmissionCompleteCallback();
+//		}
+//
+//	}
 }
 
 /**
@@ -57,46 +57,44 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
  */
 void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 
-	if (hi2c->Instance == ACCELEROMETER_I2C) {
-
-		if (GET_FLAG(accelerometer.taskStatusFlags,
-				ACCEL_FLAG_TRANSFER_RUNNING)) {
-			accelerometer.receptionCompleteCallback();
-		}
-	}
+//	if (hi2c->Instance == ACCELEROMETER_I2C) {
+//
+//		if (GET_FLAG(accelerometer.taskStatusFlags,
+//				ACCEL_FLAG_TRANSFER_RUNNING)) {
+//			accelerometer.receptionCompleteCallback();
+//		}
+//	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
-
 	switch (GPIO_Pin) {
-	case GPIO_PIN_1:
-		/* line 1 */
-		gyro.getGyroData();
-		break;
-	case GPIO_PIN_4:
-		/* line 4 */
-		accelerometer.getAccelerometerData();
-		break;
+//	case GPIO_PIN_1:
+//		/* line 1 */
+//		gyro.getGyroData();
+//		break;
+//	case GPIO_PIN_4:
+//		/* line 4 */
+//		accelerometer.getAccelerometerData();
+//		break;
 	default:
 		break;
 	}
 }
 
 /**
-  * @brief Tx Transfer completed callbacks
-  * @param hspi: SPI handle
-  * @retval None
-  */
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
-{
-	if (hspi->Instance == GYRO_SPI) {
-
-		if (GET_FLAG(gyro.taskStatusFlags,
-				GYRO_FLAG_TRANSFER_RUNNING)) {
-			gyro.transmissionCompleteCallback();
-		}
-	}
+ * @brief Tx Transfer completed callbacks
+ * @param hspi: SPI handle
+ * @retval None
+ */
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
+//	if (hspi->Instance == GYRO_SPI) {
+//
+//		if (GET_FLAG(gyro.taskStatusFlags,
+//				GYRO_FLAG_TRANSFER_RUNNING)) {
+//			gyro.transmissionCompleteCallback();
+//		}
+//	}
 }
 
 /**
@@ -106,16 +104,14 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
  */
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) {
 
-	if (hspi->Instance == GYRO_SPI) {
-
-		if (GET_FLAG(gyro.taskStatusFlags,
-				GYRO_FLAG_TRANSFER_RUNNING)) {
-			GYRO_CS_HIGH();
-			gyro.receptionCompleteCallback();
-		}
-	}
+//	if (hspi->Instance == GYRO_SPI) {
+//
+//		if (GET_FLAG(gyro.taskStatusFlags, GYRO_FLAG_TRANSFER_RUNNING)) {
+//			GYRO_CS_HIGH();
+//			gyro.receptionCompleteCallback();
+//		}
+//	}
 }
-
 
 /**
  * @brief Tx and Rx Transfer completed callbacks
@@ -124,15 +120,13 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) {
  */
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
 
-	if (hspi->Instance == GYRO_SPI) {
-
-		if (GET_FLAG(gyro.taskStatusFlags,
-				GYRO_FLAG_TRANSFER_RUNNING)) {
-			gyro.receptionCompleteCallback();
-		}
-	}
+//	if (hspi->Instance == GYRO_SPI) {
+//
+//		if (GET_FLAG(gyro.taskStatusFlags, GYRO_FLAG_TRANSFER_RUNNING)) {
+//			gyro.receptionCompleteCallback();
+//		}
+//	}
 }
-
 
 /**
  * @brief SPI error callbacks
