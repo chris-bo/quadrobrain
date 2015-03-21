@@ -9,7 +9,7 @@
 #define MPU9150_H_
 
 /********************************************************************/
-/* Register Map */
+/* MPU9150 Register Map */
 #define MPU9150_SELF_TEST_X        0x0D   // R/W
 #define MPU9150_SELF_TEST_Y        0x0E   // R/W
 #define MPU9150_SELF_TEST_X        0x0F   // R/W
@@ -102,6 +102,7 @@
 #define MPU9150_WHO_AM_I           0x75   // R
 
 //MPU9150 Compass
+
 #define MPU9150_CMPS_XOUT_L        0x4A   // R
 #define MPU9150_CMPS_XOUT_H        0x4B   // R
 #define MPU9150_CMPS_YOUT_L        0x4C   // R
@@ -110,9 +111,33 @@
 #define MPU9150_CMPS_ZOUT_H        0x4F   // R
 
 // I2C address 0x69 could be 0x68 wiring.
-#define MPU9150_I2C_ADDRESS = 0x69;
+#define MPU9150_I2C_ADDRESS 		 0x69;
 
-/* End Register Map*/
+
+/* End MPU9150 Register Map*/
+/********************************************************************/
+/* AK8975C Register Map*/
+#define AK8975C_WIA			0x00	// R
+#define AK8975C_INFO		0x01	// R
+#define AK8975C_ST1			0x02	// R
+#define AK8975C_HXL			0x03	// R
+#define AK8975C_HXH			0x04	// R
+#define AK8975C_HYL			0x05	// R
+#define AK8975C_HYH			0x06	// R
+#define AK8975C_HZL			0x07	// R
+#define AK8975C_HZH			0x08	// R
+#define AK8975C_ST2			0x09	// R
+#define AK8975C_CNTL		0x0A	// R/W
+#define AK8975C_ASTC		0x0C	// R/W
+#define AK8975C_TS1			0x0D	// R/W
+#define AK8975C_TS2			0x0E	// R/W
+#define AK8975C_I2CDIS		0x0F	// R/W
+#define AK8975C_ASAX		0x10	// R
+#define AK8975C_ASAY		0x11	// R
+#define AK8975C_ASAZ		0x12	// R
+
+#define AK8975C_I2C_ADDRESS 0x0C
+/* End AK8975C Register Map*/
 /********************************************************************/
 /* Flags */
 #define ACCEL_INIT_TIMEOUT							0xFFFFF
