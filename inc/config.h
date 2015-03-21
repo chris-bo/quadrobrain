@@ -38,22 +38,7 @@
 /* PPMGenerator
  * PWM
  */
-#define PPM_TIMER TIM3
-#define PPM_PERIPH RCC_APB1Periph_TIM3
-#define PPM_PORT_PERIPH RCC_AHBPeriph_GPIOD
-#define PPM_PORT_CHANNEL1 GPIOC
-#define PPM_PIN_CHANNEL1 GPIO_Pin_6
-#define PPM_PINSOURCE_CHANNEL1 GPIO_PinSource6
-#define PPM_PORT_CHANNEL2 GPIOC
-#define PPM_PIN_CHANNEL2 GPIO_Pin_7
-#define PPM_PINSOURCE_CHANNEL2 GPIO_PinSource7
-#define PPM_PORT_CHANNEL3 GPIOC
-#define PPM_PIN_CHANNEL3 GPIO_Pin_8
-#define PPM_PINSOURCE_CHANNEL3 GPIO_PinSource8
-#define PPM_PORT_CHANNEL4 GPIOC
-#define PPM_PIN_CHANNEL4 GPIO_Pin_9
-#define PPM_PINSOURCE_CHANNEL4 GPIO_PinSource9
-//TODO: Dummy-Werte ersetzen
+#define PPMGENERATOR_DEFAULT_PRIORITY			3
 // Eine Periode ist ~ 20ms lang
 #define PPM_TIMER_PERIOD 65535
 // Minimaler Ausschaltwert bei 1ms
@@ -61,6 +46,8 @@
 // Maximaler Ausschaltwert bei 2ms
 #define PPM_TIMER_MAX_PULSE_LENGTH 6546
 #define PPM_TIMER_PRESCALER 22
+// Einstellzeit für Regler
+#define PPM_SETUP_TIME 71925500
 
 /* Accelerometer MAgnetometer
  * LSM303DLHC

@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : SPI.c
-  * Date               : 12/01/2015 13:19:53
+  * Date               : 21/03/2015 17:56:43
   * Description        : This file provides code for the configuration
   *                      of the SPI instances.
   ******************************************************************************
@@ -63,7 +63,6 @@ void MX_SPI1_Init(void)
   hspi1.Init.TIMode = SPI_TIMODE_DISABLED;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
   hspi1.Init.NSSPMode = SPI_NSS_PULSE_ENABLED;
-  hspi1.Init.CRCPolynomial = 7;
   HAL_SPI_Init(&hspi1);
 
 }

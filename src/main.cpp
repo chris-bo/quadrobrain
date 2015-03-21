@@ -38,6 +38,7 @@
 
 Status status;
 Scheduler scheduler(&status, &htim2);
+PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3);
 RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
 Accelerometer_LSM303dlhc accelerometer(&status, ACCELEROMETER_DEFAULT_PRIORITY,
 		&hi2c1);
@@ -73,6 +74,7 @@ int main(void) {
 	MX_I2C1_Init();
 	MX_SPI1_Init();
 	MX_TIM2_Init();
+	MX_TIM3_Init();
 	MX_TIM4_Init();
 	MX_USART1_UART_Init();
 

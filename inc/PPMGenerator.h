@@ -5,20 +5,21 @@
  *      Author: Jonas
  */
 
-#ifndef MOTORTASK_H_
-#define MOTORTASK_H_
+#ifndef PPMGENERATOR_H_
+#define PPMGENERATOR_H_
 
 #include "config.h"
 #include "Task.h"
 
-class MotorTask: public Task {
+class PPMGenerator: public Task {
 public:
-	MotorTask(Status* statusPtr, uint8_t defaultPrio);
-	virtual ~MotorTask();
+	PPMGenerator(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim);
+	virtual ~PPMGenerator();
 	void update();
 	void initialize();
 
 private:
+	TIM_HandleTypeDef* PPMGenerator_htim;
 };
 
-#endif /* MOTORTASK_H_ */
+#endif /* PPMGENERATOR_H_ */
