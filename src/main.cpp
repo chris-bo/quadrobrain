@@ -42,6 +42,7 @@ RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
 Accelerometer_LSM303dlhc accelerometer(&status, ACCELEROMETER_DEFAULT_PRIORITY,
 		&hi2c1);
 Gyro_L3GD20 gyro(&status, GYRO_DEFAULT_PRIORITY, &hspi1);
+ComplementaryFilter compFilter(&status,0,0.98f);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -78,27 +79,35 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 	LedBlink led3(&status, 5);
+	led3.setFrequency(10);
 	led3.setLED(LED3);
 	led3.setOffset(50);
 	LedBlink led4(&status, 5);
+	led4.setFrequency(10);
 	led4.setLED(LED4);
 	led4.setOffset(25);
 	LedBlink led5(&status, 5);
+	led5.setFrequency(10);
 	led5.setLED(LED5);
 	led5.setOffset(75);
 	LedBlink led6(&status, 5);
+	led6.setFrequency(10);
 	led6.setLED(LED6);
 	led6.setOffset(200);
 	LedBlink led7(&status, 5);
+	led7.setFrequency(10);
 	led7.setLED(LED7);
 	led7.setOffset(100);
 	LedBlink led8(&status, 5);
+	led8.setFrequency(10);
 	led8.setLED(LED8);
 	led8.setOffset(175);
 	LedBlink led9(&status, 5);
+	led9.setFrequency(10);
 	led9.setLED(LED9);
 	led9.setOffset(125);
 	LedBlink led10(&status, 5);
+	led10.setFrequency(10);
 	led10.setLED(LED10);
 	led10.setOffset(150);
 
@@ -106,10 +115,10 @@ int main(void) {
 	gyro.initialize();
 	rcReceiver.initialize();
 
-	Task* taskarray[] = { &accelerometer, &gyro, &rcReceiver, &led3, &led4, &led5, &led6,
+	Task* taskarray[] = { &accelerometer, &gyro, &rcReceiver, &compFilter, &led3, &led4, &led5, &led6,
 			&led7, &led8, &led9, &led10 };
 
-	scheduler.start(taskarray, 11);
+	scheduler.start(taskarray, 12);
 	/* USER CODE END 2 */
 
 	/* USER CODE BEGIN 3 */

@@ -42,9 +42,9 @@ private:
 	I2C_HandleTypeDef* accel_i2c;
 	float scale;
 	int16_t rawAccelerometerValues[3]; /* X,Y,Z */
-
+	int16_t zeroGBias[3]; /* X,Y,Z */
 	void accelerometerInit();
-
+	void getBias();
 	uint8_t getIdentification();
 
 

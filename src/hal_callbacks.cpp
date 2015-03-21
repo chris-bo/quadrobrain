@@ -16,8 +16,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	// overrides default callback function
 	if (htim->Instance == SCHEDULER_TIMER) {
 		scheduler.timerIRQ();
-	}
-	if (htim->Instance == RC_RECEIVER_TIMER) {
+	} else if (htim->Instance == RC_RECEIVER_TIMER) {
 		rcReceiver.overrunIRQ();
 	}
 

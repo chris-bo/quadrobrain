@@ -16,6 +16,9 @@ Accelerometer_LSM303dlhc::Accelerometer_LSM303dlhc(Status* statusPtr,
 	rawAccelerometerValues[0] = 0;
 	rawAccelerometerValues[1] = 0;
 	rawAccelerometerValues[2] = 0;
+	zeroGBias[0] = 0;
+	zeroGBias[1] = 0;
+	zeroGBias[2] = 0;
 
 #if (ACCELEROMETER_RANGE == LSM303DLHC_FULLSCALE_2G)
 	scale = 0.001f;
@@ -37,9 +40,9 @@ Accelerometer_LSM303dlhc::~Accelerometer_LSM303dlhc() {
 
 void Accelerometer_LSM303dlhc::update() {
 
-	status->accelX = rawAccelerometerValues[0] * scale;
-	status->accelY = rawAccelerometerValues[1] * scale;
-	status->accelZ = rawAccelerometerValues[2] * scale;
+	status->accelX = (rawAccelerometerValues[0] - zeroGBias[0]) * scale;
+	status->accelY = (rawAccelerometerValues[1] - zeroGBias[1]) * scale;
+	status->accelZ = (rawAccelerometerValues[2] - zeroGBias[2]) * scale;
 
 	if (GET_FLAG(taskStatusFlags, ACCEL_FLAG_DATA_PROCESSED)) {
 		/* no interrupt occured since last update*/
@@ -58,12 +61,13 @@ void Accelerometer_LSM303dlhc::receptionCompleteCallback() {
 	/* save Raw Values
 	 * LSB @ lower address
 	 * */
+
 	rawAccelerometerValues[0] = (int16_t) (accel_transfer_buffer[0]
-			| (accel_transfer_buffer[1] << 8));
+			| (accel_transfer_buffer[1] << 8))/16;
 	rawAccelerometerValues[1] = (int16_t) (accel_transfer_buffer[2]
-			| (accel_transfer_buffer[3] << 8));
+			| (accel_transfer_buffer[3] << 8))/16;
 	rawAccelerometerValues[2] = (int16_t) (accel_transfer_buffer[4]
-			| (accel_transfer_buffer[5] << 8));
+			| (accel_transfer_buffer[5] << 8))/16;
 
 	RESET_FLAG(taskStatusFlags, ACCEL_FLAG_TRANSFER_RUNNING);
 	SET_FLAG(taskStatusFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
@@ -85,7 +89,7 @@ void Accelerometer_LSM303dlhc::initialize() {
 	 * */
 	SET_FLAG(taskStatusFlags, ACCEL_FLAG_TRANSFER_COMPLETE);
 
-	getAccelerometerData();
+	getBias();
 }
 
 void Accelerometer_LSM303dlhc::accelerometerInit() {
@@ -119,7 +123,7 @@ void Accelerometer_LSM303dlhc::accelerometerInit() {
 		 * HighResolution setting
 		 */
 		accel_transfer_buffer[3] = (LSM303DLHC_BlockUpdate_Continous
-				| LSM303DLHC_BLE_LSB | ACCELEROMETER_RANGE | ACCELEROMETER_HR);
+				| LSM303DLHC_BLE_LSB | ACCELEROMETER_RANGE | LSM303DLHC_HR_DISABLE);
 
 		/* CTRL5 */
 		accel_transfer_buffer[4] = 0;
@@ -133,6 +137,8 @@ void Accelerometer_LSM303dlhc::accelerometerInit() {
 				ACCEL_INIT_TIMEOUT);
 
 		/* other registers left at default */
+
+
 
 		/* activate task */
 		SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
@@ -186,4 +192,32 @@ uint8_t Accelerometer_LSM303dlhc::getIdentification() {
 			;
 		return 0;
 	}
+}
+
+void Accelerometer_LSM303dlhc::getBias() {
+
+	int32_t tmp[3];
+	getAccelerometerData();
+	/* for each axis */
+	tmp[0] = rawAccelerometerValues[0];
+	tmp[1] = rawAccelerometerValues[1];
+	tmp[2] = rawAccelerometerValues[2];
+
+	for (uint8_t i = 0; i<100;i++){
+		HAL_Delay(7);
+		tmp[0] = (tmp[0] + rawAccelerometerValues[0]);
+		tmp[1] = (tmp[1] + rawAccelerometerValues[1]);
+		tmp[2] = (tmp[2] + rawAccelerometerValues[2]);
+		getAccelerometerData();
+	}
+
+	tmp[0] /=100;
+	tmp[1] /=100;
+	tmp[2] /=100;
+	zeroGBias[0] = (int16_t)tmp[0];
+	zeroGBias[1] = (int16_t)tmp[1];
+	zeroGBias[2] = 0;
+
+	scale =  (1.0f / (float) tmp[2]);
+
 }
