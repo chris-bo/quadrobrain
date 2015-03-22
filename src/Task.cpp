@@ -42,3 +42,7 @@ void Task::initialize() {
 	 * set task active */
 
 }
+
+void Task::resetPriority() {
+	priority = defaultPriority;
+}

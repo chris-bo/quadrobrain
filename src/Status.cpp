@@ -21,11 +21,11 @@ Status::Status() {
 	angleY = 0;
 	angleZ = 0;
 
-	RCvalues[0] = 0;
-	RCvalues[1] = 0;
-	RCvalues[2] = 0;
-	RCvalues[3] = 0;
-	RCvalues[4] = 0;
+	rcSignalX = 0;
+	rcSignalY = 0;
+	rcSignalZ = 0;
+	rcSignalThrottle = 0;
+	rcSignalEnable = 0;
 
 	motorValues[0] = 0;
 	motorValues[1] = 0;

@@ -31,6 +31,7 @@
 #include "PPMGenerator.h"
 #include "AccelerometerLSM303dlhc.h"
 #include "GyroL3GD20.h"
+#include "ComplementaryFilter.h"
 
 
 

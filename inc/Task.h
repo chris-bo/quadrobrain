@@ -38,6 +38,7 @@ protected:
 
 	Status* status;
 
+	void resetPriority();
 };
 
 #endif /* TASK_H_ */
