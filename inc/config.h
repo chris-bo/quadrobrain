@@ -9,8 +9,7 @@
 #define CONFIG_H_
 
 #include "stm32f3xx_hal.h"
-#include "lsm303dlhc.h"
-#include "l3gd20.h"
+
 
 /*********************************************************************************/
 /* Peripheral definitions */
@@ -62,40 +61,13 @@
 #define PPM_TIMER_MAX_PULSE_LENGTH 6546
 #define PPM_TIMER_PRESCALER 22
 
-/* Accelerometer MAgnetometer
- * LSM303DLHC
- */
-#define ACCELEROMETER_I2C							I2C1
-#define ACCELEROMETER_DEFAULT_PRIORITY				0
-
-/* TODO interrupt lines */
-
-#define ACCELEROMETER_RANGE						LSM303DLHC_FULLSCALE_16G
-#define ACCELEROMETER_OUTPUT_RATE				LSM303DLHC_ODR_200_HZ
-#define ACCELEROMETER_HR						LSM303DLHC_HR_DISABLE
-/* TODO highpass filter config*/
-
-/* TODO Magnetometer Class */
-#define Magn_I2C
-#define Magn_DEFAULT_PRIORITY
-
-#define MAGNETOMETER_RANGE						LSM303DLHC_FS_4_0_GA
-#define MAGNETOMETER_OUTPUT_RATE				LSM303DLHC_ODR_220_HZ
-
-
-/* Gyro L3GD20
+/* Sensorboard MPU9150
  *
  */
+#define MPU9150_I2C								I2C1
+#define MPU9150_DEFAULT_PRIORITY				0
+#define MPU9150_INTERRUPT_PIN					GPIO_PIN_4 /*connect to PE4*/
 
-#define GYRO_SPI								SPI1
-#define GYRO_CS_GPIO_PORT						GPIOE
-#define GYRO_CS_PIN								GPIO_PIN_3
-
-#define GYRO_DEFAULT_PRIORITY					0
-
-#define GYRO_RANGE								L3GD20_FULLSCALE_500
-#define GYRO_OUTPUT_RATE						L3GD20_OUTPUT_DATARATE_2
-#define GYRO_BANDWIDTH							L3GD20_BANDWIDTH_3
 
 /*********************************************************************************/
 /*global macros */

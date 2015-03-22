@@ -14,11 +14,9 @@
 #include "stm32f3xx_it.h"
 #include "diag/Trace.h"
 #include "i2c.h"
-#include "spi.h"
 #include "dma.h"
 #include "tim.h"
 #include "gpio.h"
-#include "usart.h"
 
 
 /* classes  ---------------------------------------------------------*/
@@ -26,11 +24,8 @@
 #include "Scheduler.h"
 #include "Task.h"
 #include "LedBlink.h"
-//#include "TestTask.h"
 #include "RCreceiver.h"
 #include "PPMGenerator.h"
-//#include "AccelerometerLSM303dlhc.h"
-//#include "GyroL3GD20.h"
 #include "ComplementaryFilter.h"
 #include "MPU9150.h"
 
@@ -40,9 +35,7 @@
 extern Status status;
 extern Scheduler scheduler;
 extern RCreceiver rcReceiver;
-//extern Accelerometer_LSM303dlhc accelerometer;
-//extern Gyro_L3GD20 gyro;
-
+extern MPU9150 mpu9150;
 
 
 

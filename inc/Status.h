@@ -31,6 +31,11 @@ public:
 	float rateY;
 	float rateZ;
 
+	/* Magnet fields */
+	float magnetX;
+	float magnetY;
+	float magnetZ;
+
 	/* angle */
 	float angleX;
 	float angleY;

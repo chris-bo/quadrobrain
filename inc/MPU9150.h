@@ -111,7 +111,8 @@
 #define MPU9150_CMPS_ZOUT_H        0x4F   // R
 
 // I2C address 0x69 could be 0x68 wiring.
-#define MPU9150_I2C_ADDRESS 		 0x69;
+//ADO with 4.7k Pulldown on breakoutboard
+#define MPU9150_I2C_ADDRESS 		 0x68;
 
 
 /* End MPU9150 Register Map*/
@@ -129,9 +130,6 @@
 #define AK8975C_ST2			0x09	// R
 #define AK8975C_CNTL		0x0A	// R/W
 #define AK8975C_ASTC		0x0C	// R/W
-#define AK8975C_TS1			0x0D	// R/W
-#define AK8975C_TS2			0x0E	// R/W
-#define AK8975C_I2CDIS		0x0F	// R/W
 #define AK8975C_ASAX		0x10	// R
 #define AK8975C_ASAY		0x11	// R
 #define AK8975C_ASAZ		0x12	// R
@@ -140,19 +138,52 @@
 /* End AK8975C Register Map*/
 /********************************************************************/
 /* Flags */
-#define ACCEL_INIT_TIMEOUT							0xFFFFF
+#define MPU9150_INIT_TIMEOUT							0xFFFFF
 
 /* Accelerometer Flags */
-#define ACCEL_FLAG_TRANSFER_RUNNING					0x0100
-#define ACCEL_FLAG_TRANSFER_COMPLETE				0x0200
-#define ACCEL_FLAG_DATA_PROCESSED					0x0400
+#define MPU9150_FLAG_TRANSFER_RUNNING					0x0100
+#define MPU9150_FLAG_TRANSFER_COMPLETE					0x0200
+#define MPU9150_FLAG_DATA_PROCESSED						0x0400
 
-#define ACCEL_FLAG_REQUEST_I2CBUS_GET_DATA			0x4000
-#define ACCEL_FLAG_ERROR							0x8000
+#define MPU9150_FLAG_REQUEST_I2CBUS_GET_DATA			0x4000
+#define MPU9150_FLAG_ERROR								0x8000
 
 /* End Flags */
 /********************************************************************/
 /* Settings */
+
+/* Full Scale */
+/* Register Settings */
+#define MPU9150_GYRO_FULLSCALE_250			0x00
+#define MPU9150_GYRO_FULLSCALE_500			0x08
+#define MPU9150_GYRO_FULLSCALE_1000			0x10
+#define MPU9150_GYRO_FULLSCALE_2000			0x18
+
+#define MPU9150_ACCEL_FULLSCALE_2g			0x00
+#define MPU9150_ACCEL_FULLSCALE_4g			0x08
+#define MPU9150_ACCEL_FULLSCALE_8g			0x10
+#define MPU9150_ACCEL_FULLSCALE_16g			0x18
+
+/* Scale factors 
+ * real_value = register_value * scale
+ */		
+
+/* scale to deg/sec*/	
+#define MPU9150_GYRO_SCALE_FACTOR_250			0.007633588f
+#define MPU9150_GYRO_SCALE_FACTOR_500			0.015267176f
+#define MPU9150_GYRO_SCALE_FACTOR_1000			0.030487805f
+#define MPU9150_GYRO_SCALE_FACTOR_2000			0.06097561f
+
+/* scale to g */
+#define MPU9150_ACCEL_SCALE_FACTOR_2g			0.000061035f			
+#define MPU9150_ACCEL_SCALE_FACTOR_4g			0.00012207f
+#define MPU9150_ACCEL_SCALE_FACTOR_8g			0.000244141f
+#define MPU9150_ACCEL_SCALE_FACTOR_16g			0.000488281f
+
+#define G										9.81f
+
+#define MPU9150_TEMPERATURE_SCALE_FACTOR		0.00294f		// T = register * scale
+#define MPU9150_TEMPERATURE_OFFSET				-521			// 35 deg C
 
 /* End Settings*/
 /********************************************************************/
@@ -169,10 +200,25 @@ public:
 
 	void update();
 	void initialize();
+	void receptionCompleteCallback();
+	void transmissionCompleteCallback();
+	void DRDYinterrupt();
 
 private:
 
 	I2C_HandleTypeDef* mpu9150_i2c;
+	int16_t rawAccelData[3];
+	int16_t rawGyroData[3];
+	int16_t rawMagnetData[3];
+
+	float scaleAccel;
+	float scaleGyro;
+	float scaleManget[3];
+
+	void scaleRawData();
+
+	uint8_t getIdentification();
+
 
 };
 

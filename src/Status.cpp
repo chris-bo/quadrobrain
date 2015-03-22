@@ -17,6 +17,10 @@ Status::Status() {
 	rateY = 0;
 	rateZ = 0;
 
+	magnetX = 0;
+	magnetY = 0;
+	magnetZ = 0;
+
 	angleX = 0;
 	angleY = 0;
 	angleZ = 0;
