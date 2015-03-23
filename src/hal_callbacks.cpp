@@ -59,8 +59,8 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 
 	if (hi2c->Instance == MPU9150_I2C) {
 
-		if (GET_FLAG(mpu9150.taskStatusFlags,
-				MPU9150_FLAG_TRANSFER_RUNNING)) {
+		if (!GET_FLAG(mpu9150.taskStatusFlags,
+				MPU9150_FLAG_TRANSFER_COMPLETE)) {
 			mpu9150.receptionCompleteCallback();
 		}
 	}

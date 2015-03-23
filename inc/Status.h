@@ -41,6 +41,8 @@ public:
 	float angleY;
 	float angleZ;
 
+	float temp;
+
 	/* receiver values */
 	uint8_t RCvalues[8];
 

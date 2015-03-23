@@ -25,6 +25,8 @@ Status::Status() {
 	angleY = 0;
 	angleZ = 0;
 
+	temp = 0;
+
 	RCvalues[0] = 0;
 	RCvalues[1] = 0;
 	RCvalues[2] = 0;

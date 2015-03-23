@@ -8,11 +8,14 @@
 #ifndef MPU9150_H_
 #define MPU9150_H_
 
+#include "config.h"
+#include "i2c.h"
+
 /********************************************************************/
 /* MPU9150 Register Map */
 #define MPU9150_SELF_TEST_X        0x0D   // R/W
 #define MPU9150_SELF_TEST_Y        0x0E   // R/W
-#define MPU9150_SELF_TEST_X        0x0F   // R/W
+#define MPU9150_SELF_TEST_Z        0x0F   // R/W
 #define MPU9150_SELF_TEST_A        0x10   // R/W
 #define MPU9150_SMPLRT_DIV         0x19   // R/W
 #define MPU9150_CONFIG             0x1A   // R/W
@@ -112,8 +115,7 @@
 
 // I2C address 0x69 could be 0x68 wiring.
 //ADO with 4.7k Pulldown on breakoutboard
-#define MPU9150_I2C_ADDRESS 		 0x68;
-
+#define MPU9150_I2C_ADDRESS			0x68
 
 /* End MPU9150 Register Map*/
 /********************************************************************/
@@ -137,21 +139,6 @@
 #define AK8975C_I2C_ADDRESS 0x0C
 /* End AK8975C Register Map*/
 /********************************************************************/
-/* Flags */
-#define MPU9150_INIT_TIMEOUT							0xFFFFF
-
-/* Accelerometer Flags */
-#define MPU9150_FLAG_TRANSFER_RUNNING					0x0100
-#define MPU9150_FLAG_TRANSFER_COMPLETE					0x0200
-#define MPU9150_FLAG_DATA_PROCESSED						0x0400
-
-#define MPU9150_FLAG_REQUEST_I2CBUS_GET_DATA			0x4000
-#define MPU9150_FLAG_ERROR								0x8000
-
-/* End Flags */
-/********************************************************************/
-/* Settings */
-
 /* Full Scale */
 /* Register Settings */
 #define MPU9150_GYRO_FULLSCALE_250			0x00
@@ -164,11 +151,46 @@
 #define MPU9150_ACCEL_FULLSCALE_8g			0x10
 #define MPU9150_ACCEL_FULLSCALE_16g			0x18
 
+/* Flags */
+#define MPU9150_INIT_TIMEOUT							0xFFFFF
+#define MPU9150_I2C_TIMEOUT								0xFFFF
+
+#define MPU9150_FLAG_TRANSFER_RUNNING					0x0100
+#define MPU9150_FLAG_TRANSFER_COMPLETE					0x0200
+#define MPU9150_FLAG_DATA_PROCESSED						0x0400
+
+#define MPU9150_FLAG_REQUEST_I2CBUS_GET_DATA			0x4000
+#define MPU9150_FLAG_ERROR								0x8000
+
+/* End Flags */
+/********************************************************************/
+/* Settings */
+#define I_AM_MPU9150						0x74
+
+/* divides reading rate of i2c slaves
+ * delay must be enabled for each slave
+ *
+ * rate = mpu_sample_rate / (1 + delay)
+ *
+ */
+#define MPU9150_EXT_SENS_I2C_DELAY			0x04
+
+/* sets MPU Sample Rate*
+ * rate = 1kHz / (1 + delay)
+ */
+#define MPU9150_SAMPLE_RATE					0x01
+/* sets internal Low Pass Filter */
+#define MPU9150_DLPF_SETTING				0x02
+
+/* sets initial fullscale setting */
+#define MPU9150_GYRO_FULL_SCALE				MPU9150_GYRO_FULLSCALE_1000
+#define MPU9150_ACCEL_FULL_SCALE			MPU9150_ACCEL_FULLSCALE_4g
+
 /* Scale factors 
  * real_value = register_value * scale
- */		
+ */
 
-/* scale to deg/sec*/	
+/* scale to deg/sec*/
 #define MPU9150_GYRO_SCALE_FACTOR_250			0.007633588f
 #define MPU9150_GYRO_SCALE_FACTOR_500			0.015267176f
 #define MPU9150_GYRO_SCALE_FACTOR_1000			0.030487805f
@@ -180,6 +202,7 @@
 #define MPU9150_ACCEL_SCALE_FACTOR_8g			0.000244141f
 #define MPU9150_ACCEL_SCALE_FACTOR_16g			0.000488281f
 
+/* define G for scaling to m/s^2 */
 #define G										9.81f
 
 #define MPU9150_TEMPERATURE_SCALE_FACTOR		0.00294f		// T = register * scale
@@ -207,18 +230,24 @@ public:
 private:
 
 	I2C_HandleTypeDef* mpu9150_i2c;
+	/* raw data : x,y,z */
 	int16_t rawAccelData[3];
 	int16_t rawGyroData[3];
 	int16_t rawMagnetData[3];
+	int16_t rawTempData;
 
 	float scaleAccel;
 	float scaleGyro;
 	float scaleManget[3];
 
+	void getMagnetScale();
 	void scaleRawData();
+	void getAccelGyroMagnetRawData();
+	void enableMagnetData();
+	void disableMagnetData();
+	void configFullScale( uint8_t gyro_full_scale, uint8_t accel_full_scale);
 
 	uint8_t getIdentification();
-
 
 };
 
