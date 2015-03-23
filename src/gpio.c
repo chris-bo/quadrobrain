@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : gpio.c
-  * Date               : 13/01/2015 11:20:38
+  * Date               : 23/03/2015 09:51:31
   * Description        : This file provides code for the configuration
   *                      of all used GPIO pins.
   ******************************************************************************
@@ -52,6 +52,9 @@
         * Output
         * EVENT_OUT
         * EXTI
+     PA5   ------> SPI1_SCK
+     PA6   ------> SPI1_MISO
+     PA7   ------> SPI1_MOSI
      PA11   ------> USB_DM
      PA12   ------> USB_DP
 */
@@ -92,6 +95,14 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : PA5 PA6 PA7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pins : PA11 PA12 */
   GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -101,11 +112,8 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 1);
-  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 1);
-  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
 }
 

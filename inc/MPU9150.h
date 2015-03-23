@@ -115,7 +115,7 @@
 
 // I2C address 0x69 could be 0x68 wiring.
 //ADO with 4.7k Pulldown on breakoutboard
-#define MPU9150_I2C_ADDRESS			0x68
+#define MPU9150_I2C_ADDRESS			(0x68<<1)
 
 /* End MPU9150 Register Map*/
 /********************************************************************/
@@ -153,7 +153,7 @@
 
 /* Flags */
 #define MPU9150_INIT_TIMEOUT							0xFFFFF
-#define MPU9150_I2C_TIMEOUT								0xFFFF
+#define MPU9150_I2C_TIMEOUT								0xFFFFF
 
 #define MPU9150_FLAG_TRANSFER_RUNNING					0x0100
 #define MPU9150_FLAG_TRANSFER_COMPLETE					0x0200
@@ -165,7 +165,7 @@
 /* End Flags */
 /********************************************************************/
 /* Settings */
-#define I_AM_MPU9150						0x74
+#define I_AM_MPU9150						0x68
 
 /* divides reading rate of i2c slaves
  * delay must be enabled for each slave
@@ -205,8 +205,8 @@
 /* define G for scaling to m/s^2 */
 #define G										9.81f
 
-#define MPU9150_TEMPERATURE_SCALE_FACTOR		0.00294f		// T = register * scale
-#define MPU9150_TEMPERATURE_OFFSET				-521			// 35 deg C
+#define MPU9150_TEMPERATURE_SCALE_FACTOR		0.002941176f		// T = register * scale
+#define MPU9150_TEMPERATURE_OFFSET				+521			// 35 deg C
 
 /* End Settings*/
 /********************************************************************/

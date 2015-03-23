@@ -40,12 +40,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
  */
 void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
 	if (hi2c->Instance == MPU9150_I2C) {
-
-		if (!GET_FLAG(mpu9150.taskStatusFlags,
-				MPU9150_FLAG_TRANSFER_COMPLETE)) {
-			mpu9150.transmissionCompleteCallback();
-		}
-
+		mpu9150.transmissionCompleteCallback();
 	}
 }
 
@@ -58,11 +53,7 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
 void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 
 	if (hi2c->Instance == MPU9150_I2C) {
-
-		if (!GET_FLAG(mpu9150.taskStatusFlags,
-				MPU9150_FLAG_TRANSFER_COMPLETE)) {
-			mpu9150.receptionCompleteCallback();
-		}
+		mpu9150.receptionCompleteCallback();
 	}
 }
 

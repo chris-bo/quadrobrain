@@ -66,7 +66,7 @@
  */
 #define MPU9150_I2C								I2C1
 #define MPU9150_DEFAULT_PRIORITY				0
-#define MPU9150_INTERRUPT_PIN					GPIO_PIN_4 /*connect to PE4*/
+#define MPU9150_INTERRUPT_PIN					GPIO_PIN_0 /*connect to PE0*/
 
 
 /*********************************************************************************/
@@ -74,9 +74,9 @@
 
 
 /* flag macros */
-#define GET_FLAG(var, flag)			var & flag
-#define SET_FLAG(var, flag)			var |= flag
-#define RESET_FLAG(var, flag)		var &= ~flag
+#define GET_FLAG(var, flag)			(var & flag)
+#define SET_FLAG(var, flag)			(var |= flag)
+#define RESET_FLAG(var, flag)		(var &= ~flag)
 
 
 /*********************************************************************************/

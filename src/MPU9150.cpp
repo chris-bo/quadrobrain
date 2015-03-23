@@ -26,9 +26,26 @@ MPU9150::MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
 	rawMagnetData[2] = 0;
 
 	rawTempData = 0;
-
+#if MPU9150_ACCEL_FULL_SCALE == MPU9150_ACCEL_FULLSCALE_2g
 	scaleAccel = MPU9150_ACCEL_SCALE_FACTOR_2g * G;
+#elif MPU9150_ACCEL_FULL_SCALE == MPU9150_ACCEL_FULLSCALE_4g
+	scaleAccel = MPU9150_ACCEL_SCALE_FACTOR_4g * G;
+#elif MPU9150_ACCEL_FULL_SCALE == MPU9150_ACCEL_FULLSCALE_8g
+	scaleAccel = MPU9150_ACCEL_SCALE_FACTOR_8g * G;
+#elif MPU9150_ACCEL_FULL_SCALE == MPU9150_ACCEL_FULLSCALE_16g
+	scaleAccel = MPU9150_ACCEL_SCALE_FACTOR_16g * G;
+#endif
+
+#if MPU9150_GYRO_FULL_SCALE == MPU9150_GYRO_FULLSCALE_250
 	scaleGyro = MPU9150_GYRO_SCALE_FACTOR_250;
+#elif MPU9150_GYRO_FULL_SCALE == MPU9150_GYRO_FULLSCALE_500
+	scaleGyro = MPU9150_GYRO_SCALE_FACTOR_500;
+#elif MPU9150_GYRO_FULL_SCALE == MPU9150_GYRO_FULLSCALE_1000
+	scaleGyro = MPU9150_GYRO_SCALE_FACTOR_1000;
+#elif MPU9150_GYRO_FULL_SCALE == MPU9150_GYRO_FULLSCALE_2000
+	scaleGyro = MPU9150_GYRO_SCALE_FACTOR_2000;
+#endif
+
 	scaleManget[0] = 0.3;
 	scaleManget[1] = 0.3;
 	scaleManget[2] = 0.3;
@@ -40,7 +57,7 @@ MPU9150::~MPU9150() {
 
 void MPU9150::update() {
 
-	scaleRawData();
+	//scaleRawData();
 }
 
 void MPU9150::initialize() {
@@ -67,7 +84,7 @@ void MPU9150::initialize() {
 	 * MPU9150_CONFIG           <-  (0x2|MPU9150_DLPF_SETTING) (sync gyroZ + LowPass setting)
 	 * MPU9150_GYRO_CONFIG      <-	MPU9150_GYRO_FULL_SCALE (no self test)
 	 * MPU9150_ACCEL_CONFIG     <-  MPU9150_ACCEL_FULL_SCALE (no self test)
-	 * MPU9150_INT_PIN_CFG      <-	0x00
+	 * MPU9150_INT_PIN_CFG      <-	0x30
 	 * MPU9150_INT_ENABLE		<-	0x01 (DRDY interrupt)
 	 * MPU9150_USER_CTRL       	<-  0x00
 	 * MPU9150_PWR_MGMT_1      	<-	0x01 ( no sleep, gyro x as clock source)
@@ -90,7 +107,7 @@ void MPU9150::initialize() {
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_CONFIG,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
-	i2c_buffer[0] = 0x00;
+	i2c_buffer[0] = 0x30;
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_INT_PIN_CFG,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
@@ -110,6 +127,11 @@ void MPU9150::initialize() {
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_PWR_MGMT_2,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
+
+
+	SET_FLAG(taskStatusFlags, MPU9150_FLAG_TRANSFER_COMPLETE);
+	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+
 }
 
 void MPU9150::receptionCompleteCallback() {
@@ -117,19 +139,21 @@ void MPU9150::receptionCompleteCallback() {
 
 	/* compute raw values*/
 
-	rawAccelData[0] = (i2c_buffer[1] | (i2c_buffer[0] << 8));
-	rawAccelData[1] = (i2c_buffer[3] | (i2c_buffer[2] << 8));
-	rawAccelData[2] = (i2c_buffer[5] | (i2c_buffer[4] << 8));
+	rawAccelData[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
+	rawAccelData[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
+	rawAccelData[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
 
-	rawGyroData[0] = (i2c_buffer[7] | (i2c_buffer[6] << 8));
-	rawGyroData[1] = (i2c_buffer[9] | (i2c_buffer[8] << 8));
-	rawGyroData[2] = (i2c_buffer[11] | (i2c_buffer[10] << 8));
+	rawGyroData[0] = (int16_t) (i2c_buffer[7] | (i2c_buffer[6] << 8));
+	rawGyroData[1] = (int16_t) (i2c_buffer[9] | (i2c_buffer[8] << 8));
+	rawGyroData[2] = (int16_t) (i2c_buffer[11] | (i2c_buffer[10] << 8));
 
-	rawMagnetData[0] = (i2c_buffer[15] | (i2c_buffer[14] << 8));
-	rawMagnetData[1] = (i2c_buffer[17] | (i2c_buffer[16] << 8));
-	rawMagnetData[2] = (i2c_buffer[19] | (i2c_buffer[18] << 8));
+	rawMagnetData[0] = (int16_t) (i2c_buffer[15] | (i2c_buffer[14] << 8));
+	rawMagnetData[1] = (int16_t) (i2c_buffer[17] | (i2c_buffer[16] << 8));
+	rawMagnetData[2] = (int16_t) (i2c_buffer[19] | (i2c_buffer[18] << 8));
 
-	rawTempData = (i2c_buffer[13] | (i2c_buffer[12] << 8));
+	rawTempData = (int16_t) (i2c_buffer[13] | (i2c_buffer[12] << 8));
+
+	scaleRawData();
 
 }
 
@@ -162,7 +186,7 @@ void MPU9150::scaleRawData() {
 	status->magnetY = rawMagnetData[1] * scaleManget[1];
 	status->magnetZ = rawMagnetData[2] * scaleManget[2];
 
-	status->temp = rawTempData * MPU9150_TEMPERATURE_SCALE_FACTOR - 35;
+	status->temp = rawTempData * MPU9150_TEMPERATURE_SCALE_FACTOR + 35;
 }
 
 void MPU9150::getMagnetScale() {

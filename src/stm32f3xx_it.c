@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    stm32f3xx_it.c
-  * @date    13/01/2015 11:20:40
+  * @date    23/03/2015 09:51:32
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
@@ -42,58 +42,25 @@
 
 extern DMA_HandleTypeDef hdma_i2c1_rx;
 extern I2C_HandleTypeDef hi2c1;
-extern DMA_HandleTypeDef hdma_spi1_rx;
-extern DMA_HandleTypeDef hdma_spi1_tx;
-extern SPI_HandleTypeDef hspi1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
-extern DMA_HandleTypeDef hdma_usart1_rx;
-extern DMA_HandleTypeDef hdma_usart1_tx;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
 /******************************************************************************/
 
 /**
-* @brief This function handles EXTI Line1 interrupt.
+* @brief This function handles EXTI Line0 interrupt.
 */
-void EXTI1_IRQHandler(void)
+void EXTI0_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI1_IRQn 0 */
+  /* USER CODE BEGIN EXTI0_IRQn 0 */
 
-  /* USER CODE END EXTI1_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
-  /* USER CODE BEGIN EXTI1_IRQn 1 */
+  /* USER CODE END EXTI0_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+  /* USER CODE BEGIN EXTI0_IRQn 1 */
 
-  /* USER CODE END EXTI1_IRQn 1 */
-}
-
-/**
-* @brief This function handles DMA1 Channel4 global interrupt.
-*/
-void DMA1_Channel4_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel4_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel4_IRQn 0 */
-
-  /* USER CODE BEGIN DMA1_Channel4_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel4_IRQn 1 */
-}
-
-/**
-* @brief This function handles DMA1 Channel3 global interrupt.
-*/
-void DMA1_Channel3_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel3_IRQn 0 */
-
-  /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel3_IRQn 1 */
+  /* USER CODE END EXTI0_IRQn 1 */
 }
 
 /**
@@ -154,20 +121,6 @@ void I2C1_EV_IRQHandler(void)
 }
 
 /**
-* @brief This function handles EXTI Line4 interrupt.
-*/
-void EXTI4_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI4_IRQn 0 */
-
-  /* USER CODE END EXTI4_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
-  /* USER CODE BEGIN EXTI4_IRQn 1 */
-
-  /* USER CODE END EXTI4_IRQn 1 */
-}
-
-/**
 * @brief This function handles DMA1 Channel7 global interrupt.
 */
 void DMA1_Channel7_IRQHandler(void)
@@ -179,48 +132,6 @@ void DMA1_Channel7_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel7_IRQn 1 */
 
   /* USER CODE END DMA1_Channel7_IRQn 1 */
-}
-
-/**
-* @brief This function handles SPI1 global interrupt.
-*/
-void SPI1_IRQHandler(void)
-{
-  /* USER CODE BEGIN SPI1_IRQn 0 */
-
-  /* USER CODE END SPI1_IRQn 0 */
-
-  /* USER CODE BEGIN SPI1_IRQn 1 */
-
-  /* USER CODE END SPI1_IRQn 1 */
-}
-
-/**
-* @brief This function handles DMA1 Channel5 global interrupt.
-*/
-void DMA1_Channel5_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel5_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel5_IRQn 0 */
-
-  /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel5_IRQn 1 */
-}
-
-/**
-* @brief This function handles DMA1 Channel2 global interrupt.
-*/
-void DMA1_Channel2_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel2_IRQn 0 */
-
-  /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel2_IRQn 1 */
 }
 
 /**

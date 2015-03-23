@@ -109,11 +109,12 @@ int main(void) {
 
 	mpu9150.initialize();
 	rcReceiver.initialize();
+	mpu9150.DRDYinterrupt();
 
 	Task* taskarray[] = {&mpu9150, &rcReceiver, &compFilter, &led3, &led4, &led5, &led6,
 			&led7, &led8, &led9, &led10 };
 
-	scheduler.start(taskarray, 12);
+	scheduler.start(taskarray, 11);
 	/* USER CODE END 2 */
 
 	/* USER CODE BEGIN 3 */
