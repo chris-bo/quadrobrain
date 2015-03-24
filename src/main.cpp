@@ -39,11 +39,19 @@
 Status status;
 Scheduler scheduler(&status, &htim2);
 RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
+
+/* Sensor (Gyro, Accelerometer, Compass) management*/
 MPU9150 mpu9150(&status, MPU9150_DEFAULT_PRIORITY, &hi2c1);
+
+/* Sensor data fusion Filters*/
 ComplementaryFilter compFilterX(&status, 0, &status.accelY, &status.accelZ,
-		&status.rateX, &status.angleX, 0.98f);
+        &status.rateX, &status.angleX, 0.98f);
 ComplementaryFilter compFilterY(&status, 0, &status.accelX, &status.accelZ,
-		&status.rateY, &status.angleY, 0.98f);
+        &status.rateY, &status.angleY, 0.98f);
+ComplementaryFilter compFilterNorth(&status, 0, &status.magnetY,
+        &status.magnetX, &status.rateZ, &status.angleNorth, 0.98f);
+
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -110,14 +118,15 @@ int main(void) {
 	led10.setLED(LED10);
 	led10.setOffset(150);
 
-	mpu9150.initialize();
+	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE,MPU9150_ACCEL_FULL_SCALE);
 	rcReceiver.initialize();
 	mpu9150.DRDYinterrupt();
 
-	Task* taskarray[] = { &mpu9150, &rcReceiver, &compFilterX, &compFilterY,
-			&led3, &led4, &led5, &led6, &led7, &led8, &led9, &led10 };
+	Task* taskarray[] = { &mpu9150, &rcReceiver, &compFilterX, &compFilterY, &compFilterNorth,
+	                      &led3, &led4, &led5, &led6, &led7, &led8, &led9,
+	                      &led10 };
 
-	scheduler.start(taskarray, 11);
+	scheduler.start(taskarray, sizeof(taskarray));
 	/* USER CODE END 2 */
 
 	/* USER CODE BEGIN 3 */
@@ -138,7 +147,7 @@ void SystemClock_Config(void) {
 	RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI
-			| RCC_OSCILLATORTYPE_HSE;
+	        | RCC_OSCILLATORTYPE_HSE;
 	RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
 	RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
 	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
@@ -156,7 +165,7 @@ void SystemClock_Config(void) {
 	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1
-			| RCC_PERIPHCLK_I2C1;
+	        | RCC_PERIPHCLK_I2C1;
 	PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
 	PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
 	HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
