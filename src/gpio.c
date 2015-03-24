@@ -52,9 +52,6 @@
         * Output
         * EVENT_OUT
         * EXTI
-     PA5   ------> SPI1_SCK
-     PA6   ------> SPI1_MISO
-     PA7   ------> SPI1_MOSI
      PA11   ------> USB_DM
      PA12   ------> USB_DP
 */

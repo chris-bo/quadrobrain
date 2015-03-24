@@ -155,11 +155,7 @@
 #define MPU9150_INIT_TIMEOUT							0xFFFFF
 #define MPU9150_I2C_TIMEOUT								0xFFFFF
 
-#define MPU9150_FLAG_TRANSFER_RUNNING					0x0100
-#define MPU9150_FLAG_TRANSFER_COMPLETE					0x0200
-#define MPU9150_FLAG_DATA_PROCESSED						0x0400
-
-#define MPU9150_FLAG_REQUEST_I2CBUS_GET_DATA			0x4000
+#define MPU9150_FLAG_CONTINUOUS_RECEPTION				0x0001
 #define MPU9150_FLAG_ERROR								0x8000
 
 /* End Flags */
@@ -178,7 +174,7 @@
 /* sets MPU Sample Rate*
  * rate = 1kHz / (1 + delay)
  */
-#define MPU9150_SAMPLE_RATE					0x01
+#define MPU9150_SAMPLE_RATE					0x04
 /* sets internal Low Pass Filter */
 #define MPU9150_DLPF_SETTING				0x02
 
@@ -223,9 +219,10 @@ public:
 
 	void update();
 	void initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale);
+	void startReception();
 	void receptionCompleteCallback();
 	void transmissionCompleteCallback();
-	void DRDYinterrupt();
+	void getAccelGyroMagnetRawData();
 	void configFullScale(uint8_t gyro_full_scale, uint8_t accel_full_scale);
 
 private:
@@ -239,12 +236,12 @@ private:
 
 	float scaleAccel;
 	float scaleGyro;
-	float scaleManget[3];
+	float scaleMagnet[3];
 
 	void getMagnetScale();
 	void getBias();
 	void scaleRawData();
-	void getAccelGyroMagnetRawData();
+
 	void enableMagnetData();
 	void disableMagnetData();
 	uint8_t getIdentification();

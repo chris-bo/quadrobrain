@@ -120,13 +120,15 @@ int main(void) {
 
 	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE,MPU9150_ACCEL_FULL_SCALE);
 	rcReceiver.initialize();
-	mpu9150.DRDYinterrupt();
+
 
 	Task* taskarray[] = { &mpu9150, &rcReceiver, &compFilterX, &compFilterY, &compFilterNorth,
 	                      &led3, &led4, &led5, &led6, &led7, &led8, &led9,
 	                      &led10 };
 
-	scheduler.start(taskarray, sizeof(taskarray));
+	scheduler.start(taskarray, sizeof(taskarray)/ 4);
+
+	mpu9150.startReception();
 	/* USER CODE END 2 */
 
 	/* USER CODE BEGIN 3 */

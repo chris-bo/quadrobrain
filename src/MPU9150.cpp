@@ -7,7 +7,7 @@
 
 #include "MPU9150.h"
 
-uint8_t i2c_buffer[20] = { 0 };
+uint8_t i2c_buffer[38] = { 0 };
 
 MPU9150::MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
 		: Task(statusPtr, defaultPrio) {
@@ -46,9 +46,9 @@ MPU9150::MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
 	scaleGyro = MPU9150_GYRO_SCALE_FACTOR_2000;
 #endif
 
-	scaleManget[0] = 0.3;
-	scaleManget[1] = 0.3;
-	scaleManget[2] = 0.3;
+	scaleMagnet[0] = 0.3;
+	scaleMagnet[1] = 0.3;
+	scaleMagnet[2] = 0.3;
 }
 
 MPU9150::~MPU9150() {
@@ -56,8 +56,8 @@ MPU9150::~MPU9150() {
 }
 
 void MPU9150::update() {
+	// TODO CHECK errors
 
-	//scaleRawData();
 }
 
 void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
@@ -91,6 +91,10 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 	 * MPU9150_PWR_MGMT_2 		<-	0x00
 	 *
 	 */
+	i2c_buffer[0] = 0x01;
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_PWR_MGMT_1,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+
 	i2c_buffer[0] = MPU9150_SAMPLE_RATE;
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_SMPLRT_DIV,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
@@ -111,10 +115,6 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_USER_CTRL,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
-	i2c_buffer[0] = 0x01;
-	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_PWR_MGMT_1,
-			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
-
 	i2c_buffer[0] = 0x00;
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_PWR_MGMT_2,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
@@ -122,13 +122,13 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 
 	configFullScale(gyro_full_scale, accel_full_scale);
 
-	SET_FLAG(taskStatusFlags, MPU9150_FLAG_TRANSFER_COMPLETE);
+
 	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 
 }
 
 void MPU9150::receptionCompleteCallback() {
-	SET_FLAG(taskStatusFlags, MPU9150_FLAG_TRANSFER_COMPLETE);
+
 
 	/* compute raw values*/
 
@@ -146,29 +146,16 @@ void MPU9150::receptionCompleteCallback() {
 
 	rawTempData = (int16_t) (i2c_buffer[13] | (i2c_buffer[12] << 8));
 
-	/* clear interrupt flag by reading int status */
-	HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_INT_STATUS,
-			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
-
 	/* call scaling routine*/
 	scaleRawData();
 
 }
 
 void MPU9150::transmissionCompleteCallback() {
-	SET_FLAG(taskStatusFlags, MPU9150_FLAG_TRANSFER_COMPLETE);
-}
-
-void MPU9150::DRDYinterrupt() {
-
-	if (GET_FLAG(taskStatusFlags, MPU9150_FLAG_TRANSFER_COMPLETE)) {
-		RESET_FLAG(taskStatusFlags, MPU9150_FLAG_TRANSFER_COMPLETE);
-		getAccelGyroMagnetRawData();
-	} else {
-		/* TODO set queue for data reception */
-	}
 
 }
+
+
 
 void MPU9150::scaleRawData() {
 
@@ -180,11 +167,15 @@ void MPU9150::scaleRawData() {
 	status->rateY = rawGyroData[1] * scaleGyro;
 	status->rateZ = rawGyroData[2] * scaleGyro;
 
-	status->magnetX = rawMagnetData[0] * scaleManget[0];
-	status->magnetY = rawMagnetData[1] * scaleManget[1];
-	status->magnetZ = rawMagnetData[2] * scaleManget[2];
+	status->magnetX = rawMagnetData[0] * scaleMagnet[0];
+	status->magnetY = rawMagnetData[1] * scaleMagnet[1];
+	status->magnetZ = rawMagnetData[2] * scaleMagnet[2];
 
 	status->temp = rawTempData * MPU9150_TEMPERATURE_SCALE_FACTOR + 35;
+
+	if ( GET_FLAG(taskStatusFlags,MPU9150_FLAG_CONTINUOUS_RECEPTION )) {
+		getAccelGyroMagnetRawData();
+	}
 }
 
 void MPU9150::getMagnetScale() {
@@ -198,9 +189,10 @@ void MPU9150::getMagnetScale() {
 
 void MPU9150::getAccelGyroMagnetRawData() {
 
-	RESET_FLAG(taskStatusFlags, MPU9150_FLAG_TRANSFER_COMPLETE);
 	HAL_I2C_Mem_Read_DMA(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_XOUT_H,
-			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 20);
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 38);
+
+	// TODO I2C busy management
 
 }
 
@@ -340,4 +332,10 @@ void MPU9150::configFullScale(uint8_t gyro_full_scale,
 			scaleAccel = MPU9150_ACCEL_SCALE_FACTOR_4g * G;
 
 	}
+}
+
+void MPU9150::startReception() {
+
+	SET_FLAG(taskStatusFlags,MPU9150_FLAG_CONTINUOUS_RECEPTION);
+	getAccelGyroMagnetRawData();
 }
