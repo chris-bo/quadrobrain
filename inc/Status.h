@@ -36,10 +36,13 @@ public:
 	float magnetY;
 	float magnetZ;
 
-	/* angle */
+	/* angle
+	 * X,Y: 	angle between axis and horizont
+	 * North:	angle between X-Axis and North.
+	 * */
 	float angleX;
 	float angleY;
-	float angleZ;
+	float angleNorth;
 
 	float temp;
 

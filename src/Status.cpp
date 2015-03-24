@@ -23,7 +23,7 @@ Status::Status() {
 
 	angleX = 0;
 	angleY = 0;
-	angleZ = 0;
+	angleNorth = 0;
 
 	temp = 0;
 

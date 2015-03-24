@@ -222,10 +222,11 @@ public:
 	virtual ~MPU9150();
 
 	void update();
-	void initialize();
+	void initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale);
 	void receptionCompleteCallback();
 	void transmissionCompleteCallback();
 	void DRDYinterrupt();
+	void configFullScale(uint8_t gyro_full_scale, uint8_t accel_full_scale);
 
 private:
 
@@ -241,12 +242,11 @@ private:
 	float scaleManget[3];
 
 	void getMagnetScale();
+	void getBias();
 	void scaleRawData();
 	void getAccelGyroMagnetRawData();
 	void enableMagnetData();
 	void disableMagnetData();
-	void configFullScale( uint8_t gyro_full_scale, uint8_t accel_full_scale);
-
 	uint8_t getIdentification();
 
 };

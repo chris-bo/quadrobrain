@@ -61,11 +61,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	switch (GPIO_Pin) {
 
-	case MPU9150_INTERRUPT_PIN:
-		mpu9150.DRDYinterrupt();
-		break;
-	default:
-		break;
+		case MPU9150_INTERRUPT_PIN:
+			mpu9150.DRDYinterrupt();
+			break;
+		default:
+			break;
 	}
 }
 
