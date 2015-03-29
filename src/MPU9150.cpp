@@ -74,6 +74,7 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 		 *  */
 		SET_FLAG(taskStatusFlags, MPU9150_FLAG_ERROR);
 		return;
+
 	}
 
 	getMagnetScale();
@@ -120,8 +121,11 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
 
+	getBias();
+
 	configFullScale(gyro_full_scale, accel_full_scale);
 
+	enableMagnetData();
 
 	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 
@@ -287,6 +291,65 @@ void MPU9150::disableMagnetData() {
 
 void MPU9150::getBias() {
 	// TODO getBias()
+
+
+	/* Gyro Bias:
+	 * set to FULLSCALLE_1000
+	 * get NUMBER_BIAS_VALUES Values
+	 * compute average
+	 * write to offset registers
+	 */
+
+	int32_t bias_tmp[3] = { 0, 0, 0 };
+	int16_t raw_tmp[3] = { 0, 0, 0 };
+	i2c_buffer[0] = MPU9150_GYRO_FULLSCALE_1000;
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_GYRO_CONFIG,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+
+	for (uint8_t i = 0; i < NUMBER_BIAS_VALUES; i++) {
+		HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_GYRO_XOUT_H,
+		        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
+
+		raw_tmp[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
+		raw_tmp[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
+		raw_tmp[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
+
+		bias_tmp[0] -= (int32_t) raw_tmp[0];
+		bias_tmp[1] -= (int32_t) raw_tmp[1];
+		bias_tmp[2] -= (int32_t) raw_tmp[2];
+		HAL_Delay(10);
+	}
+
+	bias_tmp[0] = bias_tmp[0] / NUMBER_BIAS_VALUES;
+	bias_tmp[1] = bias_tmp[1] / NUMBER_BIAS_VALUES;
+	bias_tmp[2] = bias_tmp[2] / NUMBER_BIAS_VALUES;
+
+	i2c_buffer[0] = (uint8_t) ((bias_tmp[0] >> 8) & 0xFF);
+	i2c_buffer[1] = (uint8_t) (bias_tmp[0] & 0xFF);
+	i2c_buffer[2] = (uint8_t) ((bias_tmp[1] >> 8) & 0xFF);
+	i2c_buffer[3] = (uint8_t) (bias_tmp[1] & 0xFF);
+	i2c_buffer[4] = (uint8_t) ((bias_tmp[2] >> 8) & 0xFF);
+	i2c_buffer[5] = (uint8_t) (bias_tmp[2] & 0xFF);
+
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XG_OFFS_USRH,
+	        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
+
+
+
+	/* accel Bias:
+	 * set to FULLSCALLE_8G
+	 * get NUMBER_BIAS_VALUES Values
+	 * compute average
+	 * Read offset registers
+	 * new reg value = ((computed_bias - initial_offset) &~1)
+	 *
+	 */
+
+
+	/* Read 30 Values
+	 * calc average
+	 * write gyro + accel into bias gegisters
+	 */
 
 }
 

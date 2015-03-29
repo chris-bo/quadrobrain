@@ -13,6 +13,25 @@
 
 /********************************************************************/
 /* MPU9150 Register Map */
+
+/* Bias Registers
+ * Gyro bias inputs are LSB in +-1000dps format.
+ * */
+
+#define MPU9150_XG_OFFS_USRH		0x13
+#define MPU9150_XG_OFFS_USRL		0x14
+#define MPU9150_YG_OFFS_USRH		0x15
+#define MPU9150_YG_OFFS_USRL		0x16
+#define MPU9150_ZG_OFFS_USRH		0x17
+#define MPU9150_ZG_OFFS_USRL		0x18
+
+#define MPU9150_XA_OFFS_USRH		0x06
+#define MPU9150_XA_OFFS_USRL		0x07
+#define MPU9150_YA_OFFS_USRH		0x08
+#define MPU9150_YA_OFFS_USRL		0x09
+#define MPU9150_ZA_OFFS_USRH		0x0A
+#define MPU9150_ZA_OFFS_USRL		0x0B
+
 #define MPU9150_SELF_TEST_X        0x0D   // R/W
 #define MPU9150_SELF_TEST_Y        0x0E   // R/W
 #define MPU9150_SELF_TEST_Z        0x0F   // R/W
@@ -136,7 +155,7 @@
 #define AK8975C_ASAY		0x11	// R
 #define AK8975C_ASAZ		0x12	// R
 
-#define AK8975C_I2C_ADDRESS 0x0C
+#define AK8975C_I2C_ADDRESS (0x0C<<1)
 /* End AK8975C Register Map*/
 /********************************************************************/
 /* Full Scale */
@@ -161,6 +180,9 @@
 /* End Flags */
 /********************************************************************/
 /* Settings */
+#define NUMBER_BIAS_VALUES					50
+
+
 #define I_AM_MPU9150						0x68
 
 /* divides reading rate of i2c slaves
@@ -169,12 +191,12 @@
  * rate = mpu_sample_rate / (1 + delay)
  *
  */
-#define MPU9150_EXT_SENS_I2C_DELAY			0x04
+#define MPU9150_EXT_SENS_I2C_DELAY			0x09
 
 /* sets MPU Sample Rate*
  * rate = 1kHz / (1 + delay)
  */
-#define MPU9150_SAMPLE_RATE					0x04
+#define MPU9150_SAMPLE_RATE					0x01
 /* sets internal Low Pass Filter */
 #define MPU9150_DLPF_SETTING				0x02
 

@@ -60,6 +60,9 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	switch (GPIO_Pin) {
+		case MPU9150_INTERRUPT_PIN:
+			mpu9150.getAccelGyroMagnetRawData();
+			break;
 		default:
 			break;
 	}
