@@ -68,6 +68,8 @@
 #define MPU9150_DEFAULT_PRIORITY				0
 #define MPU9150_INTERRUPT_PIN					GPIO_PIN_0 /*connect to PE0*/
 
+/* define G for scaling to m/s^2 */
+#define G										9.81f
 
 /* USB
  *

@@ -18,26 +18,26 @@
  * USB_CMD
  */
 
-/* CMD: 0x0X -> data requests
- * CMD: 0xX0 -> sending data
- * */
-
 #define USB_CMD_LOOP				0x01
-#define USB_CMD_SEND_STATUS			0x02
+#define USB_CMD_SEND_STATUS_8BIT	0x02
+#define USB_CMD_SEND_STATUS_FLOAT	0x03
+#define USB_CMD_GLOBAL_FLAGS		0x04
 
 class usb_handler: public Task {
 public:
-	usb_handler(Status* statusPtr, uint8_t defaultPrio, USBD_HandleTypeDef* husb);
+	usb_handler(Status* statusPtr, uint8_t defaultPrio,
+	        USBD_HandleTypeDef* husb);
 	virtual ~usb_handler();
 
 	void update();
 	void initialize();
 
-
 private:
 	USBD_HandleTypeDef* usb;
 
-	void sendRequestedData( uint8_t cmd);
+	void sendStatus8Bit();
+	void sendStatusFloat(uint8_t part);
+	void fillBuffer(uint8_t* buffer, uint8_t pos, float var);
 };
 
 #endif /* USBHANDLER_H_ */

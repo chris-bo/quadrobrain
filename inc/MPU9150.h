@@ -220,8 +220,6 @@
 #define MPU9150_ACCEL_SCALE_FACTOR_8g			0.000244141f
 #define MPU9150_ACCEL_SCALE_FACTOR_16g			0.000488281f
 
-/* define G for scaling to m/s^2 */
-#define G										9.81f
 
 #define MPU9150_TEMPERATURE_SCALE_FACTOR		0.002941176f		// T = register * scale
 #define MPU9150_TEMPERATURE_OFFSET				+521			// 35 deg C
