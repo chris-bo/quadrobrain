@@ -62,6 +62,8 @@
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor.1594672598" name="Use preprocessor" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths.369460875" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Core/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/STM32F3xx_HAL_Driver&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/cmsis&quot;"/>
@@ -79,6 +81,8 @@
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.539715111" name="Cross ARM C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.1122604444" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Core/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/STM32F3xx_HAL_Driver&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/cmsis&quot;"/>
@@ -99,6 +103,8 @@
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.1330593830" name="Cross ARM C++ Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths.1152452440" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../system/inc/STM32F3xx_HAL_Driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Core/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/cmsis&quot;"/>
@@ -167,6 +173,8 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.138398293" name="usbd_cdc_if_template.h" rcbsApplicability="disable" resourcePath="system/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1771407765" name="usbd_conf_template.h" rcbsApplicability="disable" resourcePath="system/STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1254978189" name="core_cm3.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm3.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1613082213" name="core_sc300.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc300.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.614855770" name="core_sc000.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc000.h" toolsToInvoke=""/>
@@ -174,7 +182,7 @@
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.804906107" name="core_cm0plus.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0plus.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-						<entry excluding="inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
+						<entry excluding="STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h|STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h|STM32_USB_Device_Library/Core/Src/usbd_conf_template.c|STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.c|inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -264,6 +272,9 @@
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths.2082616555" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../system/inc/STM32F3xx_HAL_Driver&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Core/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/inc/STM32F3xx_HAL_Driver&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/cmsis&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/device&quot;"/>
@@ -278,6 +289,9 @@
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.1193170908" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../system/inc/STM32F3xx_HAL_Driver&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/STM32_USB_Device_Library/Core/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../system/inc/STM32F3xx_HAL_Driver&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/cmsis&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/device&quot;"/>
@@ -356,13 +370,15 @@
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.demangle.991383706" name="Demangle names (--demangle|-C)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.demangle" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.linenumbers.1305456980" name="Display line numbers (--line-numbers|-l)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.linenumbers" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.wide.2045478630" name="Wide lines (--wide|-w)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.wide" value="true" valueType="boolean"/>
-								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.disassemble.1972767651" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.disassemble" value="true" valueType="boolean"/>
+								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.disassemble.1972767651" name="Disassemble (--disassemble|-d)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.createlisting.disassemble" value="true" valueType="boolean"/>
 							</tool>
 							<tool errorParsers="" id="ilg.gnuarmeclipse.managedbuild.cross.tool.printsize.1654545399" name="Cross ARM GNU Print Size" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.printsize">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.printsize.format.272787114" name="Size format" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.printsize.format"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.106232911" name="usbd_cdc_if_template.h" rcbsApplicability="disable" resourcePath="system/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.1264704385" name="usbd_conf_template.h" rcbsApplicability="disable" resourcePath="system/STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.1570538293" name="core_cm3.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm3.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.746373454" name="core_sc300.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc300.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.989445428" name="core_sc000.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc000.h" toolsToInvoke=""/>
@@ -370,6 +386,7 @@
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.1742780602" name="core_cm0plus.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0plus.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h|STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h|STM32_USB_Device_Library/Core/Src/usbd_conf_template.c|STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.c|inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>						
 						<entry excluding="inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
 					</sourceEntries>
 				</configuration>
@@ -404,4 +421,5 @@
 			<resource resourceType="PROJECT" workspacePath="/qc_brain2_2"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

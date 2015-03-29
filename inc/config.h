@@ -69,6 +69,11 @@
 #define MPU9150_INTERRUPT_PIN					GPIO_PIN_0 /*connect to PE0*/
 
 
+/* USB
+ *
+ */
+#define USB_DEFAULT_PRIORITY					2
+
 /*********************************************************************************/
 /*global macros */
 

@@ -51,7 +51,7 @@ ComplementaryFilter compFilterY(&status, 0, &status.accelX, &status.accelZ,
 ComplementaryFilter compFilterNorth(&status, 0, &status.magnetY,
         &status.magnetX, &status.rateZ, &status.angleNorth, 0.98f);
 
-
+usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -83,6 +83,7 @@ int main(void) {
 	MX_I2C1_Init();
 	MX_TIM2_Init();
 	MX_TIM4_Init();
+	MX_USB_DEVICE_Init();
 
 	/* USER CODE BEGIN 2 */
 	LedBlink led3(&status, 5);
@@ -118,7 +119,7 @@ int main(void) {
 	led10.setLED(LED10);
 	led10.setOffset(150);
 
-	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE,MPU9150_ACCEL_FULL_SCALE);
+	//mpu9150.initialize(MPU9150_GYRO_FULL_SCALE,MPU9150_ACCEL_FULL_SCALE);
 	rcReceiver.initialize();
 
 
@@ -167,9 +168,10 @@ void SystemClock_Config(void) {
 	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1
-	        | RCC_PERIPHCLK_I2C1;
+	        | RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_USB;
 	PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
 	PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
+	PeriphClkInit.USBClockSelection = RCC_USBPLLCLK_DIV1_5;
 	HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
 
 	__SYSCFG_CLK_ENABLE();

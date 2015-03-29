@@ -35,16 +35,18 @@
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
+
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
+
 /* External variables --------------------------------------------------------*/
 
 extern DMA_HandleTypeDef hdma_i2c1_rx;
 extern I2C_HandleTypeDef hi2c1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
-
+extern PCD_HandleTypeDef hpcd_USB_FS;
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
 /******************************************************************************/
@@ -91,6 +93,21 @@ void TIM2_IRQHandler(void)
 
   /* USER CODE END TIM2_IRQn 1 */
 }
+
+/**
+* @brief This function handles USB Low Priority or CAN_RX0 interrupts.
+*/
+void USB_LP_CAN_RX0_IRQHandler(void)
+{
+  /* USER CODE BEGIN USB_LP_CAN_RX0_IRQn 0 */
+
+  /* USER CODE END USB_LP_CAN_RX0_IRQn 0 */
+  HAL_PCD_IRQHandler(&hpcd_USB_FS);
+  /* USER CODE BEGIN USB_LP_CAN_RX0_IRQn 1 */
+
+  /* USER CODE END USB_LP_CAN_RX0_IRQn 1 */
+}
+
 
 /**
 * @brief This function handles I2C1 error interrupt.
