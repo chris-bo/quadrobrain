@@ -8,14 +8,22 @@
 #ifndef USBHANDLER_H_
 #define USBHANDLER_H_
 
-
-#define USB_RX_BUFF_SIZE		128
-#define USB_TX_BUFF_SIZE		128
-
-
 #include "usb_device.h"
 #include "usbd_cdc_if.h"
 #include "Task.h"
+#include "config.h"
+
+/**************************************************************************/
+/* Defines
+ * USB_CMD
+ */
+
+/* CMD: 0x0X -> data requests
+ * CMD: 0xX0 -> sending data
+ * */
+
+#define USB_CMD_LOOP				0x01
+#define USB_CMD_SEND_STATUS			0x02
 
 class usb_handler: public Task {
 public:
@@ -25,12 +33,11 @@ public:
 	void update();
 	void initialize();
 
-	uint8_t num_received_data;
 
 private:
 	USBD_HandleTypeDef* usb;
 
-
+	void sendRequestedData( uint8_t cmd);
 };
 
 #endif /* USBHANDLER_H_ */

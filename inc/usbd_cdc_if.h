@@ -37,20 +37,28 @@
 #ifndef __USBD_CDC_IF_H
 #define __USBD_CDC_IF_H
 
+
 #ifdef __cplusplus
  extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc.h"
 
-extern uint8_t UserRxBufferFS[64];
 
- /* Send Data over USB CDC are stored in this buffer       */
-extern uint8_t UserTxBufferFS[64];
-extern uint8_t newData;
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+#define USB_RX_BUFF_SIZE		128
+#define USB_TX_BUFF_SIZE		128
 /* Exported cariables --------------------------------------------------------*/
+
+ /* Received Data over USB are stored in this buffer       */
+extern uint8_t UserRxBufferFS[USB_RX_BUFF_SIZE];
+
+ /* Send Data over USB CDC are stored in this buffer       */
+extern uint8_t UserTxBufferFS[USB_RX_BUFF_SIZE];
+
+extern uint8_t number_received_data;
+
 extern USBD_CDC_ItfTypeDef  USBD_Interface_fops_FS;
 
 /* Exported macro ------------------------------------------------------------*/

@@ -35,7 +35,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
-
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
   * @{
   */
@@ -75,21 +74,19 @@
   * @}
   */ 
   
-#define APP_RX_DATA_SIZE 	64
-#define APP_TX_DATA_SIZE  	64
+
 /** @defgroup USBD_CDC_Private_Variables
   * @{
   */
 /* Create buffer for reception and transmission           */
 /* It's up to user to redefine and/or remove those define */
 /* Received Data over USB are stored in this buffer       */
-uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
+uint8_t UserRxBufferFS[USB_RX_BUFF_SIZE];
 
 /* Send Data over USB CDC are stored in this buffer       */
-uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
+uint8_t UserTxBufferFS[USB_RX_BUFF_SIZE];
 
-
-uint8_t newData;
+uint8_t number_received_data;
 /* USB handler declaration */
 /* Handle for USB Full Speed IP */
 USBD_HandleTypeDef  *hUsbDevice_0;
@@ -259,7 +256,7 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
 
-	newData = *Len;
+	number_received_data = *Len;
 	return (USBD_OK);
   /* USER CODE END 6 */ 
 }
