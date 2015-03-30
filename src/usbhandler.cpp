@@ -47,6 +47,9 @@ void usb_handler::update() {
 				break;
 			default:
 				/* TODO Send error?? */
+				uint8_t error_msg[] = {"error wrong cmd"};
+				CDC_Transmit_FS(error_msg, 16);
+				USBD_CDC_ReceivePacket(usb);
 				break;
 		}
 		number_received_data = 0;
@@ -93,7 +96,10 @@ void usb_handler::sendStatusFloat(uint8_t part) {
 
 		// TODO sendStatusFloat
 		CDC_Transmit_FS(UserTxBufferFS, 12);
+		USBD_CDC_ReceivePacket(usb);
 	}
+
+
 }
 
 void usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {

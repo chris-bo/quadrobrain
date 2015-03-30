@@ -119,7 +119,7 @@ int main(void) {
 	led10.setLED(LED10);
 	led10.setOffset(150);
 
-	//mpu9150.initialize(MPU9150_GYRO_FULL_SCALE,MPU9150_ACCEL_FULL_SCALE);
+	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE,MPU9150_ACCEL_FULL_SCALE);
 	rcReceiver.initialize();
 	usb.initialize();
 
