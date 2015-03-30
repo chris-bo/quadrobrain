@@ -20,6 +20,9 @@ RCreceiver::RCreceiver(Status* statusPtr, uint8_t defaultPrio,
 	rawReceiverValues[6] = 0;
 	rawReceiverValues[7] = 0;
 
+	rawRCvalues[0] = 0;
+
+	signalLostTime = 0;
 	RCreceiver_htim = htim;
 
 }
@@ -57,8 +60,24 @@ void RCreceiver::computeValues() {
 		} else if (tmp > 100) {
 			tmp = 100;
 		}
-		status->RCvalues[i] = (uint8_t) tmp;
+		rawRCvalues[i] = (uint8_t) tmp;
 	}
+
+	// TODO update status variables;
+	/*
+	rcSignalX = (rawRCvalues[?] - 50) / 100;
+	rcSignalY = (rawRCvalues[?] - 50) / 100;
+	rcSignalZ = (rawRCvalues[?] - 50) / 100;
+	rcSignalThrottle = rawRCvalues[?] / 100;
+	if (rawRCvalues[5] > 80) {
+		rcSignalEnable = 1;
+	} else {
+		rcSignalEnable = 0;
+	}
+	
+	*/
+
+
 }
 
 void RCreceiver::overrunIRQ() {

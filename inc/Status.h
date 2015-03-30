@@ -47,7 +47,13 @@ public:
 	float temp;
 
 	/* receiver values */
-	uint8_t RCvalues[8];
+	float rcSignalX;			// [-0.5 , 0.5]
+	float rcSignalY;			// [-0.5 , 0.5]
+	float rcSignalZ;			// [-0.5 , 0.5]
+	float rcSignalThrottle;		// [0,1]
+	uint8_t rcSignalEnable;		// 0 -> motors inactive
+								// 1 -> motors active
+
 
 	/* Motor values */
 	uint8_t motorValues[4];

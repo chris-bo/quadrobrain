@@ -38,6 +38,7 @@
 
 Status status;
 Scheduler scheduler(&status, &htim2);
+PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3);
 RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
 
 /* Sensor (Gyro, Accelerometer, Compass) management*/
@@ -82,6 +83,7 @@ int main(void) {
 	MX_DMA_Init();
 	MX_I2C1_Init();
 	MX_TIM2_Init();
+	MX_TIM3_Init();
 	MX_TIM4_Init();
 
 
