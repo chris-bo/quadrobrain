@@ -94,6 +94,22 @@ void usb_handler::sendStatusFloat(uint8_t part) {
 		fillBuffer(UserTxBufferFS, 4, status->accelY);
 		fillBuffer(UserTxBufferFS, 8, status->accelZ);
 
+		fillBuffer(UserTxBufferFS, 12, status->rateX);
+		fillBuffer(UserTxBufferFS, 16, status->rateY);
+		fillBuffer(UserTxBufferFS, 20, status->rateZ);
+
+		fillBuffer(UserTxBufferFS, 24, status->magnetX);
+		fillBuffer(UserTxBufferFS, 28, status->magnetY);
+		fillBuffer(UserTxBufferFS, 32, status->magnetZ);
+
+		fillBuffer(UserTxBufferFS, 36, status->angleX);
+		fillBuffer(UserTxBufferFS, 40, status->angleY);
+		fillBuffer(UserTxBufferFS, 44, status->angleNorth);
+
+		// TODO rc values
+
+		// TODO motor values
+
 		// TODO sendStatusFloat
 		CDC_Transmit_FS(UserTxBufferFS, 12);
 		USBD_CDC_ReceivePacket(usb);
