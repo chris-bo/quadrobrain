@@ -106,12 +106,18 @@ void usb_handler::sendStatusFloat(uint8_t part) {
 		fillBuffer(UserTxBufferFS, 40, status->angleY);
 		fillBuffer(UserTxBufferFS, 44, status->angleNorth);
 
-		// TODO rc values
+		fillBuffer(UserTxBufferFS, 48, status->rcSignalX);
+		fillBuffer(UserTxBufferFS, 52, status->rcSignalY);
+		fillBuffer(UserTxBufferFS, 56, status->rcSignalZ);
+		fillBuffer(UserTxBufferFS, 60, status->rcSignalThrottle);
+		fillBuffer(UserTxBufferFS, 64, status->rcSignalEnable);
 
-		// TODO motor values
+		UserTxBufferFS[68] = status->motorValues[0];
+		UserTxBufferFS[69] = status->motorValues[1];
+		UserTxBufferFS[70] = status->motorValues[2];
+		UserTxBufferFS[71] = status->motorValues[3];
 
-		// TODO sendStatusFloat
-		CDC_Transmit_FS(UserTxBufferFS, 12);
+		CDC_Transmit_FS(UserTxBufferFS, 72);
 		USBD_CDC_ReceivePacket(usb);
 	}
 
