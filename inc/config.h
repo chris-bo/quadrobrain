@@ -46,7 +46,7 @@
 #define PPM_TIMER_MAX_PULSE_LENGTH 6546
 #define PPM_TIMER_PRESCALER 22
 // Einstellzeit für Regler
-#define PPM_SETUP_TIME 71925500
+#define PPM_SETUP_TIME 3000000
 
 /* Sensorboard MPU9150
  *
