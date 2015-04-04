@@ -19,14 +19,26 @@ ConfigReader::~ConfigReader() {
  * Loads the quadrocopter configuration from eeprom into status
  */
 void ConfigReader::loadConfiguration(Status* status) {
-	//TODO: Alle Werte aus EEPROM holen und in status speichern
+	//TODO: Weitere hinzufügen, wenn vorhanden
+	loadVariable( &status->pXY, P_XY_ADDR );
+	loadVariable( &status->iXY, I_XY_ADDR );
+	loadVariable( &status->dXY, D_XY_ADDR );
+	loadVariable( &status->pZ, P_Z_ADDR );
+	loadVariable( &status->iZ, I_Z_ADDR );
+	loadVariable( &status->dZ, D_Z_ADDR );
 }
 
 /*
  * Saves the quadrocopter configuration from status into eeprom
  */
 void ConfigReader::saveConfiguration(Status* status) {
-	//TODO: Alle Werte aus status in EEPROM schreiben
+	//TODO: Weitere hinzufügen, wenn vorhanden
+	saveVariable( &status->pXY, P_XY_ADDR );
+	saveVariable( &status->iXY, I_XY_ADDR );
+	saveVariable( &status->dXY, D_XY_ADDR );
+	saveVariable( &status->pZ, P_Z_ADDR );
+	saveVariable( &status->iZ, I_Z_ADDR );
+	saveVariable( &status->dZ, D_Z_ADDR );
 }
 
 /*

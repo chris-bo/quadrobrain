@@ -21,6 +21,7 @@
 
 /* classes  ---------------------------------------------------------*/
 #include "config.h"
+#include "ConfigReader.h"
 #include "Scheduler.h"
 #include "Task.h"
 #include "LedBlink.h"
@@ -34,6 +35,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 extern Status status;
+extern ConfigReader configReader;
 extern Scheduler scheduler;
 extern RCreceiver rcReceiver;
 extern MPU9150 mpu9150;

@@ -37,6 +37,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 Status status;
+ConfigReader configReader( &hi2c1 );
 Scheduler scheduler(&status, &htim2);
 PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3);
 RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
@@ -86,6 +87,8 @@ int main(void) {
 	MX_TIM3_Init();
 	MX_TIM4_Init();
 
+	/* Get configuration from EEPROM */
+	configReader.loadConfiguration( &status );
 
 	/* USER CODE BEGIN 2 */
 	LedBlink led3(&status, 5);

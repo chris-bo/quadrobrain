@@ -58,6 +58,13 @@ public:
 	/* Motor values */
 	uint8_t motorValues[4];
 
+	/* PID factors */
+	float pXY;
+	float iXY;
+	float dXY;
+	float pZ;
+	float iZ;
+	float dZ;
 
 
 };

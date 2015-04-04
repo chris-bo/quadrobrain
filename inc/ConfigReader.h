@@ -12,8 +12,16 @@
 #include "stm32f3xx_hal.h"
 
 // Definitions
-#define EEPROM_ADDRESS	0b10100000
+#define EEPROM_ADDRESS			0b10100000
 #define EEPROM_I2C_TIMEOUT		0xFFFFF
+
+// Addresses
+#define P_XY_ADDR	0x0000
+#define I_XY_ADDR	0x0020
+#define D_XY_ADDR	0x0040
+#define P_Z_ADDR	0x0060
+#define I_Z_ADDR	0x0080
+#define D_Z_ADDR	0x00A0
 
 
 class ConfigReader {

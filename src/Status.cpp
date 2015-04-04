@@ -38,6 +38,14 @@ Status::Status() {
 	motorValues[2] = 0;
 	motorValues[3] = 0;
 
+	pXY = 0;
+	iXY = 0;
+	dXY = 0;
+
+	pZ = 0;
+	iZ = 0;
+	dZ = 0;
+
 	globalFlags = 0;
 }
 
