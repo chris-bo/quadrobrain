@@ -27,12 +27,12 @@ public:
 	void loadVariable( uint32_t* variable, uint16_t address );
 	void loadVariable( float* variable, uint16_t address );
 	void loadVariable( bool* variable, uint16_t address );
-
 	void saveVariable( uint8_t* variable, uint16_t address );
 	void saveVariable( uint16_t* variable, uint16_t address );
 	void saveVariable( uint32_t* variable, uint16_t address );
 	void saveVariable( float* variable, uint16_t address );
 	void saveVariable( bool* variable, uint16_t address );
+
 private:
 	I2C_HandleTypeDef* eeprom_i2c;
 	void load( uint8_t* variable, uint16_t address, uint16_t byteCount );
