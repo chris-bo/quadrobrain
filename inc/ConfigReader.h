@@ -15,6 +15,9 @@
 #define EEPROM_ADDRESS			0b10100000
 #define EEPROM_I2C_TIMEOUT		0xFFFFF
 
+// Pause between read / write processes in ms
+#define EEPROM_WAIT 10
+
 // Addresses
 #define P_XY_ADDR	0x0000
 #define I_XY_ADDR	0x0004
@@ -22,6 +25,8 @@
 #define P_Z_ADDR	0x0010
 #define I_Z_ADDR	0x0014
 #define D_Z_ADDR	0x0018
+
+
 
 
 class ConfigReader {
