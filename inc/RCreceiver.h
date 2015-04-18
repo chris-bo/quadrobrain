@@ -22,6 +22,21 @@
 /* number of stored rec channels */
 #define RECEIVER_CHANNELS						7
 
+/* Channel Configuration:
+ *
+ * 1: right hor (roll)
+ * 2: left vert	(throttle)
+ * 3: right vert (nick)
+ * 4: left hor (yaw)
+ * 5: right switch
+ * 6: linear control
+ * 7: left switch
+ * 8: ---
+ *
+ */
+
+
+
 class RCreceiver: public Task {
 public:
 	RCreceiver(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim);

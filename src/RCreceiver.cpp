@@ -64,19 +64,34 @@ void RCreceiver::computeValues() {
 	}
 
 	// TODO update status variables;
-	/*
-	rcSignalX = (rawRCvalues[?] - 50) / 100;
-	rcSignalY = (rawRCvalues[?] - 50) / 100;
-	rcSignalZ = (rawRCvalues[?] - 50) / 100;
-	rcSignalThrottle = rawRCvalues[?] / 100;
-	if (rawRCvalues[5] > 80) {
-		rcSignalEnable = 1;
-	} else {
-		rcSignalEnable = 0;
-	}
-	
-	*/
+	/* Channel Configuration:
+	 *
+	 * 1: right hor (roll)
+	 * 2: left vert	(throttle)
+	 * 3: right vert (nick)
+	 * 4: left hor (yaw)
+	 * 5: right switch
+	 * 6: linear control
+	 * 7: left switch
+	 * 8: ---
+	 *
+	 */
 
+	status->rcSignalRoll = (((float) rawRCvalues[0] - 50) / 100);
+	status->rcSignalNick = (((float)rawRCvalues[2] - 50) / 100);
+	status->rcSignalYaw = (((float)rawRCvalues[3] - 50) / 100);
+	status->rcSignalThrottle = ((float) rawRCvalues[1] / 100);
+    status->rcSignalLinPoti = ((float) rawRCvalues[5] / 100);
+    if ( rawRCvalues[4] > 80 ) {
+    	status->rcSignalEnable = 1;
+    } else {
+    	status->rcSignalEnable = 0;
+    }
+    if ( rawRCvalues[6] > 80 ) {
+    	status->rcSignalSwitch = 1;
+    } else {
+    	status->rcSignalSwitch = 0;
+    }
 
 }
 
