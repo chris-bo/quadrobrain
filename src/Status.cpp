@@ -27,10 +27,12 @@ Status::Status() {
 
 	temp = 0;
 
-	rcSignalX = 0;
-	rcSignalY = 0;
-	rcSignalZ = 0;
+	rcSignalRoll = 0;
+	rcSignalNick = 0;
+	rcSignalYaw = 0;
 	rcSignalThrottle = 0;
+	rcSignalLinPoti = 0;
+	rcSignalSwitch = 0;
 	rcSignalEnable = 0;
 
 	motorValues[0] = 0;

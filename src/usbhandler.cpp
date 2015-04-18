@@ -116,9 +116,9 @@ void usb_handler::sendStatusFloat(uint8_t part) {
 		fillBuffer(UserTxBufferFS, 44, status->angleNorth);
 
 		/* rc signals */
-		fillBuffer(UserTxBufferFS, 48, status->rcSignalX);
-		fillBuffer(UserTxBufferFS, 52, status->rcSignalY);
-		fillBuffer(UserTxBufferFS, 56, status->rcSignalZ);
+		fillBuffer(UserTxBufferFS, 48, status->rcSignalRoll);
+		fillBuffer(UserTxBufferFS, 52, status->rcSignalNick);
+		fillBuffer(UserTxBufferFS, 56, status->rcSignalYaw);
 		fillBuffer(UserTxBufferFS, 60, status->rcSignalThrottle);
 		fillBuffer(UserTxBufferFS, 64, status->rcSignalEnable);
 
