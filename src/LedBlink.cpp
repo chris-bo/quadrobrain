@@ -27,7 +27,7 @@ void LedBlink::update() {
 			BSP_LED_Toggle(led);
 		}
 	}
-	priority = defaultPriority;
+	resetPriority();
 }
 
 void LedBlink::setLED(Led_TypeDef _led) {

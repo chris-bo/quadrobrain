@@ -136,6 +136,8 @@ int main(void) {
 	scheduler.start(taskarray, sizeof(taskarray)/ 4);
 
 	mpu9150.startReception();
+
+
 	/* USER CODE END 2 */
 
 	/* USER CODE BEGIN 3 */

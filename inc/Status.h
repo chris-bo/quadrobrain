@@ -55,8 +55,11 @@ public:
 								// 1 -> motors active
 
 
-	/* Motor values */
-	uint8_t motorValues[4];
+	/* Motor values
+	 * 1.0f ^= max
+	 * 0.0f ^= min
+	 */
+	float motorValues[4];
 
 	/* PID factors */
 	float pXY;

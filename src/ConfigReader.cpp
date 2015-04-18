@@ -69,7 +69,7 @@ void ConfigReader::loadVariable(uint32_t* variable, uint16_t address) {
  */
 void ConfigReader::loadVariable(float* variable, uint16_t address) {
 	uint8_t* tmp = (uint8_t*) variable;
-	load(tmp, address, 32);
+	load(tmp, address, 4);
 }
 
 /*
@@ -108,7 +108,7 @@ void ConfigReader::saveVariable(uint32_t* variable, uint16_t address) {
  */
 void ConfigReader::saveVariable(float* variable, uint16_t address) {
 	uint8_t* tmp = (uint8_t*) variable;
-	save(tmp, address, 32);
+	save(tmp, address, 4);
 }
 
 /*
