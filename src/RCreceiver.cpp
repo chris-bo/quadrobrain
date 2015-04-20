@@ -31,19 +31,39 @@ RCreceiver::~RCreceiver() {
 }
 
 void RCreceiver::update() {
-	priority = defaultPriority;
 	if (GET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC_LOST)) {
-		/* todo: manage rc signal loss*/
+		/* todo: manage rc signal loss
+		 *
+		 * 		handle throttle and engines
+		 * */
+
+		/* disable control*/
+		status->rcSignalNick = 0;
+		status->rcSignalRoll = 0;
+		status->rcSignalYaw = 0;
+
+		/* reduceThrottle to 20% */
+		if ( status->rcSignalThrottle > 0.2f){
+			status->rcSignalThrottle = 0.2f;
+		}
 		signalLostTime++;
 		if (signalLostTime == 200){
+			/* Disable Task */
 			RESET_FLAG(taskStatusFlags,TASK_FLAG_ACTIVE);
 			priority = -1;
+			/* Disable control and engines */
+			status->rcSignalNick = 0;
+			status->rcSignalRoll = 0;
+			status->rcSignalYaw = 0;
+			status->rcSignalEnable = 0;
+
 		}
 	} else {
 		computeValues();
 		signalLostTime = 0;
 
 	}
+	resetPriority();
 }
 
 void RCreceiver::computeValues() {
@@ -62,8 +82,6 @@ void RCreceiver::computeValues() {
 		}
 		rawRCvalues[i] = (uint8_t) tmp;
 	}
-
-	// TODO update status variables;
 	/* Channel Configuration:
 	 *
 	 * 1: right hor (roll)
