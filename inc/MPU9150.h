@@ -190,7 +190,7 @@
 /* End Flags */
 /********************************************************************/
 /* Settings */
-#define NUMBER_BIAS_VALUES					100
+#define NUMBER_OFFSET_VALUES					100
 
 
 #define I_AM_MPU9150						0x68
@@ -269,7 +269,7 @@ private:
 	float scaleMagnet[3];
 
 	void getMagnetScale();
-	void getBias();
+	void getOffsetRegisters();
 	void scaleRawData();
 
 	void enableMagnetData();

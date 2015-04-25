@@ -132,7 +132,7 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 
 
 
-    getBias();
+	getOffsetRegisters();
 
 	configFullScale(gyro_full_scale, accel_full_scale);
 
@@ -300,24 +300,25 @@ void MPU9150::disableMagnetData() {
 			I2C_MEMADD_SIZE_8BIT, &tmp, 1, MPU9150_INIT_TIMEOUT);
 }
 
-void MPU9150::getBias() {
-	// TODO getBias()
+void MPU9150::getOffsetRegisters() {
+
+	int32_t offset_tmp[3] = { 0, 0, 0 };
+	int16_t raw_tmp[3] = { 0, 0, 0 };
+	int16_t accel_offset[3] = { 0, 0, 0 };
 
 
-	/* Gyro Bias:
+	/* Gyro Offset:
 	 * set to FULLSCALLE_1000
-	 * get NUMBER_BIAS_VALUES Values
+	 * get NUMBER_Offset_VALUES Values
 	 * compute average
 	 * write to offset registers
 	 */
 
-	int32_t bias_tmp[3] = { 0, 0, 0 };
-	int16_t raw_tmp[3] = { 0, 0, 0 };
 	i2c_buffer[0] = MPU9150_GYRO_FULLSCALE_1000;
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_GYRO_CONFIG,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
-	for (uint8_t i = 0; i < NUMBER_BIAS_VALUES; i++) {
+	for (uint8_t i = 0; i < NUMBER_OFFSET_VALUES; i++) {
 		HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_GYRO_XOUT_H,
 		        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
 
@@ -325,15 +326,16 @@ void MPU9150::getBias() {
 		raw_tmp[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
 		raw_tmp[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
 
-		bias_tmp[0] += raw_tmp[0];
-		bias_tmp[1] += raw_tmp[1];
-		bias_tmp[2] += raw_tmp[2];
+		offset_tmp[0] += raw_tmp[0];
+		offset_tmp[1] += raw_tmp[1];
+		offset_tmp[2] += raw_tmp[2];
 		HAL_Delay(5);
 	}
 
-	raw_tmp[0] = (int16_t) ((-bias_tmp[0]) / NUMBER_BIAS_VALUES);
-	raw_tmp[1] = (int16_t) ((-bias_tmp[1]) / NUMBER_BIAS_VALUES);
-	raw_tmp[2] = (int16_t) ((-bias_tmp[2]) / NUMBER_BIAS_VALUES);
+	/* convert values and transfer to MPU Offset Registers*/
+	raw_tmp[0] = (int16_t) ((-offset_tmp[0]) / NUMBER_OFFSET_VALUES);
+	raw_tmp[1] = (int16_t) ((-offset_tmp[1]) / NUMBER_OFFSET_VALUES);
+	raw_tmp[2] = (int16_t) ((-offset_tmp[2]) / NUMBER_OFFSET_VALUES);
 
 	i2c_buffer[0] = (uint8_t) ((raw_tmp[0] >> 8) & 0xFF);
 	i2c_buffer[1] = (uint8_t) (raw_tmp[0] & 0xFF);
@@ -345,20 +347,68 @@ void MPU9150::getBias() {
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XG_OFFS_USRH,
 	        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
 
-	/* accel Bias:
+
+    /* TODO: check if needed- factory values pretty good*/
+	/* Accel Offset:
 	 * set to FULLSCALLE_8G
-	 * get NUMBER_BIAS_VALUES Values
-	 * compute average
 	 * Read offset registers
+	 * get NUMBER_OFFSET_VALUES Values
+	 * compute average
 	 * new reg value = ((computed_bias - initial_offset) &~1)
 	 *
 	 */
 
+	i2c_buffer[0] = MPU9150_ACCEL_FULLSCALE_8g;
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_CONFIG,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
-	/* Read 30 Values
-	 * calc average
-	 * write gyro + accel into bias gegisters
-	 */
+	HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XA_OFFS_USRH,
+	        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
+
+	accel_offset[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
+	accel_offset[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
+	accel_offset[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
+
+	for (uint8_t i = 0; i < NUMBER_OFFSET_VALUES; i++) {
+		HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_XOUT_H,
+		        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
+
+		raw_tmp[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
+		raw_tmp[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
+		raw_tmp[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
+
+		offset_tmp[0] += raw_tmp[0];
+		offset_tmp[1] += raw_tmp[1];
+		offset_tmp[2] += raw_tmp[2];
+		HAL_Delay(5);
+	}
+
+	raw_tmp[0] = (int16_t) ((offset_tmp[0]) / NUMBER_OFFSET_VALUES);
+	raw_tmp[1] = (int16_t) ((offset_tmp[1]) / NUMBER_OFFSET_VALUES);
+	raw_tmp[2] = (int16_t) ((offset_tmp[2]) / NUMBER_OFFSET_VALUES);
+
+	// compensate G on Z axis
+	if (raw_tmp[2] > 0 ) {
+		raw_tmp[2] = raw_tmp[2] - 4096;
+	} else {
+		raw_tmp[2] = raw_tmp[2] + 4096;
+	}
+
+	accel_offset[0] = accel_offset[0] - (int16_t) (raw_tmp[0] & ~0x0001) ;
+	accel_offset[1] = accel_offset[1] - (int16_t) (raw_tmp[1] & ~0x0001) ;
+	accel_offset[2] = accel_offset[2] - (int16_t) (raw_tmp[2] & ~0x0001) ;
+
+	i2c_buffer[0] = (uint8_t) ((accel_offset[0] >> 8) & 0xFF);
+	i2c_buffer[1] = (uint8_t) (accel_offset[0] & 0xFF);
+	i2c_buffer[2] = (uint8_t) ((accel_offset[1] >> 8) & 0xFF);
+	i2c_buffer[3] = (uint8_t) (accel_offset[1] & 0xFF);
+	i2c_buffer[4] = (uint8_t) ((accel_offset[2] >> 8) & 0xFF);
+	i2c_buffer[5] = (uint8_t) (accel_offset[2] & 0xFF);
+
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XA_OFFS_USRH,
+	        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
+
+
 
 }
 
