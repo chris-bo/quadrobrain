@@ -271,7 +271,7 @@ private:
 	float scaleMagnet[3];
 
 	void getMagnetScale();
-	void getOffsetRegisters();
+	void configOffsetRegisters();
 	void scaleRawData();
 
 	void enableMagnetData();
