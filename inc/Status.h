@@ -18,6 +18,9 @@ public:
 
 	/* all status variables */
 
+	/* Akku Voltage*/
+	float akkuVoltage;
+
 	/* status flags */
 	uint32_t globalFlags;
 

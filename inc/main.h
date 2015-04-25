@@ -17,6 +17,7 @@
 #include "dma.h"
 #include "tim.h"
 #include "gpio.h"
+#include "adc.h"
 
 
 /* classes  ---------------------------------------------------------*/
@@ -30,6 +31,7 @@
 #include "ComplementaryFilter.h"
 #include "MPU9150.h"
 #include "usbhandler.h"
+#include "AkkuMonitor.h"
 
 
 /* Private variables ---------------------------------------------------------*/

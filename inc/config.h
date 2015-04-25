@@ -45,7 +45,7 @@
 // Maximaler Ausschaltwert bei 2ms
 #define PPM_TIMER_MAX_PULSE_LENGTH 6546
 #define PPM_TIMER_PRESCALER 22
-// Einstellzeit für Regler
+// Einstellzeit fï¿½r Regler
 #define PPM_SETUP_TIME 3000000
 
 /* Sensorboard MPU9150
@@ -62,6 +62,10 @@
  *
  */
 #define USB_DEFAULT_PRIORITY					2
+
+
+/* ADC to Check akku voltage */
+#define AKKUMONITOR_DEFAULT_PRIORITY			10
 
 /*********************************************************************************/
 /*global macros */

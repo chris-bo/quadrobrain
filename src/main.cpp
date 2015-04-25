@@ -54,6 +54,8 @@ ComplementaryFilter compFilterNorth(&status, 0, &status.magnetY,
         &status.magnetX, &status.rateZ, &status.angleNorth, 0.98f);
 
 usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
+
+AkkuMonitor akku(&status,AKKUMONITOR_DEFAULT_PRIORITY,&hadc1);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -86,6 +88,7 @@ int main(void) {
 	MX_TIM2_Init();
 	MX_TIM3_Init();
 	MX_TIM4_Init();
+	MX_ADC1_Init();
 
 	configReader.loadConfiguration( &status );
 
@@ -127,9 +130,10 @@ int main(void) {
 	rcReceiver.initialize();
 	ppmgenerator.initialize();
 	usb.initialize();
+	akku.initialize();
 
 	Task* taskarray[] = { &mpu9150, &rcReceiver,&ppmgenerator, &compFilterX, &compFilterY, &compFilterNorth, &usb,
-	                      &led3, &led4, &led5, &led6, &led7, &led8, &led9,
+	                      &akku, &led3, &led4, &led5, &led6, &led7, &led8, &led9,
 	                      &led10 };
 
 	scheduler.start(taskarray, sizeof(taskarray)/ 4);
