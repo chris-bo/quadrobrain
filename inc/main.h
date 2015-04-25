@@ -42,6 +42,6 @@ extern Scheduler scheduler;
 extern RCreceiver rcReceiver;
 extern MPU9150 mpu9150;
 extern usb_handler usb;
-
+extern AkkuMonitor akku;
 
 #endif /* MAIN_H_ */
