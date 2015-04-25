@@ -8,9 +8,6 @@
 #ifndef MPU9150_H_
 #define MPU9150_H_
 
-#include "config.h"
-#include "i2c.h"
-
 /***********************************
  *
  * PINS

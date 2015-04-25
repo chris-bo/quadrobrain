@@ -54,6 +54,8 @@ ComplementaryFilter compFilterNorth(&status, 0, &status.magnetY,
         &status.magnetX, &status.rateZ, &status.angleNorth, 0.98f);
 
 usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
+
+AkkuMonitor akku(&status,AKKUMONITOR_DEFAULT_PRIORITY,&hadc1);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -86,6 +88,7 @@ int main(void) {
 	MX_TIM2_Init();
 	MX_TIM3_Init();
 	MX_TIM4_Init();
+	MX_ADC1_Init();
 
 	configReader.loadConfiguration( &status );
 
@@ -128,9 +131,10 @@ int main(void) {
 	rcReceiver.initialize();
 	ppmgenerator.initialize();
 	usb.initialize();
+	akku.initialize();
 
 	Task* taskarray[] = { &mpu9150, &rcReceiver,&ppmgenerator, &compFilterX, &compFilterY, &compFilterNorth, &usb,
-	                      &led3, &led4, &led5, &led6, &led7, &led8, &led9,
+	                      &akku, &led3, &led4, &led5, &led6, &led7, &led8, &led9,
 	                      &led10 };
 
 	scheduler.start(taskarray, sizeof(taskarray)/ 4);
@@ -174,7 +178,8 @@ void SystemClock_Config(void) {
 	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1
-	        | RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_USB;
+	        | RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_USB|RCC_PERIPHCLK_ADC12;
+	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
 	PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
 	PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
 	PeriphClkInit.USBClockSelection = RCC_USBPLLCLK_DIV1_5;

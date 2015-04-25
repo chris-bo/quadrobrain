@@ -49,6 +49,8 @@ Status::Status() {
 	dZ = 0;
 
 	globalFlags = 0;
+
+	akkuVoltage = 0;
 }
 
 Status::~Status() {
