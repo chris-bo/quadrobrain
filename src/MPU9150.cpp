@@ -56,7 +56,7 @@ MPU9150::~MPU9150() {
 }
 
 void MPU9150::update() {
-	// TODO CHECK errors
+	// TODO mpu9150 CHECK errors
 
 }
 
@@ -207,7 +207,7 @@ void MPU9150::getAccelGyroMagnetRawData() {
 	HAL_I2C_Mem_Read_DMA(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_XOUT_H,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 38);
 
-	// TODO I2C busy management
+	// TODO mpu9150 I2C busy management
 
 }
 
@@ -302,6 +302,9 @@ void MPU9150::disableMagnetData() {
 
 void MPU9150::getOffsetRegisters() {
 
+	/* TODO mpu9150 check if using hard coded values is sufficient */
+
+
 	int32_t offset_tmp[3] = { 0, 0, 0 };
 	int16_t raw_tmp[3] = { 0, 0, 0 };
 	int16_t accel_offset[3] = { 0, 0, 0 };
@@ -347,8 +350,6 @@ void MPU9150::getOffsetRegisters() {
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XG_OFFS_USRH,
 	        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
 
-
-    /* TODO: check if needed- factory values pretty good*/
 	/* Accel Offset:
 	 * set to FULLSCALLE_8G
 	 * Read offset registers
@@ -407,9 +408,6 @@ void MPU9150::getOffsetRegisters() {
 
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XA_OFFS_USRH,
 	        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
-
-
-
 }
 
 void MPU9150::configFullScale(uint8_t gyro_full_scale,

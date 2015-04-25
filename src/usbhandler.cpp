@@ -48,7 +48,7 @@ void usb_handler::update() {
 				USBD_CDC_ReceivePacket(usb);
 				break;
 			default:
-				/* TODO Send error?? */
+				/* TODO usb: Send error?? */
 				uint8_t error_msg[] = {"ERROR:unknown cmd!"};
 				usb_state = CDC_Transmit_FS(error_msg, sizeof(error_msg));
 				USBD_CDC_ReceivePacket(usb);
@@ -81,12 +81,12 @@ void usb_handler::sendStatus8Bit() {
 	UserTxBufferFS[5] = (int8_t) status->rateX / 10;
 
 	/* Magn XYZ */
-	// TODO /* Magn XYZ */
+	// TODO usb: send 8bit Magn XYZ */
 	UserTxBufferFS[6] = 0;
 	UserTxBufferFS[7] = 0;
 	UserTxBufferFS[8] = 0;
 
-	//TODO sendStatus8Bit
+	//TODO usb: sendStatus8Bit
 
 	usb_state = CDC_Transmit_FS(UserTxBufferFS, 9);
 }

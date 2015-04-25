@@ -61,6 +61,6 @@ void Kalman::initialize(float* ang, float* rot, float* rot_bias,
 }
 
 Kalman::~Kalman() {
-	// TODO Auto-generated destructor stub
+
 }
 

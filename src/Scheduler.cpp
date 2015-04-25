@@ -39,15 +39,14 @@ void Scheduler::reset() {
 
 	/* Timer stop*/
 	HAL_TIM_Base_Stop_IT(scheduler_htim);
-	/* TODO: Timer reset */
-
+	/*Timer reset */
+	__HAL_TIM_SetCounter(scheduler_htim,(SCHEDULER_INTERVALL_ms * 1000));
 	/* Timer restart */
 	HAL_TIM_Base_Start_IT(scheduler_htim);
 }
 
 void Scheduler::executeTasks() {
-	/* TODO:
-	 * - behandlung von Timer überlauf
+	/* TODO scheduler: behandlung von Timer überlauf
 	 *
 	 */
 	//checkedTasks zur�cksetzen

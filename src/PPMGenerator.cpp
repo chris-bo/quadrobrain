@@ -13,12 +13,12 @@ Task(statusPtr, defaultPrio) {
 }
 
 PPMGenerator::~PPMGenerator() {
-	// TODO Auto-generated destructor stub
+
 }
 
 void PPMGenerator::update() {
-	// Für alle 4 Motoren prozentuale Throttle-Werte in Compare-Werte für den Timer wandeln
-	// und anschließend dem Timer übergeben
+	// Fï¿½r alle 4 Motoren prozentuale Throttle-Werte in Compare-Werte fï¿½r den Timer wandeln
+	// und anschlieï¿½end dem Timer ï¿½bergeben
 	// Motor 1
 	uint16_t temp = status->motorValues[0] * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH) + PPM_TIMER_MIN_PULSE_LENGTH;
 	__HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_1, temp);
@@ -44,8 +44,8 @@ void PPMGenerator::initialize() {
 
 	// Motor-Kalibrierung
 
-	// Für alle 4 Motoren prozentuale Throttle-Werte in Compare-Werte für den Timer wandeln
-	// und anschließend dem Timer übergeben
+	// Fï¿½r alle 4 Motoren prozentuale Throttle-Werte in Compare-Werte fï¿½r den Timer wandeln
+	// und anschlieï¿½end dem Timer ï¿½bergeben
 	// Motor 1
 	uint16_t temp = status->motorValues[0] * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH) + PPM_TIMER_MIN_PULSE_LENGTH;
 	__HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_1, temp);

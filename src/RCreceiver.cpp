@@ -32,7 +32,7 @@ RCreceiver::~RCreceiver() {
 
 void RCreceiver::update() {
 	if (GET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC_LOST)) {
-		/* todo: manage rc signal loss
+		/* TODO RCreceiver manage rc signal loss
 		 *
 		 * 		handle throttle and engines
 		 * */

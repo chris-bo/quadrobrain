@@ -12,14 +12,13 @@ ConfigReader::ConfigReader(I2C_HandleTypeDef* i2c) {
 }
 
 ConfigReader::~ConfigReader() {
-	// TODO Auto-generated destructor stub
 }
 
 /*
  * Loads the quadrocopter configuration from eeprom into status
  */
 void ConfigReader::loadConfiguration(Status* status) {
-	//TODO: Weitere hinzufügen, wenn vorhanden
+	//TODO ConfigReader: Weitere hinzufï¿½gen, wenn vorhanden
 	loadVariable( &status->pXY, P_XY_ADDR );
 	loadVariable( &status->iXY, I_XY_ADDR );
 	loadVariable( &status->dXY, D_XY_ADDR );
@@ -32,7 +31,7 @@ void ConfigReader::loadConfiguration(Status* status) {
  * Saves the quadrocopter configuration from status into eeprom
  */
 void ConfigReader::saveConfiguration(Status* status) {
-	//TODO: Weitere hinzufügen, wenn vorhanden
+	//TODO ConfigReader: Weitere hinzufï¿½gen, wenn vorhanden
 	saveVariable( &status->pXY, P_XY_ADDR );
 	saveVariable( &status->iXY, I_XY_ADDR );
 	saveVariable( &status->dXY, D_XY_ADDR );
