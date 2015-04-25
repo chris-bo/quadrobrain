@@ -190,7 +190,7 @@
 /* End Flags */
 /********************************************************************/
 /* Settings */
-#define NUMBER_BIAS_VALUES					50
+#define NUMBER_BIAS_VALUES					100
 
 
 #define I_AM_MPU9150						0x68
