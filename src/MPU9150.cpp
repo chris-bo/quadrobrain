@@ -62,11 +62,13 @@ void MPU9150::update() {
 
 void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 
-	if ((HAL_I2C_GetState(mpu9150_i2c) == HAL_I2C_STATE_RESET)) {
-		/* I2C not initialized */
-		SET_FLAG(taskStatusFlags, MPU9150_FLAG_ERROR);
-		return;
-	}
+
+	/* reinit I2C
+	 * fix for broken communication after ConfigReader fails
+	 * to read from eeprom
+	 */
+	HAL_I2C_Init(mpu9150_i2c);
+
 
 	if (getIdentification() == 0) {
 		/* Wrong Chip with same address
@@ -121,7 +123,8 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
 
-	getBias();
+	// TODO bias
+	//getBias();
 
 	configFullScale(gyro_full_scale, accel_full_scale);
 
