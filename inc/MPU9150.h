@@ -165,7 +165,7 @@
 #define AK8975C_ASAY		0x11	// R
 #define AK8975C_ASAZ		0x12	// R
 
-#define AK8975C_I2C_ADDRESS (0x0C<<1)
+#define AK8975C_I2C_ADDRESS (0x0C)
 /* End AK8975C Register Map*/
 /********************************************************************/
 /* Full Scale */
@@ -194,6 +194,7 @@
 
 
 #define I_AM_MPU9150						0x68
+#define I_AM_AK8975C						0x48
 
 /* divides reading rate of i2c slaves
  * delay must be enabled for each slave
@@ -201,7 +202,7 @@
  * rate = mpu_sample_rate / (1 + delay)
  *
  */
-#define MPU9150_EXT_SENS_I2C_DELAY			0x09
+#define MPU9150_EXT_SENS_I2C_DELAY			0x05
 
 /* sets MPU Sample Rate*
  * rate = 1kHz / (1 + delay)
@@ -263,6 +264,7 @@ private:
 	int16_t rawGyroData[3];
 	int16_t rawMagnetData[3];
 	int16_t rawTempData;
+	uint8_t MagnetScaleRegister[3];
 
 	float scaleAccel;
 	float scaleGyro;
