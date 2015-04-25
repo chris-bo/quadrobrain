@@ -180,9 +180,10 @@
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.614855770" name="core_sc000.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc000.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1328743450" name="core_cm0.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.804906107" name="core_cm0plus.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0plus.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.886362447" name="stm32f3xx_hal_conf_template.h" rcbsApplicability="disable" resourcePath="system/inc/STM32F3xx_HAL_Driver/stm32f3xx_hal_conf_template.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-						<entry excluding="STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h|STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h|STM32_USB_Device_Library/Core/Src/usbd_conf_template.c|STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.c|inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
+						<entry excluding="inc/STM32F3xx_HAL_Driver/stm32f3xx_hal_conf_template.h|STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h|STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h|STM32_USB_Device_Library/Core/Src/usbd_conf_template.c|STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.c|inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -386,6 +387,7 @@
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.989445428" name="core_sc000.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc000.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.509947904" name="core_cm0.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.1742780602" name="core_cm0plus.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm0plus.h" toolsToInvoke=""/>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.1124409387" name="stm32f3xx_hal_conf_template.h" rcbsApplicability="disable" resourcePath="system/inc/STM32F3xx_HAL_Driver/stm32f3xx_hal_conf_template.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry excluding="STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h|STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h|STM32_USB_Device_Library/Core/Src/usbd_conf_template.c|STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.c|inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
