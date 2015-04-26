@@ -143,6 +143,18 @@
 //ADO with 4.7k Pulldown on breakoutboard
 #define MPU9150_I2C_ADDRESS			(0x68<<1)
 
+/* Full Scale */
+/* Register Settings */
+#define MPU9150_GYRO_FULLSCALE_250			0x00
+#define MPU9150_GYRO_FULLSCALE_500			0x08
+#define MPU9150_GYRO_FULLSCALE_1000			0x10
+#define MPU9150_GYRO_FULLSCALE_2000			0x18
+
+#define MPU9150_ACCEL_FULLSCALE_2g			0x00
+#define MPU9150_ACCEL_FULLSCALE_4g			0x08
+#define MPU9150_ACCEL_FULLSCALE_8g			0x10
+#define MPU9150_ACCEL_FULLSCALE_16g			0x18
+
 /* End MPU9150 Register Map*/
 /********************************************************************/
 /* AK8975C Register Map*/
@@ -165,23 +177,13 @@
 #define AK8975C_I2C_ADDRESS (0x0C)
 /* End AK8975C Register Map*/
 /********************************************************************/
-/* Full Scale */
-/* Register Settings */
-#define MPU9150_GYRO_FULLSCALE_250			0x00
-#define MPU9150_GYRO_FULLSCALE_500			0x08
-#define MPU9150_GYRO_FULLSCALE_1000			0x10
-#define MPU9150_GYRO_FULLSCALE_2000			0x18
 
-#define MPU9150_ACCEL_FULLSCALE_2g			0x00
-#define MPU9150_ACCEL_FULLSCALE_4g			0x08
-#define MPU9150_ACCEL_FULLSCALE_8g			0x10
-#define MPU9150_ACCEL_FULLSCALE_16g			0x18
-
-/* Flags */
 #define MPU9150_INIT_TIMEOUT							0xFFFFF
 #define MPU9150_I2C_TIMEOUT								0xFFFFF
 
+/* Flags */
 #define MPU9150_FLAG_CONTINUOUS_RECEPTION				0x0001
+#define MPU9150_FLAG_AK8975C_AVAILABLE					0x0002
 #define MPU9150_FLAG_ERROR								0x8000
 
 /* End Flags */
@@ -192,6 +194,7 @@
 
 #define I_AM_MPU9150						0x68
 #define I_AM_AK8975C						0x48
+
 
 /* divides reading rate of i2c slaves
  * delay must be enabled for each slave
@@ -247,11 +250,14 @@ public:
 
 	void update();
 	void initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale);
+	void configFullScale(uint8_t gyro_full_scale, uint8_t accel_full_scale);
+
 	void startReception();
 	void stopReception();
+
 	void receptionCompleteCallback();
-	void getAccelGyroMagnetRawData();
-	void configFullScale(uint8_t gyro_full_scale, uint8_t accel_full_scale);
+	void getRawData();
+
 
 private:
 
@@ -267,13 +273,15 @@ private:
 	float scaleGyro;
 	float scaleMagnet[3];
 
-	void getMagnetScale();
+	/* general + mpu9150 functions*/
 	void configOffsetRegisters();
 	void scaleRawData();
+	uint8_t getMPU9150Identification();
 
+	/* Functions for magnetometer control */
 	void enableMagnetData();
 	void disableMagnetData();
-	uint8_t getIdentification();
+	void getMagnetScale();
 
 };
 

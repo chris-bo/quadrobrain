@@ -59,7 +59,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	switch (GPIO_Pin) {
 		case MPU9150_INTERRUPT_PIN:
-			mpu9150.getAccelGyroMagnetRawData();
+			mpu9150.getRawData();
 			break;
 		default:
 			break;
