@@ -12,10 +12,10 @@
 #include "config.h"
 
 /* ADC in : PA1 */
-#define VREF						2.97f	// V
+#define REFERENCE_VOLTAGE			2.97f	// V
 #define VOLTAGE_DIVIDER_RATIO 		1.0f
 #define MEASUREMENT_FREQUENCY		1  // Hz
-#define SCALE_FACTOR				VREF / 4096.0f
+#define SCALE_FACTOR				REFERENCE_VOLTAGE / 4095.0f
 
 class AkkuMonitor: public Task {
 public:

@@ -32,7 +32,7 @@ void AkkuMonitor::initialize() {
 void AkkuMonitor::update() {
 
 
-	if (counter == MEASUREMENT_FREQUENCY * 1000 / SCHEDULER_INTERVALL_ms) {
+	if (counter ==  1000 / SCHEDULER_INTERVALL_ms / MEASUREMENT_FREQUENCY) {
 			HAL_ADC_Start_IT(akkumonitor_adc);
 			counter = 0;
 	} else {
