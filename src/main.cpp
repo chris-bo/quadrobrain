@@ -127,6 +127,7 @@ int main(void) {
 	led10.setOffset(150);
 
 	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE,MPU9150_ACCEL_FULL_SCALE);
+	mpu9150.startReception();
 	rcReceiver.initialize();
 	ppmgenerator.initialize();
 	usb.initialize();
@@ -137,8 +138,6 @@ int main(void) {
 	                      &led10 };
 
 	scheduler.start(taskarray, sizeof(taskarray)/ 4);
-
-	mpu9150.startReception();
 
 
 	/* USER CODE END 2 */

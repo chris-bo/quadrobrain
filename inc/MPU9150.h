@@ -8,6 +8,16 @@
 #ifndef MPU9150_H_
 #define MPU9150_H_
 
+/***********************************
+ *
+ * PINS
+ *
+ * I2C1
+ * PB6 -> SCL
+ * PB7 -> SDA
+ * PE4 -> INT
+ *
+ */
 /********************************************************************/
 /* MPU9150 Register Map */
 
@@ -152,7 +162,7 @@
 #define AK8975C_ASAY		0x11	// R
 #define AK8975C_ASAZ		0x12	// R
 
-#define AK8975C_I2C_ADDRESS (0x0C<<1)
+#define AK8975C_I2C_ADDRESS (0x0C)
 /* End AK8975C Register Map*/
 /********************************************************************/
 /* Full Scale */
@@ -177,10 +187,11 @@
 /* End Flags */
 /********************************************************************/
 /* Settings */
-#define NUMBER_BIAS_VALUES					50
+#define NUMBER_OFFSET_VALUES					100
 
 
 #define I_AM_MPU9150						0x68
+#define I_AM_AK8975C						0x48
 
 /* divides reading rate of i2c slaves
  * delay must be enabled for each slave
@@ -188,7 +199,7 @@
  * rate = mpu_sample_rate / (1 + delay)
  *
  */
-#define MPU9150_EXT_SENS_I2C_DELAY			0x09
+#define MPU9150_EXT_SENS_I2C_DELAY			0x05
 
 /* sets MPU Sample Rate*
  * rate = 1kHz / (1 + delay)
@@ -237,8 +248,8 @@ public:
 	void update();
 	void initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale);
 	void startReception();
+	void stopReception();
 	void receptionCompleteCallback();
-	void transmissionCompleteCallback();
 	void getAccelGyroMagnetRawData();
 	void configFullScale(uint8_t gyro_full_scale, uint8_t accel_full_scale);
 
@@ -250,13 +261,14 @@ private:
 	int16_t rawGyroData[3];
 	int16_t rawMagnetData[3];
 	int16_t rawTempData;
+	uint8_t MagnetScaleRegister[3];
 
 	float scaleAccel;
 	float scaleGyro;
 	float scaleMagnet[3];
 
 	void getMagnetScale();
-	void getBias();
+	void configOffsetRegisters();
 	void scaleRawData();
 
 	void enableMagnetData();

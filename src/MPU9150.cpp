@@ -49,6 +49,9 @@ MPU9150::MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
 	scaleMagnet[0] = 0.3;
 	scaleMagnet[1] = 0.3;
 	scaleMagnet[2] = 0.3;
+	MagnetScaleRegister[0] = 0;
+	MagnetScaleRegister[1] = 0;
+	MagnetScaleRegister[2] = 0;
 }
 
 MPU9150::~MPU9150() {
@@ -56,17 +59,19 @@ MPU9150::~MPU9150() {
 }
 
 void MPU9150::update() {
-	// TODO CHECK errors
+	// TODO mpu9150 CHECK errors
 
 }
 
 void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 
-	if ((HAL_I2C_GetState(mpu9150_i2c) == HAL_I2C_STATE_RESET)) {
-		/* I2C not initialized */
-		SET_FLAG(taskStatusFlags, MPU9150_FLAG_ERROR);
-		return;
-	}
+
+	/* reinit I2C
+	 * fix for broken communication after ConfigReader fails
+	 * to read from eeprom
+	 */
+	HAL_I2C_Init(mpu9150_i2c);
+
 
 	if (getIdentification() == 0) {
 		/* Wrong Chip with same address
@@ -77,7 +82,11 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 
 	}
 
-	getMagnetScale();
+	/* reset MPU9150*/
+	i2c_buffer[0] = 0x80;
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_PWR_MGMT_1,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+	HAL_Delay(100);
 
 	/* Config MPU9150
 	 *
@@ -95,6 +104,9 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 	i2c_buffer[0] = 0x01;
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_PWR_MGMT_1,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+	HAL_Delay(200);
+
+	getMagnetScale();
 
 	i2c_buffer[0] = MPU9150_SAMPLE_RATE;
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_SMPLRT_DIV,
@@ -121,7 +133,8 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
 
-	getBias();
+
+	configOffsetRegisters();
 
 	configFullScale(gyro_full_scale, accel_full_scale);
 
@@ -133,33 +146,28 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 
 void MPU9150::receptionCompleteCallback() {
 
-
 	/* compute raw values*/
 
 	rawAccelData[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
 	rawAccelData[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
 	rawAccelData[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
 
-	rawGyroData[0] = (int16_t) (i2c_buffer[7] | (i2c_buffer[6] << 8));
-	rawGyroData[1] = (int16_t) (i2c_buffer[9] | (i2c_buffer[8] << 8));
-	rawGyroData[2] = (int16_t) (i2c_buffer[11] | (i2c_buffer[10] << 8));
+	rawGyroData[0] = (int16_t) (i2c_buffer[9] | (i2c_buffer[8] << 8));
+	rawGyroData[1] = (int16_t) (i2c_buffer[11] | (i2c_buffer[10] << 8));
+	rawGyroData[2] = (int16_t) (i2c_buffer[13] | (i2c_buffer[12] << 8));
 
-	rawMagnetData[0] = (int16_t) (i2c_buffer[15] | (i2c_buffer[14] << 8));
-	rawMagnetData[1] = (int16_t) (i2c_buffer[17] | (i2c_buffer[16] << 8));
-	rawMagnetData[2] = (int16_t) (i2c_buffer[19] | (i2c_buffer[18] << 8));
+	// i2c_buffer [14] == AK8975C_ST1
+	rawMagnetData[0] = (int16_t) (i2c_buffer[16] | (i2c_buffer[15] << 8));
+	rawMagnetData[1] = (int16_t) (i2c_buffer[18] | (i2c_buffer[17] << 8));
+	rawMagnetData[2] = (int16_t) (i2c_buffer[20] | (i2c_buffer[19] << 8));
+	// i2c_buffer [21] == AK8975C_ST2
 
-	rawTempData = (int16_t) (i2c_buffer[13] | (i2c_buffer[12] << 8));
+	rawTempData = (int16_t) (i2c_buffer[7] | (i2c_buffer[6] << 8));
 
 	/* call scaling routine*/
 	scaleRawData();
 
 }
-
-void MPU9150::transmissionCompleteCallback() {
-
-}
-
-
 
 void MPU9150::scaleRawData() {
 
@@ -183,20 +191,67 @@ void MPU9150::scaleRawData() {
 }
 
 void MPU9150::getMagnetScale() {
-	// TODO MPU9150::getMagnetScale()
 	/* - set MPU9150 i2c bypass mode
 	 * - set AK8975C rom read mode
 	 * - read magn scales
 	 */
+	/* Disable I2C control*/
+	i2c_buffer[0] = 0;
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_USER_CTRL,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+
+	/* enable Bypass */
+	i2c_buffer[0] =0x02;
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_INT_PIN_CFG,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+	HAL_Delay(10);
+
+	/* power down compass*/
+	i2c_buffer[0] = 0x00;
+	HAL_I2C_Mem_Write(mpu9150_i2c, (AK8975C_I2C_ADDRESS<<1), AK8975C_CNTL,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+	HAL_Delay(1);
+
+	/* enable rom read mode*/
+	i2c_buffer[0] = 0x0F;
+	HAL_I2C_Mem_Write(mpu9150_i2c, (AK8975C_I2C_ADDRESS<<1), AK8975C_CNTL,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+	HAL_Delay(1);
+
+	/* Get sensitivity adjustment data from fuse ROM. */
+	HAL_I2C_Mem_Read(mpu9150_i2c, (AK8975C_I2C_ADDRESS<<1), AK8975C_ASAX,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 3, MPU9150_INIT_TIMEOUT);
+
+	MagnetScaleRegister[0] = i2c_buffer[0];
+	MagnetScaleRegister[1] = i2c_buffer[1];
+	MagnetScaleRegister[2] = i2c_buffer[2];
+
+	/* power down compass*/
+	i2c_buffer[0] = 0x00;
+	HAL_I2C_Mem_Write(mpu9150_i2c, (AK8975C_I2C_ADDRESS<<1), AK8975C_CNTL,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+
+	/* disable Bypass */
+	HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_INT_PIN_CFG,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+	i2c_buffer[0] = (uint8_t) (i2c_buffer[0] & ~0x02);
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_INT_PIN_CFG,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+
+
+	/*  compute magnet scales */
+	scaleMagnet[0] = scaleMagnet[0] * ((MagnetScaleRegister[0] - 128.0f) / 256.0f + 1);
+	scaleMagnet[1] = scaleMagnet[1] * ((MagnetScaleRegister[1] - 128.0f) / 256.0f + 1);
+	scaleMagnet[2] = scaleMagnet[2] * ((MagnetScaleRegister[2] - 128.0f) / 256.0f + 1);
 
 }
 
 void MPU9150::getAccelGyroMagnetRawData() {
 
 	HAL_I2C_Mem_Read_DMA(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_XOUT_H,
-			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 38);
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer,24);
 
-	// TODO I2C busy management
+	// TODO mpu9150 I2C busy management
 
 }
 
@@ -211,12 +266,13 @@ void MPU9150::enableMagnetData() {
 
 	/* Config Slave communication sample rates
 	 *
-	 * MPU9150_I2C_MST_CTRL  	<- 		0x1D (stop/start between slaves + 400kHz)
+	 * MPU9150_I2C_MST_CTRL  	<- 		0x0D (restart between slaves + 400kHz)
+	 * or : MPU9150_I2C_MST_CTRL  	<- 		0x1D (start/stop between slaves + 400kHz)
 	 * MPU9150_I2C_MST_DELAY_CTRL  <-	0x03 (delay slave 0 and 1)
 	 * MPU9150_I2C_SLV4_CTRL	<-		(0x0 | MPU9150_EXT_SENS_I2C_DELAY) disable slave 4 + delay config
 	 * MPU9150_USER_CTRL		<- 		0x20 (disable fifo + enable aux i2c)
 	 * */
-	i2c_buffer[0] = 0x1D;
+	i2c_buffer[0] = 0x0D;
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_I2C_MST_CTRL,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
@@ -237,13 +293,14 @@ void MPU9150::enableMagnetData() {
 	 *
 	 * MPU9150_I2C_SLV0_ADDR   	<-   	(AK8975C_I2C_ADDRESS | 0x80) read mode
 	 * MPU9150_I2C_SLV0_REG    	<-   	AK8975C_HXL
-	 * MPU9150_I2C_SLV0_CTRL   	<- 		0xC6 ( enable + swap + writereg adr + group 0 and 1 + length = 6 )
+	 * MPU9150_I2C_SLV0_CTRL   	<- 		0xD8 ( enable + swap + writereg adr + group 1 and 1 + length = 8 )
+	 *									Status registers are also read
 	 * */
 	i2c_buffer[0] = (AK8975C_I2C_ADDRESS | 0x80);
-	i2c_buffer[1] = AK8975C_HXL;
-	i2c_buffer[2] = 0xC6;
+	i2c_buffer[1] = AK8975C_ST1;
+	i2c_buffer[2] = 0xD8;
 
-	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_I2C_SLV1_ADDR,
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_I2C_SLV0_ADDR,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 3, MPU9150_INIT_TIMEOUT);
 
 	/* Config Slave 1
@@ -263,6 +320,14 @@ void MPU9150::enableMagnetData() {
 	i2c_buffer[0] = 0x01;
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_I2C_SLV1_DO,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+
+	/* write vddio i2c bit
+	 * information source: motion driver software
+	 * */
+	i2c_buffer[0] = 0x80;
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, 0x01,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+
 
 }
 
@@ -289,24 +354,27 @@ void MPU9150::disableMagnetData() {
 			I2C_MEMADD_SIZE_8BIT, &tmp, 1, MPU9150_INIT_TIMEOUT);
 }
 
-void MPU9150::getBias() {
-	// TODO getBias()
+void MPU9150::configOffsetRegisters() {
+
+	/* TODO mpu9150 check if using hard coded values is sufficient */
 
 
-	/* Gyro Bias:
+	int32_t offset_tmp[3] = { 0, 0, 0 };
+	int16_t raw_tmp[3] = { 0, 0, 0 };
+	int16_t accel_offset[3] = { 0, 0, 0 };
+
+
+	/* Gyro Offset:
 	 * set to FULLSCALLE_1000
-	 * get NUMBER_BIAS_VALUES Values
+	 * get NUMBER_Offset_VALUES Values
 	 * compute average
 	 * write to offset registers
 	 */
-
-	int32_t bias_tmp[3] = { 0, 0, 0 };
-	int16_t raw_tmp[3] = { 0, 0, 0 };
 	i2c_buffer[0] = MPU9150_GYRO_FULLSCALE_1000;
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_GYRO_CONFIG,
 			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
-	for (uint8_t i = 0; i < NUMBER_BIAS_VALUES; i++) {
+	for (uint8_t i = 0; i < NUMBER_OFFSET_VALUES; i++) {
 		HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_GYRO_XOUT_H,
 		        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
 
@@ -314,43 +382,85 @@ void MPU9150::getBias() {
 		raw_tmp[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
 		raw_tmp[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
 
-		bias_tmp[0] -= (int32_t) raw_tmp[0];
-		bias_tmp[1] -= (int32_t) raw_tmp[1];
-		bias_tmp[2] -= (int32_t) raw_tmp[2];
-		HAL_Delay(10);
+		offset_tmp[0] += raw_tmp[0];
+		offset_tmp[1] += raw_tmp[1];
+		offset_tmp[2] += raw_tmp[2];
+		HAL_Delay(3);
 	}
 
-	bias_tmp[0] = bias_tmp[0] / NUMBER_BIAS_VALUES;
-	bias_tmp[1] = bias_tmp[1] / NUMBER_BIAS_VALUES;
-	bias_tmp[2] = bias_tmp[2] / NUMBER_BIAS_VALUES;
+	/* convert values and transfer to MPU Offset Registers*/
+	raw_tmp[0] = (int16_t) ((-offset_tmp[0]) / NUMBER_OFFSET_VALUES);
+	raw_tmp[1] = (int16_t) ((-offset_tmp[1]) / NUMBER_OFFSET_VALUES);
+	raw_tmp[2] = (int16_t) ((-offset_tmp[2]) / NUMBER_OFFSET_VALUES);
 
-	i2c_buffer[0] = (uint8_t) ((bias_tmp[0] >> 8) & 0xFF);
-	i2c_buffer[1] = (uint8_t) (bias_tmp[0] & 0xFF);
-	i2c_buffer[2] = (uint8_t) ((bias_tmp[1] >> 8) & 0xFF);
-	i2c_buffer[3] = (uint8_t) (bias_tmp[1] & 0xFF);
-	i2c_buffer[4] = (uint8_t) ((bias_tmp[2] >> 8) & 0xFF);
-	i2c_buffer[5] = (uint8_t) (bias_tmp[2] & 0xFF);
+	i2c_buffer[0] = (uint8_t) ((raw_tmp[0] >> 8) & 0xFF);
+	i2c_buffer[1] = (uint8_t) (raw_tmp[0] & 0xFF);
+	i2c_buffer[2] = (uint8_t) ((raw_tmp[1] >> 8) & 0xFF);
+	i2c_buffer[3] = (uint8_t) (raw_tmp[1] & 0xFF);
+	i2c_buffer[4] = (uint8_t) ((raw_tmp[2] >> 8) & 0xFF);
+	i2c_buffer[5] = (uint8_t) (raw_tmp[2] & 0xFF);
 
 	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XG_OFFS_USRH,
 	        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
 
-
-
-	/* accel Bias:
+	/* Accel Offset:
 	 * set to FULLSCALLE_8G
-	 * get NUMBER_BIAS_VALUES Values
-	 * compute average
 	 * Read offset registers
+	 * get NUMBER_OFFSET_VALUES Values
+	 * compute average
 	 * new reg value = ((computed_bias - initial_offset) &~1)
 	 *
 	 */
 
+	i2c_buffer[0] = MPU9150_ACCEL_FULLSCALE_8g;
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_CONFIG,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
-	/* Read 30 Values
-	 * calc average
-	 * write gyro + accel into bias gegisters
-	 */
+	HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XA_OFFS_USRH,
+	        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
 
+	accel_offset[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
+	accel_offset[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
+	accel_offset[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
+
+	for (uint8_t i = 0; i < NUMBER_OFFSET_VALUES; i++) {
+		HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_XOUT_H,
+		        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
+
+		raw_tmp[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
+		raw_tmp[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
+		raw_tmp[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
+
+		offset_tmp[0] += raw_tmp[0];
+		offset_tmp[1] += raw_tmp[1];
+		offset_tmp[2] += raw_tmp[2];
+		HAL_Delay(3);
+	}
+
+	raw_tmp[0] = (int16_t) ((offset_tmp[0]) / NUMBER_OFFSET_VALUES);
+	raw_tmp[1] = (int16_t) ((offset_tmp[1]) / NUMBER_OFFSET_VALUES);
+	raw_tmp[2] = (int16_t) ((offset_tmp[2]) / NUMBER_OFFSET_VALUES);
+
+	// compensate G on Z axis
+	if (raw_tmp[2] > 0 ) {
+		raw_tmp[2] = (int16_t) (raw_tmp[2] - 4096);
+	} else {
+		raw_tmp[2] = (int16_t) (raw_tmp[2] + 4096);
+	}
+
+	accel_offset[0] = (int16_t) (accel_offset[0] - (raw_tmp[0] & ~0x0001));
+	accel_offset[1] = (int16_t) (accel_offset[1] - (int16_t) (raw_tmp[1] & ~0x0001));
+	accel_offset[2] = (int16_t) (accel_offset[2] - (int16_t) (raw_tmp[2] & ~0x0001));
+
+	i2c_buffer[0] = (uint8_t) ((accel_offset[0] >> 8) & 0xFF);
+	i2c_buffer[1] = (uint8_t) (accel_offset[0] & 0xFF);
+	i2c_buffer[2] = (uint8_t) ((accel_offset[1] >> 8) & 0xFF);
+	i2c_buffer[3] = (uint8_t) (accel_offset[1] & 0xFF);
+	i2c_buffer[4] = (uint8_t) ((accel_offset[2] >> 8) & 0xFF);
+	i2c_buffer[5] = (uint8_t) (accel_offset[2] & 0xFF);
+
+	HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XA_OFFS_USRH,
+	        I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
 }
 
 void MPU9150::configFullScale(uint8_t gyro_full_scale,
@@ -401,4 +511,8 @@ void MPU9150::startReception() {
 
 	SET_FLAG(taskStatusFlags,MPU9150_FLAG_CONTINUOUS_RECEPTION);
 	getAccelGyroMagnetRawData();
+}
+
+void MPU9150::stopReception() {
+	RESET_FLAG(taskStatusFlags,MPU9150_FLAG_CONTINUOUS_RECEPTION);
 }
