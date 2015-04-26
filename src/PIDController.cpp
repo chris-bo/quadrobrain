@@ -19,6 +19,7 @@ PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
 	this->p = 0.0f;
 	this->i = 0.0f;
 	this->d = 0.0f;
+	this->limit = limit;
 	this->sampleTime = sampleTime;
 	sum = 0.0f;
 	oldValue = 0.0f;
