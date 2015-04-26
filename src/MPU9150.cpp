@@ -518,3 +518,7 @@ void MPU9150::startReception() {
 	SET_FLAG(taskStatusFlags,MPU9150_FLAG_CONTINUOUS_RECEPTION);
 	getAccelGyroMagnetRawData();
 }
+
+void MPU9150::stopReception() {
+	RESET_FLAG(taskStatusFlags,MPU9150_FLAG_CONTINUOUS_RECEPTION);
+}
