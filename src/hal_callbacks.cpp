@@ -39,9 +39,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
  * @retval None
  */
 void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
-	if (hi2c->Instance == MPU9150_I2C) {
-		mpu9150.transmissionCompleteCallback();
-	}
+
 }
 
 /**
@@ -75,6 +73,5 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
   */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-
-	akku.conversionComplete();
+		akku.conversionComplete();
 }

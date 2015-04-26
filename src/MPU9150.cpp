@@ -169,12 +169,6 @@ void MPU9150::receptionCompleteCallback() {
 
 }
 
-void MPU9150::transmissionCompleteCallback() {
-
-}
-
-
-
 void MPU9150::scaleRawData() {
 
 	status->accelX = rawAccelData[0] * scaleAccel;

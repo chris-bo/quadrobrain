@@ -250,7 +250,6 @@ public:
 	void startReception();
 	void stopReception();
 	void receptionCompleteCallback();
-	void transmissionCompleteCallback();
 	void getAccelGyroMagnetRawData();
 	void configFullScale(uint8_t gyro_full_scale, uint8_t accel_full_scale);
 
