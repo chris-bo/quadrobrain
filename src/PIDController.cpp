@@ -26,7 +26,7 @@ PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
 }
 
 PIDController::~PIDController() {
-	// TODO Auto-generated destructor stub
+
 }
 
 void PIDController::update() {
