@@ -48,6 +48,10 @@ Status::Status() {
 	iZ = 0;
 	dZ = 0;
 
+	pidXOut = 0;
+	pidYOut = 0;
+	pidZOut = 0;
+
 	globalFlags = 0;
 
 	akkuVoltage = 0;

@@ -74,6 +74,11 @@ public:
 	float iZ;
 	float dZ;
 
+	/* PID Outputs */
+	float pidXOut;
+	float pidYOut;
+	float pidZOut;
+
 
 };
 

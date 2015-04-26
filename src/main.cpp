@@ -37,9 +37,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 Status status;
-ConfigReader configReader( &hi2c1 );
+ConfigReader configReader(&hi2c1);
 Scheduler scheduler(&status, &htim2);
-PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3);
+PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
+		&status.pidXOut, &status.pidYOut);
 RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
 
 /* Sensor (Gyro, Accelerometer, Compass) management*/
@@ -47,15 +48,20 @@ MPU9150 mpu9150(&status, MPU9150_DEFAULT_PRIORITY, &hi2c1);
 
 /* Sensor data fusion Filters*/
 ComplementaryFilter compFilterX(&status, 0, &status.accelY, &status.accelZ,
-        &status.rateX, &status.angleX, 0.98f);
+		&status.rateX, &status.angleX, 0.98f);
 ComplementaryFilter compFilterY(&status, 0, &status.accelX, &status.accelZ,
-        &status.rateY, &status.angleY, 0.98f);
+		&status.rateY, &status.angleY, 0.98f);
 ComplementaryFilter compFilterNorth(&status, 0, &status.magnetY,
-        &status.magnetX, &status.rateZ, &status.angleNorth, 0.98f);
+		&status.magnetX, &status.rateZ, &status.angleNorth, 0.98f);
+
+PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
+		SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick,
+		&status.pidXOut, 0.15f, false);
+//PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY, SCHEDULER_INTERVALL_ms, &status.angleY, 0, &status.rcSignalRoll, &status.pidYOut, 0.15f, false);
 
 usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
-AkkuMonitor akku(&status,AKKUMONITOR_DEFAULT_PRIORITY,&hadc1);
+AkkuMonitor akku(&status, AKKUMONITOR_DEFAULT_PRIORITY, &hadc1);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -90,7 +96,7 @@ int main(void) {
 	MX_TIM4_Init();
 	MX_ADC1_Init();
 
-	configReader.loadConfiguration( &status );
+	configReader.loadConfiguration(&status);
 
 	/* USER CODE BEGIN 2 */
 	LedBlink led3(&status, 5);
@@ -126,19 +132,18 @@ int main(void) {
 	led10.setLED(LED10);
 	led10.setOffset(150);
 
-	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE,MPU9150_ACCEL_FULL_SCALE);
+	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
 	mpu9150.startReception();
 	rcReceiver.initialize();
 	ppmgenerator.initialize();
 	usb.initialize();
 	akku.initialize();
 
-	Task* taskarray[] = { &mpu9150, &rcReceiver,&ppmgenerator, &compFilterX, &compFilterY, &compFilterNorth, &usb,
-	                      &akku, &led3, &led4, &led5, &led6, &led7, &led8, &led9,
-	                      &led10 };
+	Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
+			&compFilterY, &compFilterNorth, &pidControllerX, &usb, &akku, &led3,
+			&led4, &led5, &led6, &led7, &led8, &led9, &led10 };
 
-	scheduler.start(taskarray, sizeof(taskarray)/ 4);
-
+	scheduler.start(taskarray, sizeof(taskarray) / 4);
 
 	/* USER CODE END 2 */
 
@@ -160,7 +165,7 @@ void SystemClock_Config(void) {
 	RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI
-	        | RCC_OSCILLATORTYPE_HSE;
+			| RCC_OSCILLATORTYPE_HSE;
 	RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
 	RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
 	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
@@ -178,7 +183,7 @@ void SystemClock_Config(void) {
 	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1
-	        | RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_USB|RCC_PERIPHCLK_ADC12;
+			| RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_USB | RCC_PERIPHCLK_ADC12;
 	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
 	PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
 	PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;

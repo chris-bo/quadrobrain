@@ -29,6 +29,7 @@
 #include "RCreceiver.h"
 #include "PPMGenerator.h"
 #include "ComplementaryFilter.h"
+#include "PIDController.h"
 #include "MPU9150.h"
 #include "usbhandler.h"
 #include "AkkuMonitor.h"
@@ -41,6 +42,8 @@ extern ConfigReader configReader;
 extern Scheduler scheduler;
 extern RCreceiver rcReceiver;
 extern MPU9150 mpu9150;
+extern PIDController pidControllerX;
+extern PIDController pidControllerY;
 extern usb_handler usb;
 extern AkkuMonitor akku;
 

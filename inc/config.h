@@ -58,6 +58,11 @@
 /* define G for scaling to m/s^2 */
 #define G										9.81f
 
+/*
+ * PIDController
+ */
+#define PID_DEFAULT_PRIORITY					0
+
 /* USB
  *
  */
