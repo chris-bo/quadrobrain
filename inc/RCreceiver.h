@@ -12,6 +12,8 @@
 #include "Task.h"
 #include "config.h"
 
+/* Capture Pin: PB8 */
+
 /* receiver Flags */
 #define RC_RECEIVER_FLAG_SYNC					0x0100
 #define RC_RECEIVER_FLAG_SEQUENCE_COMPLETE 		0x0200

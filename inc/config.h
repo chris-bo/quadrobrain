@@ -43,7 +43,7 @@
 // Minimaler Ausschaltwert bei 1ms
 #define PPM_TIMER_MIN_PULSE_LENGTH 3273
 // Maximaler Ausschaltwert bei 2ms
-#define PPM_TIMER_MAX_PULSE_LENGTH 6546
+#define PPM_TIMER_MAX_PULSE_LENGTH 6382
 #define PPM_TIMER_PRESCALER 22
 // Einstellzeit f�r Regler
 #define PPM_SETUP_TIME 3000000

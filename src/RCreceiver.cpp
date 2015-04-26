@@ -48,9 +48,6 @@ void RCreceiver::update() {
 		}
 		signalLostTime++;
 		if (signalLostTime == 200){
-			/* Disable Task */
-			RESET_FLAG(taskStatusFlags,TASK_FLAG_ACTIVE);
-			priority = -1;
 			/* Disable control and engines */
 			status->rcSignalNick = 0;
 			status->rcSignalRoll = 0;
