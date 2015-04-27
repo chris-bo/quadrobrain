@@ -7,7 +7,7 @@
 
 #include "MPU9150.h"
 
-uint8_t i2c_buffer[38] = { 0 };
+uint8_t i2c_buffer[24] = { 0 };
 
 MPU9150::MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
 		: Task(statusPtr, defaultPrio) {
@@ -59,7 +59,10 @@ MPU9150::~MPU9150() {
 }
 
 void MPU9150::update() {
-	// TODO mpu9150 CHECK errors
+	if ( GET_FLAG(taskStatusFlags,MPU9150_FLAG_ERROR) ){
+		RESET_FLAG(taskStatusFlags,MPU9150_FLAG_ERROR);
+		getRawData();
+	}
 
 }
 
@@ -261,10 +264,10 @@ void MPU9150::getMagnetScale() {
 
 void MPU9150::getRawData() {
 
-	HAL_I2C_Mem_Read_DMA(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_XOUT_H,
-			I2C_MEMADD_SIZE_8BIT, i2c_buffer,24);
-
-	// TODO mpu9150 I2C busy management
+	if (HAL_I2C_Mem_Read_DMA(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_XOUT_H,
+			I2C_MEMADD_SIZE_8BIT, i2c_buffer,24) != HAL_OK) {
+		SET_FLAG(taskStatusFlags,MPU9150_FLAG_ERROR);
+	}
 
 }
 
