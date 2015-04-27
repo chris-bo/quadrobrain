@@ -29,6 +29,7 @@
 #include "RCreceiver.h"
 #include "PPMGenerator.h"
 #include "ComplementaryFilter.h"
+#include "Compass.h"
 #include "PIDController.h"
 #include "MPU9150.h"
 #include "usbhandler.h"

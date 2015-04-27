@@ -180,7 +180,7 @@ void MPU9150::scaleRawData() {
 	status->accelZ = rawAccelData[2] * scaleAccel;
 
 	status->rateX = rawGyroData[0] * scaleGyro;
-	status->rateY = rawGyroData[1] * scaleGyro;
+	status->rateY = rawGyroData[1] * -scaleGyro;  // negative to fit complementary filter
 	status->rateZ = rawGyroData[2] * scaleGyro;
 
 	status->magnetX = rawMagnetData[0] * scaleMagnet[0];
@@ -189,7 +189,7 @@ void MPU9150::scaleRawData() {
 
 	status->temp = rawTempData * MPU9150_TEMPERATURE_SCALE_FACTOR + 35;
 
-	if ( GET_FLAG(taskStatusFlags,MPU9150_FLAG_CONTINUOUS_RECEPTION )) {
+	if (GET_FLAG(taskStatusFlags, MPU9150_FLAG_CONTINUOUS_RECEPTION)) {
 		getRawData();
 	}
 }

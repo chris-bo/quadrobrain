@@ -51,8 +51,9 @@ ComplementaryFilter compFilterX(&status, 0, &status.accelY, &status.accelZ,
 		&status.rateX, &status.angleX, 0.98f);
 ComplementaryFilter compFilterY(&status, 0, &status.accelX, &status.accelZ,
 		&status.rateY, &status.angleY, 0.98f);
-ComplementaryFilter compFilterNorth(&status, 0, &status.magnetY,
-		&status.magnetX, &status.rateZ, &status.angleNorth, 0.98f);
+Compass compFilterNorth(&status, 0, &status.magnetY,
+		&status.magnetX, &status.angleY, &status.angleX, &status.rateZ,
+		&status.angleNorth, 0.98f);
 
 PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
 		SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick,

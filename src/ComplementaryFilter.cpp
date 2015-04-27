@@ -8,9 +8,9 @@
 #include "ComplementaryFilter.h"
 
 ComplementaryFilter::ComplementaryFilter(Status* statusPtr, uint8_t defaultPrio,
-		float* accel1, float* accel2, float* rotation, float* output,
-		float filter_coefficient) :
-		Task(statusPtr, defaultPrio) {
+        float* accel1, float* accel2, float* rotation, float* output,
+        float filter_coefficient)
+		: Task(statusPtr, defaultPrio) {
 
 	dt = SCHEDULER_INTERVALL_ms * 0.001f;
 	coefficient = filter_coefficient;
@@ -30,12 +30,17 @@ ComplementaryFilter::~ComplementaryFilter() {
 }
 
 void ComplementaryFilter::update() {
-	/* calculate angle between two accelerations
-	 * -> get angle between g(a2) and horizont (a1) */
-	tmp_acc_angle = atan2f(*a1, *a2) * 180.0f / M_PI ;
+	/* X + Y:
+	 * calculate angle between two accelerations
+	 * -> get angle between g(a2) and horizon (a1)
+	 *
+	 */
+	tmp_acc_angle = atan2f(*a1, *a2) * 180.0f / M_PI;
 
-	/* mix old angle with new angle and rotationmeasurements */
-	*out = coefficient * (*out + *rot * dt) + (1.0f - coefficient) * tmp_acc_angle;
+	/* mix old angle with new angle and rotation measurements */
+	*out = coefficient * (*out + *rot * dt)
+	        + (1.0f - coefficient) * tmp_acc_angle;
+
 }
 
 void ComplementaryFilter::initialize() {

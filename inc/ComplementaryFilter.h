@@ -21,7 +21,7 @@ public:
 	void update();
 	void initialize();
 
-private:
+protected:
 	float dt;
 	float coefficient;
 	float tmp_acc_angle;
