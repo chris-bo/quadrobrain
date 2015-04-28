@@ -40,7 +40,7 @@ void Scheduler::reset() {
 	/* Timer stop*/
 	HAL_TIM_Base_Stop_IT(scheduler_htim);
 	/*Timer reset */
-	__HAL_TIM_SetCounter(scheduler_htim,(SCHEDULER_INTERVALL_ms * 1000));
+	__HAL_TIM_SetCounter(scheduler_htim, (SCHEDULER_INTERVALL_ms * 1000));
 	/* Timer restart */
 	HAL_TIM_Base_Start_IT(scheduler_htim);
 }
@@ -75,7 +75,8 @@ void Scheduler::executeTasks() {
 				uint32_t timerTmp = __HAL_TIM_GetCounter(scheduler_htim);
 				/* check time
 				 * */
-				if ((timerTmp > taskArray[k]->maxDuration) || (taskArray[k]->priority == 0)) {
+				if ((timerTmp > taskArray[k]->maxDuration)
+						|| (taskArray[k]->priority == 0)) {
 					/* timeLeft > maxDuration or priority == 0*/
 					taskArray[k]->update();
 

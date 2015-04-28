@@ -48,6 +48,7 @@ public:
 	float angleNorth;
 
 	float temp;
+	int32_t pressure; // in Pa
 
 	/* receiver values */
 	float rcSignalRoll;			// [-0.5 , 0.5]
