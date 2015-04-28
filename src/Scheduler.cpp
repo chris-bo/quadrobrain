@@ -75,13 +75,20 @@ void Scheduler::executeTasks() {
 				uint32_t timerTmp = __HAL_TIM_GetCounter(scheduler_htim);
 				/* check time
 				 * */
-				if (timerTmp > taskArray[k]->maxDuration) {
-					/* timeLeft > maxDuration */
+				if ((timerTmp > taskArray[k]->maxDuration) || (taskArray[k]->priority == 0)) {
+					/* timeLeft > maxDuration or priority == 0*/
 					taskArray[k]->update();
 
+					// TODO scheduler: 	maxDuration muss sich evtl wieder verringern
+					//					können, da interrupts oder breakpoints
+					//					die dauer beeinflussen -> mittelung?
+					//      		 	maxDuration -> averageDuration ?
+					//					dann muss aber ein timerüberlauf im scheduler
+					//					behandelt werden
 					/* update maxDuration */
 					if ((timerTmp - __HAL_TIM_GetCounter(scheduler_htim))
 							> taskArray[k]->maxDuration) {
+						/* update maxDuration */
 						taskArray[k]->maxDuration = timerTmp
 								- __HAL_TIM_GetCounter(scheduler_htim);
 						/* check task durations */
