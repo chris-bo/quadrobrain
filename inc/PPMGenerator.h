@@ -11,6 +11,13 @@
 #include "config.h"
 #include "Task.h"
 
+    /**TIM3 GPIO Configuration
+    PC6     ------> TIM3_CH1
+    PC7     ------> TIM3_CH2
+    PC8     ------> TIM3_CH3
+    PC9     ------> TIM3_CH4
+    */
+
 #define THROTTLE_MIN 0.15f
 
 class PPMGenerator: public Task {

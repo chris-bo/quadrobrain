@@ -3,3 +3,4 @@
 /.settings/
 /.git/
 /quadrobrain Debug.launch
+/quadrobrain Debug qemu.launch
