@@ -177,7 +177,7 @@ void MPU9150::scaleRawData() {
 
 	status->accelX = rawAccelData[0] * scaleAccel;
 	status->accelY = rawAccelData[1] * scaleAccel;
-	status->accelZ = rawAccelData[2] * scaleAccel;
+	status->accelZ = rawAccelData[2] * -scaleAccel; // orientation
 
 	status->rateX = rawGyroData[0] * scaleGyro;
 	status->rateY = rawGyroData[1] * -scaleGyro;  // negative to fit complementary filter

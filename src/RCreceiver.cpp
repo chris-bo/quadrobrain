@@ -31,7 +31,7 @@ RCreceiver::~RCreceiver() {
 }
 
 void RCreceiver::update() {
-	if (GET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC_LOST)) {
+	if (GET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL)) {
 		/* TODO RCreceiver manage rc signal loss
 		 *
 		 * 		handle throttle and engines
@@ -117,7 +117,7 @@ void RCreceiver::overrunIRQ() {
 	if (currentChannel == 8) {
 
 	} else {
-		SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC_LOST);
+		SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
 		RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC);
 		currentChannel = 8;
 	}
@@ -127,6 +127,7 @@ void RCreceiver::captureIRQ() {
 	/* Input Capture Sequence
 	 * input capture -> save value -> reset counter
 	 * */
+    RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
 	if (currentChannel == 8) {
 		/* after sync sequence */
 		__HAL_TIM_SetCounter(RCreceiver_htim, 0x00);
@@ -143,7 +144,6 @@ void RCreceiver::captureIRQ() {
 			/* waiting for overrun interrupt to resync */
 			SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SEQUENCE_COMPLETE);
 			SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC);
-			RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC_LOST);
 		}
 		currentChannel++;
 
