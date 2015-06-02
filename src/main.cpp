@@ -63,6 +63,7 @@ PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
 usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
 AkkuMonitor akku(&status, AKKUMONITOR_DEFAULT_PRIORITY, &hadc1);
+BMP180 baro(&status, BMP180_DEFAULT_PRIORITY, &hi2c2);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -140,10 +141,11 @@ int main(void) {
 	ppmgenerator.initialize();
 	usb.initialize();
 	akku.initialize();
+	baro.initialize();
 
 	Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
-			&compFilterY, &compFilterNorth, &pidControllerX, &usb, &akku, &led3,
-			&led4, &led5, &led6, &led7, &led8, &led9, &led10 };
+			&compFilterY, &compFilterNorth, &pidControllerX, &usb, &akku, &baro,
+			&led3, &led4, &led5, &led6, &led7, &led8, &led9, &led10 };
 
 	scheduler.start(taskarray, sizeof(taskarray) / 4);
 

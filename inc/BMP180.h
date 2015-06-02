@@ -77,7 +77,9 @@
 
 
 #include "Task.h"
-#include "main.h"
+#include "config.h"
+#include "stm32f3xx_hal.h"
+#include "i2c.h"
 
 class BMP180: public Task {
 public:

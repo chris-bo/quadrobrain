@@ -77,7 +77,7 @@ void BMP180::initialize() {
 
 	if (getIdentification() == 0) {
 
-		SET_FLAG(taskStatusFlags, MPU9150_FLAG_ERROR);
+		SET_FLAG(taskStatusFlags, BMP180_FLAG_ERROR);
 		return;
 
 	}

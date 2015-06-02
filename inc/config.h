@@ -72,6 +72,9 @@
 /* ADC to Check akku voltage */
 #define AKKUMONITOR_DEFAULT_PRIORITY			10
 
+/* Pressure Sensor */
+#define BMP180_DEFAULT_PRIORITY                 10
+
 /*********************************************************************************/
 /*global macros */
 

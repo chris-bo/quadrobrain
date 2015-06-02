@@ -50,6 +50,8 @@ public:
 	float temp;
 	int32_t pressure; // in Pa
 
+	float height; // height in m over starting point
+
 	/* receiver values */
 	float rcSignalRoll;			// [-0.5 , 0.5]
 	float rcSignalNick;			// [-0.5 , 0.5]
