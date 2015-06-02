@@ -9,9 +9,9 @@
 #define BMP180_H_
 
 /**I2C2 GPIO Configuration
-* PA9     ------> I2C2_SCL
-* PA10     ------> I2C2_SDA
-*/
+ * PA9     ------> I2C2_SCL
+ * PA10     ------> I2C2_SDA
+ */
 /********************************************************************/
 /* BMP180 Register Map */
 #define BMP180_XOUT_LSB 	0xF8
@@ -55,10 +55,14 @@
 #define BMP180_INIT_TIMEOUT					0xFFFFF
 #define BMP180_I2C_TIMEOUT					0xFFFFF
 
-#define BMP180_OSS							0x1
+#define BMP180_OSS							0x2
 
-/* Read Pressure every BMP180_READOUT_CYCLE scheduler interval */
-#define BMP180_READOUT_CYCLE				1
+/* Read Pressure every BMP180_READOUT_CYCLE scheduler interval
+ *
+ * intervall durations have to fit conversion time defined by oss
+ *
+ * */
+#define BMP180_READOUT_CYCLE				5
 #define BMP180_PRESSURE_TEMP_RATIO			5
 
 /* End Settings */
@@ -75,52 +79,54 @@
 /* End Flags */
 /********************************************************************/
 
-
 #include "Task.h"
 #include "config.h"
 #include "stm32f3xx_hal.h"
 #include "i2c.h"
+#include "math.h"
 
 class BMP180: public Task {
 public:
-	BMP180(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c);
-	virtual ~BMP180();
+    BMP180(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c);
+    virtual ~BMP180();
 
-	void update();
-	void initialize();
+    void update();
+    void initialize();
 
-	void receptionCompleteCallback();
+    void receptionCompleteCallback();
 
 private:
-	I2C_HandleTypeDef* bmp_i2c;
+    I2C_HandleTypeDef* bmp_i2c;
 
-	uint8_t getIdentification();
-	void getCalibrationData();
+    uint8_t getIdentification();
+    void getCalibrationData();
 
-	void getTemp();
-	void getPressure();
+    void getTemp();
+    void getPressure();
 
-	void calculateTemp();
-	void calculatePressure();
+    void calculateTemp();
+    void calculatePressure();
+    void calculateHeight();
 
-	int32_t temp;
+    int32_t temp;
 
-	/* Calibration Data */
-	int16_t ac1;
-	int16_t ac2;
-	int16_t ac3;
-	uint16_t ac4;
-	uint16_t ac5;
-	uint16_t ac6;
+    /* Calibration Data */
+    int16_t ac1;
+    int16_t ac2;
+    int16_t ac3;
+    uint16_t ac4;
+    uint16_t ac5;
+    uint16_t ac6;
 
-	int16_t b1;
-	int16_t b2;
-	int16_t mb;
-	int16_t mc;
-	int16_t md;
+    int16_t b1;
+    int16_t b2;
+    int32_t b5;
+    int16_t mb;
+    int16_t mc;
+    int16_t md;
 
-	uint8_t cycle_counter;
-	uint8_t pressure_counter;
+    uint8_t cycle_counter;
+    uint8_t pressure_counter;
 
 };
 

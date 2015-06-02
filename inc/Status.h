@@ -50,7 +50,9 @@ public:
 	float temp;
 	int32_t pressure; // in Pa
 
-	float height; // height in m over starting point
+	float height;       // height in m over p0
+	float height_rel;   // height in m over starting point
+	float d_h;          // height difference since last measurement
 
 	/* receiver values */
 	float rcSignalRoll;			// [-0.5 , 0.5]

@@ -29,6 +29,8 @@ Status::Status() {
 
 	pressure = 0;
 	height = 0;
+	height_rel = 0;
+	d_h = 0;
 
 	rcSignalRoll = 0;
 	rcSignalNick = 0;
