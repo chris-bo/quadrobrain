@@ -126,7 +126,7 @@ void ConfigReader::load(uint8_t* variable, uint16_t address,
 	// Bytes aus I2C-EEPROM holen
 	HAL_I2C_Mem_Read(eeprom_i2c, EEPROM_ADDRESS, address, I2C_MEMADD_SIZE_16BIT,
 			variable, byteCount, EEPROM_I2C_TIMEOUT);
-	HAL_Delay(EEPROM_WAIT);
+	// HAL_Delay(EEPROM_WAIT);
 }
 
 /*

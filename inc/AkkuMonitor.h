@@ -11,9 +11,14 @@
 #include "Task.h"
 #include "config.h"
 
-/* ADC in : PA1 */
+/*******************
+ *
+ *  ADC in : PA1
+ *
+ *  */
 #define REFERENCE_VOLTAGE			2.97f	// V
-#define VOLTAGE_DIVIDER_RATIO 		1.0f
+//#define VOLTAGE_DIVIDER_RATIO 		5.68f
+#define VOLTAGE_DIVIDER_RATIO       6.985f
 #define MEASUREMENT_FREQUENCY		1  // Hz
 #define SCALE_FACTOR				REFERENCE_VOLTAGE / 4095.0f
 

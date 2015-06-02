@@ -273,8 +273,10 @@ private:
 	float scaleAccel;
 	float scaleGyro;
 	float scaleMagnet[3];
+	float biasAccel[3];
 
 	/* general + mpu9150 functions*/
+	void getBias();
 	void configOffsetRegisters();
 	void scaleRawData();
 	uint8_t getMPU9150Identification();
