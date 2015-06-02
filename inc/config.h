@@ -88,6 +88,6 @@
 /*********************************************************************************/
 /*global flags */
 
-#define EMERGENCY_FLAG				0x00000001
+#define EMERGENCY_FLAG				0x00000004
 
 #endif /* CONFIG_H_ */
