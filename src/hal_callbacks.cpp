@@ -53,6 +53,9 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 	if (hi2c->Instance == MPU9150_I2C) {
 		mpu9150.receptionCompleteCallback();
 	}
+	if (hi2c->Instance == BMP180_I2C) {
+	    baro.receptionCompleteCallback();
+	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {

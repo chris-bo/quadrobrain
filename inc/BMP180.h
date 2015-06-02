@@ -18,8 +18,8 @@
 #define BMP180_OUT_LSB		0xF7
 #define BMP180_OUT_MSB		0xF6
 #define BMP180_CTRL_MEAS	0xF4
-#define BMP180_CHIPID		0xE0
-#define BMP180_SOFT_RESET	0xD0
+#define BMP180_CHIPID		0xD0
+#define BMP180_SOFT_RESET	0xE0
 
 #define BMP180_AC1_MSB		0xAA
 #define BMP180_AC1_LSB		0xAB
@@ -45,7 +45,7 @@
 #define BMP180_MD_MSB		0xBE
 #define BMP180_MD_LSB		0xBF
 
-#define BMP180_I2C_ADDRESS 	0x55
+#define BMP180_I2C_ADDRESS 	(0xee)
 /* End BMP180 Register Map */
 /********************************************************************/
 /* Settings */

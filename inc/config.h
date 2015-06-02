@@ -74,7 +74,7 @@
 
 /* Pressure Sensor */
 #define BMP180_DEFAULT_PRIORITY                 10
-
+#define BMP180_I2C                              I2C2
 /*********************************************************************************/
 /*global macros */
 

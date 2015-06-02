@@ -148,7 +148,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c) {
 		__I2C2_CLK_ENABLE();
 
 		/* Peripheral interrupt init*/
-		HAL_NVIC_SetPriority(I2C2_EV_IRQn, 0, 0);
+		HAL_NVIC_SetPriority(I2C2_EV_IRQn, 0, 1);
 		HAL_NVIC_EnableIRQ(I2C2_EV_IRQn);
 		/* USER CODE BEGIN I2C2_MspInit 1 */
 

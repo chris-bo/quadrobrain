@@ -31,7 +31,7 @@ PIDController::~PIDController() {
 }
 
 void PIDController::update() {
-	//TODO: Throttle limitieren
+	//TODO PIDController: Throttle limitieren
 
 	float temp;
 

@@ -7,7 +7,7 @@
 
 #include "BMP180.h"
 
-uint8_t i2c2_buffer[4] = { 0 };
+uint8_t i2c2_buffer[4];
 
 BMP180::BMP180(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
 : Task(statusPtr, defaultPrio) {
@@ -152,13 +152,13 @@ void BMP180::getPressure() {
 }
 
 void BMP180::calculateTemp() {
+    RESET_FLAG(taskStatusFlags, BMP180_READING_TEMP);
+    /* TODO BMP180 CALC TEMP */
 
-	RESET_FLAG(taskStatusFlags, BMP180_READING_DATA_COMPLETE);
 
 }
 
 void BMP180::calculatePressure() {
-
-	RESET_FLAG(taskStatusFlags, BMP180_READING_DATA_COMPLETE);
-
+	RESET_FLAG(taskStatusFlags, BMP180_READING_PRESSURE);
+    /* TODO BMP180 CALC Pressure */
 }
