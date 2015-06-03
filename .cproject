@@ -173,8 +173,6 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.138398293" name="usbd_cdc_if_template.h" rcbsApplicability="disable" resourcePath="system/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h" toolsToInvoke=""/>
-					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1771407765" name="usbd_conf_template.h" rcbsApplicability="disable" resourcePath="system/STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1254978189" name="core_cm3.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm3.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.1613082213" name="core_sc300.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc300.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.614855770" name="core_sc000.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc000.h" toolsToInvoke=""/>
@@ -380,8 +378,6 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.106232911" name="usbd_cdc_if_template.h" rcbsApplicability="disable" resourcePath="system/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h" toolsToInvoke=""/>
-					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.1264704385" name="usbd_conf_template.h" rcbsApplicability="disable" resourcePath="system/STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.1570538293" name="core_cm3.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_cm3.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.746373454" name="core_sc300.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc300.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.2041906908.989445428" name="core_sc000.h" rcbsApplicability="disable" resourcePath="system/inc/cmsis/core_sc000.h" toolsToInvoke=""/>

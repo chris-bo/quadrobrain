@@ -62,7 +62,7 @@ void usb_handler::update() {
 }
 
 void usb_handler::initialize() {
-	MX_USB_DEVICE_Init();
+
 	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }
 
