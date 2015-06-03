@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : I2C.h
-  * Date               : 21/03/2015 17:56:43
+  * Date               : 28/04/2015 08:44:58
   * Description        : This file provides code for the configuration
   *                      of the I2C instances.
   ******************************************************************************
@@ -43,8 +43,10 @@
 #include "stm32f3xx_hal.h"
 
 extern I2C_HandleTypeDef hi2c1;
+extern I2C_HandleTypeDef hi2c2;
 
 void MX_I2C1_Init(void);
+void MX_I2C2_Init(void);
 
 #ifdef __cplusplus
 }

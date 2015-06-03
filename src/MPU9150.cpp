@@ -52,6 +52,7 @@ MPU9150::MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
     MagnetScaleRegister[0] = 0;
     MagnetScaleRegister[1] = 0;
     MagnetScaleRegister[2] = 0;
+
     biasAccel[0] = 0;
     biasAccel[1] = 0;
     biasAccel[2] = 0;
@@ -402,8 +403,6 @@ void MPU9150::disableMagnetData() {
 
 void MPU9150::configOffsetRegisters() {
 
-    /* TODO mpu9150 check if using hard coded values is sufficient */
-
     int64_t offset_tmp[3] = { 0, 0, 0 };
     int16_t raw_offset_tmp[3] = { 0, 0, 0 };
     int16_t accel_offset[3] = { 0, 0, 0 };
@@ -563,4 +562,5 @@ void MPU9150::startReception() {
 void MPU9150::stopReception() {
     RESET_FLAG(taskStatusFlags, MPU9150_FLAG_CONTINUOUS_RECEPTION);
 }
+
 

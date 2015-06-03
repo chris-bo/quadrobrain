@@ -34,6 +34,7 @@
 #include "MPU9150.h"
 #include "usbhandler.h"
 #include "AkkuMonitor.h"
+#include "BMP180.h"
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -47,5 +48,6 @@ extern PIDController pidControllerX;
 extern PIDController pidControllerY;
 extern usb_handler usb;
 extern AkkuMonitor akku;
+extern BMP180 baro;
 
 #endif /* MAIN_H_ */

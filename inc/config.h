@@ -72,6 +72,9 @@
 /* ADC to Check akku voltage */
 #define AKKUMONITOR_DEFAULT_PRIORITY			10
 
+/* Pressure Sensor */
+#define BMP180_DEFAULT_PRIORITY                 10
+#define BMP180_I2C                              I2C2
 /*********************************************************************************/
 /*global macros */
 
@@ -85,6 +88,6 @@
 /*********************************************************************************/
 /*global flags */
 
-#define EMERGENCY_FLAG				0x00000001
+#define EMERGENCY_FLAG				0x00000004
 
 #endif /* CONFIG_H_ */
