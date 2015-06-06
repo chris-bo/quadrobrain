@@ -63,12 +63,12 @@ usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
 /* Sensor data fusion Filters*/
 ComplementaryFilter compFilterX(&status, 0, &status.accelY, &status.accelZ,
-		&status.rateX, &status.angleX, 0.98f);
+		&status.rateX, &status.angleX, &status.filterCoefficientXY);
 ComplementaryFilter compFilterY(&status, 0, &status.accelX, &status.accelZ,
-		&status.rateY, &status.angleY, 0.98f);
+		&status.rateY, &status.angleY, &status.filterCoefficientXY);
 Compass compFilterNorth(&status, 0, &status.magnetY,
 		&status.magnetX, &status.angleY, &status.angleX, &status.rateZ,
-		&status.angleNorth, 0.98f);
+		&status.angleNorth, &status.filterCoefficientZ);
 
 PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
 		SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick,
@@ -169,10 +169,7 @@ void Reset(uint8_t mode) {
     } else {
         usb.usb_mode_request = 0;
         /* kill processes*/
-        scheduler.pause();
-        mpu9150.stopReception();
-        rcReceiver.stop();
-        ppmgenerator.disableMotors();
+        scheduler.kill();
 
         /* restart leds*/
         Initialize_LEDs();
@@ -194,9 +191,9 @@ void ConfigMode(){
      */
     scheduler.pause();
 
-    mpu9150.stopReception();
-    rcReceiver.stop();
-    ppmgenerator.disableMotors();
+    mpu9150.kill();
+    rcReceiver.kill();
+    ppmgenerator.kill();
 
     leds.led4->off();
     leds.led5->off();

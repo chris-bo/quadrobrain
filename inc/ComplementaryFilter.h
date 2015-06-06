@@ -14,21 +14,22 @@
 
 class ComplementaryFilter: public Task {
 public:
-	ComplementaryFilter(Status* statusPtr, uint8_t defaultPrio, float* accel1,
-			float* accel2, float* rotation, float* output,
-			float filter_coefficient);
-	virtual ~ComplementaryFilter();
-	void update();
-	void initialize();
+    ComplementaryFilter(Status* statusPtr, uint8_t defaultPrio, float* accel1,
+                float* accel2, float* rotation, float* output,
+                float* filter_coefficient);
+    virtual ~ComplementaryFilter();
+    void update();
+    void initialize();
+    void kill();
 
 protected:
-	float dt;
-	float coefficient;
-	float tmp_acc_angle;
-	float* a1;
-	float* a2;
-	float* rot;
-	float* out;
+    float dt;
+    float* coefficient;
+    float tmp_acc_angle;
+    float* a1;
+    float* a2;
+    float* rot;
+    float* out;
 };
 
 #endif /* COMPLEMENTARYFILTER_H_ */

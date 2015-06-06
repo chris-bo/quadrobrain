@@ -17,28 +17,30 @@
 class Task {
 public:
 
-	Task(Status* statusPtr, int8_t defaultPrio);
-	virtual ~Task();
+    Task(Status* statusPtr, int8_t defaultPrio);
+    virtual ~Task();
 
-	virtual void update();
-	virtual void initialize();
+    virtual void update();
+    virtual void initialize();
+    virtual void reset();
+    virtual void kill();
 
-	uint32_t maxDuration;
-	int8_t priority;
-	int8_t defaultPriority;
-	/* status bits */
-	/* first byte: child class specific flags
-	 *
-	 * second byte:
-	 * flags handled by scheduler:
-	 * 	|		|free	|free	|free	|free	|free	|checked| active| */
-	uint16_t taskStatusFlags;
+    uint32_t maxDuration;
+    int8_t priority;
+    int8_t defaultPriority;
+    /* status bits */
+    /* first byte: child class specific flags
+     *
+     * second byte:
+     * flags handled by scheduler:
+     * 	|		|free	|free	|free	|free	|free	|checked| active| */
+    uint16_t taskStatusFlags;
 
 protected:
 
-	Status* status;
+    Status* status;
 
-	void resetPriority();
+    void resetPriority();
 };
 
 #endif /* TASK_H_ */

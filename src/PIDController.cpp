@@ -8,22 +8,22 @@
 #include "PIDController.h"
 
 PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
-		float sampleTime, float* input, float* derivedInput, float* reference,
-		float* output, float limit, bool useDerivedInput) :
+		float _sampleTime, float* _input, float* _derivedInput, float* _reference,
+		float* _output, float _limit, bool _useDerivedInput) :
 		Task(statusPtr, defaultPrio) {
 	status = statusPtr;
-	this->input = input;
-	this->derivedInput = derivedInput;
-	this->reference = reference;
-	this->output = output;
+	this->input = _input;
+	this->derivedInput = _derivedInput;
+	this->reference = _reference;
+	this->output = _output;
 	this->p = 0.0f;
 	this->i = 0.0f;
 	this->d = 0.0f;
-	this->limit = limit;
-	this->sampleTime = sampleTime;
+	this->limit = _limit;
+	this->sampleTime = _sampleTime;
 	sum = 0.0f;
 	oldValue = 0.0f;
-	this->useDerivedInput = useDerivedInput;
+	this->useDerivedInput = _useDerivedInput;
 }
 
 PIDController::~PIDController() {
@@ -65,10 +65,20 @@ void PIDController::update() {
 	sum += (*reference - *input);
 }
 
-void PIDController::initialize(float p, float i, float d) {
+void PIDController::initialize(float _p, float _i, float _d) {
 	// Task aktivieren
 	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
-	this->p = p;
-	this->i = i;
-	this->d = d;
+	this->p = _p;
+	this->i = _i;
+	this->d = _d;
+}
+
+void PIDController::kill() {
+
+    reset();
+    p = 0.0f;
+    i = 0.0f;
+    d = 0.0f;
+    sum = 0.0f;
+    oldValue = 0.0f;
 }

@@ -9,7 +9,7 @@
 
 Compass::Compass(Status* statusPtr, uint8_t defaultPrio, float* magn1,
         float* magn2, float* ang1, float* ang2, float* rotation, float* output,
-        float filter_coefficient)
+        float* filter_coefficient)
 		: ComplementaryFilter(statusPtr, defaultPriority, magn1, magn2,
 		        rotation, output, filter_coefficient) {
 
@@ -36,8 +36,8 @@ void Compass::update() {
 	tmp_acc_angle = atan2f(x1, x2) * 180.0f / M_PI;
 
 	/* mix old angle with new angle and rotation measurements */
-	*out = coefficient * (*out + *rot * dt)
-	        + (1.0f - coefficient) * tmp_acc_angle;
+	*out = *coefficient * (*out + *rot * dt)
+	        + (1.0f - *coefficient) * tmp_acc_angle;
 
 	/*  handle overruns
 	 *  important for north calculation

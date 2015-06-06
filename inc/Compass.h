@@ -12,14 +12,15 @@
 
 class Compass: public ComplementaryFilter {
 public:
-	Compass(Status* statusPtr, uint8_t defaultPrio, float* magn1, float* magn2,
-	        float* ang1, float* ang2, float* rotation, float* output,
-	        float filter_coefficient);
-	virtual ~Compass();
-	void update();
+    Compass(Status* statusPtr, uint8_t defaultPrio, float* magn1, float* magn2,
+                float* ang1, float* ang2, float* rotation, float* output,
+                float* filter_coefficient);
+    virtual ~Compass();
+    void update();
+
 private:
-	float* angle1;
-	float* angle2;
+    float* angle1;
+    float* angle2;
 };
 
 #endif /* COMPASS_H_ */

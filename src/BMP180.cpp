@@ -259,3 +259,6 @@ void BMP180::calculateHeight() {
     }
 
 }
+
+void BMP180::kill() {
+}

@@ -39,26 +39,24 @@
  *
  */
 
-
-
 class RCreceiver: public Task {
 public:
-	RCreceiver(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim);
-	virtual ~RCreceiver();
-	void update();
-	void overrunIRQ();
-	void captureIRQ();
-	void initialize();
-	void stop();
+    RCreceiver(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim);
+    virtual ~RCreceiver();
+    void update();
+    void initialize();
+    void kill();
+    void overrunIRQ();
+    void captureIRQ();
 
 private:
-	void computeValues();
+    void computeValues();
 
-	TIM_HandleTypeDef* RCreceiver_htim;
-	uint16_t rawReceiverValues[8];
-	uint8_t rawRCvalues[RECEIVER_CHANNELS];
-	uint8_t currentChannel;
-	uint8_t signalLostTime;
+    TIM_HandleTypeDef* RCreceiver_htim;
+    uint16_t rawReceiverValues[8];
+    uint8_t rawRCvalues[RECEIVER_CHANNELS];
+    uint8_t currentChannel;
+    uint8_t signalLostTime;
 
 };
 

@@ -192,10 +192,8 @@
 /* Settings */
 #define NUMBER_OFFSET_VALUES					100
 
-
 #define I_AM_MPU9150						0x68
 #define I_AM_AK8975C						0x48
-
 
 /* divides reading rate of i2c slaves
  * delay must be enabled for each slave
@@ -232,7 +230,6 @@
 #define MPU9150_ACCEL_SCALE_FACTOR_8g			0.000244141f
 #define MPU9150_ACCEL_SCALE_FACTOR_16g			0.000488281f
 
-
 #define MPU9150_TEMPERATURE_SCALE_FACTOR		0.002941176f		// T = register * scale
 #define MPU9150_TEMPERATURE_OFFSET				+521			// 35 deg C
 
@@ -246,45 +243,45 @@
 
 class MPU9150: public Task {
 public:
-	MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c);
-	virtual ~MPU9150();
+    MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c);
+    virtual ~MPU9150();
 
-	void update();
-	void initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale);
-	void configFullScale(uint8_t gyro_full_scale, uint8_t accel_full_scale);
+    void update();
+    void initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale);
+    void kill();
+    void configFullScale(uint8_t gyro_full_scale, uint8_t accel_full_scale);
 
-	void startReception();
-	void stopReception();
+    void startReception();
+    void stopReception();
 
-	void receptionCompleteCallback();
-	void getRawData();
-
+    void receptionCompleteCallback();
+    void getRawData();
 
 private:
 
-	I2C_HandleTypeDef* mpu9150_i2c;
-	/* raw data : x,y,z */
-	int16_t rawAccelData[3];
-	int16_t rawGyroData[3];
-	int16_t rawMagnetData[3];
-	int16_t rawTempData;
-	uint8_t MagnetScaleRegister[3];
+    I2C_HandleTypeDef* mpu9150_i2c;
+    /* raw data : x,y,z */
+    int16_t rawAccelData[3];
+    int16_t rawGyroData[3];
+    int16_t rawMagnetData[3];
+    int16_t rawTempData;
+    uint8_t MagnetScaleRegister[3];
 
-	float scaleAccel;
-	float scaleGyro;
-	float scaleMagnet[3];
-	float biasAccel[3];
+    float scaleAccel;
+    float scaleGyro;
+    float scaleMagnet[3];
+    float biasAccel[3];
 
-	/* general + mpu9150 functions*/
-	void getBias();
-	void configOffsetRegisters();
-	void scaleRawData();
-	uint8_t getMPU9150Identification();
+    /* general + mpu9150 functions*/
+    void getBias();
+    void configOffsetRegisters();
+    void scaleRawData();
+    uint8_t getMPU9150Identification();
 
-	/* Functions for magnetometer control */
-	void enableMagnetData();
-	void disableMagnetData();
-	void getMagnetScale();
+    /* Functions for magnetometer control */
+    void enableMagnetData();
+    void disableMagnetData();
+    void getMagnetScale();
 
 };
 

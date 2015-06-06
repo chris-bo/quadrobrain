@@ -46,3 +46,16 @@ void Task::initialize() {
 void Task::resetPriority() {
 	priority = defaultPriority;
 }
+
+void Task::reset() {
+
+    priority = defaultPriority;
+    maxDuration = 0;
+    taskStatusFlags = 0;
+
+}
+
+void Task::kill() {
+    reset();
+    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+}

@@ -189,3 +189,16 @@ void Scheduler::initializeTaskDurations() {
 	HAL_TIM_Base_Init(scheduler_htim);
 	__HAL_TIM_ENABLE_IT(scheduler_htim, TIM_IT_UPDATE);
 }
+
+void Scheduler::kill() {
+
+    /* Timer stop*/
+    HAL_TIM_Base_Stop_IT(scheduler_htim);
+    /*Timer reset */
+    __HAL_TIM_SetCounter(scheduler_htim, (SCHEDULER_INTERVALL_ms * 1000));
+
+    for (uint8_t i = 0; i < numberOfTasks; i++) {
+        taskArray[i]->kill();
+    }
+
+}

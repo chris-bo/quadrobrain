@@ -75,6 +75,10 @@
 /* Pressure Sensor */
 #define BMP180_DEFAULT_PRIORITY                 10
 #define BMP180_I2C                              I2C2
+
+/*********************************************************************************/
+/* hard coded settings*/
+#define FILTER_COEFFICIENT                  0.98f
 /*********************************************************************************/
 /*global macros */
 

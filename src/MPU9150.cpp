@@ -563,4 +563,32 @@ void MPU9150::stopReception() {
     RESET_FLAG(taskStatusFlags, MPU9150_FLAG_CONTINUOUS_RECEPTION);
 }
 
+void MPU9150::kill() {
+    stopReception();
+    reset();
 
+    rawAccelData[0] = 0;
+    rawAccelData[1] = 0;
+    rawAccelData[2] = 0;
+
+    rawGyroData[0] = 0;
+    rawGyroData[1] = 0;
+    rawGyroData[2] = 0;
+
+    rawMagnetData[0] = 0;
+    rawMagnetData[1] = 0;
+    rawMagnetData[2] = 0;
+
+    rawTempData = 0;
+
+    scaleMagnet[0] = 0.3;
+    scaleMagnet[1] = 0.3;
+    scaleMagnet[2] = 0.3;
+    MagnetScaleRegister[0] = 0;
+    MagnetScaleRegister[1] = 0;
+    MagnetScaleRegister[2] = 0;
+
+    biasAccel[0] = 0;
+    biasAccel[1] = 0;
+    biasAccel[2] = 0;
+}

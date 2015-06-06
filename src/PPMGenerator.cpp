@@ -114,3 +114,10 @@ void PPMGenerator::disableMotors() {
     HAL_TIM_PWM_Stop(PPMGenerator_htim, TIM_CHANNEL_4);
 
 }
+
+void PPMGenerator::kill() {
+
+    reset();
+    disableMotors();
+
+}

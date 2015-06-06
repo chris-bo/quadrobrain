@@ -9,7 +9,7 @@
 
 ComplementaryFilter::ComplementaryFilter(Status* statusPtr, uint8_t defaultPrio,
         float* accel1, float* accel2, float* rotation, float* output,
-        float filter_coefficient)
+        float* filter_coefficient)
 		: Task(statusPtr, defaultPrio) {
 
 	dt = SCHEDULER_INTERVALL_ms * 0.001f;
@@ -38,12 +38,15 @@ void ComplementaryFilter::update() {
 	tmp_acc_angle = atan2f(*a1, *a2) * 180.0f / M_PI;
 
 	/* mix old angle with new angle and rotation measurements */
-	*out = coefficient * (*out + *rot * dt)
-	        + (1.0f - coefficient) * tmp_acc_angle;
+	*out = *coefficient * (*out + *rot * dt)
+	        + (1.0f - *coefficient) * tmp_acc_angle;
 
 }
 
 void ComplementaryFilter::initialize() {
 
 	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+}
+
+void ComplementaryFilter::kill() {
 }

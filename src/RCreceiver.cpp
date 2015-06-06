@@ -9,7 +9,7 @@
 
 RCreceiver::RCreceiver(Status* statusPtr, uint8_t defaultPrio,
             TIM_HandleTypeDef* htim)
-: Task(statusPtr, defaultPrio) {
+            : Task(statusPtr, defaultPrio) {
     currentChannel = 0;
     rawReceiverValues[0] = 0;
     rawReceiverValues[1] = 0;
@@ -164,7 +164,7 @@ void RCreceiver::initialize() {
 
 }
 
-void RCreceiver::stop() {
+void RCreceiver::kill() {
     /* stops RC receiver */
     __HAL_TIM_DISABLE_IT(RCreceiver_htim, TIM_IT_UPDATE);
     HAL_TIM_IC_Stop_IT(RCreceiver_htim, RC_RECEIVER_INPUT_CHANNEL);
@@ -175,4 +175,21 @@ void RCreceiver::stop() {
     status->rcSignalEnable = 0;
     status->rcSignalSwitch = 0;
 
+    currentChannel = 0;
+    rawReceiverValues[0] = 0;
+    rawReceiverValues[1] = 0;
+    rawReceiverValues[2] = 0;
+    rawReceiverValues[3] = 0;
+    rawReceiverValues[4] = 0;
+    rawReceiverValues[5] = 0;
+    rawReceiverValues[6] = 0;
+    rawReceiverValues[7] = 0;
+
+    for (uint8_t i = 0; i < RECEIVER_CHANNELS; i++) {
+        rawRCvalues[i] = 0;
+    }
+
+    signalLostTime = 0;
+
+    reset();
 }

@@ -93,6 +93,7 @@ public:
 
     void update();
     void initialize();
+    void kill();
 
     void receptionCompleteCallback();
 
