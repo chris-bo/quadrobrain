@@ -261,4 +261,24 @@ void BMP180::calculateHeight() {
 }
 
 void BMP180::kill() {
+
+    reset();
+
+    ac1 = 0;
+    ac2 = 0;
+    ac3 = 0;
+    ac4 = 0;
+    ac5 = 0;
+    ac6 = 0;
+
+    b1 = 0;
+    b2 = 0;
+    b5 = 0;
+    mb = 0;
+    mc = 0;
+    md = 0;
+
+    cycle_counter = 0;
+    pressure_counter = 0;
+
 }
