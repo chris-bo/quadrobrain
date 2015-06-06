@@ -26,6 +26,7 @@ public:
 	virtual ~PPMGenerator();
 	void update();
 	void initialize();
+	void disableMotors();
 
 private:
 	TIM_HandleTypeDef* PPMGenerator_htim;

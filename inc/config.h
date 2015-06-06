@@ -90,4 +90,7 @@
 
 #define EMERGENCY_FLAG				0x00000004
 
+#define RESET_TO_CONFIG             0x01
+#define RESET_TO_FLIGHT             0x00
+
 #endif /* CONFIG_H_ */

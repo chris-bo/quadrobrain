@@ -37,14 +37,29 @@
 /* Private variables ---------------------------------------------------------*/
 
 Status status;
-ConfigReader configReader(&hi2c1);
 Scheduler scheduler(&status, &htim2);
-PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
-		&status.pidXOut, &status.pidYOut);
+
+/* Input capture timer */
 RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);
 
 /* Sensor (Gyro, Accelerometer, Compass) management*/
 MPU9150 mpu9150(&status, MPU9150_DEFAULT_PRIORITY, &hi2c1);
+
+/* Pressure Sensor*/
+BMP180 baro(&status, BMP180_DEFAULT_PRIORITY, &hi2c2);
+
+/* Monitor Akku Voltage*/
+AkkuMonitor akku(&status, AKKUMONITOR_DEFAULT_PRIORITY, &hadc1);
+
+/* Motor Control */
+PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
+        &status.pidXOut, &status.pidYOut);
+
+/* EEPROM Configuration Management*/
+ConfigReader configReader(&hi2c1);
+
+/* PC communications */
+usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
 /* Sensor data fusion Filters*/
 ComplementaryFilter compFilterX(&status, 0, &status.accelY, &status.accelZ,
@@ -60,14 +75,19 @@ PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
 		&status.pidXOut, 0.15f, false);
 //PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY, SCHEDULER_INTERVALL_ms, &status.angleY, 0, &status.rcSignalRoll, &status.pidYOut, 0.15f, false);
 
-usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
+/* leds*/
+OnBoardLEDs leds;
 
-AkkuMonitor akku(&status, AKKUMONITOR_DEFAULT_PRIORITY, &hadc1);
-BMP180 baro(&status, BMP180_DEFAULT_PRIORITY, &hi2c2);
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
-/* USER CODE BEGIN PFP */
+
+/* Main functions */
+void FlightMode();
+void ConfigMode();
+void Reset(uint8_t mode);
+void Initialize_LEDs();
 
 /* USER CODE END PFP */
 
@@ -76,89 +96,177 @@ void SystemClock_Config(void);
 /* USER CODE END 0 */
 
 int main(void) {
-
-	/* USER CODE BEGIN 1 */
-
-	/* USER CODE END 1 */
-
 	/* MCU Configuration----------------------------------------------------------*/
-
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
 	/* Configure the system clock */
 	SystemClock_Config();
 
-	/* Initialize all configured peripherals */
+	/* Initialize GPIO and USB*/
 	MX_GPIO_Init();
-	MX_DMA_Init();
-	MX_I2C1_Init();
-	MX_I2C2_Init();
-	MX_TIM2_Init();
-	MX_TIM3_Init();
-	MX_TIM4_Init();
-	MX_ADC1_Init();
     MX_USB_DEVICE_Init();
 
-	configReader.loadConfiguration(&status);
+    usb.initialize();
 
-	/* USER CODE BEGIN 2 */
-	LedBlink led3(&status, 5);
-	led3.setFrequency(10);
-	led3.setLED(LED3);
-	led3.setOffset(50);
-	LedBlink led4(&status, 5);
-	led4.setFrequency(10);
-	led4.setLED(LED4);
-	led4.setOffset(25);
-	LedBlink led5(&status, 5);
-	led5.setFrequency(10);
-	led5.setLED(LED5);
-	led5.setOffset(75);
-	LedBlink led6(&status, 5);
-	led6.setFrequency(10);
-	led6.setLED(LED6);
-	led6.setOffset(200);
-	LedBlink led7(&status, 5);
-	led7.setFrequency(10);
-	led7.setLED(LED7);
-	led7.setOffset(100);
-	LedBlink led8(&status, 5);
-	led8.setFrequency(10);
-	led8.setLED(LED8);
-	led8.setOffset(175);
-	LedBlink led9(&status, 5);
-	led9.setFrequency(10);
-	led9.setLED(LED9);
-	led9.setOffset(125);
-	LedBlink led10(&status, 5);
-	led10.setFrequency(10);
-	led10.setLED(LED10);
-	led10.setOffset(150);
+    /* onboard leds*/
+    Initialize_LEDs();
 
-	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
-	mpu9150.startReception();
-	rcReceiver.initialize();
-	ppmgenerator.initialize();
-	usb.initialize();
-	akku.initialize();
-	baro.initialize();
+    /* Call Normal Flight Mode*/
+    FlightMode();
 
-	Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
-			&compFilterY, &compFilterNorth, &pidControllerX, &usb, &akku, &baro,
-			&led3, &led4, &led5, &led6, &led7, &led8, &led9, &led10 };
-
-	scheduler.start(taskarray, sizeof(taskarray) / 4);
-
-	/* USER CODE END 2 */
-
-	/* USER CODE BEGIN 3 */
 	/* Infinite loop */
-	while (1) {
+	while (1);
 
-	}
-	/* USER CODE END 3 */
+}
 
+void FlightMode() {
+
+    /* init peripherals */
+    MX_DMA_Init();
+    MX_I2C1_Init();
+    MX_I2C2_Init();
+    MX_TIM2_Init();
+    MX_TIM3_Init();
+    MX_TIM4_Init();
+    MX_ADC1_Init();
+
+    configReader.loadConfiguration(&status);
+
+
+    mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
+    mpu9150.startReception();
+    rcReceiver.initialize();
+    ppmgenerator.initialize();
+    akku.initialize();
+    baro.initialize();
+
+    /* create tasks and start scheduler */
+    Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
+            &compFilterY, &compFilterNorth, &pidControllerX, &usb, &akku, &baro,
+            leds.led3, leds.led4, leds.led5, leds.led6, leds.led7, leds.led8, leds.led9, leds.led10 };
+
+    scheduler.start(taskarray, sizeof(taskarray) / 4);
+
+    while(1){
+        if (usb.usb_mode_request == 1) {
+            ConfigMode();
+        } else if (usb.usb_mode_request == 0xFF) {
+            Reset(RESET_TO_FLIGHT);
+        }
+    }
+}
+
+void Reset(uint8_t mode) {
+
+    // TODO: Reset sometimes crashes
+
+    /* No need to deinit Hardware reinitializing resets peripherals*/
+
+    if (mode == RESET_TO_CONFIG) {
+        usb.usb_mode_request = 1;
+        ConfigMode();
+    } else {
+        usb.usb_mode_request = 0;
+        /* kill processes*/
+        scheduler.pause();
+        mpu9150.stopReception();
+        rcReceiver.stop();
+        ppmgenerator.disableMotors();
+
+        /* restart leds*/
+        Initialize_LEDs();
+
+        /* recall flight mode */
+        FlightMode();
+    }
+
+}
+
+void ConfigMode(){
+    /* Enter Config Mode:
+     *
+     * Stop Sensor Functions
+     * Disable Motors
+     *
+     * Restart scheduler only for usb task
+     *
+     */
+    scheduler.pause();
+
+    mpu9150.stopReception();
+    rcReceiver.stop();
+    ppmgenerator.disableMotors();
+
+    leds.led4->off();
+    leds.led5->off();
+    leds.led6->off();
+    leds.led7->off();
+    leds.led8->off();
+    leds.led9->off();
+    leds.led10->off();
+
+    usb.initialize();
+
+    Task* taskarray[] = {&usb, leds.led3};
+    scheduler.start(taskarray,2);
+
+    while(1){
+        if (usb.usb_mode_request == 2) {
+            /* config finished */
+            configReader.saveConfiguration(&status);
+
+            /* Reset System */
+            Reset(RESET_TO_FLIGHT);
+        } else if (usb.usb_mode_request == 0xFF) {
+            Reset(RESET_TO_CONFIG);
+        }
+    }
+}
+
+void Initialize_LEDs() {
+    /* init STM32_Discovery leds */
+
+    leds.led3 = new LedBlink(&status, 5);
+    leds.led4 = new LedBlink(&status, 5);
+    leds.led5 = new LedBlink(&status, 5);
+    leds.led6 = new LedBlink(&status, 5);
+    leds.led7 = new LedBlink(&status, 5);
+    leds.led8 = new LedBlink(&status, 5);
+    leds.led9 = new LedBlink(&status, 5);
+    leds.led10 = new LedBlink(&status, 5);
+
+    leds.led3->setFrequency(10);
+    leds.led3->setLED(LED3);
+    leds.led3->setOffset(50);
+
+    leds.led4->setFrequency(10);
+    leds.led4->setLED(LED4);
+    leds.led4->setOffset(25);
+
+    leds.led5->setFrequency(10);
+    leds.led5->setLED(LED5);
+    leds.led5->setOffset(75);
+
+    leds.led6->setFrequency(10);
+    leds.led6->setLED(LED6);
+    leds.led6->setOffset(200);
+
+    leds.led7->setFrequency(10);
+    leds.led7->setLED(LED7);
+    leds.led7->setOffset(100);
+
+    leds.led8->setFrequency(10);
+    leds.led8->setLED(LED8);
+    leds.led8->setOffset(175);
+
+    leds.led9->setFrequency(10);
+    leds.led9->setLED(LED9);
+    leds.led9->setOffset(125);
+
+    leds.led10->setFrequency(10);
+    leds.led10->setLED(LED10);
+    leds.led10->setOffset(150);
 }
 
 /** System Clock Configuration

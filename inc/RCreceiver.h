@@ -49,6 +49,7 @@ public:
 	void overrunIRQ();
 	void captureIRQ();
 	void initialize();
+	void stop();
 
 private:
 	void computeValues();
