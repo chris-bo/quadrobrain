@@ -14,6 +14,7 @@ usb_handler::usb_handler(Status* statusPtr, uint8_t defaultPrio,
     usb_state = USBD_BUSY;
     usb = husb;
     usb_mode_request = 0;
+    confReader = NULL;
 }
 
 usb_handler::~usb_handler() {
@@ -42,13 +43,6 @@ void usb_handler::update() {
                 usb_state = CDC_Transmit_FS(UserTxBufferFS, 4);
                 break;
 
-            case USB_CMD_RESTORE_CONFIG:
-                if (usb_mode_request == 1) {
-                    uint8_t msg[] = { "Restore hard-coded config" };
-                    usb_state = CDC_Transmit_FS(msg, sizeof(msg));
-                    status->restoreConfig();
-                }
-                break;
             case USB_CMD_CONFIG_MODE:
                 /* entering config mode */
                 if (usb_mode_request == 0) {
@@ -62,6 +56,42 @@ void usb_handler::update() {
                     usb_mode_request = 2;
                 }
                 break;
+
+                /* Config commands */
+            case USB_CMD_GET_CONFIG:
+                sendConfig();
+                break;
+            case USB_CMD_UPDATE_CONFIG:
+                updateConfig();
+                break;
+            case USB_CMD_READ_BYTE:
+                readEEPROM(1);
+                break;
+            case USB_CMD_READ_2BYTES:
+                readEEPROM(2);
+                break;
+            case USB_CMD_READ_4BYTES:
+                readEEPROM(4);
+                break;
+
+            case USB_CMD_WRITE_BYTE:
+                writeEEPROM(1);
+                break;
+            case USB_CMD_WRITE_2BYTES:
+                writeEEPROM(2);
+                break;
+            case USB_CMD_WRITE_4BYTES:
+                writeEEPROM(4);
+                break;
+
+            case USB_CMD_RESTORE_CONFIG:
+                if (usb_mode_request == 1) {
+                    uint8_t msg[] = { "Restore hard-coded config" };
+                    usb_state = CDC_Transmit_FS(msg, sizeof(msg));
+                    status->restoreConfig();
+                }
+                break;
+
             case USB_CMD_RESET: {
                 uint8_t msg[] = { "Reset" };
                 usb_state = CDC_Transmit_FS(msg, sizeof(msg));
@@ -80,10 +110,11 @@ void usb_handler::update() {
     resetPriority();
 }
 
-void usb_handler::initialize() {
+void usb_handler::initialize(ConfigReader* _confReader) {
 
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 
+    confReader = _confReader;
     USBD_CDC_ReceivePacket(usb);
 }
 
@@ -219,4 +250,104 @@ void usb_handler::sendMSGstring(uint8_t* buffer, uint8_t length) {
             return;
         }
     }
+}
+
+void usb_handler::readEEPROM(uint8_t byteCount) {
+
+    switch (byteCount) {
+        case 1: {
+            uint8_t tmp;
+            confReader->loadVariable(&tmp, (uint16_t)
+                        (UserRxBufferFS[1] << 8 | UserRxBufferFS[2]));
+            UserTxBufferFS[0] = tmp;
+            break;
+        }
+        case 2: {
+            uint16_t tmp;
+            confReader->loadVariable(&tmp, (uint16_t)
+                        (UserRxBufferFS[1] << 8 | UserRxBufferFS[2]));
+            UserTxBufferFS[0] = (uint8_t) ((tmp >> 8) & 0xff);
+            UserTxBufferFS[1] = (uint8_t) (tmp & 0xff);
+            break;
+        }
+        case 4: {
+            uint32_t tmp;
+            confReader->loadVariable(&tmp,(uint16_t)
+                        (UserRxBufferFS[1] << 8 | UserRxBufferFS[2]));
+            UserTxBufferFS[0] = (uint8_t) ((tmp >> 24) & 0xff);
+            UserTxBufferFS[1] = (uint8_t) ((tmp >> 16) & 0xff);
+            UserTxBufferFS[2] = (uint8_t) ((tmp >> 8) & 0xff);
+            UserTxBufferFS[3] = (uint8_t) (tmp & 0xff);
+            break;
+        }
+
+    }
+    /* send eeprom content*/
+    usb_state = CDC_Transmit_FS(UserTxBufferFS, byteCount);
+}
+
+void usb_handler::writeEEPROM(uint8_t byteCount) {
+
+    switch (byteCount) {
+        case 1: {
+            uint8_t tmp = UserRxBufferFS[3];
+            confReader->saveVariable(&tmp, (uint16_t)
+                        (UserRxBufferFS[1] << 8 | UserRxBufferFS[2]), 0);
+            break;
+        }
+        case 2: {
+            uint16_t tmp =  (uint16_t)( (UserRxBufferFS[3] << 8) | UserRxBufferFS[4]);
+            confReader->saveVariable(&tmp,  (uint16_t)
+                        (UserRxBufferFS[1] << 8 | UserRxBufferFS[2]), 0);
+            break;
+        }
+
+        case 4: {
+            uint32_t tmp = ((UserRxBufferFS[3] << 24) | (UserRxBufferFS[4] << 16)
+                        | (UserRxBufferFS[5] << 8) | UserRxBufferFS[6]);
+            confReader->saveVariable(&tmp,  (uint16_t)
+                        (UserRxBufferFS[1] << 8 | UserRxBufferFS[2]), 0);
+            break;
+        }
+    }
+    /* send confirmation */
+    usb_state = CDC_Transmit_FS(UserRxBufferFS, 1);
+}
+
+void usb_handler::sendConfig() {
+
+    /* send config
+     *
+     */
+    /* pid xy */
+    fillBuffer(UserTxBufferFS, 0, status->pXY);
+    fillBuffer(UserTxBufferFS, 4, status->iXY);
+    fillBuffer(UserTxBufferFS, 8, status->dXY);
+
+    /* pid z  */
+    fillBuffer(UserTxBufferFS, 12, status->pZ);
+    fillBuffer(UserTxBufferFS, 16, status->iZ);
+    fillBuffer(UserTxBufferFS, 20, status->dZ);
+
+    /* comp filter */
+    fillBuffer(UserTxBufferFS, 24, status->filterCoefficientXY);
+    fillBuffer(UserTxBufferFS, 28, status->filterCoefficientZ);
+
+    usb_state = CDC_Transmit_FS(UserTxBufferFS, 32);
+    USBD_CDC_ReceivePacket(usb);
+}
+
+void usb_handler::updateConfig() {
+
+    status->pXY = BUFFER_TO_FLOAT(UserRxBufferFS,1);
+    status->iXY = BUFFER_TO_FLOAT(UserRxBufferFS,5);
+    status->dXY = BUFFER_TO_FLOAT(UserRxBufferFS,9);
+
+    status->pZ = BUFFER_TO_FLOAT(UserRxBufferFS,13);
+    status->iZ = BUFFER_TO_FLOAT(UserRxBufferFS,17);
+    status->dZ = BUFFER_TO_FLOAT(UserRxBufferFS,21);
+
+    status->filterCoefficientXY = BUFFER_TO_FLOAT(UserRxBufferFS,25);
+    status->filterCoefficientZ = BUFFER_TO_FLOAT(UserRxBufferFS,29);
+
 }

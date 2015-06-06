@@ -107,7 +107,7 @@ int main(void) {
 	MX_GPIO_Init();
     MX_USB_DEVICE_Init();
 
-    usb.initialize();
+    usb.initialize(&configReader);
 
     /* onboard leds*/
     Initialize_LEDs();
@@ -203,7 +203,7 @@ void ConfigMode(){
     leds.led9->off();
     leds.led10->off();
 
-    usb.initialize();
+    usb.initialize(&configReader);
 
     Task* taskarray[] = {&usb, leds.led3};
     scheduler.start(taskarray,2);
