@@ -18,6 +18,11 @@ ConfigReader::~ConfigReader() {
  * Loads the quadrocopter configuration from eeprom into status
  */
 void ConfigReader::loadConfiguration(Status* status) {
+    /* reinit i2c if communication is crashed after reset */
+
+    HAL_I2C_Init(eeprom_i2c);
+
+    HAL_Delay(2);
 	//TODO ConfigReader: Weitere hinzuf�gen, wenn vorhanden
 	loadVariable( &status->pXY, P_XY_ADDR );
 	loadVariable( &status->iXY, I_XY_ADDR );
@@ -25,6 +30,8 @@ void ConfigReader::loadConfiguration(Status* status) {
 	loadVariable( &status->pZ, P_Z_ADDR );
 	loadVariable( &status->iZ, I_Z_ADDR );
 	loadVariable( &status->dZ, D_Z_ADDR );
+    loadVariable( &status->filterCoefficientXY, FILTERCOEFF_XY_ADDR );
+    loadVariable( &status->filterCoefficientZ, FILTERCOEFF_Z_ADDR );
 }
 
 /*
@@ -38,6 +45,8 @@ void ConfigReader::saveConfiguration(Status* status) {
 	saveVariable( &status->pZ, P_Z_ADDR );
 	saveVariable( &status->iZ, I_Z_ADDR );
 	saveVariable( &status->dZ, D_Z_ADDR );
+	saveVariable( &status->filterCoefficientXY, FILTERCOEFF_XY_ADDR );
+	saveVariable( &status->filterCoefficientZ, FILTERCOEFF_Z_ADDR );
 }
 
 /*
@@ -123,10 +132,11 @@ void ConfigReader::saveVariable(bool* variable, uint16_t address) {
  */
 void ConfigReader::load(uint8_t* variable, uint16_t address,
 		uint16_t byteCount) {
+
 	// Bytes aus I2C-EEPROM holen
 	HAL_I2C_Mem_Read(eeprom_i2c, EEPROM_ADDRESS, address, I2C_MEMADD_SIZE_16BIT,
 			variable, byteCount, EEPROM_I2C_TIMEOUT);
-	// HAL_Delay(EEPROM_WAIT);
+
 }
 
 /*

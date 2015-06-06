@@ -9,7 +9,7 @@
 
 usb_handler::usb_handler(Status* statusPtr, uint8_t defaultPrio,
             USBD_HandleTypeDef* husb)
-: Task(statusPtr, defaultPrio) {
+            : Task(statusPtr, defaultPrio) {
 
     usb_state = USBD_BUSY;
     usb = husb;
@@ -42,11 +42,17 @@ void usb_handler::update() {
                 usb_state = CDC_Transmit_FS(UserTxBufferFS, 4);
                 break;
 
+            case USB_CMD_RESTORE_CONFIG:
+                if (usb_mode_request == 1) {
+                    uint8_t msg[] = { "Restore hard-coded config" };
+                    usb_state = CDC_Transmit_FS(msg, sizeof(msg));
+                    status->restoreConfig();
+                }
+                break;
             case USB_CMD_CONFIG_MODE:
                 /* entering config mode */
                 if (usb_mode_request == 0) {
-                    uint8_t msg[] =
-                    { "Entering config mode." };
+                    uint8_t msg[] = { "Entering config mode." };
                     usb_state = CDC_Transmit_FS(msg, sizeof(msg));
                     usb_mode_request = 1;
                 } else if (usb_mode_request == 1) {
@@ -61,7 +67,7 @@ void usb_handler::update() {
                 usb_state = CDC_Transmit_FS(msg, sizeof(msg));
                 number_received_data = 0;
                 usb_mode_request = 0xFF;
-                }
+            }
                 break;
             default:
                 uint8_t error_msg[] = { "ERROR:unknown cmd!" };

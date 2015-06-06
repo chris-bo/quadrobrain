@@ -78,6 +78,14 @@
 
 /*********************************************************************************/
 /* hard coded settings*/
+#define PID_XY_P                            0.21f
+#define PID_XY_I                            0.22f
+#define PID_XY_D                            0.23f
+
+#define PID_Z_P                             0.31f
+#define PID_Z_I                             0.32f
+#define PID_Z_D                             0.33f
+
 #define FILTER_COEFFICIENT                  0.98f
 /*********************************************************************************/
 /*global macros */

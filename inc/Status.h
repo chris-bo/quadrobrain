@@ -17,6 +17,7 @@ public:
     virtual ~Status();
 
     void reset();
+    void restoreConfig();
 
     /* all status variables */
 

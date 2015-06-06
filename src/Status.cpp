@@ -45,8 +45,8 @@ Status::Status() {
     motorValues[2] = 0;
     motorValues[3] = 0;
 
-    filterCoefficientXY = FILTER_COEFFICIENT;
-    filterCoefficientZ = FILTER_COEFFICIENT;
+    filterCoefficientXY = 0;
+    filterCoefficientZ = 0;
 
     pXY = 0;
     iXY = 0;
@@ -106,8 +106,8 @@ void Status::reset() {
     motorValues[2] = 0;
     motorValues[3] = 0;
 
-    filterCoefficientXY = FILTER_COEFFICIENT;
-    filterCoefficientZ = FILTER_COEFFICIENT;
+    filterCoefficientXY = 0;
+    filterCoefficientZ = 0;
 
     pXY = 0;
     iXY = 0;
@@ -125,4 +125,19 @@ void Status::reset() {
 
     akkuVoltage = 0;
 
+}
+
+void Status::restoreConfig() {
+    /* restores hardcoded values */
+
+    filterCoefficientXY = FILTER_COEFFICIENT;
+    filterCoefficientZ = FILTER_COEFFICIENT;
+
+    pXY = PID_XY_P;
+    iXY = PID_XY_I;
+    dXY = PID_XY_D;
+
+    pZ = PID_Z_P;
+    iZ = PID_Z_I;
+    dZ = PID_Z_D;
 }

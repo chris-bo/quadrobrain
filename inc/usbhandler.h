@@ -34,8 +34,10 @@
 #define USB_CMD_SEND_STATUS_FLOAT	0x03
 #define USB_CMD_GLOBAL_FLAGS		0x04
 
-#define USB_CMD_CONFIG_MODE         0x7F
-#define USB_CMD_RESET        0xFF
+#define USB_CMD_CONFIG_MODE         0xC0
+#define USB_CMD_RESTORE_CONFIG      0xCF
+
+#define USB_CMD_RESET               0xFF
 
 #define USB_TIMEOUT 				0xFFFF
 
