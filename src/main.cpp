@@ -53,7 +53,7 @@ AkkuMonitor akku(&status, AKKUMONITOR_DEFAULT_PRIORITY, &hadc1);
 
 /* Motor Control */
 PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
-        &status.pidXOut, &status.pidYOut);
+            &status.pidXOut, &status.pidYOut);
 
 /* EEPROM Configuration Management*/
 ConfigReader configReader(&hi2c1);
@@ -63,25 +63,23 @@ usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
 /* Sensor data fusion Filters*/
 ComplementaryFilter compFilterX(&status, 0, &status.accelY, &status.accelZ,
-		&status.rateX, &status.angleX, &status.filterCoefficientXY);
+            &status.rateX, &status.angleX, &status.filterCoefficientXY);
 ComplementaryFilter compFilterY(&status, 0, &status.accelX, &status.accelZ,
-		&status.rateY, &status.angleY, &status.filterCoefficientXY);
-Compass compFilterNorth(&status, 0, &status.magnetY,
-		&status.magnetX, &status.angleY, &status.angleX, &status.rateZ,
-		&status.angleNorth, &status.filterCoefficientZ);
+            &status.rateY, &status.angleY, &status.filterCoefficientXY);
+Compass compFilterNorth(&status, 0, &status.magnetY, &status.magnetX, &status.angleY,
+            &status.angleX, &status.rateZ, &status.angleNorth,
+            &status.filterCoefficientZ);
 
 PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
-		SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick,
-		&status.pidXOut, 0.15f, false);
+SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick, &status.pidXOut,
+            0.15f, false);
 //PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY, SCHEDULER_INTERVALL_ms, &status.angleY, 0, &status.rcSignalRoll, &status.pidYOut, 0.15f, false);
 
 /* leds*/
 OnBoardLEDs leds;
 
-
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-
 
 /* Main functions */
 void FlightMode();
@@ -96,15 +94,15 @@ void Initialize_LEDs();
 /* USER CODE END 0 */
 
 int main(void) {
-	/* MCU Configuration----------------------------------------------------------*/
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+    /* MCU Configuration----------------------------------------------------------*/
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    HAL_Init();
 
-	/* Configure the system clock */
-	SystemClock_Config();
+    /* Configure the system clock */
+    SystemClock_Config();
 
-	/* Initialize GPIO and USB*/
-	MX_GPIO_Init();
+    /* Initialize GPIO and USB*/
+    MX_GPIO_Init();
     MX_USB_DEVICE_Init();
 
     usb.initialize(&configReader);
@@ -115,8 +113,9 @@ int main(void) {
     /* Call Normal Flight Mode*/
     FlightMode();
 
-	/* Infinite loop */
-	while (1);
+    /* Infinite loop */
+    while (1)
+        ;
 
 }
 
@@ -133,7 +132,6 @@ void FlightMode() {
 
     configReader.loadConfiguration(&status);
 
-
     mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
     mpu9150.startReception();
     rcReceiver.initialize();
@@ -143,15 +141,17 @@ void FlightMode() {
 
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
-            &compFilterY, &compFilterNorth, &pidControllerX, &usb, &akku, &baro,
-            leds.led3, leds.led4, leds.led5, leds.led6, leds.led7, leds.led8, leds.led9, leds.led10 };
+                          &compFilterY, &compFilterNorth, &pidControllerX, &usb,
+                          &akku, &baro, leds.led3, leds.led4, leds.led5, leds.led6,
+                          leds.led7, leds.led8, leds.led9, leds.led10 };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
-    while(1){
-        if (usb.usb_mode_request == 1) {
+    while (1) {
+        if ((usb.usb_mode_request == USB_MODE_CONFIG)
+                    || (usb.usb_mode_request == USB_MODE_SAVE_CONFIG)) {
             ConfigMode();
-        } else if (usb.usb_mode_request == 0xFF) {
+        } else if (usb.usb_mode_request == USB_MODE_RESET) {
             Reset(RESET_TO_FLIGHT);
         }
     }
@@ -164,10 +164,10 @@ void Reset(uint8_t mode) {
     /* No need to deinit Hardware reinitializing resets peripherals*/
 
     if (mode == RESET_TO_CONFIG) {
-        usb.usb_mode_request = 1;
+        usb.usb_mode_request = USB_MODE_CONFIG;
         ConfigMode();
     } else {
-        usb.usb_mode_request = 0;
+        usb.usb_mode_request = USB_MODE_NORMAL;
         /* kill processes*/
         scheduler.kill();
 
@@ -180,7 +180,7 @@ void Reset(uint8_t mode) {
 
 }
 
-void ConfigMode(){
+void ConfigMode() {
     /* Enter Config Mode:
      *
      * Stop Sensor Functions
@@ -205,17 +205,18 @@ void ConfigMode(){
 
     usb.initialize(&configReader);
 
-    Task* taskarray[] = {&usb, leds.led3};
-    scheduler.start(taskarray,2);
+    Task* taskarray[] = { &usb, leds.led3 };
+    scheduler.start(taskarray, 2);
 
-    while(1){
-        if (usb.usb_mode_request == 2) {
+    while (1) {
+        if ((usb.usb_mode_request == USB_MODE_LEAVE_CONFIG)
+                    || (usb.usb_mode_request == USB_MODE_SAVE_CONFIG)) {
             /* config finished */
             configReader.saveConfiguration(&status);
 
             /* Reset System */
             Reset(RESET_TO_FLIGHT);
-        } else if (usb.usb_mode_request == 0xFF) {
+        } else if (usb.usb_mode_request == USB_MODE_RESET) {
             Reset(RESET_TO_CONFIG);
         }
     }
@@ -270,9 +271,9 @@ void Initialize_LEDs() {
  */
 void SystemClock_Config(void) {
 
-	RCC_OscInitTypeDef RCC_OscInitStruct;
-	RCC_ClkInitTypeDef RCC_ClkInitStruct;
-	RCC_PeriphCLKInitTypeDef PeriphClkInit;
+    RCC_OscInitTypeDef RCC_OscInitStruct;
+    RCC_ClkInitTypeDef RCC_ClkInitStruct;
+    RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI
                 | RCC_OSCILLATORTYPE_HSE;
@@ -292,17 +293,17 @@ void SystemClock_Config(void) {
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
     HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
-	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB | RCC_PERIPHCLK_I2C1
-	        | RCC_PERIPHCLK_I2C2 | RCC_PERIPHCLK_ADC12;
-	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
-	PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
-	PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_HSI;
-	PeriphClkInit.USBClockSelection = RCC_USBPLLCLK_DIV1_5;
-	HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB | RCC_PERIPHCLK_I2C1
+                | RCC_PERIPHCLK_I2C2 | RCC_PERIPHCLK_ADC12;
+    PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
+    PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
+    PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_HSI;
+    PeriphClkInit.USBClockSelection = RCC_USBPLLCLK_DIV1_5;
+    HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
 
     HAL_RCC_EnableCSS();
 
-	__SYSCFG_CLK_ENABLE();
+    __SYSCFG_CLK_ENABLE();
 
 }
 
