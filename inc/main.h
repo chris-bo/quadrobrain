@@ -25,7 +25,6 @@
 #include "ConfigReader.h"
 #include "Scheduler.h"
 #include "Task.h"
-#include "LedBlink.h"
 #include "RCreceiver.h"
 #include "PPMGenerator.h"
 #include "ComplementaryFilter.h"
@@ -49,20 +48,5 @@ extern PIDController pidControllerX;
 extern PIDController pidControllerY;
 extern AkkuMonitor akku;
 extern BMP180 baro;
-
-/* onboard leds*/
-typedef struct {
-    LedBlink* led3;
-    LedBlink* led4;
-    LedBlink* led5;
-    LedBlink* led6;
-    LedBlink* led7;
-    LedBlink* led8;
-    LedBlink* led9;
-    LedBlink* led10;
-
-}OnBoardLEDs;
-extern OnBoardLEDs leds;
-
-extern DiscoveryLEDs led;
+extern DiscoveryLEDs leds;
 #endif /* MAIN_H_ */
