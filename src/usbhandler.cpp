@@ -28,9 +28,7 @@ void usb_handler::update() {
             case USB_CMD_LOOP:
                 usb_state = CDC_Transmit_FS(UserRxBufferFS, number_received_data);
                 break;
-            case USB_CMD_SEND_STATUS_8BIT:
-                sendStatus8Bit();
-                break;
+
             case USB_CMD_SEND_STATUS_FLOAT:
                 sendStatusFloat(0);
                 break;
@@ -113,7 +111,7 @@ void usb_handler::update() {
                 usb_state = CDC_Transmit_FS(UserRxBufferFS, 1);
                 number_received_data = 0;
                 usb_mode_request = USB_MODE_RESET;
-                }
+            }
                 break;
             default:
                 uint8_t error_msg[] = { "ERROR:unknown cmd!" };
@@ -132,77 +130,6 @@ void usb_handler::initialize(ConfigReader* _confReader) {
 
     confReader = _confReader;
     USBD_CDC_ReceivePacket(usb);
-}
-
-void usb_handler::sendStatus8Bit() {
-    /*
-     * old Debug_Data
-     *
-     0. Byte: Kanal1	= roll
-     1. Byte: Kanal2	= throttle
-     2. Byte: Kanal3	= nick
-     3. Byte: Kanal4	= yaw
-     4. Byte: Kanal5	= enable
-     5. Byte: Kanal6	= lin control
-     6. Byte: Kanal7	= left switch
-     7. Byte: Kanal8	= --
-     8. Byte: Motor1
-     9. Byte: Motor2
-     10. Byte: Motor3
-     11. Byte: Motor4
-     12. Byte: AccX
-     13. Byte: AccY
-     14. Byte: AccZ
-     15. Byte: GyroX
-     16. Byte: GyroY
-     17. Byte: GyroZ
-     18. Byte: Druck
-     19. Byte: Temp
-     20. Byte: H�he
-     21. Byte: Winkel x
-     22. Byte: Winkel y
-     23. Byte: Winkel z
-     */
-
-    /* RC signals*/
-
-    UserTxBufferFS[0] = (uint8_t) (status->rcSignalRoll * 100 + 50);
-    UserTxBufferFS[1] = (uint8_t) (status->rcSignalThrottle * 100);
-    UserTxBufferFS[2] = (uint8_t) (status->rcSignalNick * 100 + 50);
-    UserTxBufferFS[3] = (uint8_t) (status->rcSignalYaw * 100 + 50);
-    UserTxBufferFS[4] = (uint8_t) (status->rcSignalEnable * 100);
-    UserTxBufferFS[5] = (uint8_t) (status->rcSignalLinPoti * 100);
-    UserTxBufferFS[6] = (uint8_t) (status->rcSignalSwitch * 100);
-
-    /* Motor controls*/
-    UserTxBufferFS[8] = (uint8_t) (status->motorValues[0] * 100);
-    UserTxBufferFS[9] = (uint8_t) (status->motorValues[1] * 100);
-    UserTxBufferFS[10] = (uint8_t) (status->motorValues[2] * 100);
-    UserTxBufferFS[11] = (uint8_t) (status->motorValues[3] * 100);
-
-    /* Accel XYZ in 0,01 G */
-    UserTxBufferFS[12] = (int8_t) (status->accelX / G * 100);
-    UserTxBufferFS[13] = (int8_t) (status->accelY / G * 100);
-    UserTxBufferFS[14] = (int8_t) (status->accelZ / G * 100);
-
-    /* Gyro XYZ in 10 deg/s */
-    UserTxBufferFS[15] = (int8_t) (status->rateX / 10);
-    UserTxBufferFS[16] = (int8_t) (status->rateX / 10);
-    UserTxBufferFS[17] = (int8_t) (status->rateX / 10);
-
-    /* Temp */
-    UserTxBufferFS[19] = (int8_t) (status->temp);
-    /* akku voltage */
-    UserTxBufferFS[20] = (uint8_t) (status->akkuVoltage);
-
-    /*angles in deg*/
-    UserTxBufferFS[21] = (int8_t) (status->angleX);
-    UserTxBufferFS[22] = (int8_t) (status->angleY);
-    /* north in 10 deg*/
-    UserTxBufferFS[23] = (int8_t) (status->angleNorth / 10);
-
-
-    usb_state = CDC_Transmit_FS(UserTxBufferFS, 24);
 }
 
 void usb_handler::sendStatusFloat(uint8_t part) {
@@ -234,15 +161,33 @@ void usb_handler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 52, status->rcSignalNick);
         fillBuffer(UserTxBufferFS, 56, status->rcSignalYaw);
         fillBuffer(UserTxBufferFS, 60, status->rcSignalThrottle);
-        fillBuffer(UserTxBufferFS, 64, status->rcSignalEnable);
+        fillBuffer(UserTxBufferFS, 64, (float) status->rcSignalEnable);
+        fillBuffer(UserTxBufferFS, 68, (float) status->rcSignalSwitch);
+        fillBuffer(UserTxBufferFS, 72, status->rcSignalLinPoti);
 
         /* motor control values */
-        fillBuffer(UserTxBufferFS, 68, status->motorValues[0]);
-        fillBuffer(UserTxBufferFS, 72, status->motorValues[1]);
-        fillBuffer(UserTxBufferFS, 76, status->motorValues[2]);
-        fillBuffer(UserTxBufferFS, 80, status->motorValues[3]);
+        fillBuffer(UserTxBufferFS, 76, status->motorValues[0]);
+        fillBuffer(UserTxBufferFS, 80, status->motorValues[1]);
+        fillBuffer(UserTxBufferFS, 84, status->motorValues[2]);
+        fillBuffer(UserTxBufferFS, 88, status->motorValues[3]);
 
-        usb_state = CDC_Transmit_FS(UserTxBufferFS, 84);
+        /* Temperature */
+        fillBuffer(UserTxBufferFS, 92, status->temp);
+
+        /* Height */
+        fillBuffer(UserTxBufferFS, 96, status->height);
+        fillBuffer(UserTxBufferFS, 100, status->height_rel);
+        fillBuffer(UserTxBufferFS, 104, status->d_h);
+
+        /* AkkuVoltage */
+        fillBuffer(UserTxBufferFS, 108, status->akkuVoltage);
+
+        /* PID Outputs */
+        fillBuffer(UserTxBufferFS, 112, status->pidXOut);
+        fillBuffer(UserTxBufferFS, 116, status->pidYOut);
+        fillBuffer(UserTxBufferFS, 120, status->pidZOut);
+
+        usb_state = CDC_Transmit_FS(UserTxBufferFS, 124);
         USBD_CDC_ReceivePacket(usb);
     }
 }

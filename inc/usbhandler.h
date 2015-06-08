@@ -101,7 +101,6 @@ private:
     USBD_HandleTypeDef* usb;
 
     ConfigReader* confReader;
-    void sendStatus8Bit();
     void sendStatusFloat(uint8_t part);
     void fillBuffer(uint8_t* buffer, uint8_t pos, float var);
     void readEEPROM(uint8_t byteCount);
