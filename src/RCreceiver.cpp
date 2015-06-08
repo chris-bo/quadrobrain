@@ -156,7 +156,8 @@ void RCreceiver::initialize() {
     /* initialize timer and interrupts
      * needs to be called after MX_TIM4_Init();
      * */
-    HAL_TIM_Base_MspInit(RCreceiver_htim);
+
+    /* enable update interrupt to get overrun and sync info*/
     __HAL_TIM_ENABLE_IT(RCreceiver_htim, TIM_IT_UPDATE);
     HAL_TIM_IC_Start_IT(RCreceiver_htim, RC_RECEIVER_INPUT_CHANNEL);
 

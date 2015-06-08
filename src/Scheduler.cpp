@@ -17,8 +17,6 @@ Scheduler::Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim) {
 	maxIdleTime = 0;
 	minIdleTime = 0xFFFFFFFF;
 
-	/* initialize timer and interrupts */
-	HAL_TIM_Base_MspInit(scheduler_htim);
 }
 
 void Scheduler::start(Task** tasks, uint8_t taskAmount) {
@@ -190,6 +188,7 @@ void Scheduler::initializeTaskDurations() {
 	__HAL_TIM_ENABLE_IT(scheduler_htim, TIM_IT_UPDATE);
 }
 
+/* kills scheduler and all tasks in taskarray */
 void Scheduler::kill() {
 
     /* Timer stop*/
