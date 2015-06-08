@@ -86,6 +86,11 @@
 #define BMP180_DEFAULT_PRIORITY                 10
 #define BMP180_I2C                              I2C2
 
+/****************************/
+/* LEDs
+ *
+ */
+#define LEDs_DEFAULT_PRIORITY                   20
 
 /*********************************************************************************/
 /* hard coded settings*/

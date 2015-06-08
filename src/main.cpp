@@ -75,7 +75,7 @@ SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick, &status.pidXOut
             0.15f, false);
 //PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY, SCHEDULER_INTERVALL_ms, &status.angleY, 0, &status.rcSignalRoll, &status.pidYOut, 0.15f, false);
 
-DiscoveryLEDs leds(&status, 50);
+DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
