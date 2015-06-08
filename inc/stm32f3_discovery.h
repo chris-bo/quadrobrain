@@ -76,6 +76,7 @@ typedef enum
   LED8 = 5,
   LED9 = 6,
   LED10 = 7,
+  ALL   = 8,
   
   LED_GREEN  = LED6, 
   LED_ORANGE = LED5, 

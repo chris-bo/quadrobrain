@@ -35,6 +35,7 @@
 #include "usbhandler.h"
 #include "AkkuMonitor.h"
 #include "BMP180.h"
+#include "DiscoveryLEDs.h"
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -63,4 +64,5 @@ typedef struct {
 }OnBoardLEDs;
 extern OnBoardLEDs leds;
 
+extern DiscoveryLEDs led;
 #endif /* MAIN_H_ */

@@ -78,6 +78,8 @@ SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick, &status.pidXOut
 /* leds*/
 OnBoardLEDs leds;
 
+DiscoveryLEDs led(&status, 50);
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -140,10 +142,13 @@ void FlightMode() {
     baro.initialize();
 
     /* create tasks and start scheduler */
+//    Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
+//                          &compFilterY, &compFilterNorth, &pidControllerX, &usb,
+//                          &akku, &baro, leds.led3, leds.led4, leds.led5, leds.led6,
+//                          leds.led7, leds.led8, leds.led9, leds.led10 };
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidControllerX, &usb,
-                          &akku, &baro, leds.led3, leds.led4, leds.led5, leds.led6,
-                          leds.led7, leds.led8, leds.led9, leds.led10 };
+                          &akku, &baro, &led};
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
@@ -193,17 +198,12 @@ void ConfigMode() {
     rcReceiver.kill();
     ppmgenerator.kill();
 
-    leds.led4->off();
-    leds.led5->off();
-    leds.led6->off();
-    leds.led7->off();
-    leds.led8->off();
-    leds.led9->off();
-    leds.led10->off();
+    led.off(ALL);
+    led.setFrequency(LED3,1);
 
     usb.initialize(&configReader);
 
-    Task* taskarray[] = { &usb, leds.led3 };
+    Task* taskarray[] = { &usb, &led };
     scheduler.start(taskarray, 2);
 
     while (1) {
@@ -223,46 +223,56 @@ void ConfigMode() {
 void Initialize_LEDs() {
     /* init STM32_Discovery leds */
 
-    leds.led3 = new LedBlink(&status, 5);
-    leds.led4 = new LedBlink(&status, 5);
-    leds.led5 = new LedBlink(&status, 5);
-    leds.led6 = new LedBlink(&status, 5);
-    leds.led7 = new LedBlink(&status, 5);
-    leds.led8 = new LedBlink(&status, 5);
-    leds.led9 = new LedBlink(&status, 5);
-    leds.led10 = new LedBlink(&status, 5);
-
-    leds.led3->setFrequency(10);
-    leds.led3->setLED(LED3);
-    leds.led3->setOffset(50);
-
-    leds.led4->setFrequency(10);
-    leds.led4->setLED(LED4);
-    leds.led4->setOffset(25);
-
-    leds.led5->setFrequency(10);
-    leds.led5->setLED(LED5);
-    leds.led5->setOffset(75);
-
-    leds.led6->setFrequency(10);
-    leds.led6->setLED(LED6);
-    leds.led6->setOffset(200);
-
-    leds.led7->setFrequency(10);
-    leds.led7->setLED(LED7);
-    leds.led7->setOffset(100);
-
-    leds.led8->setFrequency(10);
-    leds.led8->setLED(LED8);
-    leds.led8->setOffset(175);
-
-    leds.led9->setFrequency(10);
-    leds.led9->setLED(LED9);
-    leds.led9->setOffset(125);
-
-    leds.led10->setFrequency(10);
-    leds.led10->setLED(LED10);
-    leds.led10->setOffset(150);
+    led.initialize();
+    led.setFrequency(ALL,1);
+    led.setOffset(LED3,50);
+    led.setOffset(LED4,25);
+    led.setOffset(LED5,75);
+    led.setOffset(LED6, 200);
+    led.setOffset(LED7,100);
+    led.setOffset(LED8,175);
+    led.setOffset(LED9,125);
+    led.setOffset(LED10,150);
+//    leds.led3 = new LedBlink(&status, 5);
+//    leds.led4 = new LedBlink(&status, 5);
+//    leds.led5 = new LedBlink(&status, 5);
+//    leds.led6 = new LedBlink(&status, 5);
+//    leds.led7 = new LedBlink(&status, 5);
+//    leds.led8 = new LedBlink(&status, 5);
+//    leds.led9 = new LedBlink(&status, 5);
+//    leds.led10 = new LedBlink(&status, 5);
+//
+//    leds.led3->setFrequency(10);
+//    leds.led3->setLED(LED3);
+//    leds.led3->setOffset(50);
+//
+//    leds.led4->setFrequency(10);
+//    leds.led4->setLED(LED4);
+//    leds.led4->setOffset(25);
+//
+//    leds.led5->setFrequency(10);
+//    leds.led5->setLED(LED5);
+//    leds.led5->setOffset(75);
+//
+//    leds.led6->setFrequency(10);
+//    leds.led6->setLED(LED6);
+//    leds.led6->setOffset(200);
+//
+//    leds.led7->setFrequency(10);
+//    leds.led7->setLED(LED7);
+//    leds.led7->setOffset(100);
+//
+//    leds.led8->setFrequency(10);
+//    leds.led8->setLED(LED8);
+//    leds.led8->setOffset(175);
+//
+//    leds.led9->setFrequency(10);
+//    leds.led9->setLED(LED9);
+//    leds.led9->setOffset(125);
+//
+//    leds.led10->setFrequency(10);
+//    leds.led10->setLED(LED10);
+//    leds.led10->setOffset(150);
 }
 
 /** System Clock Configuration
