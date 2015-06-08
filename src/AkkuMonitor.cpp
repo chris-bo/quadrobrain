@@ -39,6 +39,10 @@ void AkkuMonitor::update() {
 		counter ++;
 	}
 
+	if (status->akkuVoltage < LOW_VOLTAGE_WARNING_THRESHOLD) {
+	    lowVoltageWarning();
+	}
+
 	resetPriority();
 }
 
@@ -48,5 +52,11 @@ void AkkuMonitor::conversionComplete() {
 	status->akkuVoltage = tmp * SCALE_FACTOR * VOLTAGE_DIVIDER_RATIO;
 	HAL_ADC_Stop_IT(akkumonitor_adc);
 
+
+}
+
+void AkkuMonitor::lowVoltageWarning() {
+
+    /* TODO: AkkuMonitor lowVoltageWarning()*/
 
 }

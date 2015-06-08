@@ -18,7 +18,7 @@
 #define BUFFER_TO_FLOAT(buffer,start) (float)((buffer[start]<<24)|(buffer[start + 1]<<16)|(buffer[start + 2]<<8)| buffer[start + 3] )
 
 /**************************************************************************/
-/* Defines
+/*
  * USB_CMD
  */
 
@@ -72,7 +72,7 @@
 #define USB_TIMEOUT 				0xFFFF
 
 
-/******************/
+/**************************************************************************/
 /* USB_MODES */
 
 #define USB_MODE_NORMAL             0x00
@@ -81,6 +81,8 @@
 #define USB_MODE_SAVE_CONFIG        0x03
 
 #define USB_MODE_RESET              0xFF
+
+/**************************************************************************/
 
 
 class usb_handler: public Task {

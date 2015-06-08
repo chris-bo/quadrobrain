@@ -65,7 +65,9 @@
 #define BMP180_READOUT_CYCLE				5
 #define BMP180_PRESSURE_TEMP_RATIO			5
 
+/* lowpass for pressure readings*/
 #define BMP180_PRESSURE_TP                  40
+
 /* End Settings */
 /********************************************************************/
 /* Flags */

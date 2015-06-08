@@ -14,10 +14,12 @@
 /*********************************************************************************/
 /* Peripheral definitions */
 
-/* Scheduler Timer */
+/****************************/
+/* Scheduler */
 #define SCHEDULER_TIMER							TIM2
 #define SCHEDULER_INTERVALL_ms					10
 
+/****************************/
 /* RC receiver
  * Input capture
  */
@@ -34,6 +36,7 @@
 #define RC_RECEIVER_MaxHighTime_us				2050
 //#define RC_RECEIVER_SyncTime_us				300		// included in RC_RECEIVER_MinHighTime_us
 
+/****************************/
 /* PPMGenerator
  * PWM
  */
@@ -48,6 +51,7 @@
 // Einstellzeit f�r Regler
 #define PPM_SETUP_TIME 3000000
 
+/****************************/
 /* Sensorboard MPU9150
  *
  */
@@ -58,23 +62,30 @@
 /* define G for scaling to m/s^2 */
 #define G										9.81f
 
+/****************************/
 /*
  * PIDController
  */
 #define PID_DEFAULT_PRIORITY					0
 
+/****************************/
 /* USB
  *
  */
 #define USB_DEFAULT_PRIORITY					2
 
-
-/* ADC to Check akku voltage */
+/****************************/
+/* ADC to Check akku voltage
+ *
+ * */
 #define AKKUMONITOR_DEFAULT_PRIORITY			10
+#define LOW_VOLTAGE_WARNING_THRESHOLD           10.0f // [V]
 
+/****************************/
 /* Pressure Sensor */
 #define BMP180_DEFAULT_PRIORITY                 10
 #define BMP180_I2C                              I2C2
+
 
 /*********************************************************************************/
 /* hard coded settings*/

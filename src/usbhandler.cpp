@@ -201,7 +201,6 @@ void usb_handler::sendStatus8Bit() {
     /* north in 10 deg*/
     UserTxBufferFS[23] = (int8_t) (status->angleNorth / 10);
 
-    // TODO usb: send 8bit Magn XYZ */
 
     usb_state = CDC_Transmit_FS(UserTxBufferFS, 24);
 }

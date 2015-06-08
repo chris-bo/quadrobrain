@@ -23,7 +23,7 @@ void ConfigReader::loadConfiguration(Status* status) {
     HAL_I2C_Init(eeprom_i2c);
 
     HAL_Delay(2);
-    //TODO ConfigReader: Weitere hinzuf�gen, wenn vorhanden
+
     loadVariable(&status->pXY, P_XY_ADDR);
     loadVariable(&status->iXY, I_XY_ADDR);
     loadVariable(&status->dXY, D_XY_ADDR);
@@ -32,13 +32,17 @@ void ConfigReader::loadConfiguration(Status* status) {
     loadVariable(&status->dZ, D_Z_ADDR);
     loadVariable(&status->filterCoefficientXY, FILTERCOEFF_XY_ADDR);
     loadVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR);
+
+
+
 }
 
 /*
- * Saves the quadrocopter configuration from status into eeprom
+ * Saves the quadrocopter configuration from status into EEPROM
  */
 void ConfigReader::saveConfiguration(Status* status) {
-    //TODO ConfigReader: Weitere hinzuf�gen, wenn vorhanden
+
+
     saveVariable(&status->pXY, P_XY_ADDR, 0);
     saveVariable(&status->iXY, I_XY_ADDR, 0);
     saveVariable(&status->dXY, D_XY_ADDR, 0);
@@ -50,14 +54,14 @@ void ConfigReader::saveConfiguration(Status* status) {
 }
 
 /*
- * Loads a single uint8_t from eeprom
+ * Loads a single uint8_t from EEPROM
  */
 void ConfigReader::loadVariable(uint8_t* variable, uint16_t address) {
     load(variable, address, 1);
 }
 
 /*
- * Loads a single uint16_t from eeprom
+ * Loads a single uint16_t from EEPROM
  */
 void ConfigReader::loadVariable(uint16_t* variable, uint16_t address) {
     uint8_t* tmp = (uint8_t*) variable;
@@ -65,7 +69,7 @@ void ConfigReader::loadVariable(uint16_t* variable, uint16_t address) {
 }
 
 /*
- * Loads a single uint32_t from eeprom
+ * Loads a single uint32_t from EEPROM
  */
 void ConfigReader::loadVariable(uint32_t* variable, uint16_t address) {
     uint8_t* tmp = (uint8_t*) variable;
@@ -73,7 +77,7 @@ void ConfigReader::loadVariable(uint32_t* variable, uint16_t address) {
 }
 
 /*
- * Loads a single float from eeprom
+ * Loads a single float from EEPROM
  */
 void ConfigReader::loadVariable(float* variable, uint16_t address) {
     uint8_t* tmp = (uint8_t*) variable;
@@ -81,7 +85,7 @@ void ConfigReader::loadVariable(float* variable, uint16_t address) {
 }
 
 /*
- * Loads a single bool from eeprom
+ * Loads a single bool from EEPROM
  */
 void ConfigReader::loadVariable(bool* variable, uint16_t address) {
     uint8_t* tmp = (uint8_t*) variable;
@@ -89,7 +93,7 @@ void ConfigReader::loadVariable(bool* variable, uint16_t address) {
 }
 
 /*
- * Saves a single uint8_t to eeprom
+ * Saves a single uint8_t to EEPROM
  */
 void ConfigReader::saveVariable(uint8_t* variable, uint16_t address,
             uint8_t nodelay) {
@@ -97,7 +101,7 @@ void ConfigReader::saveVariable(uint8_t* variable, uint16_t address,
 }
 
 /*
- * Saves a single uint16_t to eeprom
+ * Saves a single uint16_t to EEPROM
  */
 void ConfigReader::saveVariable(uint16_t* variable, uint16_t address,
             uint8_t nodelay) {
@@ -106,7 +110,7 @@ void ConfigReader::saveVariable(uint16_t* variable, uint16_t address,
 }
 
 /*
- * Saves a single uint32_t to eeprom
+ * Saves a single uint32_t to EEPROM
  */
 void ConfigReader::saveVariable(uint32_t* variable, uint16_t address,
             uint8_t nodelay) {
@@ -115,7 +119,7 @@ void ConfigReader::saveVariable(uint32_t* variable, uint16_t address,
 }
 
 /*
- * Saves a single float to eeprom
+ * Saves a single float to EEPROM
  */
 void ConfigReader::saveVariable(float* variable, uint16_t address, uint8_t nodelay) {
     uint8_t* tmp = (uint8_t*) variable;
@@ -123,7 +127,7 @@ void ConfigReader::saveVariable(float* variable, uint16_t address, uint8_t nodel
 }
 
 /*
- * Saves a single bool to eeprom
+ * Saves a single bool to EEPROM
  */
 void ConfigReader::saveVariable(bool* variable, uint16_t address, uint8_t nodelay) {
     uint8_t* tmp = (uint8_t*) variable;

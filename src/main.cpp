@@ -159,9 +159,7 @@ void FlightMode() {
 
 void Reset(uint8_t mode) {
 
-    // TODO: Reset sometimes crashes
-
-    /* No need to deinit Hardware reinitializing resets peripherals*/
+     /* No need to deinit Hardware reinitializing resets peripherals*/
 
     if (mode == RESET_TO_CONFIG) {
         usb.usb_mode_request = USB_MODE_CONFIG;

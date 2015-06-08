@@ -24,8 +24,6 @@ int trace_printf(const char* format, ...) {
 
 	va_start(ap, format);
 
-	// TODO: rewrite it to no longer use newlib, it is way too heavy
-
 	static char buf[OS_INTEGER_TRACE_PRINTF_TMP_ARRAY_SIZE];
 
 	// Print to the local buffer
