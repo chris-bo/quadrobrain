@@ -217,7 +217,7 @@ void Initialize_LEDs() {
     /* init STM32_Discovery leds */
 
     leds.initialize();
-    leds.setFrequency(ALL,1);
+    leds.setFrequency(ALL,1.5f);
 
     leds.setOffset(LED3,50);
     leds.setOffset(LED4,25);
