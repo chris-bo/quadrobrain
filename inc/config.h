@@ -9,7 +9,7 @@
 #define CONFIG_H_
 
 #include "stm32f3xx_hal.h"
-
+#include "stm32f3_discovery.h"
 
 /*********************************************************************************/
 /* Peripheral definitions */
@@ -73,6 +73,7 @@
  *
  */
 #define USB_DEFAULT_PRIORITY					2
+#define USB_TRANSMIT_BUSY_MAX                   5
 
 /****************************/
 /* ADC to Check akku voltage
@@ -91,6 +92,14 @@
  *
  */
 #define LEDs_DEFAULT_PRIORITY                   20
+
+#define USB_RECEIVE_LED                         LED7
+#define USB_TRANSMIT_LED                        LED5
+#define CONFIG_LED                              LED8
+#define POWER_LED                               LED4
+#define FLIGHT_LED                              LED6
+#define OVERLOAD_LED                            LED3
+#define ERROR_LED                               LED10
 
 /*********************************************************************************/
 /* hard coded settings*/

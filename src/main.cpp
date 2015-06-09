@@ -103,11 +103,12 @@ int main(void) {
     /* Initialize GPIO and USB*/
     MX_GPIO_Init();
     MX_USB_DEVICE_Init();
+    /* onboard leds*/
+    leds.initialize();
+    leds.on(POWER_LED);
 
     usb.initialize(&configReader);
 
-    /* onboard leds*/
-    Initialize_LEDs();
 
     /* Call Normal Flight Mode*/
     FlightMode();
@@ -119,6 +120,10 @@ int main(void) {
 }
 
 void FlightMode() {
+
+    leds.off(ALL);
+    leds.on(POWER_LED);
+    leds.on(FLIGHT_LED);
 
     /* init peripherals */
     MX_DMA_Init();
@@ -137,6 +142,9 @@ void FlightMode() {
     ppmgenerator.initialize();
     akku.initialize();
     baro.initialize();
+
+
+    leds.setFrequency(FLIGHT_LED,1);
 
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
@@ -158,6 +166,7 @@ void FlightMode() {
 void Reset(uint8_t mode) {
 
      /* No need to deinit Hardware reinitializing resets peripherals*/
+
 
     if (mode == RESET_TO_CONFIG) {
         usb.usb_mode_request = USB_MODE_CONFIG;
@@ -192,7 +201,8 @@ void ConfigMode() {
     ppmgenerator.kill();
 
     leds.off(ALL);
-    leds.setFrequency(LED3,1);
+    leds.on(POWER_LED);
+    leds.setFrequency(CONFIG_LED,1);
 
     usb.initialize(&configReader);
 
@@ -216,17 +226,7 @@ void ConfigMode() {
 void Initialize_LEDs() {
     /* init STM32_Discovery leds */
 
-    leds.initialize();
-    leds.setFrequency(ALL,1.5f);
 
-    leds.setOffset(LED3,50);
-    leds.setOffset(LED4,25);
-    leds.setOffset(LED5,75);
-    leds.setOffset(LED6, 200);
-    leds.setOffset(LED7,100);
-    leds.setOffset(LED8,175);
-    leds.setOffset(LED9,125);
-    leds.setOffset(LED10,150);
 }
 
 /** System Clock Configuration

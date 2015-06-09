@@ -95,12 +95,14 @@ public:
     void sendMSGstring(uint8_t * buffer, uint8_t length);
     uint8_t usb_mode_request;
 
+
 private:
     uint8_t usb_state;
-
+    uint8_t usbTransmitBusyCounter;
     USBD_HandleTypeDef* usb;
 
     ConfigReader* confReader;
+    void usbTransmit(uint8_t* buffer, uint16_t len);
     void sendStatusFloat(uint8_t part);
     void fillBuffer(uint8_t* buffer, uint8_t pos, float var);
     void readEEPROM(uint8_t byteCount);

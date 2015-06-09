@@ -8,6 +8,10 @@
 #ifndef MPU9150_H_
 #define MPU9150_H_
 
+/* TODO Mpu9150
+ * magnetfeldwerte initial falsch
+ */
+
 /***********************************
  *
  * PINS

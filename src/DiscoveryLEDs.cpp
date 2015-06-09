@@ -61,6 +61,7 @@ void DiscoveryLEDs::setFrequency(Led_TypeDef _led, float freq) {
         }
         toggle[_led] = (uint8_t) ((500 / SCHEDULER_INTERVALL_ms) / frequency[_led]
                     - 1);
+        counter[_led] = 0;
     } else {
         for (uint8_t i = 0; i < 8; i++) {
             if (freq < 0.001f) {
@@ -72,6 +73,7 @@ void DiscoveryLEDs::setFrequency(Led_TypeDef _led, float freq) {
             }
             toggle[i] =
                         (uint8_t) ((500 / SCHEDULER_INTERVALL_ms) / frequency[i] - 1);
+            counter[i] = 0;
         }
     }
 }
