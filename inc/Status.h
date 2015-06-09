@@ -90,6 +90,9 @@ public:
     float pidYOut;
     float pidZOut;
 
+    /* cpu load calculated via idle time*/
+    float cpuLoad; // %
+
 };
 
 #endif /* STATUS_H_ */

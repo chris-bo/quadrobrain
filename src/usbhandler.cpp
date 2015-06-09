@@ -196,7 +196,9 @@ void usb_handler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 116, status->pidYOut);
         fillBuffer(UserTxBufferFS, 120, status->pidZOut);
 
-        usbTransmit(UserTxBufferFS, 124);
+        /* cpu load */
+        fillBuffer(UserTxBufferFS, 124, status->cpuLoad);
+        usbTransmit(UserTxBufferFS, 128);
       }
 }
 
@@ -210,6 +212,15 @@ void usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
 
 }
 
+void usb_handler::sendMSGstring(uint8_t* buffer, uint8_t length) {
+
+    uint32_t timeout = USB_TIMEOUT;
+    while ((usb_state = CDC_Transmit_FS(buffer, length)) != USBD_OK) {
+        if ((timeout--) == 0) {
+            return;
+        }
+    }
+}
 
 void usb_handler::readEEPROM(uint8_t byteCount) {
 
