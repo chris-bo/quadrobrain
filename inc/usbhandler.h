@@ -14,7 +14,6 @@
 #include "Task.h"
 #include "config.h"
 
-
 #define BUFFER_TO_FLOAT(buffer,start) (float)((buffer[start]<<24)|(buffer[start + 1]<<16)|(buffer[start + 2]<<8)| buffer[start + 3] )
 
 /**************************************************************************/
@@ -57,7 +56,6 @@
 #define USB_CMD_WRITE_2BYTES        0xC7
 #define USB_CMD_WRITE_4BYTES        0xC8
 
-
 /* save config
  * triggers reset
  */
@@ -71,7 +69,6 @@
 
 #define USB_TIMEOUT 				0xFFFF
 
-
 /**************************************************************************/
 /* USB_MODES */
 
@@ -84,7 +81,6 @@
 
 /**************************************************************************/
 
-
 class usb_handler: public Task {
 public:
     usb_handler(Status* statusPtr, uint8_t defaultPrio, USBD_HandleTypeDef* husb);
@@ -92,9 +88,7 @@ public:
 
     void update();
     void initialize(ConfigReader* _confReader);
-    void sendMSGstring(uint8_t * buffer, uint8_t length);
     uint8_t usb_mode_request;
-
 
 private:
     uint8_t usb_state;
@@ -109,7 +103,7 @@ private:
     void writeEEPROM(uint8_t byteCount);
     void sendConfig();
     void updateConfig();
-    void resetTransmitState();
+    void resetTransmissionState();
 };
 
 #endif /* USBHANDLER_H_ */

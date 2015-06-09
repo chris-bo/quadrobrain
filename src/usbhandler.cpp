@@ -27,12 +27,6 @@ void usb_handler::update() {
     leds.off(USB_RECEIVE_LED);
     leds.off(USB_TRANSMIT_LED);
 
-//   /* get usb transmit state*/
-//    USBD_CDC_HandleTypeDef   *hcdc = (USBD_CDC_HandleTypeDef*) usb->pClassData;
-//    if(hcdc->TxState != 0) {
-//        usbTransmitBusyCounter++;
-//    }
-
     if (number_received_data > 0) {
         leds.on(USB_RECEIVE_LED);
         switch (UserRxBufferFS[0]) {
@@ -127,7 +121,7 @@ void usb_handler::update() {
             default:
                 break;
         }
-        if ( usb_state == USBD_OK) {
+        if (usb_state == USBD_OK) {
             number_received_data = 0;
         }
         USBD_CDC_ReceivePacket(usb);
@@ -202,7 +196,7 @@ void usb_handler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 124, status->cpuLoad);
 
         usbTransmit(UserTxBufferFS, 128);
-      }
+    }
 }
 
 void usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
@@ -213,16 +207,6 @@ void usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
     buffer[pos + 2] = *(tmp++);
     buffer[pos + 3] = *(tmp);
 
-}
-
-void usb_handler::sendMSGstring(uint8_t* buffer, uint8_t length) {
-
-    uint32_t timeout = USB_TIMEOUT;
-    while ((usb_state = CDC_Transmit_FS(buffer, length)) != USBD_OK) {
-        if ((timeout--) == 0) {
-            return;
-        }
-    }
 }
 
 void usb_handler::readEEPROM(uint8_t byteCount) {
@@ -328,12 +312,14 @@ void usb_handler::updateConfig() {
 }
 
 void usb_handler::usbTransmit(uint8_t* buffer, uint16_t len) {
-   usb_state = CDC_Transmit_FS(buffer,len);
+    usb_state = CDC_Transmit_FS(buffer, len);
 
-    if ( usb_state == USBD_BUSY ) {
+    if (usb_state == USBD_BUSY) {
         usbTransmitBusyCounter++;
         if (usbTransmitBusyCounter == USB_TRANSMIT_BUSY_MAX) {
-            resetTransmitState();
+            resetTransmissionState();
+            /* todo usbhandler: globalflag error management */
+            leds.on(ERROR_LED);
         }
     } else {
         leds.on(USB_TRANSMIT_LED);
@@ -342,11 +328,11 @@ void usb_handler::usbTransmit(uint8_t* buffer, uint16_t len) {
 
 }
 
-void usb_handler::resetTransmitState() {
-    /* clear ep*/
-   usb->pClass->DataIn(usb,1);
-   PCD_HandleTypeDef *hpcd= ( PCD_HandleTypeDef *) usb->pData;
-   PCD_EPTypeDef *ep = (PCD_EPTypeDef*) &hpcd->IN_ep[1];
-   ep->xfer_count = 0;
-   usbTransmitBusyCounter = 0;
+void usb_handler::resetTransmissionState() {
+    /* clear endpoint*/
+    usb->pClass->DataIn(usb, 1);
+    PCD_HandleTypeDef *hpcd = (PCD_HandleTypeDef *) usb->pData;
+    PCD_EPTypeDef *ep = (PCD_EPTypeDef*) &hpcd->IN_ep[1];
+    ep->xfer_count = 0;
+    usbTransmitBusyCounter = 0;
 }

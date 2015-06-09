@@ -84,7 +84,6 @@ void SystemClock_Config(void);
 void FlightMode();
 void ConfigMode();
 void Reset(uint8_t mode);
-void Initialize_LEDs();
 
 /* USER CODE END PFP */
 
@@ -103,12 +102,12 @@ int main(void) {
     /* Initialize GPIO and USB*/
     MX_GPIO_Init();
     MX_USB_DEVICE_Init();
+
     /* onboard leds*/
     leds.initialize();
     leds.on(POWER_LED);
 
     usb.initialize(&configReader);
-
 
     /* Call Normal Flight Mode*/
     FlightMode();
@@ -143,7 +142,6 @@ void FlightMode() {
     akku.initialize();
     baro.initialize();
 
-
     leds.setFrequency(FLIGHT_LED,1);
 
     /* create tasks and start scheduler */
@@ -164,9 +162,7 @@ void FlightMode() {
 }
 
 void Reset(uint8_t mode) {
-
      /* No need to deinit Hardware reinitializing resets peripherals*/
-
 
     if (mode == RESET_TO_CONFIG) {
         usb.usb_mode_request = USB_MODE_CONFIG;
@@ -176,13 +172,9 @@ void Reset(uint8_t mode) {
         /* kill processes*/
         scheduler.kill();
 
-        /* restart leds*/
-        Initialize_LEDs();
-
         /* recall flight mode */
         FlightMode();
     }
-
 }
 
 void ConfigMode() {
@@ -221,12 +213,6 @@ void ConfigMode() {
             Reset(RESET_TO_CONFIG);
         }
     }
-}
-
-void Initialize_LEDs() {
-    /* init STM32_Discovery leds */
-
-
 }
 
 /** System Clock Configuration
