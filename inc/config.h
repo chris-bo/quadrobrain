@@ -74,7 +74,7 @@
  *
  */
 #define USB_DEFAULT_PRIORITY					2
-#define USB_TRANSMIT_BUSY_MAX                   5
+#define USB_TRANSMIT_BUSY_MAX                   2
 
 /****************************/
 /* ADC to Check akku voltage

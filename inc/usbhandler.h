@@ -109,6 +109,7 @@ private:
     void writeEEPROM(uint8_t byteCount);
     void sendConfig();
     void updateConfig();
+    void resetTransmitState();
 };
 
 #endif /* USBHANDLER_H_ */

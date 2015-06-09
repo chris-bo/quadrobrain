@@ -127,7 +127,9 @@ void usb_handler::update() {
             default:
                 break;
         }
-        number_received_data = 0;
+        if ( usb_state == USBD_OK) {
+            number_received_data = 0;
+        }
         USBD_CDC_ReceivePacket(usb);
     }
     resetPriority();
@@ -198,6 +200,7 @@ void usb_handler::sendStatusFloat(uint8_t part) {
 
         /* cpu load */
         fillBuffer(UserTxBufferFS, 124, status->cpuLoad);
+
         usbTransmit(UserTxBufferFS, 128);
       }
 }
@@ -330,17 +333,20 @@ void usb_handler::usbTransmit(uint8_t* buffer, uint16_t len) {
     if ( usb_state == USBD_BUSY ) {
         usbTransmitBusyCounter++;
         if (usbTransmitBusyCounter == USB_TRANSMIT_BUSY_MAX) {
-            /* clear ep*/
-          //  USBD_CDC_HandleTypeDef   *hcdc = (USBD_CDC_HandleTypeDef)(usb->pClassData);
-           usb->pClass->DataIn(usb,1);
-            //  hcdc->TxState = 0;
-           usbTransmitBusyCounter = 0;
-//            USBD_ClassTypeDef *pclass = usb->pClass;
-//            usb_state = *pclass->DataIn(usb,);
+            resetTransmitState();
         }
     } else {
         leds.on(USB_TRANSMIT_LED);
         usbTransmitBusyCounter = 0;
     }
 
+}
+
+void usb_handler::resetTransmitState() {
+    /* clear ep*/
+   usb->pClass->DataIn(usb,1);
+   PCD_HandleTypeDef *hpcd= ( PCD_HandleTypeDef *) usb->pData;
+   PCD_EPTypeDef *ep = (PCD_EPTypeDef*) &hpcd->IN_ep[1];
+   ep->xfer_count = 0;
+   usbTransmitBusyCounter = 0;
 }
