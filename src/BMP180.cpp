@@ -113,7 +113,6 @@ void BMP180::initialize() {
                 I2C_MEMADD_SIZE_8BIT, i2c2_buffer, 3, BMP180_I2C_TIMEOUT);
     calculatePressure();
 
-
     SET_FLAG(taskStatusFlags, BMP180_IDLE);
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
     SET_FLAG(status->globalFlags, BMP180_OK_FLAG);
@@ -192,11 +191,11 @@ void BMP180::calculateTemp() {
     int32_t x2;
 
     /* calc routine - see datasheet */
-    ut = (uint16_t) ( i2c2_buffer[0] << 8 | i2c2_buffer[1] );
+    ut = (uint16_t) (i2c2_buffer[0] << 8 | i2c2_buffer[1]);
     x1 = ((ut - ac6) * ac5) / 32768;
     x2 = (mc * 2048) / (x1 + md);
     b5 = x1 + x2;
-    temp = (b5 +8 )/16;
+    temp = (b5 + 8) / 16;
 
 }
 
@@ -214,50 +213,51 @@ void BMP180::calculatePressure() {
     int32_t p;
 
     /* calc routine - see datasheet */
-    up = (i2c2_buffer[0] << 16 | i2c2_buffer[1] << 8 | i2c2_buffer[2] ) >> (8 -BMP180_OSS);
-    x1 = (b2* (b6 * b6 ) / 4096) / 2048;
+    up = (i2c2_buffer[0] << 16 | i2c2_buffer[1] << 8 | i2c2_buffer[2])
+                            >> (8 - BMP180_OSS);
+    x1 = (b2 * (b6 * b6) / 4096) / 2048;
     x2 = (ac2 * b6) / 2048;
     x3 = x1 + x2;
-    b3 = ((((int32_t)ac1 * 4 + x3) << BMP180_OSS) + 2 )/4;
-    x1 = (ac3 * b6) /32768;
-    x2 = (b1 *(b6 * b6 ) / 4096) / 32768;
-    x3 = (x1 + x2 + 2 )/4;
+    b3 = ((((int32_t) ac1 * 4 + x3) << BMP180_OSS) + 2) / 4;
+    x1 = (ac3 * b6) / 32768;
+    x2 = (b1 * (b6 * b6) / 4096) / 32768;
+    x3 = (x1 + x2 + 2) / 4;
     b4 = ac4 * (uint32_t) (x3 + 32768) / 32768;
-    b7 = ((uint32_t) up - b3)*(50000>> BMP180_OSS);
-    if ( b7 < 0x80000000) {
-        p = b7*2/b4;
+    b7 = ((uint32_t) up - b3) * (50000 >> BMP180_OSS);
+    if (b7 < 0x80000000) {
+        p = b7 * 2 / b4;
     } else {
-        p = b7/b4 * 2;
+        p = b7 / b4 * 2;
     }
-    x1 = p/256 * p / 256;
-    x1 = (x1 * 3038)/ 65536;
-    x2 = ( -7357 * p ) / 65536;
-    p = p + ( x1 +x2 + 3791) / 16;
-    if (GET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE) == 0){
-            // initializing routine
-        status->pressure =  p;
+    x1 = p / 256 * p / 256;
+    x1 = (x1 * 3038) / 65536;
+    x2 = (-7357 * p) / 65536;
+    p = p + (x1 + x2 + 3791) / 16;
+    if (GET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE) == 0) {
+        // initializing routine
+        status->pressure = p;
     } else {
-        status->pressure =  (p * BMP180_PRESSURE_TP + status->pressure*(100-BMP180_PRESSURE_TP)) / 100;
+        status->pressure = (p * BMP180_PRESSURE_TP
+                    + status->pressure * (100 - BMP180_PRESSURE_TP)) / 100;
     }
     calculateHeight();
 }
 
 void BMP180::calculateHeight() {
-    float x1 = (float)(status->pressure) / 101325.0f;
-    float x2 = ( 1 - powf(x1, 0.190294957f));
+    float x1 = (float) (status->pressure) / 101325.0f;
+    float x2 = (1 - powf(x1, 0.190294957f));
     x2 = x2 * 44330;
 
-
     // check if value differs unrealistic -> result of not enough converting time
-    if ((( x2 - status->height > 100 ) || ( x2 - status->height < -100 ))) {
-        if (!GET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE)){
-                // initializing routine
-                status->height = x2;
+    if (((x2 - status->height > 100) || (x2 - status->height < -100))) {
+        if (!GET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE)) {
+            // initializing routine
+            status->height = x2;
         }
-    }else {
-        status->d_h =  x2 - status->height;
+    } else {
+        status->d_h = x2 - status->height;
         status->height_rel += status->d_h;
-        status->height = x2 ;
+        status->height = x2;
         status->temp = (float) temp / 10.0f;
     }
 

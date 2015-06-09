@@ -118,17 +118,14 @@
 /*********************************************************************************/
 /*global macros */
 
-
 /* flag macros */
 #define GET_FLAG(var, flag)			(var & flag)
-#define GET_FLAGS(var, flags)         ((var & flags) == flags)
+#define GET_FLAGS(var, flags)       ((var & flags) == flags)
 #define SET_FLAG(var, flag)			(var |= flag)
 #define RESET_FLAG(var, flag)		(var &= ~flag)
 
-
 /*********************************************************************************/
 /*global flags */
-
 
 #define FLIGHT_MODE_FLAG            0x00000001
 #define CONFIG_MODE_FLAG            0x00000002
@@ -145,10 +142,7 @@
 #define BMP180_OK_FLAG              0x00000400
 #define EEPROM_OK_FLAG              0x00000800
 
-
 #define EMERGENCY_FLAG              0x80000000
-
-
 
 #define RESET_TO_CONFIG             0x01
 #define RESET_TO_FLIGHT             0x00

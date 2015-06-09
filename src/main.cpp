@@ -102,13 +102,14 @@ int main(void) {
     /* Initialize GPIO and USB*/
     MX_GPIO_Init();
     MX_USB_DEVICE_Init();
+    usb.initialize(&configReader);
 
     /* onboard leds*/
     leds.initialize();
     leds.on(ALL);
 
-    usb.initialize(&configReader);
-    HAL_Delay(2);
+    /* Short Delay to check all leds */
+    HAL_Delay(10);
 
     /* Call Normal Flight Mode*/
     FlightMode();
@@ -136,8 +137,8 @@ void FlightMode() {
     MX_TIM4_Init();
     MX_ADC1_Init();
 
+    /* init Tasks */
     configReader.loadConfiguration(&status);
-
     mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
     mpu9150.startReception();
     rcReceiver.initialize();
@@ -145,6 +146,7 @@ void FlightMode() {
     akku.initialize();
     baro.initialize();
 
+    /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED,1);
 
     /* create tasks and start scheduler */
@@ -194,6 +196,9 @@ void ConfigMode() {
     SET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
     RESET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
 
+    /* kill all sensors
+     * and switch off engine
+     */
     mpu9150.kill();
     baro.kill();
     rcReceiver.kill();
@@ -201,8 +206,10 @@ void ConfigMode() {
 
     leds.off(ALL);
     leds.on(POWER_LED);
-    leds.setFrequency(CONFIG_LED,0.5f);
-
+    /* only blinking led to indicate running cpu
+     * and usb Task needed
+     * */
+    leds.setFrequency(CONFIG_LED,1);
     usb.initialize(&configReader);
 
     Task* taskarray[] = { &usb, &leds };

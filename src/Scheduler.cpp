@@ -111,13 +111,13 @@ void Scheduler::executeTasks() {
         }
     }
 
+    errorHandler();
+
     if (__HAL_TIM_GetCounter(scheduler_htim) > maxIdleTime) {
         maxIdleTime = __HAL_TIM_GetCounter(scheduler_htim);
     } else if (__HAL_TIM_GetCounter(scheduler_htim) < minIdleTime) {
         minIdleTime = __HAL_TIM_GetCounter(scheduler_htim);
     }
-
-    errorHandler();
     /* calc cpu load
      *
      * taking history into account:
@@ -128,23 +128,19 @@ void Scheduler::executeTasks() {
      * newload = oldload * history factor + current load / CPU_LOAD_HISTORY
      *
      * */
-    /* todo: check calculation, display cpu overload*/
     status->cpuLoad = (float) (status->cpuLoad * (CPU_LOAD_HISTORY - 1)
                 + ((float) (scheduler_htim->Init.Period
                             - __HAL_TIM_GetCounter(scheduler_htim) - 50)
                             / (float) (scheduler_htim->Init.Period)))
-                / CPU_LOAD_HISTORY;
+                            / CPU_LOAD_HISTORY;
 
 }
 void Scheduler::timerIRQ() {
     /* timer interrupt -> execute Scheduler cycle */
-
     executeTasks();
-
 }
 
 Scheduler::~Scheduler() {
-
 }
 
 void Scheduler::checkTaskDurations(uint8_t taskIndex) {
@@ -185,15 +181,17 @@ void Scheduler::checkTaskDurations(uint8_t taskIndex) {
 }
 
 void Scheduler::errorHandler() {
-    /* check cpu load*/
-    if (status->cpuLoad > 0.75f) {
+    /* check cpu load */
+    if (status->cpuLoad > 0.80f) {
         /* over 80% cpu load */
         leds->on(OVERLOAD_LED);
         SET_FLAG(status->globalFlags, CPU_OVERLOAD_FLAG);
         if (status->cpuLoad > 0.9f) {
+            /* add error if cpu load over 90%*/
             SET_FLAG(status->globalFlags, ERROR_FLAG);
         }
     } else {
+        /* enough cpu time left */
         leds->off(OVERLOAD_LED);
         RESET_FLAG(status->globalFlags, CPU_OVERLOAD_FLAG);
     }
@@ -202,10 +200,10 @@ void Scheduler::errorHandler() {
     if (GET_FLAG(status->globalFlags, ERROR_FLAG)) {
         /* some error is detected */
         /* check errors, etc */
-
         leds->on(ERROR_LED);
     }
-    if ( GET_FLAGS(status->globalFlags, (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))){
+    if (GET_FLAGS(status->globalFlags,
+                (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
         leds->on(FLIGHT_DATA_RECEPTION_LED);
     } else {
         leds->off(FLIGHT_DATA_RECEPTION_LED);
@@ -215,10 +213,11 @@ void Scheduler::errorHandler() {
      *                  switching led off
      *
      */
-    if (!GET_FLAG(status->globalFlags, (USB_ERROR_FLAG | NO_RC_SIGNAL_FLAG))) {
+    if (!GET_FLAGS(status->globalFlags,
+                (USB_ERROR_FLAG | NO_RC_SIGNAL_FLAG | CPU_OVERLOAD_FLAG))) {
 
-        /* at this time, there are no set error flags
-         * -> reset error_flag and switch led off
+        /* at this time, there are no error flags set
+         * -> reset error_flag and switch led error off
          */
         RESET_FLAG(status->globalFlags, ERROR_FLAG);
         leds->off(ERROR_LED);

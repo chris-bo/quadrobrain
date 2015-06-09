@@ -8,6 +8,13 @@
 #ifndef BMP180_H_
 #define BMP180_H_
 
+
+#include "Task.h"
+#include "config.h"
+#include "stm32f3xx_hal.h"
+#include "i2c.h"
+#include "math.h"
+
 /**I2C2 GPIO Configuration
  * PA9     ------> I2C2_SCL
  * PA10     ------> I2C2_SDA
@@ -56,13 +63,14 @@
 #define BMP180_I2C_TIMEOUT					0xFFFFF
 
 #define BMP180_OSS							0x2
+#define CONVERSION_TIME_MS                  13.5f
 
 /* Read Pressure every BMP180_READOUT_CYCLE scheduler interval
  *
  * intervall durations have to fit conversion time defined by oss
  *
  * */
-#define BMP180_READOUT_CYCLE				5
+#define BMP180_READOUT_CYCLE				(uint8_t) ( CONVERSION_TIME_MS / SCHEDULER_INTERVALL_ms + 1 )
 #define BMP180_PRESSURE_TEMP_RATIO			5
 
 /* lowpass for pressure readings*/
@@ -82,11 +90,6 @@
 /* End Flags */
 /********************************************************************/
 
-#include "Task.h"
-#include "config.h"
-#include "stm32f3xx_hal.h"
-#include "i2c.h"
-#include "math.h"
 
 class BMP180: public Task {
 public:
