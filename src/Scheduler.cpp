@@ -123,6 +123,7 @@ void Scheduler::executeTasks() {
      * newload = oldload * history factor + current load / CPU_LOAD_HISTORY
      *
      * */
+    /* todo: check calculation, display cpu overload*/
     status->cpuLoad = (status->cpuLoad * (CPU_LOAD_HISTORY - 1)
                 + ((float) (scheduler_htim->Init.Period
                             - __HAL_TIM_GetCounter(scheduler_htim) - 20)

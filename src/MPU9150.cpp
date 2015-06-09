@@ -190,7 +190,8 @@ void MPU9150::scaleRawData() {
     status->magnetY = rawMagnetData[1] * scaleMagnet[1];
     status->magnetZ = rawMagnetData[2] * scaleMagnet[2];
 
-    status->temp = rawTempData * MPU9150_TEMPERATURE_SCALE_FACTOR + 35;
+    /* use temp measurement of bmp180 */
+    //status->temp = rawTempData * MPU9150_TEMPERATURE_SCALE_FACTOR + 35;
 
     if (GET_FLAG(taskStatusFlags, MPU9150_FLAG_CONTINUOUS_RECEPTION)) {
         getRawData();

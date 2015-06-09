@@ -256,6 +256,7 @@ void BMP180::calculateHeight() {
         status->d_h =  x2 - status->height;
         status->height_rel += status->d_h;
         status->height = x2 ;
+        status->temp = (float) temp / 10.0f;
     }
 
 }
