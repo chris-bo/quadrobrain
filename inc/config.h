@@ -18,6 +18,7 @@
 /* Scheduler */
 #define SCHEDULER_TIMER							TIM2
 #define SCHEDULER_INTERVALL_ms					10
+#define CPU_LOAD_HISTORY                        4.0f
 
 /****************************/
 /* RC receiver

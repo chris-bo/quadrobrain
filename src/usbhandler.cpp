@@ -187,7 +187,9 @@ void usb_handler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 116, status->pidYOut);
         fillBuffer(UserTxBufferFS, 120, status->pidZOut);
 
-        usb_state = CDC_Transmit_FS(UserTxBufferFS, 124);
+        /* cpu load */
+        fillBuffer(UserTxBufferFS, 124, status->cpuLoad);
+        usb_state = CDC_Transmit_FS(UserTxBufferFS, 128);
         USBD_CDC_ReceivePacket(usb);
     }
 }

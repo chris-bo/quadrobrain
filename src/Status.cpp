@@ -63,6 +63,8 @@ Status::Status() {
     globalFlags = 0;
 
     akkuVoltage = 0;
+
+    cpuLoad = 0;
 }
 
 Status::~Status() {
