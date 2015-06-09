@@ -37,7 +37,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 Status status;
-Scheduler scheduler(&status, &htim2);
+Scheduler scheduler(&status, &htim2, &leds);
 
 /* Input capture timer */
 RCreceiver rcReceiver(&status, RC_RECEIVER_DEFAULT_PRIORITY, &htim4);

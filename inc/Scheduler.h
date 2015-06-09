@@ -12,19 +12,22 @@
 #include "config.h"
 #include "Task.h"
 #include "Status.h"
+#include "DiscoveryLEDs.h"
 
 class Scheduler {
 public:
-    Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim);
+    Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim, DiscoveryLEDs* leds);
 
     void start(Task** tasks, uint8_t taskAmount);
     void pause();
     void reset();
     void kill();
+    void errorHandler();
     void timerIRQ();
     virtual ~Scheduler();
 private:
     TIM_HandleTypeDef* scheduler_htim;
+    DiscoveryLEDs* leds;
     Task** taskArray;
     Status* status;
     uint8_t numberOfTasks;

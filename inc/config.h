@@ -17,8 +17,9 @@
 /****************************/
 /* Scheduler */
 #define SCHEDULER_TIMER							TIM2
-#define SCHEDULER_INTERVALL_ms					10
-#define CPU_LOAD_HISTORY                        4.0f
+#define SCHEDULER_INTERVALL_ms					1
+/* compute CPU Load with last CPU_LOAD_HISTORY values*/
+#define CPU_LOAD_HISTORY                        5
 
 /****************************/
 /* RC receiver
@@ -126,7 +127,12 @@
 /*********************************************************************************/
 /*global flags */
 
-#define EMERGENCY_FLAG				0x00000004
+#define EMERGENCY_FLAG				0x80000000
+#define FLIGHT_MODE_FLAG            0x00000001
+#define CONFIG_MODE_FLAG            0x00000002
+#define ERROR_FLAG                  0x00000004
+#define USB_ERROR_FLAG              0x00000010
+#define CPU_OVERLOAD_FLAG           0x00000020
 
 #define RESET_TO_CONFIG             0x01
 #define RESET_TO_FLIGHT             0x00

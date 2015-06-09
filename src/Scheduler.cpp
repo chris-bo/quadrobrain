@@ -7,7 +7,8 @@
 
 #include "Scheduler.h"
 
-Scheduler::Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim) {
+Scheduler::Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim,
+            DiscoveryLEDs* _leds) {
     status = systemStatus;
     taskArray = 0;
     numberOfTasks = 0;
@@ -16,6 +17,7 @@ Scheduler::Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim) {
 
     maxIdleTime = 0;
     minIdleTime = 0xFFFFFFFF;
+    leds = _leds;
 
 }
 
@@ -113,6 +115,7 @@ void Scheduler::executeTasks() {
         minIdleTime = __HAL_TIM_GetCounter(scheduler_htim);
     }
 
+    errorHandler();
     /* calc cpu load
      *
      * taking history into account:
@@ -177,6 +180,43 @@ void Scheduler::checkTaskDurations(uint8_t taskIndex) {
             SET_FLAG(status->globalFlags, EMERGENCY_FLAG);
         }
     }
+}
+
+void Scheduler::errorHandler() {
+    /* check cpu load*/
+    if (status->cpuLoad > 0.75f) {
+        /* over 80% cpu load */
+        leds->on(OVERLOAD_LED);
+        SET_FLAG(status->globalFlags, CPU_OVERLOAD_FLAG);
+        if (status->cpuLoad > 0.9f) {
+            SET_FLAG(status->globalFlags, ERROR_FLAG);
+        }
+    } else {
+        leds->off(OVERLOAD_LED);
+        RESET_FLAG(status->globalFlags, CPU_OVERLOAD_FLAG);
+    }
+
+    /* Error FLAGS */
+    if (GET_FLAG(status->globalFlags, ERROR_FLAG)) {
+        /* some error is detected */
+        /* check errors, etc */
+
+        leds->on(ERROR_LED);
+    }
+
+    /* TODO: Scheduler: ckeck all errorflags before
+     *                  switching led off
+     *
+     */
+    if (!GET_FLAG(status->globalFlags, USB_ERROR_FLAG)) {
+
+        /* at this time, there are no set error flags
+         * -> reset error_flag and switch led off
+         */
+        RESET_FLAG(status->globalFlags, ERROR_FLAG);
+        leds->off(ERROR_LED);
+    }
+
 }
 
 void Scheduler::initializeTaskDurations() {
