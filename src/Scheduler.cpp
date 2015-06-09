@@ -26,7 +26,9 @@ void Scheduler::start(Task** tasks, uint8_t taskAmount) {
     numberOfTasks = taskAmount;
 
     initializeTaskDurations();
-    /*  Timer start */
+
+    /*  Timer set period and start */
+    __HAL_TIM_SetCounter(scheduler_htim, (SCHEDULER_INTERVALL_ms * 1000));
     HAL_TIM_Base_Start_IT(scheduler_htim);
 }
 
@@ -253,6 +255,8 @@ void Scheduler::kill() {
     /*Timer reset */
     __HAL_TIM_SetCounter(scheduler_htim, (SCHEDULER_INTERVALL_ms * 1000));
 
+    /* reset Flags*/
+    status->globalFlags = 0;
     for (uint8_t i = 0; i < numberOfTasks; i++) {
         taskArray[i]->kill();
     }

@@ -105,9 +105,10 @@ int main(void) {
 
     /* onboard leds*/
     leds.initialize();
-    leds.on(POWER_LED);
+    leds.on(ALL);
 
     usb.initialize(&configReader);
+    HAL_Delay(2);
 
     /* Call Normal Flight Mode*/
     FlightMode();
@@ -187,6 +188,9 @@ void ConfigMode() {
      *
      */
     scheduler.pause();
+
+    SET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
+    RESET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
 
     mpu9150.kill();
     rcReceiver.kill();
