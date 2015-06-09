@@ -11,7 +11,7 @@ DiscoveryLEDs::DiscoveryLEDs(Status* statusPtr, uint8_t defaultPrio)
             : Task(statusPtr, defaultPrio) {
     for (uint8_t i = 0; i < 8; i++) {
         frequency[i] = 1;
-        toggle[i] = (uint8_t) (500 / SCHEDULER_INTERVALL_ms);
+        toggle[i] = (uint16_t) (500 / SCHEDULER_INTERVALL_ms);
         counter[i] = 0;
     }
 }
@@ -36,7 +36,7 @@ void DiscoveryLEDs::update() {
     for (uint8_t i = 0; i < 8; i++) {
         if (frequency[i] > 0.001f) {
             counter[i]++;
-            if (counter[i] == toggle[i]) {
+            if (counter[i] >= toggle[i]) {
                 counter[i] = 0;
                 BSP_LED_Toggle((Led_TypeDef) i);
             }
@@ -52,16 +52,15 @@ void DiscoveryLEDs::kill() {
 
 void DiscoveryLEDs::setFrequency(Led_TypeDef _led, float freq) {
     if (_led != ALL) {
-        if (freq < 0.001f) {
-            frequency[_led] = 0.001f;
+        if (freq < 0.01f) {
+            frequency[_led] = 0.01f;
         } else if (freq > 500 / SCHEDULER_INTERVALL_ms) {
             frequency[_led] = (500 / SCHEDULER_INTERVALL_ms);
         } else {
             frequency[_led] = freq;
         }
-        toggle[_led] = (uint8_t) ((500 / SCHEDULER_INTERVALL_ms) / frequency[_led]
+        toggle[_led] = (uint16_t) ((500 / SCHEDULER_INTERVALL_ms) / frequency[_led]
                     - 1);
-        counter[_led] = 0;
     } else {
         for (uint8_t i = 0; i < 8; i++) {
             if (freq < 0.001f) {
@@ -72,9 +71,8 @@ void DiscoveryLEDs::setFrequency(Led_TypeDef _led, float freq) {
                 frequency[i] = freq;
             }
             toggle[i] =
-                        (uint8_t) ((500 / SCHEDULER_INTERVALL_ms) / frequency[i] - 1);
-            counter[i] = 0;
-        }
+                        (uint16_t) (((float)(500 / SCHEDULER_INTERVALL_ms) / frequency[i] )- 1);
+         }
     }
 }
 
@@ -91,7 +89,7 @@ void DiscoveryLEDs::setOffset(Led_TypeDef _led, uint8_t percentage) {
             percentage = percentage - 1;
         }
         uint32_t tmp = ((toggle[_led] * percentage) / 100);
-        counter[_led] = (uint8_t) tmp;
+        counter[_led] = (uint16_t) tmp;
 
     } else {
         for (uint8_t i = 0; i < 8; i++) {
@@ -106,7 +104,7 @@ void DiscoveryLEDs::setOffset(Led_TypeDef _led, uint8_t percentage) {
                 percentage = percentage - 1;
             }
             uint32_t tmp = ((toggle[i] * percentage) / 100);
-            counter[i] = (uint8_t) tmp;
+            counter[i] = (uint16_t) tmp;
         }
     }
 }

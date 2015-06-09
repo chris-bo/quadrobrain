@@ -33,7 +33,7 @@ void ConfigReader::loadConfiguration(Status* status) {
     loadVariable(&status->filterCoefficientXY, FILTERCOEFF_XY_ADDR);
     loadVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR);
 
-
+    SET_FLAG((status->globalFlags), EEPROM_OK_FLAG);
 
 }
 

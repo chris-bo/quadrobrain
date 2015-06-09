@@ -148,6 +148,7 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
     enableMagnetData();
 
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    SET_FLAG(status->globalFlags, MPU9150_OK_FLAG);
 
 }
 
@@ -592,4 +593,6 @@ void MPU9150::kill() {
     biasAccel[0] = 0;
     biasAccel[1] = 0;
     biasAccel[2] = 0;
+
+    RESET_FLAG(status->globalFlags, MPU9150_OK_FLAG);
 }

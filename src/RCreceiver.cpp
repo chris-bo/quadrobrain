@@ -41,23 +41,23 @@ void RCreceiver::update() {
         status->rcSignalNick = 0;
         status->rcSignalRoll = 0;
         status->rcSignalYaw = 0;
-
+        RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         /* reduceThrottle to 20% */
         if (status->rcSignalThrottle > 0.2f) {
             status->rcSignalThrottle = 0.2f;
         }
         signalLostTime++;
-        if (signalLostTime == 200) {
-            /* Disable control and engines */
-            status->rcSignalNick = 0;
-            status->rcSignalRoll = 0;
-            status->rcSignalYaw = 0;
-            status->rcSignalEnable = 0;
 
+        if (signalLostTime == 2000 /SCHEDULER_INTERVALL_ms ) {
+            /* signal lost for 2 seconds */
+            SET_FLAG(status->globalFlags, NO_RC_SIGNAL_FLAG | ERROR_FLAG);
+            RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         }
     } else {
         computeValues();
         signalLostTime = 0;
+        SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
+        RESET_FLAG(status->globalFlags, NO_RC_SIGNAL_FLAG);
 
     }
     resetPriority();

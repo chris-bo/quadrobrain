@@ -122,17 +122,17 @@ void Scheduler::executeTasks() {
      *
      * taking history into account:
      * History Factor = (CPU_LOAD_HISTORY - 1 ) / CPU_LOAD_HISTORY
-     * current load = (period - idle time - 20 ( to take this calculation into account) )/ period
+     * current load = (period - idle time - 50 ( to take this calculation into account) )/ period
      *
      *
      * newload = oldload * history factor + current load / CPU_LOAD_HISTORY
      *
      * */
     /* todo: check calculation, display cpu overload*/
-    status->cpuLoad = (status->cpuLoad * (CPU_LOAD_HISTORY - 1)
+    status->cpuLoad = (float) (status->cpuLoad * (CPU_LOAD_HISTORY - 1)
                 + ((float) (scheduler_htim->Init.Period
-                            - __HAL_TIM_GetCounter(scheduler_htim) - 20)
-                            / (float) scheduler_htim->Init.Period))
+                            - __HAL_TIM_GetCounter(scheduler_htim) - 50)
+                            / (float) (scheduler_htim->Init.Period)))
                 / CPU_LOAD_HISTORY;
 
 }
@@ -205,12 +205,17 @@ void Scheduler::errorHandler() {
 
         leds->on(ERROR_LED);
     }
+    if ( GET_FLAGS(status->globalFlags, (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))){
+        leds->on(FLIGHT_DATA_RECEPTION_LED);
+    } else {
+        leds->off(FLIGHT_DATA_RECEPTION_LED);
+    }
 
-    /* TODO: Scheduler: ckeck all errorflags before
+    /* TODO: Scheduler: check all errorflags before
      *                  switching led off
      *
      */
-    if (!GET_FLAG(status->globalFlags, USB_ERROR_FLAG)) {
+    if (!GET_FLAG(status->globalFlags, (USB_ERROR_FLAG | NO_RC_SIGNAL_FLAG))) {
 
         /* at this time, there are no set error flags
          * -> reset error_flag and switch led off

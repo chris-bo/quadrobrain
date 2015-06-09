@@ -125,6 +125,8 @@ void FlightMode() {
     leds.on(POWER_LED);
     leds.on(FLIGHT_LED);
 
+    SET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
+
     /* init peripherals */
     MX_DMA_Init();
     MX_I2C1_Init();
@@ -193,12 +195,13 @@ void ConfigMode() {
     RESET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
 
     mpu9150.kill();
+    baro.kill();
     rcReceiver.kill();
     ppmgenerator.kill();
 
     leds.off(ALL);
     leds.on(POWER_LED);
-    leds.setFrequency(CONFIG_LED,1);
+    leds.setFrequency(CONFIG_LED,0.5f);
 
     usb.initialize(&configReader);
 

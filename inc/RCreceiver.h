@@ -56,7 +56,7 @@ private:
     uint16_t rawReceiverValues[8];
     uint8_t rawRCvalues[RECEIVER_CHANNELS];
     uint8_t currentChannel;
-    uint8_t signalLostTime;
+    uint32_t signalLostTime;
 
 };
 

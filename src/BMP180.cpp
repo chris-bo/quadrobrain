@@ -116,6 +116,7 @@ void BMP180::initialize() {
 
     SET_FLAG(taskStatusFlags, BMP180_IDLE);
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    SET_FLAG(status->globalFlags, BMP180_OK_FLAG);
 }
 
 void BMP180::receptionCompleteCallback() {
@@ -133,6 +134,7 @@ uint8_t BMP180::getIdentification() {
         return 1;
     }
     return 0;
+    RESET_FLAG(status->globalFlags, BMP180_OK_FLAG);
 }
 
 void BMP180::getCalibrationData() {
@@ -281,5 +283,7 @@ void BMP180::kill() {
 
     cycle_counter = 0;
     pressure_counter = 0;
+
+    RESET_FLAG(status->globalFlags, BMP180_OK_FLAG);
 
 }

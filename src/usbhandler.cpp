@@ -318,9 +318,7 @@ void usb_handler::usbTransmit(uint8_t* buffer, uint16_t len) {
         usbTransmitBusyCounter++;
         if (usbTransmitBusyCounter == USB_TRANSMIT_BUSY_MAX) {
             resetTransmissionState();
-            /* todo usbhandler: globalflag error management */
             SET_FLAG(status->globalFlags, USB_ERROR_FLAG | ERROR_FLAG);
-
         }
     } else {
         leds.on(USB_TRANSMIT_LED);

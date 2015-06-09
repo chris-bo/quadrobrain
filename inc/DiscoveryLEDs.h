@@ -27,8 +27,8 @@ public:
     void off(Led_TypeDef _led);
 private:
     float frequency[8];
-    uint8_t counter[8];
-    uint8_t toggle[8];
+    uint16_t counter[8];
+    uint16_t toggle[8];
 };
 
 #endif /* DISCOVERYLEDS_H_ */

@@ -101,6 +101,7 @@
 #define POWER_LED                               LED4
 #define FLIGHT_LED                              LED6
 #define OVERLOAD_LED                            LED3
+#define FLIGHT_DATA_RECEPTION_LED               LED9
 #define ERROR_LED                               LED10
 
 /*********************************************************************************/
@@ -120,6 +121,7 @@
 
 /* flag macros */
 #define GET_FLAG(var, flag)			(var & flag)
+#define GET_FLAGS(var, flags)         ((var & flags) == flags)
 #define SET_FLAG(var, flag)			(var |= flag)
 #define RESET_FLAG(var, flag)		(var &= ~flag)
 
@@ -127,12 +129,26 @@
 /*********************************************************************************/
 /*global flags */
 
-#define EMERGENCY_FLAG				0x80000000
+
 #define FLIGHT_MODE_FLAG            0x00000001
 #define CONFIG_MODE_FLAG            0x00000002
 #define ERROR_FLAG                  0x00000004
-#define USB_ERROR_FLAG              0x00000010
-#define CPU_OVERLOAD_FLAG           0x00000020
+#define USB_ERROR_FLAG              0x00000008
+
+#define CPU_OVERLOAD_FLAG           0x00000010
+#define NO_RC_SIGNAL_FLAG           0x00000020
+#define FREE_FLAG2                  0x00000040
+#define FREE_FLAG3                  0x00000080
+
+#define MPU9150_OK_FLAG             0x00000100
+#define RC_RECEIVER_OK_FLAG         0x00000200
+#define BMP180_OK_FLAG              0x00000400
+#define EEPROM_OK_FLAG              0x00000800
+
+
+#define EMERGENCY_FLAG              0x80000000
+
+
 
 #define RESET_TO_CONFIG             0x01
 #define RESET_TO_FLIGHT             0x00
