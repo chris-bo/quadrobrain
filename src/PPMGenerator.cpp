@@ -119,5 +119,5 @@ void PPMGenerator::kill() {
 
     reset();
     disableMotors();
-
+    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }

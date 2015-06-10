@@ -4,13 +4,8 @@ Quadrobrain TODOs:
 RC Receiver: signalverlustbehandlung
         eingestecker empfänger verhinder error ??
 
-MPU9150:
-    Magnetfeldwerte?
-
 PID: limit throttle
 
-BMP180: 
-    prozess stirbt??
 
 Scheduler:
     Scheduler::overrunError()

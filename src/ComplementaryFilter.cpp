@@ -49,4 +49,11 @@ void ComplementaryFilter::initialize() {
 }
 
 void ComplementaryFilter::kill() {
+
+    reset();
+
+    tmp_acc_angle = 0;
+   *out = 0;
+
+    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }

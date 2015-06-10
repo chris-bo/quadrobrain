@@ -48,6 +48,9 @@ void DiscoveryLEDs::update() {
 void DiscoveryLEDs::kill() {
     reset();
     off(ALL);
+   /* don t reset active flag, because leds wont get initialized after kill
+    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    */
 }
 
 void DiscoveryLEDs::setFrequency(Led_TypeDef _led, float freq) {

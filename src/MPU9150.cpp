@@ -595,4 +595,5 @@ void MPU9150::kill() {
     biasAccel[2] = 0;
 
     RESET_FLAG(status->globalFlags, MPU9150_OK_FLAG);
+    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }

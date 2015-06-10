@@ -191,4 +191,5 @@ void RCreceiver::kill() {
     signalLostTime = 0;
 
     reset();
+    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }

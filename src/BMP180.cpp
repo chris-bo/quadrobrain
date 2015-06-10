@@ -14,6 +14,7 @@ BMP180::BMP180(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
 
     bmp_i2c = i2c;
     temp = 0;
+    height_start = 0;
 
     ac1 = 0;
     ac2 = 0;
@@ -50,12 +51,28 @@ void BMP180::update() {
         SET_FLAG(taskStatusFlags, BMP180_IDLE);
     } else if (GET_FLAG(taskStatusFlags,
                 BMP180_READING_PRESSURE) || GET_FLAG(taskStatusFlags,BMP180_READING_TEMP)) {
-        /* Measurement Triggered -> readout data*/
-        HAL_I2C_Mem_Read_IT(bmp_i2c, BMP180_I2C_ADDRESS, BMP180_OUT_MSB,
-                    I2C_MEMADD_SIZE_8BIT, i2c2_buffer, 3);
+        if (!GET_FLAG(taskStatusFlags, BMP180_FLAG_I2C_BUSY)) {
+            /* Do this only if you are currently not reading anything*/
+            if ((cycle_counter == BMP180_P_READOUT_DELAY
+                        && GET_FLAG(taskStatusFlags, BMP180_READING_PRESSURE))
+                        || (cycle_counter == BMP180_T_READOUT_DELAY
+                                    && GET_FLAG(taskStatusFlags, BMP180_READING_TEMP))) {
+
+                /* TWO cases:
+                 * 1. reading pressure is set and waited readout delay for pressure
+                 * 2. reading temperature is set and waited readout delay for temperature
+                 */
+                cycle_counter = 0;
+                /* Measurement Triggered -> readout data*/
+                SET_FLAG(taskStatusFlags, BMP180_FLAG_I2C_BUSY);
+                HAL_I2C_Mem_Read_IT(bmp_i2c, BMP180_I2C_ADDRESS, BMP180_OUT_MSB,
+                            I2C_MEMADD_SIZE_8BIT, i2c2_buffer, 3);
+            } else {
+                cycle_counter++;
+            }
+        }
     } else if (GET_FLAG(taskStatusFlags, BMP180_IDLE)) {
         /* no measurement triggered, no data read, no reading in progress */
-
         if (cycle_counter == BMP180_READOUT_CYCLE) {
             if (pressure_counter == BMP180_PRESSURE_TEMP_RATIO) {
                 getTemp();
@@ -69,7 +86,6 @@ void BMP180::update() {
         } else {
             cycle_counter++;
         }
-
     }
     resetPriority();
 }
@@ -82,7 +98,6 @@ void BMP180::initialize() {
         return;
 
     }
-
     getCalibrationData();
 
     /* init process
@@ -119,9 +134,8 @@ void BMP180::initialize() {
 }
 
 void BMP180::receptionCompleteCallback() {
-
+    RESET_FLAG(taskStatusFlags, BMP180_FLAG_I2C_BUSY);
     SET_FLAG(taskStatusFlags, BMP180_READING_DATA_COMPLETE);
-
 }
 
 uint8_t BMP180::getIdentification() {
@@ -166,7 +180,6 @@ void BMP180::getCalibrationData() {
     HAL_I2C_Mem_Read(bmp_i2c, BMP180_I2C_ADDRESS, BMP180_MD_MSB,
                 I2C_MEMADD_SIZE_8BIT, i2c2_buffer, 2, BMP180_I2C_TIMEOUT);
     md = (int16_t) ((i2c2_buffer[0] << 8) | i2c2_buffer[1]);
-
 }
 
 void BMP180::getTemp() {
@@ -248,16 +261,16 @@ void BMP180::calculateHeight() {
     float x2 = (1 - powf(x1, 0.190294957f));
     x2 = x2 * 44330;
 
-    // check if value differs unrealistic -> result of not enough converting time
-    if (((x2 - status->height > 100) || (x2 - status->height < -100))) {
-        if (!GET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE)) {
-            // initializing routine
-            status->height = x2;
-        }
-    } else {
-        status->d_h = x2 - status->height;
-        status->height_rel += status->d_h;
+    if (!GET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE)) {
+        // initializing routine
         status->height = x2;
+        height_start =  x2;
+        status->height_rel = 0;
+        status->d_h =0;
+    } else {
+        status->d_h = x2  - status->height;
+        status->height = x2;
+        status->height_rel = status->height - height_start;
         status->temp = (float) temp / 10.0f;
     }
 
@@ -283,7 +296,8 @@ void BMP180::kill() {
 
     cycle_counter = 0;
     pressure_counter = 0;
+    height_start = 0;
 
     RESET_FLAG(status->globalFlags, BMP180_OK_FLAG);
-
+    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }

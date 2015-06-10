@@ -65,12 +65,15 @@
 #define BMP180_OSS							0x2
 #define CONVERSION_TIME_P_MS                13.5f
 #define CONVERSION_TIME_T_MS                4.5f
+
+/* cycles to wait for conversion complete */
+#define BMP180_P_READOUT_DELAY      (uint8_t) ( CONVERSION_TIME_P_MS / SCHEDULER_INTERVALL_ms + 1 )
+#define BMP180_T_READOUT_DELAY      (uint8_t) ( CONVERSION_TIME_T_MS / SCHEDULER_INTERVALL_ms + 1 )
+
 /* Read Pressure every BMP180_READOUT_CYCLE scheduler interval
- *
- * intervall durations have to fit conversion time defined by oss
- *
+ * Read Temperature every BMP180_PRESSURE_TEMP_RATIO pressure measurement
  * */
-#define BMP180_READOUT_CYCLE				(uint8_t) ( CONVERSION_TIME_P_MS / SCHEDULER_INTERVALL_ms + 1 )
+#define BMP180_READOUT_CYCLE                3
 #define BMP180_PRESSURE_TEMP_RATIO			2
 
 /* lowpass for pressure readings*/
@@ -114,6 +117,8 @@ private:
     void calculateTemp();
     void calculatePressure();
     void calculateHeight();
+
+    float height_start;
 
     int32_t temp;
 

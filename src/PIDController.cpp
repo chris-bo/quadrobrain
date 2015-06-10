@@ -81,4 +81,5 @@ void PIDController::kill() {
     d = 0.0f;
     sum = 0.0f;
     oldValue = 0.0f;
+    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }

@@ -146,6 +146,10 @@ void FlightMode() {
     akku.initialize();
     baro.initialize();
 
+    compFilterX.initialize();
+    compFilterY.initialize();
+    compFilterNorth.initialize();
+
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED,1);
 
