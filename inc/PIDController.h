@@ -18,13 +18,13 @@ public:
                 float* _output, float _limit, bool _useDerivedInput);
     virtual ~PIDController();
     void update();
-    void initialize(float _p, float _i, float _d);
+    void initialize(float* _p, float* _i, float* _d);
     void kill();
 private:
     Status* status;
-    float p; 				// P-Anteil
-    float i; 				// I-Anteil
-    float d;				// D-Anteil
+    float* p; 				// P-Anteil
+    float* i; 				// I-Anteil
+    float* d;				// D-Anteil
     float* input;			// Messgroesse (Ist-Wert)
     float* derivedInput;// Ableitung der Messgroesse (falls vorhanden, ansonsten null setzen)
     float* reference;		// Soll-Wert

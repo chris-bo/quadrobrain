@@ -71,9 +71,11 @@ Compass compFilterNorth(&status, 0, &status.magnetY, &status.magnetX, &status.an
             &status.filterCoefficientZ);
 
 PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
-SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick, &status.pidXOut,
+		SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick, &status.pidXOut,
             0.15f, false);
-//PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY, SCHEDULER_INTERVALL_ms, &status.angleY, 0, &status.rcSignalRoll, &status.pidYOut, 0.15f, false);
+PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY,
+		SCHEDULER_INTERVALL_ms, &status.angleY, 0, &status.rcSignalRoll, &status.pidYOut,
+			0.15f, false);
 
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
@@ -149,6 +151,10 @@ void FlightMode() {
     compFilterX.initialize();
     compFilterY.initialize();
     compFilterNorth.initialize();
+
+    /* Initialize PID for X and Y axis */
+    pidControllerX.initialize(&status.pXY, &status.iXY, &status.dXY);
+    pidControllerY.initialize(&status.pXY, &status.iXY, &status.dXY);
 
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED,1);

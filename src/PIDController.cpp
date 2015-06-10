@@ -16,9 +16,9 @@ PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
 	this->derivedInput = _derivedInput;
 	this->reference = _reference;
 	this->output = _output;
-	this->p = 0.0f;
-	this->i = 0.0f;
-	this->d = 0.0f;
+	this->p = 0;
+	this->i = 0;
+	this->d = 0;
 	this->limit = _limit;
 	this->sampleTime = _sampleTime;
 	sum = 0.0f;
@@ -38,12 +38,12 @@ void PIDController::update() {
 	//Neue Werte mittels PID-Regler ausrechnen
 	if (useDerivedInput) {
 		// Falls Ableitung vorhanden wird diese direkt verwendet
-		temp = p * (*reference - *input) + i * sampleTime * sum
-				+ d * *derivedInput;
+		temp = (*p) * (*reference - *input) + (*i) * sampleTime * sum
+				+ (*d) * (*derivedInput);
 	} else {
 		// falls nicht wird die Ableitung berechnet
-		temp = p * (*reference - *input) + i * sampleTime * sum
-				+ d * (*input - oldValue) / sampleTime;
+		temp = (*p) * (*reference - *input) + (*i) * sampleTime * sum
+				+ (*d) * (*input - oldValue) / sampleTime;
 
 		// alten Wert speichern fuer naechste Differenzierung
 		oldValue = *input;
@@ -65,7 +65,7 @@ void PIDController::update() {
 	sum += (*reference - *input);
 }
 
-void PIDController::initialize(float _p, float _i, float _d) {
+void PIDController::initialize(float* _p, float* _i, float* _d) {
 	// Task aktivieren
 	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 	this->p = _p;
@@ -76,9 +76,9 @@ void PIDController::initialize(float _p, float _i, float _d) {
 void PIDController::kill() {
 
     reset();
-    p = 0.0f;
-    i = 0.0f;
-    d = 0.0f;
+    p = 0;
+    i = 0;
+    d = 0;
     sum = 0.0f;
     oldValue = 0.0f;
     RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
