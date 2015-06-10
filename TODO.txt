@@ -1,8 +1,6 @@
 Quadrobrain TODOs:
 
 
-AkkuMonitor: warnung bei niedringer spannung -> error
-
 RC Receiver: signalverlustbehandlung
         eingestecker empfänger verhinder error ??
 

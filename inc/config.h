@@ -137,7 +137,7 @@
 
 #define CPU_OVERLOAD_FLAG           0x00000010
 #define NO_RC_SIGNAL_FLAG           0x00000020
-#define FREE_FLAG2                  0x00000040
+#define LOW_VOLTAGE_FLAG            0x00000040
 #define FREE_FLAG3                  0x00000080
 
 #define MPU9150_OK_FLAG             0x00000100

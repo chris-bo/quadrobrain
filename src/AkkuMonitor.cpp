@@ -56,7 +56,6 @@ void AkkuMonitor::conversionComplete() {
 }
 
 void AkkuMonitor::lowVoltageWarning() {
-
-    /* TODO: AkkuMonitor lowVoltageWarning()*/
-
+    /* akkuVoltate below threshold */
+    SET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
 }

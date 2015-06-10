@@ -210,7 +210,7 @@ void Scheduler::errorHandler() {
      *
      */
     if (!GET_FLAG(status->globalFlags,
-                (USB_ERROR_FLAG | NO_RC_SIGNAL_FLAG | CPU_OVERLOAD_FLAG))) {
+                (LOW_VOLTAGE_FLAG | USB_ERROR_FLAG | NO_RC_SIGNAL_FLAG | CPU_OVERLOAD_FLAG))) {
 
         /* at this time, there are no error flags set
          * -> reset error_flag and switch led error off
