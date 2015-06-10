@@ -117,7 +117,8 @@
 #define PID_Z_I                             0.32f
 #define PID_Z_D                             0.33f
 
-#define FILTER_COEFFICIENT                  0.98f
+#define FILTER_COEFFICIENT_XY               0.98f
+#define FILTER_COEFFICIENT_Z                0.99f
 /*********************************************************************************/
 /*global macros */
 

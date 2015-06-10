@@ -132,8 +132,8 @@ void Status::reset() {
 void Status::restoreConfig() {
     /* restores hardcoded values */
 
-    filterCoefficientXY = FILTER_COEFFICIENT;
-    filterCoefficientZ = FILTER_COEFFICIENT;
+    filterCoefficientXY = FILTER_COEFFICIENT_XY;
+    filterCoefficientZ = FILTER_COEFFICIENT_Z;
 
     pXY = PID_XY_P;
     iXY = PID_XY_I;
