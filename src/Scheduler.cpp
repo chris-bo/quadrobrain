@@ -15,10 +15,7 @@ Scheduler::Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim,
     checkedTasks = 0;
     scheduler_htim = htim;
 
-    maxIdleTime = 0;
-    minIdleTime = 0xFFFFFFFF;
     leds = _leds;
-
 }
 
 void Scheduler::start(Task** tasks, uint8_t taskAmount) {
@@ -48,11 +45,13 @@ void Scheduler::reset() {
 }
 
 void Scheduler::executeTasks() {
-    /* TODO scheduler: behandlung von Timer überlauf
-     *
-     */
-    //checkedTasks zur�cksetzen
-    checkedTasks = 0;
+
+    if (checkedTasks == numberOfTasks){
+        /* all Tasks checked */
+        checkedTasks = 0;
+    } else {
+        overrunError();
+    }
     // Alle Tasks auf "unchecked" setzen, ausser Tasks mit Prio -1
     for (uint8_t i = 0; i < numberOfTasks; i++) {
         if (taskArray[i]->priority == -1) {
@@ -77,25 +76,27 @@ void Scheduler::executeTasks() {
                 uint32_t timerTmp = __HAL_TIM_GetCounter(scheduler_htim);
                 /* check time
                  * */
-                if ((timerTmp > taskArray[k]->maxDuration)
-                            || (taskArray[k]->priority == 0)) {
-                    /* timeLeft > maxDuration or priority == 0*/
+                if ((timerTmp > taskArray[k]->duration)
+                            || (taskArray[k]->priority < 2)) {
+                    /* timeLeft > maxDuration or priority < 2
+                     * Priority 0 and 1 are executed always
+                     *
+                     * */
                     taskArray[k]->update();
 
-                    // TODO scheduler: 	maxDuration muss sich evtl wieder verringern
-                    //					können, da interrupts oder breakpoints
-                    //					die dauer beeinflussen -> mittelung?
-                    //      		 	maxDuration -> averageDuration ?
-                    //					dann muss aber ein timerüberlauf im scheduler
-                    //					behandelt werden
                     /* update maxDuration */
-                    if ((timerTmp - __HAL_TIM_GetCounter(scheduler_htim))
-                                > taskArray[k]->maxDuration) {
-                        /* update maxDuration */
-                        taskArray[k]->maxDuration = timerTmp
-                                    - __HAL_TIM_GetCounter(scheduler_htim);
+                    timerTmp -= __HAL_TIM_GetCounter(scheduler_htim);
+                    if (timerTmp > taskArray[k]->duration) {
+                        /* increase duration duration */
+                        taskArray[k]->duration = timerTmp;
+
                         /* check task durations */
                         checkTaskDurations(k);
+                    } else {
+                        /* timerTemp < duration -> Task needed less time
+                         * decrease duration: (90% old + 10% new)
+                         */
+                        taskArray[k]->duration = (taskArray[k]->duration * 9 + timerTmp) / 10;
                     }
                 } else {
                     /* not enough time to complete task
@@ -113,11 +114,6 @@ void Scheduler::executeTasks() {
 
     errorHandler();
 
-    if (__HAL_TIM_GetCounter(scheduler_htim) > maxIdleTime) {
-        maxIdleTime = __HAL_TIM_GetCounter(scheduler_htim);
-    } else if (__HAL_TIM_GetCounter(scheduler_htim) < minIdleTime) {
-        minIdleTime = __HAL_TIM_GetCounter(scheduler_htim);
-    }
     /* calc cpu load
      *
      * taking history into account:
@@ -129,9 +125,9 @@ void Scheduler::executeTasks() {
      *
      * */
     status->cpuLoad = (float) (status->cpuLoad * (CPU_LOAD_HISTORY - 1)
-                + ((float) (scheduler_htim->Init.Period
+                + ((float) (SCHEDULER_TIMER_PERIOD
                             - __HAL_TIM_GetCounter(scheduler_htim) - 50)
-                            / (float) (scheduler_htim->Init.Period)))
+                            / (float) (SCHEDULER_TIMER_PERIOD)))
                             / CPU_LOAD_HISTORY;
 
 }
@@ -150,7 +146,7 @@ void Scheduler::checkTaskDurations(uint8_t taskIndex) {
     // Zeitdauern aller Tasks mit Prio 0 addieren
     for (uint8_t i = 0; i < numberOfTasks; i++) {
         if (taskArray[i]->priority == 0) {
-            timeSum += taskArray[i]->maxDuration;
+            timeSum += taskArray[i]->duration;
         }
     }
 
@@ -160,7 +156,7 @@ void Scheduler::checkTaskDurations(uint8_t taskIndex) {
         for (uint8_t i = 0; i < numberOfTasks; i++) {
             if (taskArray[i]->priority != 0) {
                 // Wenn Prio 0 Tasks zusammen mit einer anderen Task zusammen nicht in eine Periode passen
-                if ((timeSum + taskArray[i]->maxDuration)
+                if ((timeSum + taskArray[i]->duration)
                             >= SCHEDULER_INTERVALL_ms * 1000) {
                     // Emergency-Flag setzen
                     SET_FLAG(status->globalFlags, EMERGENCY_FLAG);
@@ -170,7 +166,7 @@ void Scheduler::checkTaskDurations(uint8_t taskIndex) {
         }
     } else {
         // Falls nicht genuegt die Addition der Ausfuehrdauer der uebergebenen Task
-        timeSum += taskArray[taskIndex]->maxDuration;
+        timeSum += taskArray[taskIndex]->duration;
 
         // Wenn Ausfuehrdauer nicht in Periodendauer passt
         if (timeSum >= SCHEDULER_INTERVALL_ms * 1000) {
@@ -213,7 +209,7 @@ void Scheduler::errorHandler() {
      *                  switching led off
      *
      */
-    if (!GET_FLAGS(status->globalFlags,
+    if (!GET_FLAG(status->globalFlags,
                 (USB_ERROR_FLAG | NO_RC_SIGNAL_FLAG | CPU_OVERLOAD_FLAG))) {
 
         /* at this time, there are no error flags set
@@ -240,7 +236,7 @@ void Scheduler::initializeTaskDurations() {
         HAL_TIM_Base_Start(scheduler_htim);
 
         taskArray[i]->update();
-        taskArray[i]->maxDuration = __HAL_TIM_GetCounter(scheduler_htim);
+        taskArray[i]->duration = __HAL_TIM_GetCounter(scheduler_htim);
 
         HAL_TIM_Base_Stop(scheduler_htim);
     }
@@ -264,5 +260,10 @@ void Scheduler::kill() {
     for (uint8_t i = 0; i < numberOfTasks; i++) {
         taskArray[i]->kill();
     }
+
+}
+
+void Scheduler::overrunError() {
+    /* TODO Scheduler::overrunError() */
 
 }

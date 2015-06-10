@@ -22,7 +22,6 @@ public:
     void pause();
     void reset();
     void kill();
-    void errorHandler();
     void timerIRQ();
     virtual ~Scheduler();
 private:
@@ -33,13 +32,11 @@ private:
     uint8_t numberOfTasks;
     uint8_t checkedTasks;
 
-    uint32_t maxIdleTime;
-    uint32_t minIdleTime;
-
     void executeTasks();
     void checkTaskDurations(uint8_t taskIndex);
     void initializeTaskDurations();
-
+    void overrunError();
+    void errorHandler();
 };
 
 #endif /* SCHEDULER_H_ */

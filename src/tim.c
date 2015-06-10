@@ -54,9 +54,9 @@ void MX_TIM2_Init(void) {
 	TIM_MasterConfigTypeDef sMasterConfig;
 
 	htim2.Instance = TIM2;
-	htim2.Init.Prescaler = (uint16_t) (HAL_RCC_GetSysClockFreq() / 1000000 - 1);
+	htim2.Init.Prescaler = SCHEDULER_TIMER_PRESCALER;
 	htim2.Init.CounterMode = TIM_COUNTERMODE_DOWN;
-	htim2.Init.Period = (uint32_t) (SCHEDULER_INTERVALL_ms * 1000);
+	htim2.Init.Period = SCHEDULER_TIMER_PERIOD;
 	htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	HAL_TIM_Base_Init(&htim2);
 
@@ -120,7 +120,7 @@ void MX_TIM4_Init(void) {
 	 * */
 
 	htim4.Instance = TIM4;
-	htim4.Init.Prescaler = (uint16_t) (HAL_RCC_GetSysClockFreq() / 1000000 - 1);
+	htim4.Init.Prescaler = RC_RECEIVER_TIMER_PRESCALER;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
 	htim4.Init.Period = RC_RECEIVER_OverrunTime_us;
 	htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

@@ -19,7 +19,7 @@ Task::Task(Status* statusPtr, int8_t defaultPrio) {
 
 	defaultPriority = defaultPrio;
 	priority = defaultPriority;
-	maxDuration = 0;
+	duration = 0;
 	taskStatusFlags = 0;
 
 }
@@ -50,7 +50,7 @@ void Task::resetPriority() {
 void Task::reset() {
 
     priority = defaultPriority;
-    maxDuration = 0;
+    duration = 0;
     taskStatusFlags = 0;
 
 }

@@ -36,12 +36,13 @@ void RCreceiver::update() {
          *
          * 		handle throttle and engines
          * */
-
+        SET_FLAG(status->globalFlags, NO_RC_SIGNAL_FLAG);
+        RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         /* disable control*/
         status->rcSignalNick = 0;
         status->rcSignalRoll = 0;
         status->rcSignalYaw = 0;
-        RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
+
         /* reduceThrottle to 20% */
         if (status->rcSignalThrottle > 0.2f) {
             status->rcSignalThrottle = 0.2f;
@@ -51,7 +52,6 @@ void RCreceiver::update() {
         if (signalLostTime == 2000 /SCHEDULER_INTERVALL_ms ) {
             /* signal lost for 2 seconds */
             SET_FLAG(status->globalFlags, NO_RC_SIGNAL_FLAG | ERROR_FLAG);
-            RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         }
     } else {
         computeValues();
@@ -127,12 +127,12 @@ void RCreceiver::captureIRQ() {
     /* Input Capture Sequence
      * input capture -> save value -> reset counter
      * */
-    RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
     if (currentChannel == 8) {
         /* after sync sequence */
         __HAL_TIM_SetCounter(RCreceiver_htim, 0x00);
         HAL_TIM_ReadCapturedValue(RCreceiver_htim, RC_RECEIVER_INPUT_CHANNEL);
         currentChannel = 0;
+        RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
         RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SEQUENCE_COMPLETE);
     } else {
         rawReceiverValues[currentChannel] = (uint16_t) HAL_TIM_ReadCapturedValue(
@@ -146,9 +146,7 @@ void RCreceiver::captureIRQ() {
             SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC);
         }
         currentChannel++;
-
     }
-
 }
 
 void RCreceiver::initialize() {

@@ -63,15 +63,15 @@
 #define BMP180_I2C_TIMEOUT					0xFFFFF
 
 #define BMP180_OSS							0x2
-#define CONVERSION_TIME_MS                  13.5f
-
+#define CONVERSION_TIME_P_MS                13.5f
+#define CONVERSION_TIME_T_MS                4.5f
 /* Read Pressure every BMP180_READOUT_CYCLE scheduler interval
  *
  * intervall durations have to fit conversion time defined by oss
  *
  * */
-#define BMP180_READOUT_CYCLE				(uint8_t) ( CONVERSION_TIME_MS / SCHEDULER_INTERVALL_ms + 1 )
-#define BMP180_PRESSURE_TEMP_RATIO			5
+#define BMP180_READOUT_CYCLE				(uint8_t) ( CONVERSION_TIME_P_MS / SCHEDULER_INTERVALL_ms + 1 )
+#define BMP180_PRESSURE_TEMP_RATIO			2
 
 /* lowpass for pressure readings*/
 #define BMP180_PRESSURE_TP                  40

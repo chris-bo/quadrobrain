@@ -4,17 +4,17 @@ Quadrobrain TODOs:
 AkkuMonitor: warnung bei niedringer spannung -> error
 
 RC Receiver: signalverlustbehandlung
+        eingestecker empfänger verhinder error ??
 
 MPU9150:
     Magnetfeldwerte?
 
 PID: limit throttle
 
+BMP180: 
+    prozess stirbt??
+
 Scheduler:
-    maxDuration zu einer gemittelten dauer ändern
-        -> Wert kann sich wieder verringern
-        -> größere dauer direkt übernehmen, dann langsam an mittel annähern
-        
-    Timer Überlauf behandeln
+    Scheduler::overrunError()
     
     

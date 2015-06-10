@@ -20,6 +20,8 @@
 #define SCHEDULER_INTERVALL_ms					1
 /* compute CPU Load with last CPU_LOAD_HISTORY values*/
 #define CPU_LOAD_HISTORY                        5
+#define SCHEDULER_TIMER_PERIOD                  (uint32_t) (SCHEDULER_INTERVALL_ms * 1000)
+#define SCHEDULER_TIMER_PRESCALER               (uint16_t) (HAL_RCC_GetSysClockFreq() / 1000000 - 1)
 
 /****************************/
 /* RC receiver
@@ -28,6 +30,7 @@
 #define RC_RECEIVER_TIMER						TIM4
 #define RC_RECEIVER_INPUT_CHANNEL				TIM_CHANNEL_3
 #define RC_RECEIVER_DEFAULT_PRIORITY			3
+#define RC_RECEIVER_TIMER_PRESCALER             (uint16_t) (HAL_RCC_GetSysClockFreq() / 1000000 - 1)
 
 #define RC_RECEIVER_GPIO_PORT					GPIOB
 #define RC_RECEIVER_GPIO_PIN					GPIO_Pin_8	// TIM4 CH3 (CH1 and CH2 used by I2C1)

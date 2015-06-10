@@ -25,7 +25,7 @@ public:
     virtual void reset();
     virtual void kill();
 
-    uint32_t maxDuration;
+    uint32_t duration;
     int8_t priority;
     int8_t defaultPriority;
     /* status bits */
