@@ -14,8 +14,6 @@
 #include "Task.h"
 #include "config.h"
 
-#define BUFFER_TO_FLOAT(buffer,start) (float)((buffer[start]<<24)|(buffer[start + 1]<<16)|(buffer[start + 2]<<8)| buffer[start + 3] )
-
 /**************************************************************************/
 /*
  * USB_CMD

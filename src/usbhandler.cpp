@@ -7,6 +7,15 @@
 
 #include "usbhandler.h"
 
+float byteToFloat(uint8_t* array, uint8_t offset)
+{
+float val;
+
+memcpy(&val,array + offset,4l);
+
+return val;
+}
+
 usb_handler::usb_handler(Status* statusPtr, uint8_t defaultPrio,
             USBD_HandleTypeDef* husb)
             : Task(statusPtr, defaultPrio) {
@@ -296,16 +305,16 @@ void usb_handler::sendConfig() {
 
 void usb_handler::updateConfig() {
 
-    status->pXY = BUFFER_TO_FLOAT(UserRxBufferFS, 1);
-    status->iXY = BUFFER_TO_FLOAT(UserRxBufferFS, 5);
-    status->dXY = BUFFER_TO_FLOAT(UserRxBufferFS, 9);
+    status->pXY = byteToFloat(UserRxBufferFS, 1);
+    status->iXY = byteToFloat(UserRxBufferFS, 5);
+    status->dXY = byteToFloat(UserRxBufferFS, 9);
 
-    status->pZ = BUFFER_TO_FLOAT(UserRxBufferFS, 13);
-    status->iZ = BUFFER_TO_FLOAT(UserRxBufferFS, 17);
-    status->dZ = BUFFER_TO_FLOAT(UserRxBufferFS, 21);
+    status->pZ = byteToFloat(UserRxBufferFS, 13);
+    status->iZ = byteToFloat(UserRxBufferFS, 17);
+    status->dZ = byteToFloat(UserRxBufferFS, 21);
 
-    status->filterCoefficientXY = BUFFER_TO_FLOAT(UserRxBufferFS, 25);
-    status->filterCoefficientZ = BUFFER_TO_FLOAT(UserRxBufferFS, 29);
+    status->filterCoefficientXY = byteToFloat(UserRxBufferFS, 25);
+    status->filterCoefficientZ = byteToFloat(UserRxBufferFS, 29);
 
     usbTransmit(UserRxBufferFS, 1);
 
@@ -336,3 +345,4 @@ void usb_handler::resetTransmissionState() {
     ep->xfer_count = 0;
     usbTransmitBusyCounter = 0;
 }
+
