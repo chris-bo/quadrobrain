@@ -136,7 +136,7 @@
 #define USB_ERROR_FLAG              0x00000008
 
 #define CPU_OVERLOAD_FLAG           0x00000010
-#define NO_RC_SIGNAL_FLAG           0x00000020
+//#define NO_RC_SIGNAL_FLAG           0x00000020
 #define LOW_VOLTAGE_FLAG            0x00000040
 #define FREE_FLAG3                  0x00000080
 

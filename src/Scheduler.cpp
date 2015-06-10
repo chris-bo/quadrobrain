@@ -46,7 +46,7 @@ void Scheduler::reset() {
 
 void Scheduler::executeTasks() {
 
-    if (checkedTasks == numberOfTasks){
+    if (checkedTasks == numberOfTasks) {
         /* all Tasks checked */
         checkedTasks = 0;
     } else {
@@ -96,7 +96,8 @@ void Scheduler::executeTasks() {
                         /* timerTemp < duration -> Task needed less time
                          * decrease duration: (90% old + 10% new)
                          */
-                        taskArray[k]->duration = (taskArray[k]->duration * 9 + timerTmp) / 10;
+                        taskArray[k]->duration = (taskArray[k]->duration * 9
+                                    + timerTmp) / 10;
                     }
                 } else {
                     /* not enough time to complete task
@@ -127,8 +128,7 @@ void Scheduler::executeTasks() {
     status->cpuLoad = (float) (status->cpuLoad * (CPU_LOAD_HISTORY - 1)
                 + ((float) (SCHEDULER_TIMER_PERIOD
                             - __HAL_TIM_GetCounter(scheduler_htim) - 50)
-                            / (float) (SCHEDULER_TIMER_PERIOD)))
-                            / CPU_LOAD_HISTORY;
+                            / (float) (SCHEDULER_TIMER_PERIOD ))) / CPU_LOAD_HISTORY;
 
 }
 void Scheduler::timerIRQ() {
@@ -209,8 +209,9 @@ void Scheduler::errorHandler() {
      *                  switching led off
      *
      */
-    if (!GET_FLAG(status->globalFlags,
-                (LOW_VOLTAGE_FLAG | USB_ERROR_FLAG | NO_RC_SIGNAL_FLAG | CPU_OVERLOAD_FLAG))) {
+    if ((!GET_FLAG(status->globalFlags,
+                (LOW_VOLTAGE_FLAG | USB_ERROR_FLAG | CPU_OVERLOAD_FLAG)))
+                && GET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG)) {
 
         /* at this time, there are no error flags set
          * -> reset error_flag and switch led error off

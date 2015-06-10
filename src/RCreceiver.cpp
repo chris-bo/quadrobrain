@@ -36,7 +36,6 @@ void RCreceiver::update() {
          *
          * 		handle throttle and engines
          * */
-        SET_FLAG(status->globalFlags, NO_RC_SIGNAL_FLAG);
         RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         /* disable control*/
         status->rcSignalNick = 0;
@@ -51,14 +50,12 @@ void RCreceiver::update() {
 
         if (signalLostTime == 2000 /SCHEDULER_INTERVALL_ms ) {
             /* signal lost for 2 seconds */
-            SET_FLAG(status->globalFlags, NO_RC_SIGNAL_FLAG | ERROR_FLAG);
+            SET_FLAG(status->globalFlags, ERROR_FLAG);
         }
     } else {
         computeValues();
         signalLostTime = 0;
         SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
-        RESET_FLAG(status->globalFlags, NO_RC_SIGNAL_FLAG);
-
     }
     resetPriority();
 }

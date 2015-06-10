@@ -33,8 +33,12 @@ void ConfigReader::loadConfiguration(Status* status) {
     loadVariable(&status->filterCoefficientXY, FILTERCOEFF_XY_ADDR);
     loadVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR);
 
-    SET_FLAG((status->globalFlags), EEPROM_OK_FLAG);
-
+    if (HAL_I2C_GetState(eeprom_i2c) == HAL_OK) {
+        SET_FLAG((status->globalFlags), EEPROM_OK_FLAG);
+    } else {
+        /*reload hardcoded values*/
+        status->restoreConfig();
+    }
 }
 
 /*
