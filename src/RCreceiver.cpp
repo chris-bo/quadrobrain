@@ -129,7 +129,7 @@ void RCreceiver::captureIRQ() {
         __HAL_TIM_SetCounter(RCreceiver_htim, 0x00);
         HAL_TIM_ReadCapturedValue(RCreceiver_htim, RC_RECEIVER_INPUT_CHANNEL);
         currentChannel = 0;
-        RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
+
         RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SEQUENCE_COMPLETE);
     } else {
         rawReceiverValues[currentChannel] = (uint16_t) HAL_TIM_ReadCapturedValue(
@@ -141,6 +141,8 @@ void RCreceiver::captureIRQ() {
             /* waiting for overrun interrupt to resync */
             SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SEQUENCE_COMPLETE);
             SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC);
+            /* reset no signal flag*/
+            RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
         }
         currentChannel++;
     }

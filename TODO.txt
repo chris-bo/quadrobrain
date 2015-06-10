@@ -1,11 +1,6 @@
 Quadrobrain TODOs:
 
-
-RC Receiver: signalverlustbehandlung
-        eingestecker empfänger verhinder error ??
-
 PID: limit throttle
-
 
 Scheduler:
     Scheduler::overrunError()
