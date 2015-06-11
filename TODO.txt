@@ -4,5 +4,8 @@ PID: limit throttle
 
 Scheduler:
     Scheduler::overrunError()
+    take cpuload calculation time into calculation 
     
+USB: 
+    reset buffer when resetting
     

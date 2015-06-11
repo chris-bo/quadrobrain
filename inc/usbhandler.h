@@ -86,6 +86,7 @@ public:
 
     void update();
     void initialize(ConfigReader* _confReader);
+    void kill();
     uint8_t usb_mode_request;
 
 private:
@@ -102,6 +103,7 @@ private:
     void sendConfig();
     void updateConfig();
     void resetTransmissionState();
+
 };
 
 #endif /* USBHANDLER_H_ */

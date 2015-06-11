@@ -21,7 +21,7 @@ Scheduler::Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim,
 void Scheduler::start(Task** tasks, uint8_t taskAmount) {
     taskArray = tasks;
     numberOfTasks = taskAmount;
-
+    checkedTasks = 0;
     initializeTaskDurations();
 
     /*  Timer set period and start */
@@ -32,6 +32,7 @@ void Scheduler::start(Task** tasks, uint8_t taskAmount) {
 void Scheduler::pause() {
     /* Timer stop*/
     HAL_TIM_Base_Stop_IT(scheduler_htim);
+
 }
 
 void Scheduler::reset() {
@@ -40,8 +41,8 @@ void Scheduler::reset() {
     HAL_TIM_Base_Stop_IT(scheduler_htim);
     /*Timer reset */
     __HAL_TIM_SetCounter(scheduler_htim, (SCHEDULER_INTERVALL_ms * 1000));
-    /* Timer restart */
-    HAL_TIM_Base_Start_IT(scheduler_htim);
+    /* reset Tasks checked */
+    checkedTasks = 0;
 }
 
 void Scheduler::executeTasks() {
@@ -63,7 +64,7 @@ void Scheduler::executeTasks() {
     }
 
     // Schleife läuft so lange durch, bis alle Tasks abgefragt worden sind
-    for (uint8_t prio = 0; checkedTasks != numberOfTasks; prio++) {
+    for (uint8_t prio = 0; checkedTasks < numberOfTasks; prio++) {
         for (uint8_t k = 0; k < numberOfTasks; k++) {
             // Wenn Task aktuelle Priorit�t hat und aktiv (erstes Statusbit) ist
             if ((taskArray[k]->priority == prio)
@@ -119,15 +120,15 @@ void Scheduler::executeTasks() {
      *
      * taking history into account:
      * History Factor = (CPU_LOAD_HISTORY - 1 ) / CPU_LOAD_HISTORY
-     * current load = (period - idle time - 50 ( to take this calculation into account) )/ period
-     *
+     * current load = (period - idle time  )/ period
+     * doesn't take this measurement into account
      *
      * newload = oldload * history factor + current load / CPU_LOAD_HISTORY
      *
      * */
     status->cpuLoad = (float) (status->cpuLoad * (CPU_LOAD_HISTORY - 1)
                 + ((float) (SCHEDULER_TIMER_PERIOD
-                            - __HAL_TIM_GetCounter(scheduler_htim) - 50)
+                            - __HAL_TIM_GetCounter(scheduler_htim))
                             / (float) (SCHEDULER_TIMER_PERIOD ))) / CPU_LOAD_HISTORY;
 
 }
@@ -251,11 +252,7 @@ void Scheduler::initializeTaskDurations() {
 /* kills scheduler and all tasks in taskarray */
 void Scheduler::kill() {
 
-    /* Timer stop*/
-    HAL_TIM_Base_Stop_IT(scheduler_htim);
-    /*Timer reset */
-    __HAL_TIM_SetCounter(scheduler_htim, (SCHEDULER_INTERVALL_ms * 1000));
-
+    reset();
     /* reset Flags*/
     status->globalFlags = 0;
     for (uint8_t i = 0; i < numberOfTasks; i++) {

@@ -68,7 +68,6 @@ void usb_handler::update() {
                     usb_mode_request = USB_MODE_LEAVE_CONFIG;
                 }
                 break;
-
                 /* Config commands */
             case USB_CMD_GET_CONFIG:
                 sendConfig();
@@ -130,9 +129,10 @@ void usb_handler::update() {
             default:
                 break;
         }
-        if (usb_state == USBD_OK) {
-            number_received_data = 0;
-        }
+
+        /* clear usb rx buffer[0] */
+        UserRxBufferFS[0] = 0;
+        number_received_data = 0;
         USBD_CDC_ReceivePacket(usb);
     }
     resetPriority();
@@ -335,6 +335,9 @@ void usb_handler::usbTransmit(uint8_t* buffer, uint16_t len) {
         RESET_FLAG(status->globalFlags, USB_ERROR_FLAG);
     }
 
+}
+
+void usb_handler::kill() {
 }
 
 void usb_handler::resetTransmissionState() {

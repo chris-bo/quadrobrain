@@ -181,6 +181,9 @@ void Reset(uint8_t mode) {
 
     if (mode == RESET_TO_CONFIG) {
         usb.usb_mode_request = USB_MODE_CONFIG;
+        /* kill processes*/
+        scheduler.kill();
+
         ConfigMode();
     } else {
         usb.usb_mode_request = USB_MODE_NORMAL;
@@ -201,7 +204,7 @@ void ConfigMode() {
      * Restart scheduler only for usb task
      *
      */
-    scheduler.pause();
+    scheduler.reset();
 
     SET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
     RESET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
@@ -222,8 +225,8 @@ void ConfigMode() {
     leds.setFrequency(CONFIG_LED,1);
     usb.initialize(&configReader);
 
-    Task* taskarray[] = { &usb, &leds };
-    scheduler.start(taskarray, 2);
+    Task* tasks_config[] = { &usb, &leds };
+    scheduler.start(tasks_config, sizeof(tasks_config) / 4);
 
     while (1) {
         if ((usb.usb_mode_request == USB_MODE_LEAVE_CONFIG)
