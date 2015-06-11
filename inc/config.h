@@ -72,7 +72,9 @@
  * PIDController
  */
 #define PID_DEFAULT_PRIORITY					0
-
+#define PID_THROTTLE_THRESHOLD                  0.2f
+#define PID_LIMIT                               100.0f // Range -100% -> +100%
+#define PID_SUM_LIMIT                           200.0f
 /****************************/
 /* USB
  *

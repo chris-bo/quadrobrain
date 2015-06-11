@@ -69,14 +69,19 @@ ComplementaryFilter compFilterY(&status, 0, &status.accelX, &status.accelZ,
 Compass compFilterNorth(&status, 0, &status.magnetY, &status.magnetX, &status.angleY,
             &status.angleX, &status.rateZ, &status.angleNorth,
             &status.filterCoefficientZ);
-
+// test without derived input first
+//PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
+//		(float)SCHEDULER_INTERVALL_ms, &status.angleX, &status.rateX, &status.rcSignalNick, &status.pidXOut,
+//		PID_LIMIT,PID_SUM_LIMIT, false);
+//PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY,
+//		(float)SCHEDULER_INTERVALL_ms, &status.angleY, &status.rateY, &status.rcSignalRoll, &status.pidYOut,
+//			PID_LIMIT,PID_SUM_LIMIT, false);
 PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
-		(float)SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick, &status.pidXOut,
-            0.15f, false);
+        (float)SCHEDULER_INTERVALL_ms, &status.angleX, 0, &status.rcSignalNick, &status.pidXOut,
+        PID_LIMIT,PID_SUM_LIMIT, false);
 PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY,
-		(float)SCHEDULER_INTERVALL_ms, &status.angleY, 0, &status.rcSignalRoll, &status.pidYOut,
-			0.15f, false);
-
+        (float)SCHEDULER_INTERVALL_ms, &status.angleY, 0, &status.rcSignalRoll, &status.pidYOut,
+            PID_LIMIT,PID_SUM_LIMIT, false);
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
 /* Private function prototypes -----------------------------------------------*/
@@ -153,15 +158,15 @@ void FlightMode() {
     compFilterNorth.initialize();
 
     /* Initialize PID for X and Y axis */
-    pidControllerX.initialize(&status.pXY, &status.iXY, &status.dXY);
-    pidControllerY.initialize(&status.pXY, &status.iXY, &status.dXY);
+    pidControllerX.initialize(&status.pXY, &status.iXY, &status.dXY, 100);
+    pidControllerY.initialize(&status.pXY, &status.iXY, &status.dXY, 100);
 
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED,1);
 
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
-                          &compFilterY, &compFilterNorth, &pidControllerX, &usb,
+                          &compFilterY, &compFilterNorth, &pidControllerX, &pidControllerY, &usb,
                           &akku, &baro, &leds};
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
