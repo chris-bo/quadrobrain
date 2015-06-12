@@ -41,13 +41,14 @@ void PIDController::update() {
      y = Kp * e + Ki * Ta * esum + Kd * (e – ealt)/Ta
      ealt = e
      */
-
+    float pv = ((float) (int32_t) (*processVariable * 1000)) / 1000.0f;
     float temp;
-    float e = (*setPoint * *scale - *processVariable);
+    float e = (*setPoint * *scale - pv);
     eSum += e;
 
     /* enable PID if using throttle > threshold */
     if (status->rcSignalThrottle > PID_THROTTLE_THRESHOLD) {
+
         if (useDerivedInput) {
             // Falls Ableitung vorhanden wird diese direkt verwendet
             temp = (*p) * e + (*i) * sampleTime * eSum
@@ -61,6 +62,7 @@ void PIDController::update() {
 
             oldValue = e;
         }
+
 
         // beachte limit
         if (temp > limit) {

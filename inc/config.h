@@ -56,6 +56,8 @@
 // Einstellzeit f�r Regler
 #define PPM_SETUP_TIME 3000000
 
+#define THROTTLE_SCALING                        0.7f
+
 /****************************/
 /* Sensorboard MPU9150
  *
@@ -72,7 +74,7 @@
  * PIDController
  */
 #define PID_DEFAULT_PRIORITY					0
-#define PID_THROTTLE_THRESHOLD                  0.2f
+#define PID_THROTTLE_THRESHOLD                  0.1f
 #define PID_LIMIT                               100.0f // Range -100% -> +100%
 #define PID_SUM_LIMIT                           200.0f
 /****************************/
@@ -114,13 +116,13 @@
 #define PID_XY_P                            0.1f
 #define PID_XY_I                            0.05f
 #define PID_XY_D                            0.4f
-#define PID_XY_GAIN                         0.1f
+#define PID_XY_GAIN                         0.001f
 #define PID_XY_SCALE                        100
 
 #define PID_Z_P                             0.1f
 #define PID_Z_I                             0.05f
 #define PID_Z_D                             0.4f
-#define PID_Z_GAIN                          0.1f
+#define PID_Z_GAIN                          0.001f
 #define PID_Z_SCALE                         100
 
 #define FILTER_COEFFICIENT_XY               0.98f

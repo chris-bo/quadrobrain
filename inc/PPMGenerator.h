@@ -18,7 +18,7 @@
  PC9     ------> TIM3_CH4
  */
 
-#define THROTTLE_MIN 0.15f
+#define THROTTLE_MIN 0.1f
 
 class PPMGenerator: public Task {
 public:
