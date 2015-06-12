@@ -19,14 +19,19 @@
 #define EEPROM_WAIT 10
 
 // Addresses
-#define P_XY_ADDR	        0x0000
-#define I_XY_ADDR	        0x0004
-#define D_XY_ADDR	        0x0008
-#define P_Z_ADDR	        0x000C
-#define I_Z_ADDR	        0x0012
-#define D_Z_ADDR	        0x0016
-#define FILTERCOEFF_XY_ADDR 0x001A
-#define FILTERCOEFF_Z_ADDR  0x001E
+#define PID_XY_P_ADDR	            0x0000
+#define PID_XY_I_ADDR	            0x0004
+#define PID_XY_D_ADDR	            0x0008
+#define PID_XY_GAIN_ADDR            0x000C
+#define PID_XY_SCALE_ADDR           0x0010
+#define PID_Z_P_ADDR                0x0014
+#define PID_Z_I_ADDR	            0x0018
+#define PID_Z_D_ADDR	            0x001C
+#define PID_Z_GAIN_ADDR             0x0020
+#define PID_Z_SCALE_ADDR            0x0024
+#define FILTERCOEFF_XY_ADDR         0x0028
+#define FILTERCOEFF_Z_ADDR          0x002C
+
 
 class ConfigReader {
 public:

@@ -24,12 +24,16 @@ void ConfigReader::loadConfiguration(Status* status) {
 
     HAL_Delay(2);
 
-    loadVariable(&status->pXY, P_XY_ADDR);
-    loadVariable(&status->iXY, I_XY_ADDR);
-    loadVariable(&status->dXY, D_XY_ADDR);
-    loadVariable(&status->pZ, P_Z_ADDR);
-    loadVariable(&status->iZ, I_Z_ADDR);
-    loadVariable(&status->dZ, D_Z_ADDR);
+    loadVariable(&status->pXY, PID_XY_P_ADDR);
+    loadVariable(&status->iXY, PID_XY_I_ADDR);
+    loadVariable(&status->dXY, PID_XY_D_ADDR);
+    loadVariable(&status->gainXY, PID_XY_GAIN_ADDR);
+    loadVariable(&status->scaleXY, PID_XY_SCALE_ADDR);
+    loadVariable(&status->pZ, PID_Z_P_ADDR);
+    loadVariable(&status->iZ, PID_Z_I_ADDR);
+    loadVariable(&status->dZ, PID_Z_D_ADDR);
+    loadVariable(&status->gainZ, PID_Z_GAIN_ADDR);
+    loadVariable(&status->scaleZ, PID_Z_SCALE_ADDR);
     loadVariable(&status->filterCoefficientXY, FILTERCOEFF_XY_ADDR);
     loadVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR);
 
@@ -46,13 +50,16 @@ void ConfigReader::loadConfiguration(Status* status) {
  */
 void ConfigReader::saveConfiguration(Status* status) {
 
-
-    saveVariable(&status->pXY, P_XY_ADDR, 0);
-    saveVariable(&status->iXY, I_XY_ADDR, 0);
-    saveVariable(&status->dXY, D_XY_ADDR, 0);
-    saveVariable(&status->pZ, P_Z_ADDR, 0);
-    saveVariable(&status->iZ, I_Z_ADDR, 0);
-    saveVariable(&status->dZ, D_Z_ADDR, 0);
+    saveVariable(&status->pXY, PID_XY_P_ADDR, 0);
+    saveVariable(&status->iXY, PID_XY_I_ADDR, 0);
+    saveVariable(&status->dXY, PID_XY_D_ADDR, 0);
+    saveVariable(&status->gainXY, PID_XY_GAIN_ADDR, 0);
+    saveVariable(&status->scaleXY, PID_XY_SCALE_ADDR, 0);
+    saveVariable(&status->pZ, PID_Z_P_ADDR, 0);
+    saveVariable(&status->iZ, PID_Z_I_ADDR, 0);
+    saveVariable(&status->dZ, PID_Z_D_ADDR, 0);
+    saveVariable(&status->gainZ, PID_Z_GAIN_ADDR, 0);
+    saveVariable(&status->scaleZ, PID_Z_SCALE_ADDR, 0);
     saveVariable(&status->filterCoefficientXY, FILTERCOEFF_XY_ADDR, 0);
     saveVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR, 0);
 }

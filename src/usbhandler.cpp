@@ -67,6 +67,8 @@ void usb_handler::update() {
                     usbTransmit(UserRxBufferFS, 1);
                     usb_mode_request = USB_MODE_LEAVE_CONFIG;
                 }
+                /* reset puffer to prevent executing twice */
+                UserRxBufferFS[0] = 0;
                 break;
                 /* Config commands */
             case USB_CMD_GET_CONFIG:
@@ -116,12 +118,16 @@ void usb_handler::update() {
                 status->restoreConfig();
                 /* send confirmation */
                 usbTransmit(UserRxBufferFS, 1);
+                /* reset puffer to prevent executing twice */
+                UserRxBufferFS[0] = 0;
                 break;
 
             case USB_CMD_RESET: {
                 /* Reset */
                 /* send confirmation */
                 usbTransmit(UserRxBufferFS, 1);
+                /* reset puffer to prevent executing twice */
+                UserRxBufferFS[0] = 0;
                 number_received_data = 0;
                 usb_mode_request = USB_MODE_RESET;
             }
@@ -130,9 +136,9 @@ void usb_handler::update() {
                 break;
         }
 
-        /* clear usb rx buffer[0] */
-        UserRxBufferFS[0] = 0;
-        number_received_data = 0;
+        if (usb_state == USBD_OK) {
+            number_received_data = 0;
+        }
         USBD_CDC_ReceivePacket(usb);
     }
     resetPriority();

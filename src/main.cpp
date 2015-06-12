@@ -158,8 +158,8 @@ void FlightMode() {
     compFilterNorth.initialize();
 
     /* Initialize PID for X and Y axis */
-    pidControllerX.initialize(&status.pXY, &status.iXY, &status.dXY, 100);
-    pidControllerY.initialize(&status.pXY, &status.iXY, &status.dXY, 100);
+    pidControllerX.initialize(&status.pXY, &status.iXY, &status.dXY, &status.gainXY, &status.scaleXY);
+    pidControllerY.initialize(&status.pXY, &status.iXY, &status.dXY, &status.gainZ, &status.scaleZ);
 
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED,1);

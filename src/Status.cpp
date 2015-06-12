@@ -48,13 +48,17 @@ Status::Status() {
     filterCoefficientXY = 0;
     filterCoefficientZ = 0;
 
-    pXY = 0;
-    iXY = 0;
-    dXY = 0;
+    pXY = PID_XY_P;
+    iXY = PID_XY_I;
+    dXY = PID_XY_D;
+    gainXY = PID_XY_GAIN;
+    scaleXY = PID_XY_SCALE;
 
-    pZ = 0;
-    iZ = 0;
-    dZ = 0;
+    pZ = PID_Z_P;
+    iZ = PID_Z_I;
+    dZ = PID_Z_D;
+    gainZ = PID_Z_GAIN;
+    scaleZ = PID_Z_SCALE;
 
     pidXOut = 0;
     pidYOut = 0;
@@ -111,13 +115,18 @@ void Status::reset() {
     filterCoefficientXY = 0;
     filterCoefficientZ = 0;
 
-    pXY = 0;
-    iXY = 0;
-    dXY = 0;
+    pXY = PID_XY_P;
+    iXY = PID_XY_I;
+    dXY = PID_XY_D;
+    gainXY = PID_XY_GAIN;
+    scaleXY = PID_XY_SCALE;
 
-    pZ = 0;
-    iZ = 0;
-    dZ = 0;
+    pZ = PID_Z_P;
+    iZ = PID_Z_I;
+    dZ = PID_Z_D;
+    gainZ = PID_Z_GAIN;
+    scaleZ = PID_Z_SCALE;
+
 
     pidXOut = 0;
     pidYOut = 0;
@@ -138,8 +147,13 @@ void Status::restoreConfig() {
     pXY = PID_XY_P;
     iXY = PID_XY_I;
     dXY = PID_XY_D;
+    gainXY = PID_XY_GAIN;
+    scaleXY = PID_XY_SCALE;
 
     pZ = PID_Z_P;
     iZ = PID_Z_I;
     dZ = PID_Z_D;
+    gainZ = PID_Z_GAIN;
+    scaleZ = PID_Z_SCALE;
+
 }

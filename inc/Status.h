@@ -77,13 +77,18 @@ public:
     float filterCoefficientXY;
     float filterCoefficientZ;
 
-    /* PID factors */
+    /* PID settings */
     float pXY;
     float iXY;
     float dXY;
+    float scaleXY;
+    float gainXY;
+
     float pZ;
     float iZ;
     float dZ;
+    float scaleZ;
+    float gainZ;
 
     /* PID Outputs */
     float pidXOut;
