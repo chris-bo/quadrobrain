@@ -20,8 +20,8 @@ PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
     this->p = 0;
     this->i = 0;
     this->d = 0;
-    scale = 0;
-    gain = 0;
+    this->scale = 0;
+    this->gain = 0;
     this->limit = _limit;
     this->sampleTime = _sampleTime;
     eSum = 0.0f;
@@ -51,7 +51,7 @@ void PIDController::update() {
         if (useDerivedInput) {
             // Falls Ableitung vorhanden wird diese direkt verwendet
             temp = (*p) * e + (*i) * sampleTime * eSum
-                        + (*d) * ((*setPoint - oldValue)* *scale - *derivedProcessVariable);
+                        + (*d) * (((*setPoint) - oldValue)* (*scale) - (*derivedProcessVariable));
             oldValue = *setPoint;
 
         } else {
@@ -71,7 +71,7 @@ void PIDController::update() {
         }
 
         // Reglerwert ausgeben
-        *controlValue = *gain * temp;
+        *controlValue = (*gain) * temp;
 
         /* limit sum*/
         if (eSum > sumLimit) {
@@ -94,8 +94,8 @@ void PIDController::initialize(float* _p, float* _i, float* _d, float* _gain, fl
     this->p = _p;
     this->i = _i;
     this->d = _d;
-    scale = _scale;
-    gain = _gain;
+    this->scale = _scale;
+    this->gain = _gain;
 }
 
 void PIDController::kill() {
