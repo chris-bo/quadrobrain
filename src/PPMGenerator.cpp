@@ -25,7 +25,7 @@ void PPMGenerator::update() {
 	// Motoren aktiviert?
 	if (status->rcSignalEnable) {
 		// Throttle hoch genug, damit Regler aktiv werden darf?
-		/*if (status->rcSignalThrottle > THROTTLE_MIN) {
+		if (status->rcSignalThrottle > THROTTLE_MIN) {
 			status->motorValues[0] = status->rcSignalThrottle
 					+ *controllerValueX;
 			status->motorValues[1] = status->rcSignalThrottle
@@ -35,12 +35,12 @@ void PPMGenerator::update() {
 			status->motorValues[3] = status->rcSignalThrottle
 					- *controllerValueY;
 			// Throttle zu niedrig => Reglerwerte werden nicht beruecksichtig
-		} else {*/
+		} else {
 			status->motorValues[0] = status->rcSignalThrottle;
 			status->motorValues[1] = status->rcSignalThrottle;
 			status->motorValues[2] = status->rcSignalThrottle;
 			status->motorValues[3] = status->rcSignalThrottle;
-		//}
+		}
 		// Motoren sind deaktiviert => alle Werte auf 0 setzen
 	} else {
 		status->motorValues[0] = 0;
