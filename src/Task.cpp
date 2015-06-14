@@ -40,6 +40,7 @@ void Task::initialize() {
 	/* standard initialization function
 	 *
 	 * set task active */
+    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 
 }
 
