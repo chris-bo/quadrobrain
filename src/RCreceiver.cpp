@@ -66,15 +66,15 @@ void RCreceiver::computeValues() {
     for (uint8_t i = 0; i < RECEIVER_CHANNELS; i++) {
 
         tmp = (int16_t) (rawReceiverValues[i] - RC_RECEIVER_MinHighTime_us);
-        tmp = tmp
-                    / ((RC_RECEIVER_MaxHighTime_us - RC_RECEIVER_MinHighTime_us)
-                                / 100);
+        tmp = tmp * 10000
+                    / (RC_RECEIVER_MaxHighTime_us - RC_RECEIVER_MinHighTime_us);
         if (tmp < 0) {
             tmp = 0;
-        } else if (tmp > 100) {
-            tmp = 100;
+        } else if (tmp > 10000) {
+            tmp = 10000;
         }
-        rawRCvalues[i] = (uint8_t) tmp;
+        /* add lowpass filter and save rawRCvalue*/
+        rawRCvalues[i] = (rawRCvalues[i] + tmp) / 2;
     }
     /* Channel Configuration:
      *
@@ -89,17 +89,17 @@ void RCreceiver::computeValues() {
      *
      */
 
-    status->rcSignalRoll = (((float) rawRCvalues[0] - 50) / 100);
-    status->rcSignalNick = (((float) rawRCvalues[2] - 50) / 100);
-    status->rcSignalYaw = (((float) rawRCvalues[3] - 50) / 100);
-    status->rcSignalThrottle = ((float) rawRCvalues[1] / 100);
-    status->rcSignalLinPoti = ((float) rawRCvalues[5] / 100);
-    if (rawRCvalues[4] > 80) {
+    status->rcSignalRoll = (((float) (rawRCvalues[0]) / 10000.0f) - 0.5f);
+    status->rcSignalNick = (((float) rawRCvalues[2]) / 10000.0f) - 0.5f;
+    status->rcSignalYaw = (((float) rawRCvalues[3] ) / 10000.0f) - 0.5f;
+    status->rcSignalThrottle = (float) (rawRCvalues[1] ) / 10000.0f;
+    status->rcSignalLinPoti = (float) (rawRCvalues[5] ) / 10000.0f;
+    if (rawRCvalues[4] > 8000) {
         status->rcSignalEnable = 1;
     } else {
         status->rcSignalEnable = 0;
     }
-    if (rawRCvalues[6] > 80) {
+    if (rawRCvalues[6] > 8000) {
         status->rcSignalSwitch = 1;
     } else {
         status->rcSignalSwitch = 0;

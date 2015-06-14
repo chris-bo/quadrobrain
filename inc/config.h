@@ -38,7 +38,7 @@
 /* signal detection defines */
 #define RC_RECEIVER_OverrunTime_us				4000
 #define RC_RECEIVER_MinHighTime_us				950
-#define RC_RECEIVER_MaxHighTime_us				2050
+#define RC_RECEIVER_MaxHighTime_us				2080
 //#define RC_RECEIVER_SyncTime_us				300		// included in RC_RECEIVER_MinHighTime_us
 
 /****************************/

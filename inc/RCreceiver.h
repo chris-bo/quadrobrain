@@ -54,7 +54,7 @@ private:
 
     TIM_HandleTypeDef* RCreceiver_htim;
     uint16_t rawReceiverValues[8];
-    uint8_t rawRCvalues[RECEIVER_CHANNELS];
+    uint16_t rawRCvalues[RECEIVER_CHANNELS];
     uint8_t currentChannel;
     uint32_t signalLostTime;
 
