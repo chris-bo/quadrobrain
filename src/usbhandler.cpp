@@ -295,17 +295,21 @@ void usb_handler::sendConfig() {
     fillBuffer(UserTxBufferFS, 0, status->pXY);
     fillBuffer(UserTxBufferFS, 4, status->iXY);
     fillBuffer(UserTxBufferFS, 8, status->dXY);
+    fillBuffer(UserTxBufferFS, 12, status->gainXY);
+    fillBuffer(UserTxBufferFS, 16, status->scaleXY);
 
     /* pid z  */
-    fillBuffer(UserTxBufferFS, 12, status->pZ);
-    fillBuffer(UserTxBufferFS, 16, status->iZ);
-    fillBuffer(UserTxBufferFS, 20, status->dZ);
+    fillBuffer(UserTxBufferFS, 20, status->pZ);
+    fillBuffer(UserTxBufferFS, 24, status->iZ);
+    fillBuffer(UserTxBufferFS, 28, status->dZ);
+    fillBuffer(UserTxBufferFS, 32, status->gainZ);
+    fillBuffer(UserTxBufferFS, 36, status->scaleZ);
 
     /* comp filter */
-    fillBuffer(UserTxBufferFS, 24, status->filterCoefficientXY);
-    fillBuffer(UserTxBufferFS, 28, status->filterCoefficientZ);
+    fillBuffer(UserTxBufferFS, 40, status->filterCoefficientXY);
+    fillBuffer(UserTxBufferFS, 44, status->filterCoefficientZ);
 
-    usbTransmit(UserTxBufferFS, 32);
+    usbTransmit(UserTxBufferFS, 48);
 
 }
 
@@ -314,13 +318,17 @@ void usb_handler::updateConfig() {
     status->pXY = byteToFloat(UserRxBufferFS, 1);
     status->iXY = byteToFloat(UserRxBufferFS, 5);
     status->dXY = byteToFloat(UserRxBufferFS, 9);
+    status->gainXY = byteToFloat(UserRxBufferFS, 13);
+    status->scaleXY = byteToFloat(UserRxBufferFS, 17);
 
-    status->pZ = byteToFloat(UserRxBufferFS, 13);
-    status->iZ = byteToFloat(UserRxBufferFS, 17);
-    status->dZ = byteToFloat(UserRxBufferFS, 21);
+    status->pZ = byteToFloat(UserRxBufferFS, 21);
+    status->iZ = byteToFloat(UserRxBufferFS, 25);
+    status->dZ = byteToFloat(UserRxBufferFS, 29);
+    status->gainZ = byteToFloat(UserRxBufferFS, 33);
+    status->scaleZ = byteToFloat(UserRxBufferFS, 37);
 
-    status->filterCoefficientXY = byteToFloat(UserRxBufferFS, 25);
-    status->filterCoefficientZ = byteToFloat(UserRxBufferFS, 29);
+    status->filterCoefficientXY = byteToFloat(UserRxBufferFS, 41);
+    status->filterCoefficientZ = byteToFloat(UserRxBufferFS, 45);
 
     usbTransmit(UserRxBufferFS, 1);
 
