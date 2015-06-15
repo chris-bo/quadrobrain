@@ -74,15 +74,16 @@ Compass compFilterNorth(&status, 0, &status.magnetY, &status.magnetX, &status.an
 /* PIDs low level */
 PIDController pidAngleX(&status, PID_DEFAULT_PRIORITY,
             (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleX, 0,
-            &status.rcSignalNick, &status.pidXOut,
+            &status.rcSignalNick, &status.pidXOut, PID_XY_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 PIDController pidAngleY(&status, PID_DEFAULT_PRIORITY,
             (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleY, 0,
-            &status.rcSignalRoll, &status.pidYOut,
+            &status.rcSignalRoll, &status.pidYOut, PID_XY_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
             (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rateZ, 0,
-            &status.rcSignalYaw, &status.pidZOut, PID_LIMIT, PID_SUM_LIMIT, false);
+            &status.rcSignalYaw, &status.pidZOut, PID_Z_CONTROL_VALUE_GAIN,
+            PID_LIMIT, PID_SUM_LIMIT, false);
 
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 

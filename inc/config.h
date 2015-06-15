@@ -119,12 +119,15 @@
 #define PID_XY_D                            0.4f
 #define PID_XY_GAIN                         0.001f
 #define PID_XY_SCALE                        100
+#define PID_XY_CONTROL_VALUE_GAIN           0.01f
 
 #define PID_Z_P                             0.1f
 #define PID_Z_I                             0.05f
 #define PID_Z_D                             0.4f
 #define PID_Z_GAIN                          0.001f
 #define PID_Z_SCALE                         100
+//TODO: anpassen!
+#define PID_Z_CONTROL_VALUE_GAIN            0.01f
 
 #define FILTER_COEFFICIENT_XY               0.98f
 #define FILTER_COEFFICIENT_Z                0.99f

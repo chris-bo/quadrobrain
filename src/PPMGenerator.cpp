@@ -35,11 +35,11 @@ void PPMGenerator::update() {
         // Throttle hoch genug, damit Regler aktiv werden darf?
         if (status->rcSignalThrottle > PID_THROTTLE_THRESHOLD) {
             motorValuesAvg[0] += status->rcSignalThrottle * THROTTLE_SCALING
-                        + *controllerValueY;
+                        - *controllerValueY;
             motorValuesAvg[1] += status->rcSignalThrottle * THROTTLE_SCALING
                         + *controllerValueX;
             motorValuesAvg[2] += status->rcSignalThrottle * THROTTLE_SCALING
-                        - *controllerValueY;
+                        + *controllerValueY;
             motorValuesAvg[3] += status->rcSignalThrottle * THROTTLE_SCALING
                         - *controllerValueX;
             counter++;

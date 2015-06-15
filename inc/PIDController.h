@@ -15,7 +15,7 @@ class PIDController: public Task {
 public:
     PIDController(Status* statusPtr, uint8_t defaultPrio, float _sampleTime,
                 float* _processVariable, float* _derivedProcessVariable,
-                float* _setPoint, float* _controlValue, float _limit,
+                float* _setPoint, float* _controlValue, float _controlValueGain, float _limit,
                 float _sumLimit, bool _useDerivedInput);
     virtual ~PIDController();
     void update();
@@ -42,6 +42,7 @@ private:
 
     /* output*/
     float* controlValue;
+    float controlValueGain;
 
     float eSum;
     float oldValue;

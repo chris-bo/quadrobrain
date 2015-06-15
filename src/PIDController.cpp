@@ -9,7 +9,7 @@
 
 PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
             float _sampleTime, float* _processVariable,
-            float* _derivedProcessVariable, float* _setPoint, float* _controlValue,
+            float* _derivedProcessVariable, float* _setPoint, float* _controlValue, float _controlValueGain,
             float _limit, float _sumLimit, bool _useDerivedInput)
             : Task(statusPtr, defaultPrio) {
     status = statusPtr;
@@ -17,6 +17,7 @@ PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
     this->derivedProcessVariable = _derivedProcessVariable;
     this->setPoint = _setPoint;
     this->controlValue = _controlValue;
+    this->controlValueGain = _controlValueGain;
     this->p = 0;
     this->i = 0;
     this->d = 0;
@@ -73,7 +74,7 @@ void PIDController::update() {
         }
 
         // Reglerwert ausgeben
-        *controlValue = (*gain) * temp;
+        *controlValue = (*gain) * controlValueGain * temp;
 
         /* limit sum*/
         if (eSum > sumLimit) {
