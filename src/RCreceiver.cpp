@@ -55,7 +55,6 @@ void RCreceiver::update() {
     } else {
         computeValues();
         signalLostTime = 0;
-        SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
     }
     resetPriority();
 }
@@ -143,6 +142,7 @@ void RCreceiver::captureIRQ() {
             SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC);
             /* reset no signal flag*/
             RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
+            SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         }
         currentChannel++;
     }
@@ -191,4 +191,5 @@ void RCreceiver::kill() {
 
     reset();
     RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
 }

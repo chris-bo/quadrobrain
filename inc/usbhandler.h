@@ -54,6 +54,7 @@
 #define USB_CMD_WRITE_2BYTES        0xC7
 #define USB_CMD_WRITE_4BYTES        0xC8
 
+#define USB_CMD_RELOAD_EEPROM       0xC9
 /* save config
  * triggers reset
  */
@@ -74,6 +75,7 @@
 #define USB_MODE_CONFIG             0x01
 #define USB_MODE_LEAVE_CONFIG       0x02
 #define USB_MODE_SAVE_CONFIG        0x03
+#define USB_MODE_RELOAD_EEPROM      0x04
 
 #define USB_MODE_RESET              0xFF
 

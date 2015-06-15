@@ -133,6 +133,7 @@ void FlightMode() {
     leds.on(POWER_LED);
     leds.on(FLIGHT_LED);
 
+    RESET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
     SET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
 
     /* init peripherals */
@@ -243,6 +244,9 @@ void ConfigMode() {
             Reset(RESET_TO_FLIGHT);
         } else if (usb.usb_mode_request == USB_MODE_RESET) {
             Reset(RESET_TO_CONFIG);
+        } else if (usb.usb_mode_request == USB_MODE_RELOAD_EEPROM) {
+            usb.usb_mode_request = USB_MODE_CONFIG;
+            configReader.loadConfiguration(&status);
         }
     }
 }

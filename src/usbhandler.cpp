@@ -108,6 +108,13 @@ void usb_handler::update() {
                     writeEEPROM(4);
                 }
                 break;
+            case USB_CMD_RELOAD_EEPROM:
+                if (usb_mode_request == USB_MODE_CONFIG){
+                    usb_mode_request = USB_MODE_RELOAD_EEPROM;
+                    /* send confirmation */
+                    usbTransmit(UserRxBufferFS, 1);
+                }
+                break;
             case USB_CMD_SAVE_CONFIG:
                 usb_mode_request = USB_MODE_SAVE_CONFIG;
                 /* send confirmation */
