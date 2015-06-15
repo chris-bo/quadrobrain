@@ -45,6 +45,7 @@
 /* PPMGenerator
  * PWM
  */
+
 #define PPMGENERATOR_DEFAULT_PRIORITY			3
 // Eine Periode ist ~ 20ms lang
 #define PPM_TIMER_PERIOD 65535

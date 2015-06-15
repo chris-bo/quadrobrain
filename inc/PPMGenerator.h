@@ -18,6 +18,7 @@
  PC9     ------> TIM3_CH4
  */
 
+
 #define THROTTLE_MIN 0.1f
 
 class PPMGenerator: public Task {
@@ -34,6 +35,10 @@ private:
     TIM_HandleTypeDef* PPMGenerator_htim;
     float* controllerValueX;
     float* controllerValueY;
+
+    float motorValuesAvg[4];
+    uint8_t counter;
+
 };
 
 #endif /* PPMGENERATOR_H_ */
