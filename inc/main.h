@@ -35,6 +35,7 @@
 #include "AkkuMonitor.h"
 #include "BMP180.h"
 #include "DiscoveryLEDs.h"
+#include "MAfilterF.h"
 
 
 /* Private variables ---------------------------------------------------------*/
