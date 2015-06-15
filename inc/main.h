@@ -45,8 +45,6 @@ extern ConfigReader configReader;
 extern Scheduler scheduler;
 extern RCreceiver rcReceiver;
 extern MPU9150 mpu9150;
-extern PIDController pidControllerX;
-extern PIDController pidControllerY;
 extern AkkuMonitor akku;
 extern BMP180 baro;
 extern DiscoveryLEDs leds;

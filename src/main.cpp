@@ -61,6 +61,7 @@ ConfigReader configReader(&hi2c1);
 /* PC communications */
 usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
+
 /* Sensor data fusion Filters*/
 ComplementaryFilter compFilterX(&status, 0, &status.accelY, &status.accelZ,
             &status.rateX, &status.angleX, &status.filterCoefficientXY);
@@ -69,19 +70,20 @@ ComplementaryFilter compFilterY(&status, 0, &status.accelX, &status.accelZ,
 Compass compFilterNorth(&status, 0, &status.magnetY, &status.magnetX, &status.angleY,
             &status.angleX, &status.rateZ, &status.angleNorth,
             &status.filterCoefficientZ);
-// test without derived input first
-//PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
-//		(float)SCHEDULER_INTERVALL_ms, &status.angleX, &status.rateX, &status.rcSignalNick, &status.pidXOut,
-//		PID_LIMIT,PID_SUM_LIMIT, false);
-//PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY,
-//		(float)SCHEDULER_INTERVALL_ms, &status.angleY, &status.rateY, &status.rcSignalRoll, &status.pidYOut,
-//			PID_LIMIT,PID_SUM_LIMIT, false);
-PIDController pidControllerX(&status, PID_DEFAULT_PRIORITY,
-        (float)SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleX, 0, &status.rcSignalNick, &status.pidXOut,
-        PID_LIMIT,PID_SUM_LIMIT, false);
-PIDController pidControllerY( &status, PID_DEFAULT_PRIORITY,
-        (float)SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleY, 0, &status.rcSignalRoll, &status.pidYOut,
-            PID_LIMIT,PID_SUM_LIMIT, false);
+
+/* PIDs low level */
+PIDController pidAngleX(&status, PID_DEFAULT_PRIORITY,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleX, 0,
+            &status.rcSignalNick, &status.pidXOut,
+            PID_LIMIT, PID_SUM_LIMIT, false);
+PIDController pidAngleY(&status, PID_DEFAULT_PRIORITY,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleY, 0,
+            &status.rcSignalRoll, &status.pidYOut,
+            PID_LIMIT, PID_SUM_LIMIT, false);
+PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rateZ, 0,
+            &status.rcSignalYaw, &status.pidZOut, PID_LIMIT, PID_SUM_LIMIT, false);
+
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
 /* Private function prototypes -----------------------------------------------*/
@@ -159,16 +161,20 @@ void FlightMode() {
     compFilterNorth.initialize();
 
     /* Initialize PID for X and Y axis */
-    pidControllerX.initialize(&status.pXY, &status.iXY, &status.dXY, &status.gainXY, &status.scaleXY);
-    pidControllerY.initialize(&status.pXY, &status.iXY, &status.dXY, &status.gainZ, &status.scaleZ);
+    pidAngleX.initialize(&status.pXY, &status.iXY, &status.dXY, &status.gainXY,
+                &status.scaleXY);
+    pidAngleY.initialize(&status.pXY, &status.iXY, &status.dXY, &status.gainXY,
+                &status.scaleXY);
+    pidRateZ.initialize(&status.pZ, &status.iZ, &status.dZ, &status.gainZ,
+                &status.scaleZ);
 
     /* blinking flight led, to indicate running cpu */
-    leds.setFrequency(FLIGHT_LED,1);
+    leds.setFrequency(FLIGHT_LED, 1);
 
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
-                          &compFilterY, &compFilterNorth, &pidControllerX, &pidControllerY, &usb,
-                          &akku, &baro, &leds};
+                          &compFilterY, &compFilterNorth, &pidAngleX,
+                          &pidAngleY, &pidRateZ, &usb, &akku, &baro, &leds };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
@@ -183,7 +189,7 @@ void FlightMode() {
 }
 
 void Reset(uint8_t mode) {
-     /* No need to deinit Hardware reinitializing resets peripherals*/
+    /* No need to deinit Hardware reinitializing resets peripherals*/
 
     if (mode == RESET_TO_CONFIG) {
         usb.usb_mode_request = USB_MODE_CONFIG;
@@ -228,7 +234,7 @@ void ConfigMode() {
     /* only blinking led to indicate running cpu
      * and usb Task needed
      * */
-    leds.setFrequency(CONFIG_LED,1);
+    leds.setFrequency(CONFIG_LED, 1);
     usb.initialize(&configReader);
 
     Task* tasks_config[] = { &usb, &leds };
