@@ -98,6 +98,10 @@ public:
     /* cpu load calculated via idle time*/
     float cpuLoad; // %
 
+    /* Buzzer Status */
+    bool buzzer1Busy;
+    bool buzzer2Busy;
+
 };
 
 #endif /* STATUS_H_ */

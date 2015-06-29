@@ -112,6 +112,12 @@
 #define FLIGHT_DATA_RECEPTION_LED               LED9
 #define ERROR_LED                               LED10
 
+/****************************/
+/* Buzzer
+ *
+ */
+
+#define BUZZER_DEFAULT_PRIORITY                 20
 /*********************************************************************************/
 /* hard coded settings*/
 #define PID_XY_P                            0.1f

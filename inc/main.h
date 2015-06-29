@@ -36,6 +36,7 @@
 #include "BMP180.h"
 #include "DiscoveryLEDs.h"
 #include "MAfilterF.h"
+#include "Buzzer.h"
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -48,4 +49,5 @@ extern MPU9150 mpu9150;
 extern AkkuMonitor akku;
 extern BMP180 baro;
 extern DiscoveryLEDs leds;
+extern Buzzer beep;
 #endif /* MAIN_H_ */

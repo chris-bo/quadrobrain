@@ -45,7 +45,7 @@
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
-
+TIM_HandleTypeDef htim15;
 
 /* TIM2 init function */
 /* scheduler timer */
@@ -137,6 +137,50 @@ void MX_TIM4_Init(void) {
 	HAL_TIM_IC_ConfigChannel(&htim4, &sConfigIC, TIM_CHANNEL_3);
 
 }
+
+
+/* TIM15 init function */
+void MX_TIM15_Init(void) {
+TIM_MasterConfigTypeDef sMasterConfig;
+TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
+TIM_OC_InitTypeDef sConfigOC;
+
+htim15.Instance = TIM15;
+htim15.Init.Prescaler = 72;
+htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
+htim15.Init.Period = 2;
+htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+htim15.Init.RepetitionCounter = 0;
+HAL_TIM_PWM_Init(&htim15);
+
+sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+HAL_TIMEx_MasterConfigSynchronization(&htim15, &sMasterConfig);
+
+sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+sBreakDeadTimeConfig.DeadTime = 0;
+sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+sBreakDeadTimeConfig.BreakFilter = 0;
+sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+HAL_TIMEx_ConfigBreakDeadTime(&htim15, &sBreakDeadTimeConfig);
+
+sConfigOC.OCMode = TIM_OCMODE_PWM1;
+sConfigOC.Pulse = 0;
+sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+HAL_TIM_PWM_ConfigChannel(&htim15, &sConfigOC, TIM_CHANNEL_1);
+
+HAL_TIM_PWM_ConfigChannel(&htim15, &sConfigOC, TIM_CHANNEL_2);
+
+}
+
+
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 {
 
@@ -182,6 +226,58 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM3_MspInit 1 */
   }
 }
+
+
+void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* htim_pwm) {
+
+GPIO_InitTypeDef GPIO_InitStruct;
+if (htim_pwm->Instance == TIM3) {
+    /* USER CODE BEGIN TIM3_MspInit 0 */
+
+    /* USER CODE END TIM3_MspInit 0 */
+    /* Peripheral clock enable */
+    __TIM3_CLK_ENABLE();
+
+    /**TIM3 GPIO Configuration
+     PC6     ------> TIM3_CH1
+     PC7     ------> TIM3_CH2
+     PC8     ------> TIM3_CH3
+     PC9     ------> TIM3_CH4
+     */
+    GPIO_InitStruct.Pin = GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    /* USER CODE BEGIN TIM3_MspInit 1 */
+
+    /* USER CODE END TIM3_MspInit 1 */
+} else if (htim_pwm->Instance == TIM15) {
+    /* USER CODE BEGIN TIM15_MspInit 0 */
+
+    /* USER CODE END TIM15_MspInit 0 */
+    /* Peripheral clock enable */
+    __TIM15_CLK_ENABLE();
+
+    /**TIM15 GPIO Configuration
+     PF9     ------> TIM15_CH1
+     PF10     ------> TIM15_CH2
+     */
+    GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF3_TIM15;
+    HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+
+    /* USER CODE BEGIN TIM15_MspInit 1 */
+
+    /* USER CODE END TIM15_MspInit 1 */
+}
+}
+
 
 void HAL_TIM_IC_MspInit(TIM_HandleTypeDef* htim_ic)
 {
@@ -252,6 +348,46 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
 
   /* USER CODE END TIM3_MspDeInit 1 */
   }
+}
+
+
+void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* htim_pwm) {
+
+if (htim_pwm->Instance == TIM3) {
+    /* USER CODE BEGIN TIM3_MspDeInit 0 */
+
+    /* USER CODE END TIM3_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __TIM3_CLK_DISABLE();
+
+    /**TIM3 GPIO Configuration
+     PC6     ------> TIM3_CH1
+     PC7     ------> TIM3_CH2
+     PC8     ------> TIM3_CH3
+     PC9     ------> TIM3_CH4
+     */
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9);
+
+    /* USER CODE BEGIN TIM3_MspDeInit 1 */
+
+    /* USER CODE END TIM3_MspDeInit 1 */
+} else if (htim_pwm->Instance == TIM15) {
+    /* USER CODE BEGIN TIM15_MspDeInit 0 */
+
+    /* USER CODE END TIM15_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __TIM15_CLK_DISABLE();
+
+    /**TIM15 GPIO Configuration
+     PF9     ------> TIM15_CH1
+     PF10     ------> TIM15_CH2
+     */
+    HAL_GPIO_DeInit(GPIOF, GPIO_PIN_9 | GPIO_PIN_10);
+
+    /* USER CODE BEGIN TIM15_MspDeInit 1 */
+
+    /* USER CODE END TIM15_MspDeInit 1 */
+}
 }
 
 void HAL_TIM_IC_MspDeInit(TIM_HandleTypeDef* htim_ic)

@@ -87,6 +87,8 @@ PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
 
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
+Buzzer beep(&status, BUZZER_DEFAULT_PRIORITY,&htim15);
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -117,6 +119,10 @@ int main(void) {
     /* onboard leds*/
     leds.initialize();
     leds.on(ALL);
+
+    /* Buzzer*/
+    MX_TIM15_Init();
+    beep.initialize();
 
     /* Short Delay to check all leds */
     HAL_Delay(10);
@@ -172,10 +178,12 @@ void FlightMode() {
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
 
+    beep.playToneOnBuzzer1(BUZZER_A4,200);
+
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidAngleX,
-                          &pidAngleY, &pidRateZ, &usb, &akku, &baro, &leds };
+                          &pidAngleY, &pidRateZ, &usb, &akku, &baro, &leds,&beep };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
@@ -238,7 +246,7 @@ void ConfigMode() {
     leds.setFrequency(CONFIG_LED, 1);
     usb.initialize(&configReader);
 
-    Task* tasks_config[] = { &usb, &leds };
+    Task* tasks_config[] = { &usb, &leds , &beep};
     scheduler.start(tasks_config, sizeof(tasks_config) / 4);
 
     while (1) {

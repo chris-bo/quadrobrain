@@ -8,8 +8,10 @@
 #ifndef AKKUMONITOR_H_
 #define AKKUMONITOR_H_
 
+
 #include "Task.h"
 #include "config.h"
+
 
 /*********************************************************
  *
