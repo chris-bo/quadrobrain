@@ -41,6 +41,8 @@ void AkkuMonitor::update() {
 
 	if (status->akkuVoltage < LOW_VOLTAGE_WARNING_THRESHOLD) {
 	    lowVoltageWarning();
+	} else {
+	    RESET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
 	}
 
 	resetPriority();

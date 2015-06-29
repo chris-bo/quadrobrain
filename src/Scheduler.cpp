@@ -193,17 +193,20 @@ void Scheduler::errorHandler() {
         RESET_FLAG(status->globalFlags, CPU_OVERLOAD_FLAG);
     }
 
-    /* Error FLAGS */
-    if (GET_FLAG(status->globalFlags, ERROR_FLAG)) {
-        /* some error is detected */
-        /* check errors, etc */
-        leds->on(ERROR_LED);
-    }
+    /* Flight Data Reception */
     if (GET_FLAGS(status->globalFlags,
                 (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
         leds->on(FLIGHT_DATA_RECEPTION_LED);
     } else {
         leds->off(FLIGHT_DATA_RECEPTION_LED);
+        SET_FLAG(status->globalFlags, ERROR_FLAG);
+    }
+
+    /* Error FLAGS */
+    if (GET_FLAG(status->globalFlags, ERROR_FLAG)) {
+        /* some error is detected */
+        /* check errors, etc */
+        leds->on(ERROR_LED);
     }
 
     /* TODO: Scheduler: check all errorflags before
@@ -212,7 +215,7 @@ void Scheduler::errorHandler() {
      */
     if ((!GET_FLAG(status->globalFlags,
                 (LOW_VOLTAGE_FLAG | USB_ERROR_FLAG | CPU_OVERLOAD_FLAG)))
-                && GET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG)) {
+                && GET_FLAG(status->globalFlags, (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
 
         /* at this time, there are no error flags set
          * -> reset error_flag and switch led error off
