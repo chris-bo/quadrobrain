@@ -77,7 +77,8 @@ void Buzzer::playToneOnBuzzer2(float frequency, uint16_t length) {
 }
 
 uint16_t Buzzer::calculateReloadValue( float frequency ) {
-	return (uint16_t)(72000 / 72 / 2 * frequency);
+	// nreload = 72Mhz / nprescaler / frequency
+	return (uint16_t)(72000000 / 72 / frequency);
 }
 
 Buzzer::~Buzzer() {
