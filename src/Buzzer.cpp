@@ -59,6 +59,7 @@ void Buzzer::playToneOnBuzzer1(float frequency, uint16_t length) {
 	// set pwm timer
 	uint16_t temp = calculateReloadValue( frequency );
 	__HAL_TIM_SetAutoreload( Buzzer_htim, temp );
+	// TODO: evtl. Lautstärkenregelung über Pulslänge
 	__HAL_TIM_SetCompare( Buzzer_htim, TIM_CHANNEL_1, temp / 2 );
 	// set buzzer as busy
 	status->buzzer1Busy = true;
