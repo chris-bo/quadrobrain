@@ -31,12 +31,14 @@ RCreceiver::~RCreceiver() {
 }
 
 void RCreceiver::update() {
+
     if (GET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL)) {
         /* TODO RCreceiver manage rc signal loss
          *
          * 		handle throttle and engines
          * */
         RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
+        SET_FLAG(status->globalFlags, ERROR_FLAG);
         /* disable control*/
         status->rcSignalNick = 0;
         status->rcSignalRoll = 0;
@@ -47,12 +49,8 @@ void RCreceiver::update() {
             status->rcSignalThrottle = 0.2f;
         }
         signalLostTime++;
-
-        if (signalLostTime == 2000 /SCHEDULER_INTERVALL_ms ) {
-            /* signal lost for 2 seconds */
-            SET_FLAG(status->globalFlags, ERROR_FLAG);
-        }
     } else {
+        SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         computeValues();
         signalLostTime = 0;
     }
@@ -65,15 +63,15 @@ void RCreceiver::computeValues() {
     for (uint8_t i = 0; i < RECEIVER_CHANNELS; i++) {
 
         tmp = (int16_t) (rawReceiverValues[i] - RC_RECEIVER_MinHighTime_us);
-        tmp = tmp * 10000
-                    / (RC_RECEIVER_MaxHighTime_us - RC_RECEIVER_MinHighTime_us);
+        tmp = (int16_t) (tmp * 10000
+                    / (RC_RECEIVER_MaxHighTime_us - RC_RECEIVER_MinHighTime_us));
         if (tmp < 0) {
             tmp = 0;
         } else if (tmp > 10000) {
             tmp = 10000;
         }
         /* add lowpass filter and save rawRCvalue*/
-        rawRCvalues[i] = (rawRCvalues[i] + tmp) / 2;
+        rawRCvalues[i] = (rawRCvalues[i] + (uint16_t) tmp) / 2;
     }
     /* Channel Configuration:
      *
@@ -114,7 +112,6 @@ void RCreceiver::overrunIRQ() {
 
     } else {
         SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
-        RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC);
         currentChannel = 8;
     }
 }
@@ -128,8 +125,6 @@ void RCreceiver::captureIRQ() {
         __HAL_TIM_SetCounter(RCreceiver_htim, 0x00);
         HAL_TIM_ReadCapturedValue(RCreceiver_htim, RC_RECEIVER_INPUT_CHANNEL);
         currentChannel = 0;
-
-        RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SEQUENCE_COMPLETE);
     } else {
         rawReceiverValues[currentChannel] = (uint16_t) HAL_TIM_ReadCapturedValue(
                     RCreceiver_htim,
@@ -138,11 +133,8 @@ void RCreceiver::captureIRQ() {
         if (currentChannel == 7) {
             /* all pulses detected and saved */
             /* waiting for overrun interrupt to resync */
-            SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SEQUENCE_COMPLETE);
-            SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_SYNC);
             /* reset no signal flag*/
             RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
-            SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         }
         currentChannel++;
     }
