@@ -9,8 +9,9 @@
 
 PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
             float _sampleTime, float* _processVariable,
-            float* _derivedProcessVariable, float* _setPoint, float* _controlValue, float _controlValueGain,
-            float _limit, float _sumLimit, bool _useDerivedInput)
+            float* _derivedProcessVariable, float* _setPoint, float* _controlValue,
+            float _controlValueGain, float _limit, float _sumLimit,
+            bool _useDerivedInput)
             : Task(statusPtr, defaultPrio) {
     status = statusPtr;
     this->processVariable = _processVariable;
@@ -42,23 +43,24 @@ void PIDController::update() {
      y = Kp * e + Ki * Ta * esum + Kd * (e – ealt)/Ta
      ealt = e
      */
-
-#ifdef PID_ROUND_PROCESS_VARIABLE
-    float pv = ((float) (int32_t) (*processVariable * 1000)) / 1000.0f;
-#else
-    float pv = *processVariable;
-#endif
-    float temp;
-    float e = (*setPoint * *scale - pv);
-    eSum += e;
-
     /* enable PID if using throttle > threshold */
     if (status->rcSignalThrottle > PID_THROTTLE_THRESHOLD) {
+
+#ifdef PID_ROUND_PROCESS_VARIABLE
+        float pv = ((float) (int32_t) (*processVariable * 1000)) / 1000.0f;
+#else
+        float pv = *processVariable;
+#endif
+        float temp;
+        float e = (*setPoint * *scale - pv);
+        eSum += e;
 
         if (useDerivedInput) {
             // Falls Ableitung vorhanden wird diese direkt verwendet
             temp = (*p) * e + (*i) * sampleTime * eSum
-                        + (*d) * (((*setPoint) - oldValue)* (*scale) - (*derivedProcessVariable));
+                        + (*d)
+                                    * (((*setPoint) - oldValue) * (*scale)
+                                                - (*derivedProcessVariable));
             oldValue = *setPoint;
 
         } else {
@@ -68,7 +70,6 @@ void PIDController::update() {
 
             oldValue = e;
         }
-
 
         // beachte limit
         if (temp > limit) {
@@ -97,7 +98,8 @@ void PIDController::update() {
     }
 }
 
-void PIDController::initialize(float* _p, float* _i, float* _d, float* _gain, float* _scale){
+void PIDController::initialize(float* _p, float* _i, float* _d, float* _gain,
+            float* _scale) {
     // Task aktivieren
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
     this->p = _p;

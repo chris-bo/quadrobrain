@@ -87,6 +87,6 @@ uint16_t Buzzer::calculateReloadValue( float frequency ) {
 }
 
 Buzzer::~Buzzer() {
-	// TODO: Geh dich erschiessen
+
 }
 
