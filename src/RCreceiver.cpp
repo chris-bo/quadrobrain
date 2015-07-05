@@ -71,7 +71,7 @@ void RCreceiver::computeValues() {
             tmp = 10000;
         }
         /* add lowpass filter and save rawRCvalue*/
-        rawRCvalues[i] = (rawRCvalues[i] + (uint16_t) tmp) / 2;
+        rawRCvalues[i] = (uint16_t) (rawRCvalues[i] +  tmp) / 2;
     }
     /* Channel Configuration:
      *
