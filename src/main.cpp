@@ -124,6 +124,7 @@ int main(void) {
     MX_TIM15_Init();
     beep.initialize();
 
+
     /* Short Delay to check all leds */
     HAL_Delay(10);
 
@@ -178,7 +179,7 @@ void FlightMode() {
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
 
-    beep.playToneOnBuzzer1(BUZZER_A4,200);
+
 
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
@@ -186,6 +187,15 @@ void FlightMode() {
                           &pidAngleY, &pidRateZ, &usb, &akku, &baro, &leds,&beep };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
+    beep.playToneOnBuzzer1(BUZZER_A4,2000);
+    HAL_Delay(3000);
+    beep.playToneOnBuzzer1(10,2000);
+    HAL_Delay(3000);
+    beep.playToneOnBuzzer1(4000,2000);
+    HAL_Delay(3000);
+    beep.playToneOnBuzzer2(BUZZER_D4,2000);
+    HAL_Delay(3000);
+    beep.playToneOnBuzzer2(BUZZER_E4,2000);
 
     while (1) {
         if ((usb.usb_mode_request == USB_MODE_CONFIG)

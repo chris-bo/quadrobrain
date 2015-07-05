@@ -21,6 +21,7 @@ void Buzzer::update() {
 	if( elapsedLengthBuzzer1 == 0 && toneLengthBuzzer1 != 0 ) {
 		// start pwm timer
 		HAL_TIM_PWM_Start( Buzzer_htim, TIM_CHANNEL_1 );
+        elapsedLengthBuzzer1 = 1;
 	} else if (elapsedLengthBuzzer1 == toneLengthBuzzer1) {
 		// stop pwm timer
 		HAL_TIM_PWM_Stop( Buzzer_htim, TIM_CHANNEL_1 );
@@ -38,6 +39,7 @@ void Buzzer::update() {
 		if( elapsedLengthBuzzer2 == 0 && toneLengthBuzzer2 != 0 ) {
 			// start pwm timer
 			HAL_TIM_PWM_Start( Buzzer_htim, TIM_CHANNEL_2 );
+			elapsedLengthBuzzer2 = 1;
 		} else if (elapsedLengthBuzzer2 == toneLengthBuzzer2) {
 			// stop pwm timer
 			HAL_TIM_PWM_Stop( Buzzer_htim, TIM_CHANNEL_2 );
@@ -59,8 +61,9 @@ void Buzzer::playToneOnBuzzer1(float frequency, uint16_t length) {
 	// set pwm timer
 	uint16_t temp = calculateReloadValue( frequency );
 	__HAL_TIM_SetAutoreload( Buzzer_htim, temp );
-	// TODO: evtl. Lautstärkenregelung über Pulslänge
+	// TODO: evtl. Lautstï¿½rkenregelung ï¿½ber Pulslï¿½nge
 	__HAL_TIM_SetCompare( Buzzer_htim, TIM_CHANNEL_1, temp / 2 );
+
 	// set buzzer as busy
 	status->buzzer1Busy = true;
 }
@@ -79,7 +82,8 @@ void Buzzer::playToneOnBuzzer2(float frequency, uint16_t length) {
 
 uint16_t Buzzer::calculateReloadValue( float frequency ) {
 	// nreload = 72Mhz / nprescaler / frequency
-	return (uint16_t)(72000000 / 72 / frequency);
+    uint32_t tmp=((HAL_RCC_GetSysClockFreq() / (BUZZER_PRESCALER +1 )) / frequency);
+	return (uint16_t)(tmp);
 }
 
 Buzzer::~Buzzer() {

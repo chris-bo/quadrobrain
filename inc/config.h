@@ -118,6 +118,7 @@
  */
 
 #define BUZZER_DEFAULT_PRIORITY                 20
+#define BUZZER_PRESCALER                        71
 /*********************************************************************************/
 /* hard coded settings*/
 #define PID_XY_P                            0.1f

@@ -146,9 +146,9 @@ TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 TIM_OC_InitTypeDef sConfigOC;
 
 htim15.Instance = TIM15;
-htim15.Init.Prescaler = 72;
+htim15.Init.Prescaler = BUZZER_PRESCALER;
 htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
-htim15.Init.Period = 2;
+htim15.Init.Period = 2200;
 htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 htim15.Init.RepetitionCounter = 0;
 HAL_TIM_PWM_Init(&htim15);
@@ -268,7 +268,7 @@ if (htim_pwm->Instance == TIM3) {
     GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF3_TIM15;
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
