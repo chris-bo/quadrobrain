@@ -42,7 +42,12 @@ void PIDController::update() {
      y = Kp * e + Ki * Ta * esum + Kd * (e – ealt)/Ta
      ealt = e
      */
+
+#ifdef PID_ROUND_PROCESS_VARIABLE
     float pv = ((float) (int32_t) (*processVariable * 1000)) / 1000.0f;
+#else
+    float pv = *processVariable;
+#endif
     float temp;
     float e = (*setPoint * *scale - pv);
     eSum += e;
@@ -77,11 +82,12 @@ void PIDController::update() {
         *controlValue = (*gain) * controlValueGain * temp;
 
         /* limit sum*/
-        if (eSum > sumLimit) {
-            eSum = sumLimit;
-        } else if (eSum < -1 * sumLimit) {
-            eSum = -1 * sumLimit;
-
+        if (sumLimit != INFINITY) {
+            if (eSum > sumLimit) {
+                eSum = sumLimit;
+            } else if (eSum < -1 * sumLimit) {
+                eSum = -1 * sumLimit;
+            }
         }
     } else {
         /* reset sum */

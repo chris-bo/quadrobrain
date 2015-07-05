@@ -10,6 +10,7 @@
 
 #include "stm32f3xx_hal.h"
 #include "stm32f3_discovery.h"
+#include "math.h"
 
 /*********************************************************************************/
 /* Peripheral definitions */
@@ -77,7 +78,12 @@
 #define PID_DEFAULT_PRIORITY					0
 #define PID_THROTTLE_THRESHOLD                  0.1f
 #define PID_LIMIT                               100.0f // Range -100% -> +100%
-#define PID_SUM_LIMIT                           200.0f
+
+/* set to zero to disable limiting e_sum */
+#define PID_SUM_LIMIT                           INFINITY
+
+/* uncomment to round processvariable to 3 digits behind .
+//#define PID_ROUND_PROCESS_VARIABLE
 /****************************/
 /* USB
  *
