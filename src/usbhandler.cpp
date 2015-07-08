@@ -210,9 +210,9 @@ void usb_handler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 108, status->akkuVoltage);
 
         /* PID Outputs */
-        fillBuffer(UserTxBufferFS, 112, status->pidXOut);
-        fillBuffer(UserTxBufferFS, 116, status->pidYOut);
-        fillBuffer(UserTxBufferFS, 120, status->pidZOut);
+        fillBuffer(UserTxBufferFS, 112, status->motorSetPointX);
+        fillBuffer(UserTxBufferFS, 116, status->motorSetPointY);
+        fillBuffer(UserTxBufferFS, 120, status->motorSetPointZ);
 
         /* cpu load */
         fillBuffer(UserTxBufferFS, 124, status->cpuLoad);
@@ -299,18 +299,18 @@ void usb_handler::sendConfig() {
      *
      */
     /* pid xy */
-    fillBuffer(UserTxBufferFS, 0, status->pXY);
-    fillBuffer(UserTxBufferFS, 4, status->iXY);
-    fillBuffer(UserTxBufferFS, 8, status->dXY);
-    fillBuffer(UserTxBufferFS, 12, status->gainXY);
-    fillBuffer(UserTxBufferFS, 16, status->scaleXY);
+    fillBuffer(UserTxBufferFS, 0, status->pidSettigsAngleXY.p);
+    fillBuffer(UserTxBufferFS, 4, status->pidSettigsAngleXY.i);
+    fillBuffer(UserTxBufferFS, 8, status->pidSettigsAngleXY.d);
+    fillBuffer(UserTxBufferFS, 12, status->pidSettigsAngleXY.gain);
+    fillBuffer(UserTxBufferFS, 16, status->pidSettigsAngleXY.scaleSetPoint);
 
     /* pid z  */
-    fillBuffer(UserTxBufferFS, 20, status->pZ);
-    fillBuffer(UserTxBufferFS, 24, status->iZ);
-    fillBuffer(UserTxBufferFS, 28, status->dZ);
-    fillBuffer(UserTxBufferFS, 32, status->gainZ);
-    fillBuffer(UserTxBufferFS, 36, status->scaleZ);
+    fillBuffer(UserTxBufferFS, 20, status->pidSettigsRotationZ.p);
+    fillBuffer(UserTxBufferFS, 24, status->pidSettigsRotationZ.i);
+    fillBuffer(UserTxBufferFS, 28, status->pidSettigsRotationZ.d);
+    fillBuffer(UserTxBufferFS, 32, status->pidSettigsRotationZ.gain);
+    fillBuffer(UserTxBufferFS, 36, status->pidSettigsRotationZ.scaleSetPoint);
 
     /* comp filter */
     fillBuffer(UserTxBufferFS, 40, status->filterCoefficientXY);
@@ -322,17 +322,17 @@ void usb_handler::sendConfig() {
 
 void usb_handler::updateConfig() {
 
-    status->pXY = byteToFloat(UserRxBufferFS, 1);
-    status->iXY = byteToFloat(UserRxBufferFS, 5);
-    status->dXY = byteToFloat(UserRxBufferFS, 9);
-    status->gainXY = byteToFloat(UserRxBufferFS, 13);
-    status->scaleXY = byteToFloat(UserRxBufferFS, 17);
+    status->pidSettigsAngleXY.p = byteToFloat(UserRxBufferFS, 1);
+    status->pidSettigsAngleXY.i = byteToFloat(UserRxBufferFS, 5);
+    status->pidSettigsAngleXY.d = byteToFloat(UserRxBufferFS, 9);
+    status->pidSettigsAngleXY.gain = byteToFloat(UserRxBufferFS, 13);
+    status->pidSettigsAngleXY.scaleSetPoint = byteToFloat(UserRxBufferFS, 17);
 
-    status->pZ = byteToFloat(UserRxBufferFS, 21);
-    status->iZ = byteToFloat(UserRxBufferFS, 25);
-    status->dZ = byteToFloat(UserRxBufferFS, 29);
-    status->gainZ = byteToFloat(UserRxBufferFS, 33);
-    status->scaleZ = byteToFloat(UserRxBufferFS, 37);
+    status->pidSettigsRotationZ.p = byteToFloat(UserRxBufferFS, 21);
+    status->pidSettigsRotationZ.i = byteToFloat(UserRxBufferFS, 25);
+    status->pidSettigsRotationZ.d = byteToFloat(UserRxBufferFS, 29);
+    status->pidSettigsRotationZ.gain = byteToFloat(UserRxBufferFS, 33);
+    status->pidSettigsRotationZ.scaleSetPoint = byteToFloat(UserRxBufferFS, 37);
 
     status->filterCoefficientXY = byteToFloat(UserRxBufferFS, 41);
     status->filterCoefficientZ = byteToFloat(UserRxBufferFS, 45);

@@ -48,27 +48,30 @@ Status::Status() {
     filterCoefficientXY = 0;
     filterCoefficientZ = 0;
 
-    pXY = PID_XY_P;
-    iXY = PID_XY_I;
-    dXY = PID_XY_D;
-    gainXY = PID_XY_GAIN;
-    scaleXY = PID_XY_SCALE;
+    pidSettigsAngleXY.p = PID_XY_P;
+    pidSettigsAngleXY.i = PID_XY_I;
+    pidSettigsAngleXY.d = PID_XY_D;
+    pidSettigsAngleXY.scaleSetPoint = PID_XY_SCALE;
+    pidSettigsAngleXY.gain = PID_XY_GAIN;
 
-    pZ = PID_Z_P;
-    iZ = PID_Z_I;
-    dZ = PID_Z_D;
-    gainZ = PID_Z_GAIN;
-    scaleZ = PID_Z_SCALE;
+    pidSettigsRotationZ.p = PID_Z_P;
+    pidSettigsRotationZ.i = PID_Z_I;
+    pidSettigsRotationZ.d = PID_Z_D;
+    pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
+    pidSettigsRotationZ.gain = PID_Z_GAIN;
 
-    pidXOut = 0;
-    pidYOut = 0;
-    pidZOut = 0;
+    motorSetPointX = 0;
+    motorSetPointY = 0;
+    motorSetPointZ = 0;
 
     globalFlags = 0;
 
     akkuVoltage = 0;
 
     cpuLoad = 0;
+
+    buzzer1Busy = false;
+    buzzer2Busy = false;
 }
 
 Status::~Status() {
@@ -115,22 +118,22 @@ void Status::reset() {
     filterCoefficientXY = 0;
     filterCoefficientZ = 0;
 
-    pXY = PID_XY_P;
-    iXY = PID_XY_I;
-    dXY = PID_XY_D;
-    gainXY = PID_XY_GAIN;
-    scaleXY = PID_XY_SCALE;
+    pidSettigsAngleXY.p = PID_XY_P;
+    pidSettigsAngleXY.i = PID_XY_I;
+    pidSettigsAngleXY.d = PID_XY_D;
+    pidSettigsAngleXY.scaleSetPoint = PID_XY_SCALE;
+    pidSettigsAngleXY.gain = PID_XY_GAIN;
 
-    pZ = PID_Z_P;
-    iZ = PID_Z_I;
-    dZ = PID_Z_D;
-    gainZ = PID_Z_GAIN;
-    scaleZ = PID_Z_SCALE;
+    pidSettigsRotationZ.p = PID_Z_P;
+    pidSettigsRotationZ.i = PID_Z_I;
+    pidSettigsRotationZ.d = PID_Z_D;
+    pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
+    pidSettigsRotationZ.gain = PID_Z_GAIN;
 
 
-    pidXOut = 0;
-    pidYOut = 0;
-    pidZOut = 0;
+    motorSetPointX = 0;
+    motorSetPointY = 0;
+    motorSetPointZ = 0;
 
     globalFlags = 0;
 
@@ -144,16 +147,16 @@ void Status::restoreConfig() {
     filterCoefficientXY = FILTER_COEFFICIENT_XY;
     filterCoefficientZ = FILTER_COEFFICIENT_Z;
 
-    pXY = PID_XY_P;
-    iXY = PID_XY_I;
-    dXY = PID_XY_D;
-    gainXY = PID_XY_GAIN;
-    scaleXY = PID_XY_SCALE;
+    pidSettigsAngleXY.p = PID_XY_P;
+    pidSettigsAngleXY.i = PID_XY_I;
+    pidSettigsAngleXY.d = PID_XY_D;
+    pidSettigsAngleXY.scaleSetPoint = PID_XY_SCALE;
+    pidSettigsAngleXY.gain = PID_XY_GAIN;
 
-    pZ = PID_Z_P;
-    iZ = PID_Z_I;
-    dZ = PID_Z_D;
-    gainZ = PID_Z_GAIN;
-    scaleZ = PID_Z_SCALE;
+    pidSettigsRotationZ.p = PID_Z_P;
+    pidSettigsRotationZ.i = PID_Z_I;
+    pidSettigsRotationZ.d = PID_Z_D;
+    pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
+    pidSettigsRotationZ.gain = PID_Z_GAIN;
 
 }

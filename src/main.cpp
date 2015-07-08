@@ -53,14 +53,13 @@ AkkuMonitor akku(&status, AKKUMONITOR_DEFAULT_PRIORITY, &hadc1);
 
 /* Motor Control */
 PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
-            &status.pidXOut, &status.pidYOut);
+            &status.motorSetPointX, &status.motorSetPointY);
 
 /* EEPROM Configuration Management*/
 ConfigReader configReader(&hi2c1);
 
 /* PC communications */
 usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
-
 
 /* Sensor data fusion Filters*/
 ComplementaryFilter compFilterX(&status, 0, &status.accelY, &status.accelZ,
@@ -74,20 +73,20 @@ Compass compFilterNorth(&status, 0, &status.magnetY, &status.magnetX, &status.an
 /* PIDs low level */
 PIDController pidAngleX(&status, PID_DEFAULT_PRIORITY,
             (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleX, 0,
-            &status.rcSignalNick, &status.pidXOut, PID_XY_CONTROL_VALUE_GAIN,
+            &status.rcSignalNick, &status.motorSetPointX, PID_XY_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 PIDController pidAngleY(&status, PID_DEFAULT_PRIORITY,
             (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleY, 0,
-            &status.rcSignalRoll, &status.pidYOut, PID_XY_CONTROL_VALUE_GAIN,
+            &status.rcSignalRoll, &status.motorSetPointY, PID_XY_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
             (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rateZ, 0,
-            &status.rcSignalYaw, &status.pidZOut, PID_Z_CONTROL_VALUE_GAIN,
+            &status.rcSignalYaw, &status.motorSetPointZ, PID_Z_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
-Buzzer beep(&status, BUZZER_DEFAULT_PRIORITY,&htim15);
+Buzzer beep(&status, BUZZER_DEFAULT_PRIORITY, &htim15);
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -123,7 +122,6 @@ int main(void) {
     /* Buzzer*/
     MX_TIM15_Init();
     beep.initialize();
-
 
     /* Short Delay to check all leds */
     HAL_Delay(10);
@@ -169,33 +167,33 @@ void FlightMode() {
     compFilterNorth.initialize();
 
     /* Initialize PID for X and Y axis */
-    pidAngleX.initialize(&status.pXY, &status.iXY, &status.dXY, &status.gainXY,
-                &status.scaleXY);
-    pidAngleY.initialize(&status.pXY, &status.iXY, &status.dXY, &status.gainXY,
-                &status.scaleXY);
-    pidRateZ.initialize(&status.pZ, &status.iZ, &status.dZ, &status.gainZ,
-                &status.scaleZ);
-
+    pidAngleX.initialize(&status.pidSettigsAngleXY.p, &status.pidSettigsAngleXY.i,
+                &status.pidSettigsAngleXY.d, &status.pidSettigsAngleXY.gain,
+                &status.pidSettigsAngleXY.scaleSetPoint);
+    pidAngleY.initialize(&status.pidSettigsAngleXY.p, &status.pidSettigsAngleXY.i,
+                &status.pidSettigsAngleXY.d, &status.pidSettigsAngleXY.gain,
+                &status.pidSettigsAngleXY.scaleSetPoint);
+    pidRateZ.initialize(&status.pidSettigsRotationZ.p, &status.pidSettigsRotationZ.i,
+                &status.pidSettigsRotationZ.d, &status.pidSettigsRotationZ.gain,
+                &status.pidSettigsRotationZ.scaleSetPoint);
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
 
-
-
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
-                          &compFilterY, &compFilterNorth, &pidAngleX,
-                          &pidAngleY, &pidRateZ, &usb, &akku, &baro, &leds,&beep };
+                          &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
+                          &pidRateZ, &usb, &akku, &baro, &leds, &beep };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
-    beep.playToneOnBuzzer1(BUZZER_A4,2000);
+    beep.playToneOnBuzzer1(BUZZER_A4, 2000);
     HAL_Delay(3000);
-    beep.playToneOnBuzzer1(10,2000);
+    beep.playToneOnBuzzer1(10, 2000);
     HAL_Delay(3000);
-    beep.playToneOnBuzzer1(4000,2000);
+    beep.playToneOnBuzzer1(4000, 2000);
     HAL_Delay(3000);
-    beep.playToneOnBuzzer2(BUZZER_D4,2000);
+    beep.playToneOnBuzzer2(BUZZER_D4, 2000);
     HAL_Delay(3000);
-    beep.playToneOnBuzzer2(BUZZER_E4,2000);
+    beep.playToneOnBuzzer2(BUZZER_E4, 2000);
 
     while (1) {
         if ((usb.usb_mode_request == USB_MODE_CONFIG)
@@ -256,7 +254,7 @@ void ConfigMode() {
     leds.setFrequency(CONFIG_LED, 1);
     usb.initialize(&configReader);
 
-    Task* tasks_config[] = { &usb, &leds , &beep};
+    Task* tasks_config[] = { &usb, &leds, &beep };
     scheduler.start(tasks_config, sizeof(tasks_config) / 4);
 
     while (1) {

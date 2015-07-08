@@ -11,6 +11,15 @@
 #include "stm32f3xx_hal.h"
 #include "config.h"
 
+typedef struct {
+    float p;
+    float i;
+    float d;
+    float scaleSetPoint;
+    float gain;
+}PID_Settings;
+
+
 class Status {
 public:
     Status();
@@ -78,22 +87,13 @@ public:
     float filterCoefficientZ;
 
     /* PID settings */
-    float pXY;
-    float iXY;
-    float dXY;
-    float scaleXY;
-    float gainXY;
-
-    float pZ;
-    float iZ;
-    float dZ;
-    float scaleZ;
-    float gainZ;
+    PID_Settings pidSettigsAngleXY;
+    PID_Settings pidSettigsRotationZ;
 
     /* PID Outputs */
-    float pidXOut;
-    float pidYOut;
-    float pidZOut;
+    float motorSetPointX;
+    float motorSetPointY;
+    float motorSetPointZ;
 
     /* cpu load calculated via idle time*/
     float cpuLoad; // %
