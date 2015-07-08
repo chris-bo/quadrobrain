@@ -72,13 +72,13 @@ Compass compFilterNorth(&status, 0, &status.magnetY, &status.magnetX, &status.an
 
 /* PIDs low level */
 PIDController pidAngleX(&status, PID_DEFAULT_PRIORITY,
-            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleX, 0,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleX, &status.rateX,
             &status.rcSignalNick, &status.motorSetPointX, PID_XY_CONTROL_VALUE_GAIN,
-            PID_LIMIT, PID_SUM_LIMIT, false);
+            PID_LIMIT, PID_SUM_LIMIT, true);
 PIDController pidAngleY(&status, PID_DEFAULT_PRIORITY,
-            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleY, 0,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleY, &status.rateY,
             &status.rcSignalRoll, &status.motorSetPointY, PID_XY_CONTROL_VALUE_GAIN,
-            PID_LIMIT, PID_SUM_LIMIT, false);
+            PID_LIMIT, PID_SUM_LIMIT, true);
 PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
             (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rateZ, 0,
             &status.rcSignalYaw, &status.motorSetPointZ, PID_Z_CONTROL_VALUE_GAIN,

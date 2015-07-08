@@ -59,7 +59,7 @@ void PIDController::update() {
             // Falls Ableitung vorhanden wird diese direkt verwendet
             temp = (*p) * e + (*i) * sampleTime * eSum
                         + (*d)
-                                    * (((*setPoint) - oldValue) * (*scale)
+                                    * (((*setPoint) - oldValue)/sampleTime * (*scale)
                                                 - (*derivedProcessVariable));
             oldValue = *setPoint;
 

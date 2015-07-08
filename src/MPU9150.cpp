@@ -183,8 +183,8 @@ void MPU9150::scaleRawData() {
     status->accelY = rawAccelData[1] * scaleAccel - biasAccel[1];
     status->accelZ = -1 * (rawAccelData[2] * scaleAccel - biasAccel[2]);  // orientation of chip
 
-    status->rateX = rawGyroData[0] * scaleGyro;
-    status->rateY = -1 * (rawGyroData[1] * scaleGyro);  // negative to fit complementary filter
+    status->rateX = -1 * rawGyroData[0] * scaleGyro;
+    status->rateY = rawGyroData[1] * scaleGyro;  // negative to fit complementary filter
     status->rateZ = rawGyroData[2] * scaleGyro;
 
     status->magnetX = rawMagnetData[0] * scaleMagnet[0];
