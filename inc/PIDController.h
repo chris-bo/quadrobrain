@@ -19,14 +19,13 @@ public:
                 float _sumLimit, bool _useDerivedInput);
     virtual ~PIDController();
     void update();
-    void initialize(float* _p, float* _i, float* _d, float* _gain, float* _scale);
+    void initialize(PID_Settings* _settings);
     void kill();
 private:
     Status* status;
-    /* PID coefficients*/
-    float* p;
-    float* i;
-    float* d;
+    /* PID settings */
+    PID_Settings* settings;
+
 
     /* measured input  */
     float* processVariable;
@@ -34,11 +33,6 @@ private:
 
     /* desired value */
     float* setPoint;
-    /* scales setPoint to fit processVariable */
-    float* scale;
-
-    /* overall gain added to pid output*/
-    float* gain;
 
     /* output*/
     float* controlValue;
