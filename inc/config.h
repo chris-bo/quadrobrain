@@ -96,7 +96,7 @@
  *
  * */
 #define AKKUMONITOR_DEFAULT_PRIORITY			10
-#define LOW_VOLTAGE_WARNING_THRESHOLD           10.0f // [V]
+#define LOW_VOLTAGE_WARNING_THRESHOLD           10.5f // [V]
 
 /****************************/
 /* Pressure Sensor */
