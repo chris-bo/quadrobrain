@@ -12,6 +12,12 @@
 #include "config.h"
 
 typedef struct {
+    float x;
+    float y;
+    float z;
+}XYZ_Data;
+
+typedef struct {
     float p;
     float i;
     float d;
@@ -30,6 +36,10 @@ public:
 
     /* all status variables */
 
+    /* uptime since power on [SCHEDULER_INTERVALL_ms]*/
+
+    uint32_t uptime;
+
     /* Akku Voltage*/
     float akkuVoltage;
 
@@ -37,27 +47,23 @@ public:
     uint32_t globalFlags;
 
     /* acceleration [m/s ^ 2]*/
-    float accelX;
-    float accelY;
-    float accelZ;
+    XYZ_Data accel;
 
     /* gyro rates [°/s]*/
-    float rateX;
-    float rateY;
-    float rateZ;
+    XYZ_Data rate;
 
     /* Magnet fields */
-    float magnetX;
-    float magnetY;
-    float magnetZ;
+    XYZ_Data magnetfield;
 
     /* angle
      * X,Y: 	angle between axis and horizont
-     * North:	angle between X-Axis and North.
+     * Z:	angle between X-Axis and North.
      * */
-    float angleX;
-    float angleY;
-    float angleNorth;
+    XYZ_Data angle;
+
+    /* velocity setpoint */
+    XYZ_Data velocitySetpoint;
+    XYZ_Data velocity;
 
     float temp;
     int32_t pressure;  // in Pa
@@ -91,9 +97,7 @@ public:
     PID_Settings pidSettigsRotationZ;
 
     /* PID Outputs */
-    float motorSetPointX;
-    float motorSetPointY;
-    float motorSetPointZ;
+    XYZ_Data motorSetpoint;
 
     /* cpu load calculated via idle time*/
     float cpuLoad; // %

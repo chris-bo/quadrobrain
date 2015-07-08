@@ -135,6 +135,9 @@ void Scheduler::executeTasks() {
 void Scheduler::timerIRQ() {
     /* timer interrupt -> execute Scheduler cycle */
     executeTasks();
+
+    /* increase uptime */
+    status->uptime++;
 }
 
 Scheduler::~Scheduler() {

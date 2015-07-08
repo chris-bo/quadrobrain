@@ -179,17 +179,17 @@ void MPU9150::receptionCompleteCallback() {
 
 void MPU9150::scaleRawData() {
 
-    status->accelX = rawAccelData[0] * scaleAccel - biasAccel[0];
-    status->accelY = rawAccelData[1] * scaleAccel - biasAccel[1];
-    status->accelZ = -1 * (rawAccelData[2] * scaleAccel - biasAccel[2]);  // orientation of chip
+    status->accel.x = rawAccelData[0] * scaleAccel - biasAccel[0];
+    status->accel.y = rawAccelData[1] * scaleAccel - biasAccel[1];
+    status->accel.z = -1 * (rawAccelData[2] * scaleAccel - biasAccel[2]);  // orientation of chip
 
-    status->rateX = -1 * rawGyroData[0] * scaleGyro;
-    status->rateY = rawGyroData[1] * scaleGyro;  // negative to fit complementary filter
-    status->rateZ = rawGyroData[2] * scaleGyro;
+    status->rate.x = -1.0f * rawGyroData[0] * scaleGyro;
+    status->rate.y = rawGyroData[1] * scaleGyro;  // negative to fit complementary filter
+    status->rate.z = rawGyroData[2] * scaleGyro;
 
-    status->magnetX = rawMagnetData[0] * scaleMagnet[0];
-    status->magnetY = rawMagnetData[1] * scaleMagnet[1];
-    status->magnetZ = rawMagnetData[2] * scaleMagnet[2];
+    status->magnetfield.x = rawMagnetData[0] * scaleMagnet[0];
+    status->magnetfield.y = rawMagnetData[1] * scaleMagnet[1];
+    status->magnetfield.z = rawMagnetData[2] * scaleMagnet[2];
 
     /* use temp measurement of bmp180 */
     //status->temp = rawTempData * MPU9150_TEMPERATURE_SCALE_FACTOR + 35;

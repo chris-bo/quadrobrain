@@ -9,21 +9,16 @@
 
 Status::Status() {
     /* init status variables */
-    accelX = 0;
-    accelY = 0;
-    accelZ = 0;
 
-    rateX = 0;
-    rateY = 0;
-    rateZ = 0;
+    uptime = 0;
 
-    magnetX = 0;
-    magnetY = 0;
-    magnetZ = 0;
+    accel = {0,0,0};
 
-    angleX = 0;
-    angleY = 0;
-    angleNorth = 0;
+    rate = {0,0,0};
+
+    magnetfield = {0,0,0};
+
+    angle = {0,0,0};
 
     temp = 0;
 
@@ -60,9 +55,7 @@ Status::Status() {
     pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
     pidSettigsRotationZ.gain = PID_Z_GAIN;
 
-    motorSetPointX = 0;
-    motorSetPointY = 0;
-    motorSetPointZ = 0;
+    motorSetpoint = {0,0,0};
 
     globalFlags = 0;
 
@@ -79,21 +72,13 @@ Status::~Status() {
 
 void Status::reset() {
     /* reset status variables */
-    accelX = 0;
-    accelY = 0;
-    accelZ = 0;
+    accel = {0,0,0};
 
-    rateX = 0;
-    rateY = 0;
-    rateZ = 0;
+    rate = {0,0,0};
 
-    magnetX = 0;
-    magnetY = 0;
-    magnetZ = 0;
+    magnetfield = {0,0,0};
 
-    angleX = 0;
-    angleY = 0;
-    angleNorth = 0;
+    angle = {0,0,0};
 
     temp = 0;
 
@@ -131,9 +116,7 @@ void Status::reset() {
     pidSettigsRotationZ.gain = PID_Z_GAIN;
 
 
-    motorSetPointX = 0;
-    motorSetPointY = 0;
-    motorSetPointZ = 0;
+    motorSetpoint = {0,0,0};
 
     globalFlags = 0;
 

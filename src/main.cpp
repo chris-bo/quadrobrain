@@ -53,7 +53,7 @@ AkkuMonitor akku(&status, AKKUMONITOR_DEFAULT_PRIORITY, &hadc1);
 
 /* Motor Control */
 PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
-            &status.motorSetPointX, &status.motorSetPointY);
+            &status.motorSetpoint.x, &status.motorSetpoint.y);
 
 /* EEPROM Configuration Management*/
 ConfigReader configReader(&hi2c1);
@@ -62,26 +62,26 @@ ConfigReader configReader(&hi2c1);
 usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
 /* Sensor data fusion Filters*/
-ComplementaryFilter compFilterX(&status, 0, &status.accelY, &status.accelZ,
-            &status.rateX, &status.angleX, &status.filterCoefficientXY);
-ComplementaryFilter compFilterY(&status, 0, &status.accelX, &status.accelZ,
-            &status.rateY, &status.angleY, &status.filterCoefficientXY);
-Compass compFilterNorth(&status, 0, &status.magnetY, &status.magnetX, &status.angleY,
-            &status.angleX, &status.rateZ, &status.angleNorth,
+ComplementaryFilter compFilterX(&status, 0, &status.accel.y, &status.accel.z,
+            &status.rate.x, &status.angle.x, &status.filterCoefficientXY);
+ComplementaryFilter compFilterY(&status, 0, &status.accel.x, &status.accel.z,
+            &status.rate.y, &status.angle.y, &status.filterCoefficientXY);
+Compass compFilterNorth(&status, 0, &status.magnetfield.y, &status.magnetfield.x, &status.angle.y,
+            &status.angle.x, &status.rate.z, &status.angle.z,
             &status.filterCoefficientZ);
 
 /* PIDs low level */
 PIDController pidAngleX(&status, PID_DEFAULT_PRIORITY,
-            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleX, &status.rateX,
-            &status.rcSignalNick, &status.motorSetPointX, PID_XY_CONTROL_VALUE_GAIN,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.x, &status.rate.x,
+            &status.rcSignalNick, &status.motorSetpoint.x, PID_XY_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, true);
 PIDController pidAngleY(&status, PID_DEFAULT_PRIORITY,
-            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angleY, &status.rateY,
-            &status.rcSignalRoll, &status.motorSetPointY, PID_XY_CONTROL_VALUE_GAIN,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.y, &status.rate.y,
+            &status.rcSignalRoll, &status.motorSetpoint.y, PID_XY_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, true);
 PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
-            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rateZ, 0,
-            &status.rcSignalYaw, &status.motorSetPointZ, PID_Z_CONTROL_VALUE_GAIN,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rate.z, 0,
+            &status.rcSignalYaw, &status.motorSetpoint.z, PID_Z_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);

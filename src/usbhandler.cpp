@@ -164,24 +164,24 @@ void usb_handler::sendStatusFloat(uint8_t part) {
 
     if (part == 0) {
         /* accelerometer XYZ in m/s^2 */
-        fillBuffer(UserTxBufferFS, 0, status->accelX);
-        fillBuffer(UserTxBufferFS, 4, status->accelY);
-        fillBuffer(UserTxBufferFS, 8, status->accelZ);
+        fillBuffer(UserTxBufferFS, 0, status->accel.x);
+        fillBuffer(UserTxBufferFS, 4, status->accel.y);
+        fillBuffer(UserTxBufferFS, 8, status->accel.z);
 
         /* rate in deg/s */
-        fillBuffer(UserTxBufferFS, 12, status->rateX);
-        fillBuffer(UserTxBufferFS, 16, status->rateY);
-        fillBuffer(UserTxBufferFS, 20, status->rateZ);
+        fillBuffer(UserTxBufferFS, 12, status->rate.x);
+        fillBuffer(UserTxBufferFS, 16, status->rate.y);
+        fillBuffer(UserTxBufferFS, 20, status->rate.z);
 
         /* magn in gauss ??? */
-        fillBuffer(UserTxBufferFS, 24, status->magnetX);
-        fillBuffer(UserTxBufferFS, 28, status->magnetY);
-        fillBuffer(UserTxBufferFS, 32, status->magnetZ);
+        fillBuffer(UserTxBufferFS, 24, status->magnetfield.x);
+        fillBuffer(UserTxBufferFS, 28, status->magnetfield.y);
+        fillBuffer(UserTxBufferFS, 32, status->magnetfield.z);
 
         /* angles in deg */
-        fillBuffer(UserTxBufferFS, 36, status->angleX);
-        fillBuffer(UserTxBufferFS, 40, status->angleY);
-        fillBuffer(UserTxBufferFS, 44, status->angleNorth);
+        fillBuffer(UserTxBufferFS, 36, status->angle.x);
+        fillBuffer(UserTxBufferFS, 40, status->angle.y);
+        fillBuffer(UserTxBufferFS, 44, status->angle.z);
 
         /* rc signals */
         fillBuffer(UserTxBufferFS, 48, status->rcSignalRoll);
@@ -210,9 +210,9 @@ void usb_handler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 108, status->akkuVoltage);
 
         /* PID Outputs */
-        fillBuffer(UserTxBufferFS, 112, status->motorSetPointX);
-        fillBuffer(UserTxBufferFS, 116, status->motorSetPointY);
-        fillBuffer(UserTxBufferFS, 120, status->motorSetPointZ);
+        fillBuffer(UserTxBufferFS, 112, status->motorSetpoint.x);
+        fillBuffer(UserTxBufferFS, 116, status->motorSetpoint.y);
+        fillBuffer(UserTxBufferFS, 120, status->motorSetpoint.z);
 
         /* cpu load */
         fillBuffer(UserTxBufferFS, 124, status->cpuLoad);
