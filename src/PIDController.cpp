@@ -19,11 +19,7 @@ PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
     this->setPoint = _setPoint;
     this->controlValue = _controlValue;
     this->controlValueGain = _controlValueGain;
-    this->p = 0;
-    this->i = 0;
-    this->d = 0;
-    this->scale = 0;
-    this->gain = 0;
+    settings = 0;
     this->limit = _limit;
     this->sampleTime = _sampleTime;
     eSum = 0.0f;
@@ -52,21 +48,21 @@ void PIDController::update() {
         float pv = *processVariable;
 #endif
         float temp;
-        float e = (*setPoint * *scale - pv);
+        float e = (*setPoint * settings->scaleSetPoint - pv);
         eSum += e;
 
         if (useDerivedInput) {
             // Falls Ableitung vorhanden wird diese direkt verwendet
-            temp = (*p) * e + (*i) * sampleTime * eSum
-                        + (*d)
-                                    * (((*setPoint) - oldValue)/sampleTime * (*scale)
+            temp = (settings->p) * e + (settings->i) * sampleTime * eSum
+                        + (settings->d)
+                                    * (((*setPoint) - oldValue)/sampleTime * (settings->scaleSetPoint)
                                                 - (*derivedProcessVariable));
             oldValue = *setPoint;
 
         } else {
             // falls nicht wird die Ableitung berechnet
-            temp = (*p) * e + (*i) * sampleTime * eSum
-                        + (*d) * (e - oldValue) / sampleTime;
+            temp = (settings->p) * e + (settings->i) * sampleTime * eSum
+                        + (settings->d) * (e - oldValue) / sampleTime;
 
             oldValue = e;
         }
@@ -80,7 +76,7 @@ void PIDController::update() {
         }
 
         // Reglerwert ausgeben
-        *controlValue = (*gain) * controlValueGain * temp;
+        *controlValue = (settings->gain) * controlValueGain * temp;
 
         /* limit sum*/
         if (sumLimit != INFINITY) {
@@ -98,15 +94,10 @@ void PIDController::update() {
     }
 }
 
-void PIDController::initialize(float* _p, float* _i, float* _d, float* _gain,
-            float* _scale) {
+void PIDController::initialize(PID_Settings* _settings) {
     // Task aktivieren
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
-    this->p = _p;
-    this->i = _i;
-    this->d = _d;
-    this->scale = _scale;
-    this->gain = _gain;
+    settings = _settings;
 }
 
 void PIDController::kill() {

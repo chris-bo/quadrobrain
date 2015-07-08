@@ -21,7 +21,9 @@ typedef struct {
     float p;
     float i;
     float d;
+    /* scales setPoint to fit processVariable */
     float scaleSetPoint;
+    /* overall gain added to pid output*/
     float gain;
 }PID_Settings;
 

@@ -167,15 +167,9 @@ void FlightMode() {
     compFilterNorth.initialize();
 
     /* Initialize PID for X and Y axis */
-    pidAngleX.initialize(&status.pidSettigsAngleXY.p, &status.pidSettigsAngleXY.i,
-                &status.pidSettigsAngleXY.d, &status.pidSettigsAngleXY.gain,
-                &status.pidSettigsAngleXY.scaleSetPoint);
-    pidAngleY.initialize(&status.pidSettigsAngleXY.p, &status.pidSettigsAngleXY.i,
-                &status.pidSettigsAngleXY.d, &status.pidSettigsAngleXY.gain,
-                &status.pidSettigsAngleXY.scaleSetPoint);
-    pidRateZ.initialize(&status.pidSettigsRotationZ.p, &status.pidSettigsRotationZ.i,
-                &status.pidSettigsRotationZ.d, &status.pidSettigsRotationZ.gain,
-                &status.pidSettigsRotationZ.scaleSetPoint);
+    pidAngleX.initialize(&status.pidSettigsAngleXY);
+    pidAngleY.initialize(&status.pidSettigsAngleXY);
+    pidRateZ.initialize(&status.pidSettigsRotationZ);
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
 
