@@ -82,8 +82,17 @@
 /* set to zero to disable limiting e_sum */
 #define PID_SUM_LIMIT                           INFINITY
 
-/* uncomment to round processvariable to 3 digits behind .
+/* uncomment to round processvariable to 3 digits behind . */
 //#define PID_ROUND_PROCESS_VARIABLE
+
+/* HorizontalMotion Control */
+#define HorizontalMotionControl_PRIORITY        0
+
+#define VELOCITY_PID_LIMIT                      INFINITY
+#define VELOCITY_PID_SUM_LIMIT                  INFINITY
+
+#define ACCELERATION_PID_LIMIT                  INFINITY
+#define ACCELERATION_PID_SUM_LIMIT              INFINITY
 /****************************/
 /* USB
  *
@@ -144,6 +153,21 @@
 
 #define FILTER_COEFFICIENT_XY               0.98f
 #define FILTER_COEFFICIENT_Z                0.99f
+
+#define PID_VELOCITY_P                      0.01f
+#define PID_VELOCITY_I                      0.01f
+#define PID_VELOCITY_D                      0.01f
+#define PID_VELOCITY_GAIN                   0.01f
+#define PID_VELOCITY_SCALE                  0.01f
+#define PID_VELOCITY_CONTROL_VALUE_GAIN     0.01f
+
+#define PID_ACCELERATION_P                  0.01f
+#define PID_ACCELERATION_I                  0.01f
+#define PID_ACCELERATION_D                  0.01f
+#define PID_ACCELERATION_GAIN               0.01f
+#define PID_ACCELERATION_SCALE              0.01f
+#define PID_ACCELERATION_CONTROL_VALUE_GAIN 0.01f
+
 /*********************************************************************************/
 /*global macros */
 

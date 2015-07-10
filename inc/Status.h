@@ -62,6 +62,7 @@ public:
      * Z:	angle between X-Axis and North.
      * */
     XYZ_Data angle;
+    XYZ_Data angleSetpoint;
 
     /* velocity setpoint */
     XYZ_Data velocitySetpoint;
@@ -97,6 +98,9 @@ public:
     /* PID settings */
     PID_Settings pidSettigsAngleXY;
     PID_Settings pidSettigsRotationZ;
+
+    PID_Settings pidSettingsVelocity;
+    PID_Settings pidSettingsacceleration;
 
     /* PID Outputs */
     XYZ_Data motorSetpoint;

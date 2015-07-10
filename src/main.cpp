@@ -84,6 +84,9 @@ PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
             &status.rcSignalYaw, &status.motorSetpoint.z, PID_Z_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 
+HorizontalMotionControl horMotion(&status, HorizontalMotionControl_PRIORITY);
+
+
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
 Buzzer beep(&status, BUZZER_DEFAULT_PRIORITY, &htim15);
@@ -170,13 +173,16 @@ void FlightMode() {
     pidAngleX.initialize(&status.pidSettigsAngleXY);
     pidAngleY.initialize(&status.pidSettigsAngleXY);
     pidRateZ.initialize(&status.pidSettigsRotationZ);
+
+    horMotion.initialize(&status.pidSettingsVelocity, &status.pidSettingsacceleration);
+
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
 
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
-                          &pidRateZ, &usb, &akku, &baro, &leds, &beep };
+                          &pidRateZ, &horMotion, &usb, &akku, &baro, &leds, &beep };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
     beep.playToneOnBuzzer1(BUZZER_A4, 2000);

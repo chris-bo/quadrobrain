@@ -37,6 +37,7 @@
 #include "DiscoveryLEDs.h"
 #include "MAfilterF.h"
 #include "Buzzer.h"
+#include "HorizontalMotionControl.h"
 
 
 /* Private variables ---------------------------------------------------------*/
