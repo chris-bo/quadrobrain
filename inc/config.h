@@ -138,11 +138,11 @@
 #define BUZZER_PRESCALER                        71
 /*********************************************************************************/
 /* hard coded settings*/
-#define PID_XY_P                            0.1f
-#define PID_XY_I                            0.05f
-#define PID_XY_D                            0.4f
-#define PID_XY_GAIN                         0.001f
-#define PID_XY_SCALE                        100
+#define PID_XY_P                            0.66f
+#define PID_XY_I                            0.9f
+#define PID_XY_D                            0.5f
+#define PID_XY_GAIN                         0.1f
+#define PID_XY_SCALE                        20
 #define PID_XY_CONTROL_VALUE_GAIN           0.01f
 
 #define PID_Z_P                             0.1f
