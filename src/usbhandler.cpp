@@ -259,29 +259,59 @@ void usb_handler::sendStatusFloat(uint8_t part) {
         usbTransmit(UserTxBufferFS, 78);
     } else if(part == USB_CMD_SEND_FLIGHT_DATA){
 
-        //TODO:
         /* angles in deg */
-        fillBuffer(UserTxBufferFS, 36, status->angle.x);
-        fillBuffer(UserTxBufferFS, 40, status->angle.y);
-        fillBuffer(UserTxBufferFS, 44, status->angle.z);
+        fillBuffer(UserTxBufferFS, 0, status->angle.x);
+        fillBuffer(UserTxBufferFS, 4, status->angle.y);
+        fillBuffer(UserTxBufferFS, 8, status->angle.z);
+
+        fillBuffer(UserTxBufferFS, 12, status->angleSetpoint.x);
+        fillBuffer(UserTxBufferFS, 16, status->angleSetpoint.y);
+        fillBuffer(UserTxBufferFS, 20, status->angleSetpoint.z);
+
+        /* velocities in m/s */
+        fillBuffer(UserTxBufferFS, 24, status->velocity.x);
+        fillBuffer(UserTxBufferFS, 28, status->velocity.y);
+        fillBuffer(UserTxBufferFS, 32, status->velocity.z);
+
+        fillBuffer(UserTxBufferFS, 36, status->velocitySetpoint.x);
+        fillBuffer(UserTxBufferFS, 40, status->velocitySetpoint.y);
+        fillBuffer(UserTxBufferFS, 44, status->velocitySetpoint.z);
+
+        /* Height */
+        fillBuffer(UserTxBufferFS, 48, status->height);
+        fillBuffer(UserTxBufferFS, 52, status->height_rel);
+        fillBuffer(UserTxBufferFS, 56, status->d_h);
 
         /* motor control values */
-        fillBuffer(UserTxBufferFS, 76, status->motorValues[0]);
-        fillBuffer(UserTxBufferFS, 80, status->motorValues[1]);
-        fillBuffer(UserTxBufferFS, 84, status->motorValues[2]);
-        fillBuffer(UserTxBufferFS, 88, status->motorValues[3]);
+        fillBuffer(UserTxBufferFS, 60, status->motorValues[0]);
+        fillBuffer(UserTxBufferFS, 64, status->motorValues[1]);
+        fillBuffer(UserTxBufferFS, 68, status->motorValues[2]);
+        fillBuffer(UserTxBufferFS, 72, status->motorValues[3]);
 
         /* PID Outputs */
-        fillBuffer(UserTxBufferFS, 112, status->motorSetpoint.x);
-        fillBuffer(UserTxBufferFS, 116, status->motorSetpoint.y);
-        fillBuffer(UserTxBufferFS, 120, status->motorSetpoint.z);
+        fillBuffer(UserTxBufferFS, 76, status->motorSetpoint.x);
+        fillBuffer(UserTxBufferFS, 80, status->motorSetpoint.y);
+        fillBuffer(UserTxBufferFS, 84, status->motorSetpoint.z);
 
+        usbTransmit(UserTxBufferFS, 88);
     } else if(part == USB_CMD_SEND_SYSTEM_STATE){
-        //TODO:
+
+        /* AkkuVoltage */
+        fillBuffer(UserTxBufferFS, 0, status->akkuVoltage);
+        /* cpu load */
+        fillBuffer(UserTxBufferFS, 4, status->cpuLoad);
+
+        /* uptime */
+        UserTxBufferFS[8] = (uint8_t) ((status->uptime & 0xFF) >> 0);
+        UserTxBufferFS[9] = (uint8_t) ((status->uptime & 0xFF00) >> 8);
+        UserTxBufferFS[10] = (uint8_t) ((status->uptime & 0xFF0000) >> 16);
+        UserTxBufferFS[11] = (uint8_t) ((status->uptime & 0xFF000000) >> 24);
+
+        usbTransmit(UserTxBufferFS, 12);
     } else if(part == USB_CMD_SEND_GPS_DATA_1){
-        //TODO:
+        //TODO: USBHandler GPS data transmission
     } else if(part == USB_CMD_SEND_GPS_DATA_2){
-        //TODO:
+
     }
 }
 
