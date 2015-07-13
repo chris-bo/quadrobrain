@@ -84,6 +84,9 @@ PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
             &status.rcSignalYaw, &status.motorSetpoint.z, PID_Z_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 
+MotionController motionControl(&status, HorizontalMotionControl_PRIORITY);
+
+
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
 Buzzer beep(&status, BUZZER_DEFAULT_PRIORITY, &htim15);
@@ -170,24 +173,18 @@ void FlightMode() {
     pidAngleX.initialize(&status.pidSettigsAngleXY);
     pidAngleY.initialize(&status.pidSettigsAngleXY);
     pidRateZ.initialize(&status.pidSettigsRotationZ);
+
+    motionControl.initialize(&status.pidSettingsVelocity, &status.pidSettingsacceleration);
+
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
 
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
-                          &pidRateZ, &usb, &akku, &baro, &leds, &beep };
+                          &pidRateZ, &motionControl, &usb, &akku, &baro, &leds, &beep };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
-    beep.playToneOnBuzzer1(BUZZER_A4, 2000);
-    HAL_Delay(3000);
-    beep.playToneOnBuzzer1(10, 2000);
-    HAL_Delay(3000);
-    beep.playToneOnBuzzer1(4000, 2000);
-    HAL_Delay(3000);
-    beep.playToneOnBuzzer2(BUZZER_D4, 2000);
-    HAL_Delay(3000);
-    beep.playToneOnBuzzer2(BUZZER_E4, 2000);
 
     while (1) {
         if ((usb.usb_mode_request == USB_MODE_CONFIG)

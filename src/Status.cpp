@@ -19,6 +19,10 @@ Status::Status() {
     magnetfield = {0,0,0};
 
     angle = {0,0,0};
+    angleSetpoint = {0,0,0};
+
+    velocity = {0,0,0};
+    velocitySetpoint = {0,0,0};
 
     temp = 0;
 
@@ -54,6 +58,18 @@ Status::Status() {
     pidSettigsRotationZ.d = PID_Z_D;
     pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
     pidSettigsRotationZ.gain = PID_Z_GAIN;
+
+    pidSettingsVelocity.p = PID_VELOCITY_P;
+    pidSettingsVelocity.i = PID_VELOCITY_I;
+    pidSettingsVelocity.d = PID_VELOCITY_D;
+    pidSettingsVelocity.scaleSetPoint = PID_VELOCITY_SCALE;
+    pidSettingsVelocity.gain = PID_VELOCITY_GAIN;
+
+    pidSettingsacceleration.p = PID_ACCELERATION_P;
+    pidSettingsacceleration.i = PID_ACCELERATION_I;
+    pidSettingsacceleration.d = PID_ACCELERATION_D;
+    pidSettingsacceleration.scaleSetPoint = PID_ACCELERATION_SCALE;
+    pidSettingsacceleration.gain = PID_ACCELERATION_GAIN;
 
     motorSetpoint = {0,0,0};
 
@@ -79,6 +95,10 @@ void Status::reset() {
     magnetfield = {0,0,0};
 
     angle = {0,0,0};
+    angleSetpoint = {0,0,0};
+
+    velocity = {0,0,0};
+    velocitySetpoint = {0,0,0};
 
     temp = 0;
 
@@ -114,7 +134,6 @@ void Status::reset() {
     pidSettigsRotationZ.d = PID_Z_D;
     pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
     pidSettigsRotationZ.gain = PID_Z_GAIN;
-
 
     motorSetpoint = {0,0,0};
 
@@ -141,5 +160,17 @@ void Status::restoreConfig() {
     pidSettigsRotationZ.d = PID_Z_D;
     pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
     pidSettigsRotationZ.gain = PID_Z_GAIN;
+
+    pidSettingsVelocity.p = PID_VELOCITY_P;
+    pidSettingsVelocity.i = PID_VELOCITY_I;
+    pidSettingsVelocity.d = PID_VELOCITY_D;
+    pidSettingsVelocity.scaleSetPoint = PID_VELOCITY_SCALE;
+    pidSettingsVelocity.gain = PID_VELOCITY_GAIN;
+
+    pidSettingsacceleration.p = PID_ACCELERATION_P;
+    pidSettingsacceleration.i = PID_ACCELERATION_I;
+    pidSettingsacceleration.d = PID_ACCELERATION_D;
+    pidSettingsacceleration.scaleSetPoint = PID_ACCELERATION_SCALE;
+    pidSettingsacceleration.gain = PID_ACCELERATION_GAIN;
 
 }
