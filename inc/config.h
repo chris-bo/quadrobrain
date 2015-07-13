@@ -88,6 +88,8 @@
 /* HorizontalMotion Control */
 #define HorizontalMotionControl_PRIORITY        0
 
+#define ACCELERATION_MA_FILTER_SIZE             5
+
 #define VELOCITY_PID_LIMIT                      INFINITY
 #define VELOCITY_PID_SUM_LIMIT                  INFINITY
 

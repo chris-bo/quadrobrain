@@ -1,44 +1,43 @@
 /*
- * HorizontalMotionControl.cpp
+ * MotionController.cpp
  *
  *  Created on: Jul 8, 2015
  *      Author: bohni
  */
 
-#include "HorizontalMotionControl.h"
+#include <MotionController.h>
 
-HorizontalMotionControl::HorizontalMotionControl(Status* _status,
+MotionController::MotionController(Status* _status,
             int8_t _defaultPrio)
             : Task(_status, _defaultPrio) {
 
-
     horizontalAcceleration = {0,0,0};
+    horizontalAccelerationFiltered = {0,0,0};
     accelerationSetpoint = {0,0,0};
 
-      /* todo set to throttle if automated control is enabled*/
+    /* todo set to throttle if automated control is enabled*/
     throttle_out = new float();
 
     /* setup filters */
 
     // TODO add ma filters for acceleration
-
     /* setup pids*/
 
     veloctityPIDx = new PIDController(_status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status->velocity.x,
-                &horizontalAcceleration.x, &status->velocitySetpoint.x,
+                &horizontalAccelerationFiltered.x, &status->velocitySetpoint.x,
                 &accelerationSetpoint.x, 1, VELOCITY_PID_LIMIT,
                 VELOCITY_PID_SUM_LIMIT, true);
 
     veloctityPIDy = new PIDController(status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status->velocity.y,
-                &horizontalAcceleration.y, &status->velocitySetpoint.y,
+                &horizontalAccelerationFiltered.y, &status->velocitySetpoint.y,
                 &accelerationSetpoint.y, 1, VELOCITY_PID_LIMIT,
                 VELOCITY_PID_SUM_LIMIT, true);
 
     veloctityPIDz = new PIDController(status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status->velocity.z,
-                &horizontalAcceleration.z,  &status->velocitySetpoint.z,
+                &horizontalAccelerationFiltered.z, &status->velocitySetpoint.z,
                 &accelerationSetpoint.z, 1, VELOCITY_PID_LIMIT,
                 VELOCITY_PID_SUM_LIMIT, true);
 
@@ -49,7 +48,7 @@ HorizontalMotionControl::HorizontalMotionControl(Status* _status,
 
     accelerationPIDy = new PIDController(status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &horizontalAcceleration.y,
-                0, &accelerationSetpoint.y,  &status->angleSetpoint.y, 1,
+                0, &accelerationSetpoint.y, &status->angleSetpoint.y, 1,
                 ACCELERATION_PID_LIMIT, ACCELERATION_PID_SUM_LIMIT, false);
 
     accelerationPIDz = new PIDController(status, 0,
@@ -57,42 +56,42 @@ HorizontalMotionControl::HorizontalMotionControl(Status* _status,
                 0, &accelerationSetpoint.z, throttle_out, 1, ACCELERATION_PID_LIMIT,
                 ACCELERATION_PID_SUM_LIMIT, false);
 
-}
-HorizontalMotionControl::~HorizontalMotionControl() {
+    accelerationFilterX = new MAfilterF(status, 0 ,&horizontalAcceleration.x,
+                &horizontalAccelerationFiltered.x, ACCELERATION_MA_FILTER_SIZE);
+
+    accelerationFilterY = new MAfilterF(status, 0 ,&horizontalAcceleration.y,
+                &horizontalAccelerationFiltered.y, ACCELERATION_MA_FILTER_SIZE);
+
+    accelerationFilterZ = new MAfilterF(status, 0 ,&horizontalAcceleration.z,
+                &horizontalAccelerationFiltered.x, ACCELERATION_MA_FILTER_SIZE);
 
 }
+MotionController::~MotionController() {
 
-void HorizontalMotionControl::update() {
+}
 
-    // todo HorizontalMotionControl::update()
-
-    /*
-     *
-     * calc horizontal acceleration
-     *
-     * calc horizontal speed
-     *
-     * call pid updates
-     *
-     */
+void MotionController::update() {
 
     /* calc horizontal accelerations */
 
-    horizontalAcceleration.x = sinf(status->angle.y) * status->accel.x;
-    horizontalAcceleration.y = sinf(status->angle.x) * status->accel.y;
-    horizontalAcceleration.z = sinf(status->angle.x) * sinf(status->angle.y)
+    horizontalAcceleration.x = cosf(status->angle.y) * status->accel.x;
+    horizontalAcceleration.y = cosf(status->angle.x) * status->accel.y;
+    horizontalAcceleration.z = cosf(status->angle.x) * cosf(status->angle.y)
                 * status->accel.z - G;
 
-    /* TODO call MA filters */
-
+    /* filter accelerations */
+    accelerationFilterX->update();
+    accelerationFilterY->update();
+    accelerationFilterZ->update();
 
     /* calc velocities */
 
-    status->velocity.x += horizontalAcceleration.x * (float) SCHEDULER_INTERVALL_ms / 1000.0f;
-    status->velocity.y += horizontalAcceleration.y * (float) SCHEDULER_INTERVALL_ms / 1000.0f;
-    status->velocity.z += horizontalAcceleration.z * (float) SCHEDULER_INTERVALL_ms / 1000.0f;
-
-
+    status->velocity.x += horizontalAccelerationFiltered.x
+                * (float) SCHEDULER_INTERVALL_ms / 1000.0f;
+    status->velocity.y += horizontalAccelerationFiltered.y
+                * (float) SCHEDULER_INTERVALL_ms / 1000.0f;
+    status->velocity.z += horizontalAccelerationFiltered.z
+                * (float) SCHEDULER_INTERVALL_ms / 1000.0f;
 
     /* call PID updates */
 
@@ -105,7 +104,7 @@ void HorizontalMotionControl::update() {
     accelerationPIDz->update();
 }
 
-void HorizontalMotionControl::initialize(PID_Settings* _velocityPIDsettings,
+void MotionController::initialize(PID_Settings* _velocityPIDsettings,
             PID_Settings* _accelerationPIDsettings) {
 
     // todo initialize?
@@ -122,7 +121,7 @@ void HorizontalMotionControl::initialize(PID_Settings* _velocityPIDsettings,
 
 }
 
-void HorizontalMotionControl::reset() {
+void MotionController::reset() {
 
     veloctityPIDx->reset();
     veloctityPIDy->reset();

@@ -1,21 +1,21 @@
 /*
- * HorizontalMotionControl.h
+ * MotionController.h
  *
  *  Created on: Jul 8, 2015
  *      Author: bohni
  */
 
-#ifndef HORIZONTALMOTIONCONTROL_H_
-#define HORIZONTALMOTIONCONTROL_H_
+#ifndef MOTIONCONTROLLER_H_
+#define MOTIONCONTROLLER_H_
 
 #include "Task.h"
 #include "PIDController.h"
 #include "MAfilterF.h"
 
-class HorizontalMotionControl: public Task {
+class MotionController: public Task {
 public:
-    HorizontalMotionControl(Status* _status, int8_t _defaultPrio);
-    virtual ~HorizontalMotionControl();
+    MotionController(Status* _status, int8_t _defaultPrio);
+    virtual ~MotionController();
 
     void initialize(PID_Settings* _velocityPIDsettings,
                 PID_Settings* _accelerationPIDsettings);
@@ -27,6 +27,7 @@ private:
     /* take these directly from status*/
 
     XYZ_Data horizontalAcceleration;
+    XYZ_Data horizontalAccelerationFiltered;
     XYZ_Data accelerationSetpoint;
 
     PIDController* veloctityPIDx;
@@ -37,8 +38,12 @@ private:
     PIDController* accelerationPIDy;
     PIDController* accelerationPIDz;
 
+    MAfilterF* accelerationFilterX;
+    MAfilterF* accelerationFilterY;
+    MAfilterF* accelerationFilterZ;
+
     float* throttle_out;
 
 };
 
-#endif /* HORIZONTALMOTIONCONTROL_H_ */
+#endif /* MOTIONCONTROLLER_H_ */
