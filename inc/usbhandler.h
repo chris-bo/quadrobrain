@@ -24,9 +24,50 @@
 
 #define USB_CMD_SEND_STATUS_8BIT	0x02
 
+/*old*/
 #define USB_CMD_SEND_STATUS_FLOAT	0x03
 
 #define USB_CMD_GLOBAL_FLAGS		0x04
+
+/*******************/
+/* Status Data sending Commands
+ * */
+
+/* sends all sensor data:
+ * accelerometer
+ * gyro
+ * magnetometer
+ * barometer
+ * rc receiver
+ */
+#define USB_CMD_SEND_SENSOR_DATA    0x10
+
+
+/* angle
+ * angle setpoint
+ *
+ * velocity
+ * velocity setpoint
+ *
+ * motorSetpoint
+ * motorValues
+ */
+#define USB_CMD_SEND_FLIGHT_DATA    0x11
+
+/* system states
+ *
+ * uptime
+ * akkuVoltage
+ * cpuLoad
+ *
+ */
+#define USB_CMD_SEND_SYSTEM_STATE   0x12
+
+
+/* gps data */
+
+#define USB_CMD_SEND_GPS_DATA_1     0x13
+#define USB_CMD_SEND_GPS_DATA_2     0x14
 
 /*******************/
 /* Config Commands

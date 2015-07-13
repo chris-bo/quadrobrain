@@ -43,8 +43,13 @@ void usb_handler::update() {
                 usbTransmit(UserRxBufferFS, number_received_data);
                 break;
 
+            case USB_CMD_SEND_SENSOR_DATA:
+            case USB_CMD_SEND_FLIGHT_DATA:
+            case USB_CMD_SEND_SYSTEM_STATE:
+            case USB_CMD_SEND_GPS_DATA_1:
+            case USB_CMD_SEND_GPS_DATA_2:
             case USB_CMD_SEND_STATUS_FLOAT:
-                sendStatusFloat(0);
+                sendStatusFloat(UserRxBufferFS[0]);
                 break;
             case USB_CMD_GLOBAL_FLAGS:
                 /* HIGH -> LOW */
@@ -162,7 +167,7 @@ void usb_handler::initialize(ConfigReader* _confReader) {
 void usb_handler::sendStatusFloat(uint8_t part) {
     /* needs to be updated, if new variables are needed to be sent */
 
-    if (part == 0) {
+    if (part == USB_CMD_SEND_STATUS_FLOAT) {
         /* accelerometer XYZ in m/s^2 */
         fillBuffer(UserTxBufferFS, 0, status->accel.x);
         fillBuffer(UserTxBufferFS, 4, status->accel.y);
@@ -218,6 +223,65 @@ void usb_handler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 124, status->cpuLoad);
 
         usbTransmit(UserTxBufferFS, 128);
+    } else if(part == USB_CMD_SEND_SENSOR_DATA){
+        /* accelerometer XYZ in m/s^2 */
+        fillBuffer(UserTxBufferFS, 0, status->accel.x);
+        fillBuffer(UserTxBufferFS, 4, status->accel.y);
+        fillBuffer(UserTxBufferFS, 8, status->accel.z);
+
+        /* rate in deg/s */
+        fillBuffer(UserTxBufferFS, 12, status->rate.x);
+        fillBuffer(UserTxBufferFS, 16, status->rate.y);
+        fillBuffer(UserTxBufferFS, 20, status->rate.z);
+
+        /* magn in gauss ??? */
+        fillBuffer(UserTxBufferFS, 24, status->magnetfield.x);
+        fillBuffer(UserTxBufferFS, 28, status->magnetfield.y);
+        fillBuffer(UserTxBufferFS, 32, status->magnetfield.z);
+
+        /* Temperature */
+        fillBuffer(UserTxBufferFS, 36, status->temp);
+
+        /* Height */
+        fillBuffer(UserTxBufferFS, 40, status->height);
+        fillBuffer(UserTxBufferFS, 44, status->height_rel);
+        fillBuffer(UserTxBufferFS, 48, status->d_h);
+
+        /* rc signals */
+        fillBuffer(UserTxBufferFS, 52, status->rcSignalRoll);
+        fillBuffer(UserTxBufferFS, 56, status->rcSignalNick);
+        fillBuffer(UserTxBufferFS, 60, status->rcSignalYaw);
+        fillBuffer(UserTxBufferFS, 64, status->rcSignalThrottle);
+        fillBuffer(UserTxBufferFS, 68, (float) status->rcSignalEnable);
+        fillBuffer(UserTxBufferFS, 72, (float) status->rcSignalSwitch);
+        fillBuffer(UserTxBufferFS, 74, status->rcSignalLinPoti);
+
+        usbTransmit(UserTxBufferFS, 78);
+    } else if(part == USB_CMD_SEND_FLIGHT_DATA){
+
+        //TODO:
+        /* angles in deg */
+        fillBuffer(UserTxBufferFS, 36, status->angle.x);
+        fillBuffer(UserTxBufferFS, 40, status->angle.y);
+        fillBuffer(UserTxBufferFS, 44, status->angle.z);
+
+        /* motor control values */
+        fillBuffer(UserTxBufferFS, 76, status->motorValues[0]);
+        fillBuffer(UserTxBufferFS, 80, status->motorValues[1]);
+        fillBuffer(UserTxBufferFS, 84, status->motorValues[2]);
+        fillBuffer(UserTxBufferFS, 88, status->motorValues[3]);
+
+        /* PID Outputs */
+        fillBuffer(UserTxBufferFS, 112, status->motorSetpoint.x);
+        fillBuffer(UserTxBufferFS, 116, status->motorSetpoint.y);
+        fillBuffer(UserTxBufferFS, 120, status->motorSetpoint.z);
+
+    } else if(part == USB_CMD_SEND_SYSTEM_STATE){
+        //TODO:
+    } else if(part == USB_CMD_SEND_GPS_DATA_1){
+        //TODO:
+    } else if(part == USB_CMD_SEND_GPS_DATA_2){
+        //TODO:
     }
 }
 
