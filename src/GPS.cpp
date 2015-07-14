@@ -29,83 +29,125 @@ void GPS::initialize() {
 }
 
 void GPS::update() {
+
+  // TODO: GPS::update()
 }
 
 void GPS::reset() {
+
+    // TODO GPS::reset()
 }
 
 void GPS::pollUBXMessage(uint8_t msgClass, uint8_t msgID) {
+
+        /* Generate Header  */
+        generateUBXHeader(msgClass, msgID, 0);
+
+        /* Generate Checksum*/
+        appendUBXChecksumTX(6);
+
+        /* todo gps :dma sending routine */
+
+//        /* DMA Settings*/
+//        /* Buffersize = buffer_size + checksum*/
+//        DMA_SetCurrDataCounter(NEO6_DMA_TX_CH, (uint16_t) ((buffer_size + 2)));
+//        DMA_Cmd(NEO6_DMA_TX_CH, ENABLE);
+//
+//
+        /*get msg length with header and checksum*/
+        uint8_t msg_length = getUBXMsgLength(msgClass, msgID);
+        /* Start Receiver */
+        receive(msg_length);
+
 }
 
-void GPS::appendUBXChecksumTX(uint8_t bufferPosition) {
+void GPS::appendUBXChecksumTX(uint8_t bufferSize) {
+    /*
+     * CK_A = 0, CK_B = 0
+     For(I=0;I<N;I++)
+     {
+     CK_A = CK_A + Buffer[I]
+     CK_B = CK_B + CK_A
+     }
+     */
+    uint32_t tmp_a = 0;
+    uint32_t tmp_b = 0;
+
+    for (uint8_t i = 2; i < bufferSize; i++) {
+        tmp_a = (tmp_a + NEO6_TX_buffer[i]);
+        tmp_b = (tmp_b + tmp_a);
+
+    }
+    NEO6_TX_buffer[bufferSize] = (tmp_a & 0xFF);
+    NEO6_TX_buffer[bufferSize + 1] = (tmp_b & 0xFF);
 }
 
 void GPS::decodeRX() {
     switch (NEO6_RX_buffer[2]) {
-    case UBX_ACK: {
-        /*decode ack-msg*/
-        if (NEO6_RX_buffer[3] == UBX_ACK_ACK) {
-            lastACK.ack = 1;
-        } else if (NEO6_RX_buffer[3] == UBX_ACK_NAK) {
-            lastACK.ack = 0;
-        } else {
-            /* Error */
-            /* wrong protocol */
-        }
-        lastACK.classid = NEO6_RX_buffer[6];
-        lastACK.msgid = NEO6_RX_buffer[7];
-        break;
-    }
-    case UBX_NAV: {
-        /*decode NAV */
-        switch (NEO6_RX_buffer[3]) {
-        case UBX_NAV_TIMEUTC:
-            decodeUBX_NavTimeUtc();
-            break;
-        case UBX_NAV_SOL:
-        case UBX_NAV_POSECEF:
-        case UBX_NAV_VELECEF:
-        case UBX_NAV_VELNED:
-        case UBX_NAV_POSLLH:
-        case UBX_NAV_DOP:
-        case UBX_NAV_STATUS:
-            decodeUBX_NAV();
-            break;
-        case UBX_NAV_SBAS:
-            break;
-        default:
-            /* Error */
-            /* wrong protocol */
+        case UBX_ACK: {
+            /*decode ack-msg*/
+            if (NEO6_RX_buffer[3] == UBX_ACK_ACK) {
+                lastACK.ack = 1;
+            } else if (NEO6_RX_buffer[3] == UBX_ACK_NAK) {
+                lastACK.ack = 0;
+            } else {
+                /* Error */
+                /* wrong protocol */
+            }
+            lastACK.classid = NEO6_RX_buffer[6];
+            lastACK.msgid = NEO6_RX_buffer[7];
             break;
         }
+        case UBX_NAV: {
+            /*decode NAV */
+            switch (NEO6_RX_buffer[3]) {
+                case UBX_NAV_TIMEUTC:
+                    decodeUBX_NavTimeUtc();
+                    break;
+                case UBX_NAV_SOL:
+                case UBX_NAV_POSECEF:
+                case UBX_NAV_VELECEF:
+                case UBX_NAV_VELNED:
+                case UBX_NAV_POSLLH:
+                case UBX_NAV_DOP:
+                case UBX_NAV_STATUS:
+                    decodeUBX_NAV();
+                    break;
+                case UBX_NAV_SBAS:
+                    break;
+                default:
+                    /* Error */
+                    /* wrong protocol */
+                    break;
+            }
 
-        break;
-    }
-    case UBX_CFG: {
-        /* Decode Configurations */
-        break;
-    }
-    default:{
-        /* Error */
-        /* wrong protocol */
+            break;
+        }
+        case UBX_CFG: {
+            /* Decode Configurations */
+            break;
+        }
+        default: {
+            /* Error */
+            /* wrong protocol */
 
-    }
+        }
     }
 }
 
 void GPS::decodeUBX_NAV() {
     /*Decode Navigation Data
-         * UBX_NAV_POSECEF
-         * UBX_NAV_VELECEF
-         * UBX_NAV_VELNED
-         * UBX_NAV_POSLLH
-         * UBX_NAV_SOL
-         * UBX_NAV_STATUS
-         * UBX_NAV_DOP
-         */
-        gpsData->iTOW = gps_rx_buffer_32offset(0);
+     * UBX_NAV_POSECEF
+     * UBX_NAV_VELECEF
+     * UBX_NAV_VELNED
+     * UBX_NAV_POSLLH
+     * UBX_NAV_SOL
+     * UBX_NAV_STATUS
+     * UBX_NAV_DOP
+     */
+    gpsData->iTOW = gps_rx_buffer_32offset(0);
 
-        switch (NEO6_RX_buffer[3]) {
+    switch (NEO6_RX_buffer[3]) {
 
         case UBX_NAV_POSECEF:
             gpsData->ecef_data.x = gps_rx_buffer_32offset(4);
@@ -174,7 +216,7 @@ void GPS::decodeUBX_NAV() {
             /* Error */
             /* wrong protocol */
             break;
-        }
+    }
 }
 
 void GPS::decodeUBX_NavTimeUtc() {
@@ -199,45 +241,66 @@ void GPS::generateUBXHeader(uint8_t msgClass, uint8_t msgID,
     NEO6_TX_buffer[5] = (uint8_t) ((payloadLength & 0xFF00) >> 8);
 }
 
+void GPS::receive(uint8_t msgLenght) {
+    // TODO: start dma receiver
+
+
+
+}
+
+void GPS::RXCompleteCallback() {
+
+    //TODO:GPS::RXCompleteCallback() {
+}
+
+void GPS::TXCompleteCallback() {
+    //TODO:GPS::TXCompleteCallback() {
+}
+
 uint8_t GPS::getUBXMsgLength(uint8_t classid, uint8_t msgid) {
     /* returns length with header and checksum*/
     switch (classid) {
-    case UBX_NAV:
-        switch (msgid) {
-        case UBX_NAV_SOL:
-            return UBX_MSG_LENGTH_NAV_SOL;
+        case UBX_NAV:
+            switch (msgid) {
+                case UBX_NAV_SOL:
+                    return UBX_MSG_LENGTH_NAV_SOL;
+                    break;
+                case UBX_NAV_POSLLH:
+                    return UBX_MSG_LENGTH_NAV_POSLLH;
+                    break;
+                case UBX_NAV_POSECEF:
+                    return UBX_MSG_LENGTH_NAV_POSECEF;
+                    break;
+                case UBX_NAV_VELNED:
+                    return UBX_MSG_LENGTH_NAV_VELNED;
+                    break;
+                case UBX_NAV_VELECEF:
+                    return UBX_MSG_LENGTH_NAV_VELECEF;
+                    break;
+                case UBX_NAV_TIMEUTC:
+                    return UBX_MSG_LENGTH_NAV_TIMEUTC;
+                    break;
+                case UBX_NAV_STATUS:
+                    return UBX_MSG_LENGTH_NAV_TIMEUTC;
+                    break;
+                case UBX_NAV_DOP:
+                    return UBX_MSG_LENGTH_NAV_TIMEUTC;
+                    break;
+                default:
+                    return 0;
+            }
             break;
-        case UBX_NAV_POSLLH:
-            return UBX_MSG_LENGTH_NAV_POSLLH;
-            break;
-        case UBX_NAV_POSECEF:
-            return UBX_MSG_LENGTH_NAV_POSECEF;
-            break;
-        case UBX_NAV_VELNED:
-            return UBX_MSG_LENGTH_NAV_VELNED;
-            break;
-        case UBX_NAV_VELECEF:
-            return UBX_MSG_LENGTH_NAV_VELECEF;
-            break;
-        case UBX_NAV_TIMEUTC:
-            return UBX_MSG_LENGTH_NAV_TIMEUTC;
-            break;
-        case UBX_NAV_STATUS:
-            return UBX_MSG_LENGTH_NAV_TIMEUTC;
-            break;
-        case UBX_NAV_DOP:
-            return UBX_MSG_LENGTH_NAV_TIMEUTC;
+        case UBX_ACK:
+            return UBX_MSG_LENGTH_ACK;
             break;
         default:
             return 0;
-        }
-        break;
-    case UBX_ACK:
-        return UBX_MSG_LENGTH_ACK;
-        break;
-    default:
-        return 0;
-        break;
+            break;
     }
     return 0;
+}
+
+void GPS::forceReset() {
+
+    //TODO: GPS::forceReset()
 }

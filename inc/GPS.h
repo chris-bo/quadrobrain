@@ -23,6 +23,10 @@ public:
     void initialize();
     void update();
     void reset();
+
+    void RXCompleteCallback();
+    void TXCompleteCallback();
+
 private:
     GPS_Data_t* gpsData;
 
@@ -30,14 +34,16 @@ private:
 
     void generateUBXHeader(uint8_t msgClass, uint8_t msgID, uint16_t payload);
     void pollUBXMessage(uint8_t msgClass, uint8_t msgID);
-    void appendUBXChecksumTX(uint8_t bufferPosition);
-    void decodeRX();
+    void appendUBXChecksumTX(uint8_t bufferSize);
+    void receive(uint8_t msgLength);
 
+    void decodeRX();
     void decodeUBX_NAV();
     void decodeUBX_NavTimeUtc();
 
     uint8_t getUBXMsgLength(uint8_t classid, uint8_t msgid);
 
+    void forceReset();
 
 };
 
