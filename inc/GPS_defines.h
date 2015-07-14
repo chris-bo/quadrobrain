@@ -476,11 +476,11 @@ typedef struct {
  * buffer_32offset(y) y: datasheet value
  *
  * */
-#define buffer_offset(y) NEO6_RX_buffer[y+6]
-#define buffer_16offset(y) buffer_16bit(y+6)
-#define buffer_16bit(x) ((NEO6_RX_buffer[x+1]<<8)|NEO6_RX_buffer[x])
-#define buffer_32offset(y) buffer_32bit(y+6)
-#define buffer_32bit(x) ((NEO6_RX_buffer[x+3]<<24)|(NEO6_RX_buffer[x+2]<<16)|(NEO6_RX_buffer[x+1]<<8)|NEO6_RX_buffer[x])
+#define gps_rx_buffer_offset(y) NEO6_RX_buffer[y+6]
+#define gps_rx_buffer_16offset(y) gps_rx_buffer_16bit(y+6)
+#define gps_rx_buffer_16bit(x) ((NEO6_RX_buffer[x+1]<<8)|NEO6_RX_buffer[x])
+#define gps_rx_buffer_32offset(y) gps_rx_buffer_32bit(y+6)
+#define gps_rx_buffer_32bit(x) ((NEO6_RX_buffer[x+3]<<24)|(NEO6_RX_buffer[x+2]<<16)|(NEO6_RX_buffer[x+1]<<8)|NEO6_RX_buffer[x])
 
 /**********************************************************************************/
 #endif /* GPS_DEFINES_H_ */

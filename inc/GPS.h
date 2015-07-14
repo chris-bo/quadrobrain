@@ -26,6 +26,7 @@ public:
 private:
     GPS_Data_t* gpsData;
 
+    GPS_ACK_t lastACK;
 
     void generateUBXHeader(uint8_t msgClass, uint8_t msgID, uint16_t payload);
     void pollUBXMessage(uint8_t msgClass, uint8_t msgID);
