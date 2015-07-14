@@ -294,8 +294,9 @@ void SystemClock_Config(void) {
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
     HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
-    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB | RCC_PERIPHCLK_I2C1
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB |RCC_PERIPHCLK_USART1 | RCC_PERIPHCLK_I2C1
                 | RCC_PERIPHCLK_I2C2 | RCC_PERIPHCLK_ADC12;
+    PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
     PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
     PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
     PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_HSI;

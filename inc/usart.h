@@ -1,9 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : dma.c
-  * Date               : 23/03/2015 09:51:31
+  * File Name          : USART.h
   * Description        : This file provides code for the configuration
-  *                      of all the requested memory to memory DMA transfers.
+  *                      of the USART instances.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -32,42 +31,24 @@
   *
   ******************************************************************************
   */
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __usart_H
+#define __usart_H
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 /* Includes ------------------------------------------------------------------*/
-#include "dma.h"
+#include "stm32f3xx_hal.h"
 
-/* USER CODE BEGIN 0 */
+extern UART_HandleTypeDef huart1;
 
-/* USER CODE END 0 */
+void MX_USART1_UART_Init(void);
 
-/*----------------------------------------------------------------------------*/
-/* Configure DMA                                                              */
-/*----------------------------------------------------------------------------*/
-
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-
-/** 
-  * Enable DMA controller clock
-  */
-void MX_DMA_Init(void) 
-{
-  /* DMA controller clock enable */
-  __DMA1_CLK_ENABLE();
-
-  /* DMA interrupt init */
-  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 1, 1);
-  HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
-  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 1, 1);
-  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
-  HAL_NVIC_SetPriority(DMA1_Channel7_IRQn, 1, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel7_IRQn);
-
+#ifdef __cplusplus
 }
-
-/* USER CODE BEGIN 2 */
-
-/* USER CODE END 2 */
+#endif
+#endif /*__ usart_H */
 
 /**
   * @}

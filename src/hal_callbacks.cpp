@@ -78,3 +78,24 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 		akku.conversionComplete();
 }
+
+/**
+  * @brief Tx Transfer completed callbacks
+  * @param huart: uart handle
+  * @retval None
+  */
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+// TODO:  HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+}
+
+
+/**
+  * @brief Rx Transfer completed callbacks
+  * @param huart: uart handle
+  * @retval None
+  */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    //TODO: HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+}
