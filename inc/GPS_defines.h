@@ -37,8 +37,8 @@
 /* Check Timeouts !! */
 /* Timeout for USART Communication
  * */
-#define GPS_INIT_TIMEOUT                    0xffff
-#define GPS_UART_TIMEOUT                    0xffff
+#define GPS_INIT_TIMEOUT                    0x2ff
+#define GPS_UART_TIMEOUT                    0xfff
 
 /* Polled messages in standard config */
 
@@ -59,7 +59,7 @@
 //#define CONFIG_VIA_PC
 
 /* Settings for UpdateCFG*/
-#define CHANGE_DEFAULT_CFG_SBAS
+//#define CHANGE_DEFAULT_CFG_SBAS
 //#define CHANGE_DEFAULT_CFG_NAV
 
 /* Save Settings to Battery Backed RAM*/

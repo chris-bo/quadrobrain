@@ -24,6 +24,8 @@ GPS::~GPS() {
 
 void GPS::initialize() {
 
+    gpsUart->Init.BaudRate = 115200;
+    HAL_UART_Init(gpsUart);
 
     /* UBX port settings */
     /* USART1
@@ -54,7 +56,7 @@ void GPS::initialize() {
         /* wait if receiver is still transmitting */
         HAL_Delay(100);
         /* reset */
-
+        gpsUart->Init.BaudRate = 115200;
         HAL_UART_Init(gpsUart);
 
 
@@ -63,7 +65,22 @@ void GPS::initialize() {
             /* solution 2
              * try 9600 baud
              */
+            /* wait if receiver is still transmitting */
+            HAL_Delay(100);
+            /* reset */
+            gpsUart->Init.BaudRate = 9600;
+            HAL_UART_Init(gpsUart);
+            updateReceiverConfig(UBX_CFG_PRT, PORT_Config_115200, 20);
 
+            if ( !GET_FLAG(transferState,GPS_COM_FLAG_TRANSMISSION_ERROR)) {
+                SET_FLAG(transferState,GPS_COM_FLAG_TRANSMISSION_ERROR);
+                /* recall initialization */
+                this->initialize();
+            } else {
+                /* 2nd try failed */
+                /* no gps */
+                return;
+            }
 
         }
     }
@@ -126,6 +143,8 @@ void GPS::initialize() {
     }
 #endif
 
+    transferState = 0;
+    setTransferState();
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }
 
@@ -382,9 +401,9 @@ void GPS::generateUBXHeader(uint8_t msgClass, uint8_t msgID,
 
 void GPS::receive(uint8_t msgLenght) {
 
-    SET_FLAG(transferState, GPS_COM_FLAG_RX_RUNNING);
-    HAL_UART_Receive_DMA(gpsUart, GPS_RX_buffer, msgLenght);
 
+    HAL_UART_Receive_DMA(gpsUart, GPS_RX_buffer, msgLenght);
+    SET_FLAG(transferState, GPS_COM_FLAG_RX_RUNNING);
 }
 
 void GPS::RXCompleteCallback() {
@@ -463,10 +482,10 @@ uint8_t GPS::getUBXMsgLength(uint8_t classid, uint8_t msgid) {
                     return UBX_MSG_LENGTH_NAV_TIMEUTC;
                     break;
                 case UBX_NAV_STATUS:
-                    return UBX_MSG_LENGTH_NAV_TIMEUTC;
+                    return UBX_MSG_LENGTH_NAV_STATUS;
                     break;
                 case UBX_NAV_DOP:
-                    return UBX_MSG_LENGTH_NAV_TIMEUTC;
+                    return UBX_MSG_LENGTH_NAV_DOP;
                     break;
                 default:
                     return 0;
@@ -506,9 +525,12 @@ uint8_t GPS::updateReceiverConfig(uint8_t configID, uint8_t* buffer, uint16_t pa
     HAL_UART_Transmit(gpsUart,GPS_TX_buffer, payloadLength + 8, GPS_UART_TIMEOUT);
 
     /* receive ack*/
-    HAL_UART_Receive(gpsUart,GPS_RX_buffer,10,GPS_UART_TIMEOUT);
+    receive(10);
+    uint32_t timeout = GPS_UART_TIMEOUT * 100;
+    while ( GET_FLAG(transferState, GPS_COM_FLAG_RX_RUNNING) && (timeout > 0)) {
 
-    decodeRX();
+       timeout --;
+    }
 
     if (lastACK.ack == 1) {
         if (lastACK.classid == UBX_CFG) {
