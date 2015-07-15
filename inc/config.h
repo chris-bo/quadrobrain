@@ -103,6 +103,13 @@
 #define BMP180_DEFAULT_PRIORITY                 10
 #define BMP180_I2C                              I2C2
 
+
+/****************************/
+/* GPS
+ *
+ */
+
+#define GPS_DEFAULT_PRIORITY                    5
 /****************************/
 /* LEDs
  *

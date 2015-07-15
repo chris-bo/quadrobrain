@@ -18,7 +18,7 @@
 #include "tim.h"
 #include "gpio.h"
 #include "adc.h"
-
+#include "usart.h"
 
 /* classes  ---------------------------------------------------------*/
 #include "config.h"
@@ -37,6 +37,7 @@
 #include "DiscoveryLEDs.h"
 #include "MAfilterF.h"
 #include "Buzzer.h"
+#include "GPS.h"
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -50,4 +51,5 @@ extern AkkuMonitor akku;
 extern BMP180 baro;
 extern DiscoveryLEDs leds;
 extern Buzzer beep;
+extern GPS gpsReceiver;
 #endif /* MAIN_H_ */

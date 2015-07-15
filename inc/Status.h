@@ -10,6 +10,7 @@
 
 #include "stm32f3xx_hal.h"
 #include "config.h"
+#include "GPS_defines.h"
 
 typedef struct {
     float x;
@@ -108,6 +109,8 @@ public:
     bool buzzer1Busy;
     bool buzzer2Busy;
 
+    /* GPS Data*/
+    GPS_Data_t gpsData;
 };
 
 #endif /* STATUS_H_ */

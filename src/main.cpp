@@ -61,6 +61,9 @@ ConfigReader configReader(&hi2c1);
 /* PC communications */
 usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
+/* GPS Receiver */
+GPS gpsReceiver(&status, GPS_DEFAULT_PRIORITY, &huart1);
+
 /* Sensor data fusion Filters*/
 ComplementaryFilter compFilterX(&status, 0, &status.accel.y, &status.accel.z,
             &status.rate.x, &status.angle.x, &status.filterCoefficientXY);
@@ -89,6 +92,7 @@ PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
 Buzzer beep(&status, BUZZER_DEFAULT_PRIORITY, &htim15);
+
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -154,6 +158,7 @@ void FlightMode() {
     MX_TIM3_Init();
     MX_TIM4_Init();
     MX_ADC1_Init();
+    MX_USART1_UART_Init();
 
     /* init Tasks */
     configReader.loadConfiguration(&status);
@@ -163,6 +168,7 @@ void FlightMode() {
     ppmgenerator.initialize();
     akku.initialize();
     baro.initialize();
+    gpsReceiver.initialize();
 
     compFilterX.initialize();
     compFilterY.initialize();
@@ -178,7 +184,7 @@ void FlightMode() {
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
-                          &pidRateZ, &usb, &akku, &baro, &leds, &beep };
+                          &pidRateZ, &usb, &akku, &baro,&gpsReceiver, &leds, &beep };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
     beep.playToneOnBuzzer1(BUZZER_A4, 2000);

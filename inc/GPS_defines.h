@@ -45,10 +45,6 @@
 #define TRANSMITTER_TIMEOUT                 1000
 #define LOOP_TIMEOUT                        2000
 
-/* Check and modify buffer size for used messages */
-#define NEO6_RX_BUFFER_SIZE                     64
-#define NEO6_TX_BUFFER_SIZE                     64
-
 /* Polled messages in standard config */
 
 #define POLL_NAV_TIMEUTC
@@ -77,6 +73,8 @@
 
 /* Message lengths
  * Payload + 8
+ *
+ * RX Buffer size must fit these lengths
  */
 #define UBX_MSG_LENGTH_NAV_SOL              (52+8)
 #define UBX_MSG_LENGTH_NAV_POSLLH           (28+8)
@@ -91,57 +89,38 @@
 #define UBX_MSG_LENGTH_ACK                  (2+8)
 
 
-/* NEO6 config variable:
- * Flag Positions
+
+
+/*   Transferstate
+ * 2lsb: flags
+ * 2mbs configuration flags to update all config settings
+ */
+#define GPS_COM_FLAG_TX_RUNNING             0x01
+#define GPS_COM_FLAG_RX_RUNNING             0x02
+#define GPS_COM_FLAG_DECODE_COMPLETE        0x04
+#define GPS_COM_FLAG_LAST_UPDATE_COMPLETE   0x08
+#define GPS_COM_FLAG_RECEPTION_ERROR        0x10
+#define GPS_COM_FLAG_TRANSMISSION_ERROR     0x20
+#define GPS_COM_FLAG_TIMEOUT                0x40
+#define GPS_COM_FLAG_ERROR                  0x80
+
+/* configuration
  * */
 
-#define NEO6_CONFIG_GET_NAV_SOL     0x0001
-#define NEO6_CONFIG_GET_LLH         0x0002
-#define NEO6_CONFIG_GET_NED         0x0004
-#define NEO6_CONFIG_GET_ECEF        0x0008
+#define GPS_GET_NAV_SOL                     0x00010000
+#define GPS_GET_LLH                         0x00020000
+#define GPS_GET_VELNED                      0x00040000
+#define GPS_GET_ECEF                        0x00080000
 
-#define NEO6_CONFIG_GET_VELECEF     0x0010
-#define NEO6_CONFIG_GET_DATE        0x0020
-#define NEO6_CONFIG_GET_NAV_DOP     0x0400
-#define NEO6_CONFIG_GET_NAV_STATUS  0x0800
+#define GPS_GET_VELECEF                     0x00100000
+#define GPS_GET_DATE                        0x00200000
+#define GPS_GET_NAV_DOP                     0x04000000
+#define GPS_GET_NAV_STATUS                  0x08000000
 
-#define NEO6_CONFIG_HANDLER_HALT    0x4000
-#define NEO6_CONFIG_CONTINUOUS_REC  0x8000
+#define GPS_GET_DATA_BITMASK                0x0FFF0000
 
-/* Neo6M_communicationStatus
- * 4 Byte: | Statusflags | x | DATA TO UPDATE(MSB)|  DATA TO UPDATE(LSB) |
- * Statusflags:
- * 8 Bit: | ERROR | TIMEOUT_ERROR | TRANSMISSION_ERROR | RECEPTION_ERROR |
- *          | LAST UPDATE COMPLETE | DECODE_COMPLETE | MSG_REC_STARTED | MSG_TRANSFER_STARTED |
- *
- *          DATA TO UPDATE -> same positions as NEO6_config
- */
-#define NEO6_COM_FLAG_TX_RUNNING            0x01000000
-#define NEO6_COM_FLAG_RX_RUNNING            0x02000000
-#define NEO6_COM_FLAG_DECODE_COMPLETE       0x04000000
-#define NEO6_COM_FLAG_LAST_UPDATE_COMPLETE  0x08000000
-#define NEO6_COM_FLAG_RECEPTION_ERROR       0x10000000
-#define NEO6_COM_FLAG_TRANSMISSION_ERROR    0x20000000
-#define NEO6_COM_FLAG_TIMEOUT               0x40000000
-#define NEO6_COM_FLAG_ERROR                 0x80000000
-
-/* Redefine Communication Flags for Data to Update*/
-#define NEO6_COM_FLAG_UPDATE_NAV_SOL            NEO6_CONFIG_GET_NAV_SOL
-#define NEO6_COM_FLAG_UPDATE_LLH                NEO6_CONFIG_GET_LLH
-#define NEO6_COM_FLAG_UPDATE_NED                NEO6_CONFIG_GET_NED
-#define NEO6_COM_FLAG_UPDATE_ECEF               NEO6_CONFIG_GET_ECEF
-#define NEO6_COM_FLAG_UPDATE_VELECEF            NEO6_CONFIG_GET_VELECEF
-#define NEO6_COM_FLAG_UPDATE_DATE               NEO6_CONFIG_GET_DATE
-#define NEO6_COM_FLAG_UPDATE_NAV_DOP            NEO6_CONFIG_GET_NAV_DOP
-#define NEO6_COM_FLAG_UPDATE_NAV_STATUS         NEO6_CONFIG_GET_NAV_STATUS
-#define NEO6_COM_FLAG_UPDATE_HANDLER_HALT       NEO6_CONFIG_HANDLER_HALT
-#define NEO6_COM_FLAG_UPDATE_CONTINUOUS_REC     NEO6_CONFIG_CONTINUOUS_REC
-
-/* Macros for Flag management*/
-#define GET_NEO6M_COMMUNICATION_FLAG(x)         (Neo6M_communicationStatus & x)
-#define RESET_NEO6M_COMMUNICATION_FLAG(x)       (Neo6M_communicationStatus &= ~x)
-#define SET_NEO6M_COMMUNICATION_FLAG(x)         (Neo6M_communicationStatus |= x)
-
+#define GPS_HANDLER_HALT                    0x40000000
+#define GPS_CONTINUOUS_REC                  0x80000000
 
 /* Optimization of Polling Defines */
 
@@ -476,11 +455,11 @@ typedef struct {
  * buffer_32offset(y) y: datasheet value
  *
  * */
-#define gps_rx_buffer_offset(y) NEO6_RX_buffer[y+6]
+#define gps_rx_buffer_offset(y) GPS_RX_buffer[y+6]
 #define gps_rx_buffer_16offset(y) gps_rx_buffer_16bit(y+6)
-#define gps_rx_buffer_16bit(x) ((NEO6_RX_buffer[x+1]<<8)|NEO6_RX_buffer[x])
+#define gps_rx_buffer_16bit(x) ((GPS_RX_buffer[x+1]<<8)|GPS_RX_buffer[x])
 #define gps_rx_buffer_32offset(y) gps_rx_buffer_32bit(y+6)
-#define gps_rx_buffer_32bit(x) ((NEO6_RX_buffer[x+3]<<24)|(NEO6_RX_buffer[x+2]<<16)|(NEO6_RX_buffer[x+1]<<8)|NEO6_RX_buffer[x])
+#define gps_rx_buffer_32bit(x) ((GPS_RX_buffer[x+3]<<24)|(GPS_RX_buffer[x+2]<<16)|(GPS_RX_buffer[x+1]<<8)|GPS_RX_buffer[x])
 
 /**********************************************************************************/
 #endif /* GPS_DEFINES_H_ */
