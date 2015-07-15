@@ -27,23 +27,18 @@
  * - increase speed
  *          problem might be time of receiver to answer
  *
- * - update Handler mechanism
- * - add reception mode where gps receiver sends without polling
+ *  - add reception mode where gps receiver sends without polling
  *  - Bugs:
  *          -sometimes error when powering on
  *
  */
 /**********************************************************************************/
 
-/* Ublox Neo-6M lib */
-
 /* Check Timeouts !! */
 /* Timeout for USART Communication
- * time = define * systick
  * */
-#define RECEIVER_TIMEOUT                    1500
-#define TRANSMITTER_TIMEOUT                 1000
-#define LOOP_TIMEOUT                        2000
+#define GPS_INIT_TIMEOUT                    0xffff
+#define GPS_UART_TIMEOUT                    0xffff
 
 /* Polled messages in standard config */
 

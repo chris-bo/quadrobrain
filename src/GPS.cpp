@@ -24,7 +24,107 @@ GPS::~GPS() {
 
 void GPS::initialize() {
 
-    // todo neo6 initialization routine
+
+    /* UBX port settings */
+    /* USART1
+     * Protocol in : UBX NEMA RTCM
+     * Protocol out: UBX
+     * Baudrate : 115200
+     */
+    uint8_t PORT_Config_115200[] = { 0x01, 0x00, 0x00, 0x00, 0xD0, 0x08, 0x00,
+            0x00, 0x00, 0xC2, 0x01, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00,
+            0x00, 0x00 };
+#ifdef CONFIG_BAUD_9600_NO_NMEA
+    /* UBX port settings */
+    /* USART1
+     * Protocol in : UBX NEMA RTCM
+     * Protocol out: UBX
+     * Baudrate : 9600
+     */
+    uint8_t PORT_Config_9600[] = {0x01, 0x00, 0x00, 0x00, 0xD0, 0x08, 0x00,
+        0x00, 0x80, 0x25, 0x00, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00,
+        0x00, 0x00};
+#endif
+
+    /* Check Baudrate by Port config -> ack?*/
+    if (updateReceiverConfig(UBX_CFG_PRT, PORT_Config_115200, 20) == 0 ) {
+        /* no ack -> needs fixing*/
+        /* solution 1: reset uart and check again */
+
+        /* wait if receiver is still transmitting */
+        HAL_Delay(100);
+        /* reset */
+
+        HAL_UART_Init(gpsUart);
+
+
+        if (updateReceiverConfig(UBX_CFG_PRT, PORT_Config_115200, 20) == 0 ) {
+            /* failed again */
+            /* solution 2
+             * try 9600 baud
+             */
+
+
+        }
+    }
+
+
+    /* now port should be accepted */
+#ifdef SAVE_PORT_SETTINGS_TO_BBR
+                /* Save Settings for next startup*/
+                /* Payload to save Portconfig to BBR(battery backed ram*/
+                uint8_t save_port_config[] = { 0x00, 0x00, 0x00, 0x00, 0x01,
+                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
+
+                updateReceiverConfig(UBX_CFG_CFG, save_port_config, 13);
+#endif
+
+    /* Port Config accepted
+     *  -> config receiver
+     */
+#ifdef CHANGE_DEFAULT_CFG_SBAS
+    /* SBAS_config
+     * enabled
+     * test mode
+     *
+     * use SBAS in ranging correction and integrity
+     * 3 channels
+     * autoscan
+     *
+     */
+
+    uint8_t SBAS_config[] = { 0x01, 0x07, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+    /* update SBAS config -> ack? */
+    if (updateReceiverConfig(UBX_CFG_SBAS, SBAS_config, 8) == 0) {
+        /* error*/
+    }
+#endif
+#ifdef CHANGE_DEFAULT_CFG_NAV
+    /* NAV config:
+     * Parameter Mask: 0xFF 0xFF update all
+     * Dyn model (byte3):   - 0 Portable (used)
+     *                      - 2 Stationary
+     *                      - 3 Pedestrian
+     *                      - 4 Automotive
+     *                      - 5 Sea
+     *                      - 6 Airborne with <1g Acceleration
+     *                      - 7 Airborne with <2g Acceleration
+     *                      - 8 Airborne with <4g Acceleration
+     *
+     * rest: leave default
+     *
+     */
+
+    uint8_t NAV5_config[]= {0xFF, 0xFF, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x10,
+        0x27, 0x00, 0x00, 0x05, 0x00, 0xFA, 0x00, 0xFA, 0x00, 0x64, 0x00,
+        0x2C, 0x01, 0x00, 0x3C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00};
+    /* update NAV5 settings -> ack? */
+    if (updateReceiverConfig(UBX_CFG_NAV5, NAV5_config, 36) == 0) {
+        /* error */
+    }
+#endif
 
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }
@@ -391,4 +491,40 @@ void GPS::kill() {
 
     RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 
+}
+
+uint8_t GPS::updateReceiverConfig(uint8_t configID, uint8_t* buffer, uint16_t payloadLength) {
+
+    /* Generate Header and copy buffer to TX_buffer*/
+    generateUBXHeader(UBX_CFG, configID, payloadLength);
+    for (uint16_t i = 0; i < payloadLength; i++) {
+        GPS_TX_buffer[i + 6] = buffer[i];
+    }
+    appendUBXChecksumTX(payloadLength+6);
+
+    /* start transmission */
+    HAL_UART_Transmit(gpsUart,GPS_TX_buffer, payloadLength + 8, GPS_UART_TIMEOUT);
+
+    /* receive ack*/
+    HAL_UART_Receive(gpsUart,GPS_RX_buffer,10,GPS_UART_TIMEOUT);
+
+    decodeRX();
+
+    if (lastACK.ack == 1) {
+        if (lastACK.classid == UBX_CFG) {
+            if (lastACK.msgid == configID) {
+                /* ACK SUCCESS*/
+                /* clear last ack */
+
+                lastACK.ack = 0;
+                lastACK.classid = 0;
+                lastACK.msgid = 0;
+                return 1;
+            }
+        }
+    } else {
+        /* NACK ... */
+        return 0;
+    }
+    return 0;
 }

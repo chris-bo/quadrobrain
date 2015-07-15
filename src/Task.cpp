@@ -57,6 +57,6 @@ void Task::reset() {
 }
 
 void Task::kill() {
-    reset();
+    this->reset();
     RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }
