@@ -14,8 +14,6 @@
  *
  * -check if intitializer works with standard config
  *
- * -poll/detect/decode NAV_SBAS ? -> msg length variable-> buffer size?
- *
  *
  */
 /**********************************************************************************/
@@ -41,16 +39,10 @@
 /* Infinite and continuous reception */
 #define CONTINUOUS_RECEPTION
 
-/* Config via pc -> no configChanges */
-//#define CONFIG_VIA_PC
-
 /* Settings for UpdateCFG*/
-//#define CHANGE_DEFAULT_CFG_SBAS
-//#define CHANGE_DEFAULT_CFG_NAV
 #define USE_SBAS
 #define INCREASE_MEASUREMENT_RATE
 /* Save Settings to Battery Backed RAM*/
-#define SAVE_PORT_SETTINGS_TO_BBR
 #define SAVE_ALL_SETTINGS_TO_BBR
 
 /* Message lengths

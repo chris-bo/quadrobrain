@@ -90,7 +90,7 @@ void GPS::initialize() {
 #ifdef SAVE_PORT_SETTINGS_TO_BBR
                 /* Save Settings for next startup*/
                 /* Payload to save Portconfig to BBR(battery backed ram*/
-                uint8_t save_port_config[] = { 0x00, 0x00, 0x00, 0x00, 0x01,
+               static uint8_t save_port_config[] = { 0x00, 0x00, 0x00, 0x00, 0x01,
                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
 
                 updateReceiverConfig(UBX_CFG_CFG, save_port_config, 13);
@@ -99,7 +99,6 @@ void GPS::initialize() {
     /* Port Config accepted
      *  -> config receiver
      */
-
 #ifdef USE_SBAS
     /* SBAS_config
      * enabled
@@ -110,47 +109,20 @@ void GPS::initialize() {
      * autoscan
      *
      */
-      uint8_t use_sbas_config[] = {0x03, 0x07, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00};
+      static uint8_t use_sbas_config[] = {0x03, 0x07, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00};
       updateReceiverConfig(UBX_CFG_SBAS, use_sbas_config, 8);
 #endif
 
-
-      // TODO gps cfg nav
-#ifdef CHANGE_DEFAULT_CFG_NAV
-    /* NAV config:
-     * Parameter Mask: 0xFF 0xFF update all
-     * Dyn model (byte3):   - 0 Portable (used)
-     *                      - 2 Stationary
-     *                      - 3 Pedestrian
-     *                      - 4 Automotive
-     *                      - 5 Sea
-     *                      - 6 Airborne with <1g Acceleration
-     *                      - 7 Airborne with <2g Acceleration
-     *                      - 8 Airborne with <4g Acceleration
-     *
-     * rest: leave default
-     *
-     */
-
-    uint8_t NAV5_config[]= {0xFF, 0xFF, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x10,
-        0x27, 0x00, 0x00, 0x05, 0x00, 0xFA, 0x00, 0xFA, 0x00, 0x64, 0x00,
-        0x2C, 0x01, 0x00, 0x3C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00};
-    /* update NAV5 settings -> ack? */
-    if (updateReceiverConfig(UBX_CFG_NAV5, NAV5_config, 36) == 0) {
-        /* error */
-    }
-#endif
-    // TODO INCREASE_MEASUREMENT_RATE
 #ifdef INCREASE_MEASUREMENT_RATE
-
+  static uint8_t inrease_measurement_rate[] = {0xC8, 0x00, 0x01, 0x00, 0x01, 0x00,};
+    updateReceiverConfig(UBX_CFG_RATE, inrease_measurement_rate, 6);
 #endif
 
-    // TODO SAVE_ALL_SETTINGS_TO_BRR
-#ifdef SAVE_ALL_SETTINGS_TO_BRR
+#ifdef SAVE_ALL_SETTINGS_TO_BBR
 
-
-
+    static uint8_t save_all_settings[] = {0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00,
+                                          0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
+       updateReceiverConfig(UBX_CFG_RATE, save_all_settings, 13);
 #endif
     transferState = 0;
     setTransferState();
