@@ -370,16 +370,6 @@ void USBHandler::sendStatusFloat(uint8_t part) {
     }
 }
 
-void USBHandler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
-
-    uint8_t* tmp = (uint8_t*) &var;
-    buffer[pos] = *tmp++;
-    buffer[pos + 1] = *(tmp++);
-    buffer[pos + 2] = *(tmp++);
-    buffer[pos + 3] = *(tmp);
-
-}
-
 void USBHandler::readEEPROM(uint8_t byteCount) {
 
     switch (byteCount) {
