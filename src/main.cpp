@@ -69,30 +69,30 @@ ComplementaryFilter compFilterX(&status, 0, &status.accel.y, &status.accel.z,
             &status.rate.x, &status.angle.x, &status.filterCoefficientXY);
 ComplementaryFilter compFilterY(&status, 0, &status.accel.x, &status.accel.z,
             &status.rate.y, &status.angle.y, &status.filterCoefficientXY);
-Compass compFilterNorth(&status, 0, &status.magnetfield.y, &status.magnetfield.x,
-            &status.angle.y, &status.angle.x, &status.rate.z, &status.angle.z,
+Compass compFilterNorth(&status, 0, &status.magnetfield.y, &status.magnetfield.x, &status.angle.y,
+            &status.angle.x, &status.rate.z, &status.angle.z,
             &status.filterCoefficientZ);
 
 /* PIDs low level */
 PIDController pidAngleX(&status, PID_DEFAULT_PRIORITY,
-            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.x,
-            &status.rate.x, &status.rcSignalNick, &status.motorSetpoint.x,
-            PID_XY_CONTROL_VALUE_GAIN,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.x, &status.rate.x,
+            &status.rcSignalNick, &status.motorSetpoint.x, PID_XY_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, true);
 PIDController pidAngleY(&status, PID_DEFAULT_PRIORITY,
-            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.y,
-            &status.rate.y, &status.rcSignalRoll, &status.motorSetpoint.y,
-            PID_XY_CONTROL_VALUE_GAIN,
+            (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.y, &status.rate.y,
+            &status.rcSignalRoll, &status.motorSetpoint.y, PID_XY_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, true);
 PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
             (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rate.z, 0,
             &status.rcSignalYaw, &status.motorSetpoint.z, PID_Z_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 
+MotionController motionControl(&status, HorizontalMotionControl_PRIORITY);
+
+
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 
 Buzzer beep(&status, BUZZER_DEFAULT_PRIORITY, &htim15);
-
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -178,13 +178,16 @@ void FlightMode() {
     pidAngleX.initialize(&status.pidSettigsAngleXY);
     pidAngleY.initialize(&status.pidSettigsAngleXY);
     pidRateZ.initialize(&status.pidSettigsRotationZ);
+
+    motionControl.initialize(&status.pidSettingsVelocity, &status.pidSettingsacceleration);
+
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
 
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
-                          &pidRateZ, &usb, &akku, &baro,&gpsReceiver, &leds, &beep };
+                          &pidRateZ, &motionControl, &usb, &akku, &baro, &leds, &beep };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
