@@ -59,21 +59,22 @@
 #define BUZZER_Cp2	69.2957f
 #define BUZZER_C2	65.4064f
 
+
+/*
+ * TODO: Buzzer queue
+ */
 class Buzzer: public Task {
 public:
-	Buzzer(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim);
+	Buzzer(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim );
 	void update();
-	void playToneOnBuzzer1(float frequency, uint16_t length);
-	void playToneOnBuzzer2(float frequency, uint16_t length);
+	void playTone(float frequency, uint16_t length);
 	virtual ~Buzzer();
 
 private:
-	TIM_HandleTypeDef* Buzzer_htim;
+	TIM_HandleTypeDef* buzzerHtim;
 	uint16_t calculateReloadValue(float frequency);
-	uint16_t toneLengthBuzzer1;
-	uint16_t toneLengthBuzzer2;
-	uint16_t elapsedLengthBuzzer1;
-	uint16_t elapsedLengthBuzzer2;
+	uint16_t toneLengthBuzzer;
+	uint16_t elapsedLengthBuzzer;
 };
 
 #endif /* BUZZER_H_ */

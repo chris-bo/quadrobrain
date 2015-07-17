@@ -49,5 +49,6 @@ extern MPU9150 mpu9150;
 extern AkkuMonitor akku;
 extern BMP180 baro;
 extern DiscoveryLEDs leds;
-extern Buzzer beep;
+extern Buzzer beep1;
+extern Buzzer beep2;
 #endif /* MAIN_H_ */

@@ -84,12 +84,16 @@ PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
             &status.rcSignalYaw, &status.motorSetpoint.z, PID_Z_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
 
+/* Motion Control
+ * includes PIDs for velocity and acceleration
+ */
 MotionController motionControl(&status, HorizontalMotionControl_PRIORITY);
 
 
+/* Feedback Tasks */
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
-
-Buzzer beep(&status, BUZZER_DEFAULT_PRIORITY, &htim15);
+Buzzer beep1(&status, BUZZER_DEFAULT_PRIORITY, &htim15);
+Buzzer beep2(&status, BUZZER_DEFAULT_PRIORITY, &htim17);
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -124,7 +128,9 @@ int main(void) {
 
     /* Buzzer*/
     MX_TIM15_Init();
-    beep.initialize();
+    MX_TIM17_Init();
+    beep1.initialize();
+    beep2.initialize();
 
     /* Short Delay to check all leds */
     HAL_Delay(10);
@@ -182,7 +188,7 @@ void FlightMode() {
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
-                          &pidRateZ, &motionControl, &usb, &akku, &baro, &leds, &beep };
+                          &pidRateZ, &motionControl, &usb, &akku, &baro, &leds, &beep1,&beep2 };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
@@ -245,7 +251,7 @@ void ConfigMode() {
     leds.setFrequency(CONFIG_LED, 1);
     usb.initialize(&configReader);
 
-    Task* tasks_config[] = { &usb, &leds, &beep };
+    Task* tasks_config[] = { &usb, &leds, &beep1, &beep2 };
     scheduler.start(tasks_config, sizeof(tasks_config) / 4);
 
     while (1) {
