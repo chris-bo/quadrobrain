@@ -66,8 +66,8 @@
 
 /* gps data */
 
-#define USB_CMD_SEND_GPS_DATA_1     0x13
-#define USB_CMD_SEND_GPS_DATA_2     0x14
+#define USB_CMD_SEND_GPS_DATA_TIME    0x13
+#define USB_CMD_SEND_GPS_DATA_POSITION     0x14
 
 /*******************/
 /* Config Commands
@@ -140,7 +140,15 @@ private:
     ConfigReader* confReader;
     void usbTransmit(uint8_t* buffer, uint16_t len);
     void sendStatusFloat(uint8_t part);
-    void fillBuffer(uint8_t* buffer, uint8_t pos, float var);
+
+    /* fillBuffer returns next free pos in buffer*/
+    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, float var);
+    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint32_t var);
+    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int32_t var);
+    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int16_t var);
+    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint16_t var);
+    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int8_t var);
+    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint8_t var);
     void readEEPROM(uint8_t byteCount);
     void writeEEPROM(uint8_t byteCount);
     void sendConfig();

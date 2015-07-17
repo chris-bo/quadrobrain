@@ -348,18 +348,18 @@ void GPS::decodeUBX_NAV() {
             gpsData->ecef_data.vz = gps_rx_buffer_32offset(36);
             gpsData->ecef_data.sAcc = gps_rx_buffer_32offset(40);
 
-            gpsData->pDOP = (uint16_t) gps_rx_buffer_16offset(44);
+            gpsData->dop.pDOP = (uint16_t) gps_rx_buffer_16offset(44);
             gpsData->numSV = (uint8_t) gps_rx_buffer_offset(47);
             RESET_FLAG(transferState, GPS_GET_NAV_SOL);
             break;
         case UBX_NAV_DOP:
-            gpsData->pDOP = (uint16_t) gps_rx_buffer_16offset(4);
-            gpsData->gDop = (uint16_t) gps_rx_buffer_16offset(6);
-            gpsData->tDOP = (uint16_t) gps_rx_buffer_16offset(8);
-            gpsData->vDOP = (uint16_t) gps_rx_buffer_16offset(10);
-            gpsData->hDOP = (uint16_t) gps_rx_buffer_16offset(12);
-            gpsData->nDOP = (uint16_t) gps_rx_buffer_16offset(14);
-            gpsData->eDOP = (uint16_t) gps_rx_buffer_16offset(16);
+            gpsData->dop.pDOP = (uint16_t) gps_rx_buffer_16offset(4);
+            gpsData->dop.gDOP = (uint16_t) gps_rx_buffer_16offset(6);
+            gpsData->dop.tDOP = (uint16_t) gps_rx_buffer_16offset(8);
+            gpsData->dop.vDOP = (uint16_t) gps_rx_buffer_16offset(10);
+            gpsData->dop.hDOP = (uint16_t) gps_rx_buffer_16offset(12);
+            gpsData->dop.nDOP = (uint16_t) gps_rx_buffer_16offset(14);
+            gpsData->dop.eDOP = (uint16_t) gps_rx_buffer_16offset(16);
             RESET_FLAG(transferState, GPS_GET_NAV_DOP);
             break;
         case UBX_NAV_STATUS:

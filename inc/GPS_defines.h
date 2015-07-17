@@ -198,6 +198,20 @@ typedef struct {
 }GPS_LLH_t;
 
 /**
+ * struct for dilution of precission (DOP) Data
+ *
+ */
+typedef struct {
+    uint16_t pDOP;  // Position DOP scale 0.01
+    uint16_t gDOP;  // Geometric DOP
+    uint16_t tDOP;  // Time DOP
+    uint16_t vDOP;  // Vertical DOP
+    uint16_t hDOP;  // Horizontal DOP
+    uint16_t nDOP;  // Northing DOP
+    uint16_t eDOP;  // Easting DOP
+}GPS_DOP_t;
+
+/**
  * Main struct to work with GPS
  *
  */
@@ -211,13 +225,7 @@ typedef struct {
 
     uint32_t iTOW;  // Time of Week [ms]
 
-    uint16_t pDOP;  // Position DOP scale 0.01
-    uint16_t gDop;  // Geometric DOP
-    uint16_t tDOP;  // Time DOP
-    uint16_t vDOP;  // Vertical DOP
-    uint16_t hDOP;  // Horizontal DOP
-    uint16_t nDOP;  // Northing DOP
-    uint16_t eDOP;  // Easting DOP
+    GPS_DOP_t dop;
 
     int16_t gpsWeek;
 

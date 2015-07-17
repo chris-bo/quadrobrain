@@ -46,8 +46,8 @@ void usb_handler::update() {
             case USB_CMD_SEND_SENSOR_DATA:
             case USB_CMD_SEND_FLIGHT_DATA:
             case USB_CMD_SEND_SYSTEM_STATE:
-            case USB_CMD_SEND_GPS_DATA_1:
-            case USB_CMD_SEND_GPS_DATA_2:
+            case USB_CMD_SEND_GPS_DATA_TIME:
+            case USB_CMD_SEND_GPS_DATA_POSITION:
             case USB_CMD_SEND_STATUS_FLOAT:
                 sendStatusFloat(UserRxBufferFS[0]);
                 break;
@@ -302,28 +302,78 @@ void usb_handler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 4, status->cpuLoad);
 
         /* uptime */
-        UserTxBufferFS[8] = (uint8_t) ((status->uptime & 0xFF) >> 0);
-        UserTxBufferFS[9] = (uint8_t) ((status->uptime & 0xFF00) >> 8);
-        UserTxBufferFS[10] = (uint8_t) ((status->uptime & 0xFF0000) >> 16);
-        UserTxBufferFS[11] = (uint8_t) ((status->uptime & 0xFF000000) >> 24);
+        fillBuffer(UserTxBufferFS,8, status->uptime);
 
         usbTransmit(UserTxBufferFS, 12);
-    } else if(part == USB_CMD_SEND_GPS_DATA_1){
-        //TODO: USBHandler GPS data transmission
-    } else if(part == USB_CMD_SEND_GPS_DATA_2){
+    } else if(part == USB_CMD_SEND_GPS_DATA_TIME){
 
+        /* gps time of week*/
+        fillBuffer(UserTxBufferFS,0, status->gpsData.iTOW);
+        fillBuffer(UserTxBufferFS,4,status->gpsData.gpsWeek);
+
+        /* gps time */
+        UserTxBufferFS[6] = status->gpsData.time.hours;
+        UserTxBufferFS[7] = status->gpsData.time.minutes;
+        UserTxBufferFS[8] = status->gpsData.time.seconds;
+        UserTxBufferFS[9] = status->gpsData.time.hundredths;
+        UserTxBufferFS[10] = status->gpsData.time.validity;
+
+        /* gps date*/
+        fillBuffer(UserTxBufferFS,11, status->gpsData.date.year);
+        UserTxBufferFS[13] = status->gpsData.date.month;
+        UserTxBufferFS[14] = status->gpsData.date.day;
+
+        usbTransmit(UserTxBufferFS, 15);
+    } else if(part == USB_CMD_SEND_GPS_DATA_POSITION){
+        /* postition llh with accuracy*/
+        fillBuffer(UserTxBufferFS,0, status->gpsData.llh_data.lat);
+        fillBuffer(UserTxBufferFS,4, status->gpsData.llh_data.lon);
+        fillBuffer(UserTxBufferFS,8, status->gpsData.llh_data.h);
+        fillBuffer(UserTxBufferFS,12, status->gpsData.llh_data.hMSL);
+        fillBuffer(UserTxBufferFS,16, status->gpsData.llh_data.vAcc);
+        fillBuffer(UserTxBufferFS,20, status->gpsData.llh_data.hAcc);
+
+        /* ned*/
+        fillBuffer(UserTxBufferFS,24, status->gpsData.ned_data.vN);
+        fillBuffer(UserTxBufferFS,28, status->gpsData.ned_data.vE);
+        fillBuffer(UserTxBufferFS,32, status->gpsData.ned_data.vD);
+        fillBuffer(UserTxBufferFS,36, status->gpsData.ned_data.speed);
+        fillBuffer(UserTxBufferFS,40, status->gpsData.ned_data.gSpeed);
+        fillBuffer(UserTxBufferFS,44, status->gpsData.ned_data.sAcc);
+        fillBuffer(UserTxBufferFS,48, status->gpsData.ned_data.heading);
+        fillBuffer(UserTxBufferFS,52, status->gpsData.ned_data.cAcc);
+
+        /* position ecef */
+        fillBuffer(UserTxBufferFS,56, status->gpsData.ecef_data.x);
+        fillBuffer(UserTxBufferFS,60, status->gpsData.ecef_data.y);
+        fillBuffer(UserTxBufferFS,64, status->gpsData.ecef_data.z);
+        fillBuffer(UserTxBufferFS,68, status->gpsData.ecef_data.vx);
+        fillBuffer(UserTxBufferFS,72, status->gpsData.ecef_data.vy);
+        fillBuffer(UserTxBufferFS,76, status->gpsData.ecef_data.vz);
+        fillBuffer(UserTxBufferFS,80, status->gpsData.ecef_data.pAcc);
+        fillBuffer(UserTxBufferFS,84, status->gpsData.ecef_data.sAcc);
+
+        /* dilution of precission*/
+        fillBuffer(UserTxBufferFS,88, status->gpsData.dop.pDOP);
+        fillBuffer(UserTxBufferFS,90, status->gpsData.dop.gDOP);
+        fillBuffer(UserTxBufferFS,92, status->gpsData.dop.tDOP);
+        fillBuffer(UserTxBufferFS,94, status->gpsData.dop.vDOP);
+        fillBuffer(UserTxBufferFS,96, status->gpsData.dop.hDOP);
+        fillBuffer(UserTxBufferFS,98, status->gpsData.dop.nDOP);
+        fillBuffer(UserTxBufferFS,100, status->gpsData.dop.eDOP);
+
+        /* fix + flags*/
+        fillBuffer(UserTxBufferFS,102, status->gpsData.gpsFix);
+        fillBuffer(UserTxBufferFS,103, status->gpsData.FixStatus);
+        fillBuffer(UserTxBufferFS,104, status->gpsData.numSV);
+        fillBuffer(UserTxBufferFS,105, status->gpsData.flags);
+        fillBuffer(UserTxBufferFS,106, status->gpsData.flags2);
+
+        usbTransmit(UserTxBufferFS, 107);
     }
 }
 
-void usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
 
-    uint8_t* tmp = (uint8_t*) &var;
-    buffer[pos] = *tmp++;
-    buffer[pos + 1] = *(tmp++);
-    buffer[pos + 2] = *(tmp++);
-    buffer[pos + 3] = *(tmp);
-
-}
 
 void usb_handler::readEEPROM(uint8_t byteCount) {
 
@@ -464,3 +514,53 @@ void usb_handler::resetTransmissionState() {
     usbTransmitBusyCounter = 0;
 }
 
+uint8_t usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
+    uint8_t* tmp = (uint8_t*) &var;
+    buffer[pos++] = *tmp++;
+    buffer[pos++] = *(tmp++);
+    buffer[pos++] = *(tmp++);
+    buffer[pos++] = *(tmp);
+    return pos;
+}
+
+uint8_t usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, uint32_t var) {
+    uint8_t* tmp = (uint8_t*) &var;
+    buffer[pos++] = *tmp++;
+    buffer[pos++] = *(tmp++);
+    buffer[pos++] = *(tmp++);
+    buffer[pos++] = *(tmp);
+    return pos;
+}
+
+uint8_t usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, int32_t var) {
+    uint8_t* tmp = (uint8_t*) &var;
+    buffer[pos++] = *tmp++;
+    buffer[pos++] = *(tmp++);
+    buffer[pos++] = *(tmp++);
+    buffer[pos++] = *(tmp);
+    return pos;
+}
+
+uint8_t usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, int16_t var) {
+    uint8_t* tmp = (uint8_t*) &var;
+    buffer[pos++] = *tmp++;
+    buffer[pos++] = *(tmp);
+    return pos;
+}
+
+uint8_t usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, uint16_t var) {
+    uint8_t* tmp = (uint8_t*) &var;
+    buffer[pos++] = *tmp++;
+    buffer[pos++] = *(tmp);
+    return pos;
+}
+
+uint8_t usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, int8_t var) {
+    buffer[pos++] = var;;
+    return pos;
+}
+
+uint8_t usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, uint8_t var) {
+    buffer[pos++] = var;
+    return pos;
+}
