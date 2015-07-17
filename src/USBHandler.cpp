@@ -9,9 +9,7 @@
 
 float byteToFloat(uint8_t* array, uint8_t offset) {
     float val;
-
     memcpy(&val, array + offset, 4l);
-
     return val;
 }
 
@@ -370,6 +368,16 @@ void USBHandler::sendStatusFloat(uint8_t part) {
 
         usbTransmit(UserTxBufferFS, 107);
     }
+}
+
+void USBHandler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
+
+    uint8_t* tmp = (uint8_t*) &var;
+    buffer[pos] = *tmp++;
+    buffer[pos + 1] = *(tmp++);
+    buffer[pos + 2] = *(tmp++);
+    buffer[pos + 3] = *(tmp);
+
 }
 
 void USBHandler::readEEPROM(uint8_t byteCount) {
