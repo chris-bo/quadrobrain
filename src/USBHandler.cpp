@@ -7,13 +7,10 @@
 
 #include <USBHandler.h>
 
-float byteToFloat(uint8_t* array, uint8_t offset)
-{
-float val;
-
-memcpy(&val,array + offset,4l);
-
-return val;
+float byteToFloat(uint8_t* array, uint8_t offset) {
+    float val;
+    memcpy(&val, array + offset, 4l);
+    return val;
 }
 
 USBHandler::USBHandler(Status* statusPtr, uint8_t defaultPrio,
@@ -114,7 +111,7 @@ void USBHandler::update() {
                 }
                 break;
             case USB_CMD_RELOAD_EEPROM:
-                if (usb_mode_request == USB_MODE_CONFIG){
+                if (usb_mode_request == USB_MODE_CONFIG) {
                     usb_mode_request = USB_MODE_RELOAD_EEPROM;
                     /* send confirmation */
                     usbTransmit(UserRxBufferFS, 1);
@@ -223,7 +220,7 @@ void USBHandler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 124, status->cpuLoad);
 
         usbTransmit(UserTxBufferFS, 128);
-    } else if(part == USB_CMD_SEND_SENSOR_DATA){
+    } else if (part == USB_CMD_SEND_SENSOR_DATA) {
         /* accelerometer XYZ in m/s^2 */
         fillBuffer(UserTxBufferFS, 0, status->accel.x);
         fillBuffer(UserTxBufferFS, 4, status->accel.y);
@@ -254,10 +251,10 @@ void USBHandler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 64, status->rcSignalThrottle);
         fillBuffer(UserTxBufferFS, 68, (float) status->rcSignalEnable);
         fillBuffer(UserTxBufferFS, 72, (float) status->rcSignalSwitch);
-        fillBuffer(UserTxBufferFS, 74, status->rcSignalLinPoti);
+        fillBuffer(UserTxBufferFS, 76, status->rcSignalLinPoti);
 
-        usbTransmit(UserTxBufferFS, 78);
-    } else if(part == USB_CMD_SEND_FLIGHT_DATA){
+        usbTransmit(UserTxBufferFS, 80);
+    } else if (part == USB_CMD_SEND_FLIGHT_DATA) {
 
         /* angles in deg */
         fillBuffer(UserTxBufferFS, 0, status->angle.x);
@@ -294,7 +291,7 @@ void USBHandler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS, 84, status->motorSetpoint.z);
 
         usbTransmit(UserTxBufferFS, 88);
-    } else if(part == USB_CMD_SEND_SYSTEM_STATE){
+    } else if (part == USB_CMD_SEND_SYSTEM_STATE) {
 
         /* AkkuVoltage */
         fillBuffer(UserTxBufferFS, 0, status->akkuVoltage);
@@ -308,9 +305,9 @@ void USBHandler::sendStatusFloat(uint8_t part) {
         UserTxBufferFS[11] = (uint8_t) ((status->uptime & 0xFF000000) >> 24);
 
         usbTransmit(UserTxBufferFS, 12);
-    } else if(part == USB_CMD_SEND_GPS_DATA_1){
+    } else if (part == USB_CMD_SEND_GPS_DATA_1) {
         //TODO: USBHandler GPS data transmission
-    } else if(part == USB_CMD_SEND_GPS_DATA_2){
+    } else if (part == USB_CMD_SEND_GPS_DATA_2) {
 
     }
 }
