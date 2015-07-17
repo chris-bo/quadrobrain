@@ -48,6 +48,9 @@ void USBHandler::update() {
             case USB_CMD_SEND_STATUS_FLOAT:
                 sendStatusFloat(UserRxBufferFS[0]);
                 break;
+            case USB_CMD_SEND_CUSTOM_FRAME:
+                sendCustomFrame();
+                break;
             case USB_CMD_GLOBAL_FLAGS:
                 /* HIGH -> LOW */
                 UserTxBufferFS[0] = (uint8_t) ((status->globalFlags >> 24) & 0xFF);
@@ -500,6 +503,168 @@ void USBHandler::usbTransmit(uint8_t* buffer, uint16_t len) {
 void USBHandler::kill() {
 }
 
+void USBHandler::sendCustomFrame() {
+    uint8_t bufferPos = 0;
+    uint8_t bufferOverrun = 0;
+    /* start loop at beginning of data ids */
+    for (uint8_t i = 1; i < number_received_data; i++) {
+        switch (UserRxBufferFS[i]) {
+            case DATA_ID_GYRO:
+                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rate.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rate.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rate.z);
+                }
+                break;
+            case DATA_ID_ACCEL:
+                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->accel.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->accel.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->accel.z);
+                }
+                break;
+            case DATA_ID_MAGNETOMETER:
+                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->magnetfield.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->magnetfield.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->magnetfield.z);
+                }
+                break;
+            case DATA_ID_ANGLE:
+                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->angle.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->angle.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->angle.z);
+                }
+                break;
+            case DATA_ID_ANGLE_SP:
+                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->angleSetpoint.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->angleSetpoint.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->angleSetpoint.z);
+                }
+                break;
+            case DATA_ID_VELOCITY:
+                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->velocity.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->velocity.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->velocity.z);
+                }
+                break;
+            case DATA_ID_VELOCITY_SP:
+                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->velocitySetpoint.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->velocitySetpoint.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->velocitySetpoint.z);
+                }
+                break;
+            case DATA_ID_HEIGHT:
+                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->height);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->height);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos, status->d_h);
+                }
+                break;
+            case DATA_ID_RC:
+                if (!checkBufferOverrun(bufferPos, 22, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rcSignalNick);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rcSignalRoll);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rcSignalYaw);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rcSignalThrottle);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rcSignalLinPoti);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rcSignalEnable);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->rcSignalSwitch);
+                }
+                break;
+            case DATA_ID_MOTOR_SP:
+                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->motorSetpoint.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->motorSetpoint.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->motorSetpoint.z);
+                }
+                break;
+            case DATA_ID_MOTOR:
+                if (!checkBufferOverrun(bufferPos, 16, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->motorValues[0]);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->motorValues[1]);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->motorValues[2]);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->motorValues[3]);
+                }
+                break;
+            case DATA_ID_CPU:
+                if (!checkBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->cpuLoad);
+                }
+                break;
+            case DATA_ID_AKKU:
+                if (!checkBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->akkuVoltage);
+                }
+                break;
+            case DATA_ID_TEMP:
+                if (!checkBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos, status->temp);
+                }
+                break;
+            case DATA_ID_EOF:
+                break;
+            default:
+                break;
+
+        }
+        if (bufferOverrun == 1) {
+            /* Buffer Overrun
+             * fill rest with  DATA_ID_BUFFER_OVERRUN
+             */
+            for (uint8_t i = bufferPos; i < USB_TX_BUFF_SIZE; i++) {
+                UserTxBufferFS[i] = DATA_ID_BUFFER_OVERRUN;
+            }
+            bufferPos = 128;
+            break;
+        }
+    }
+    usbTransmit(UserTxBufferFS, bufferPos);
+}
+
 void USBHandler::resetTransmissionState() {
     /* clear endpoint*/
     usb->pClass->DataIn(usb, 1);
@@ -559,4 +724,14 @@ uint8_t USBHandler::fillBuffer(uint8_t* buffer, uint8_t pos, int8_t var) {
 uint8_t USBHandler::fillBuffer(uint8_t* buffer, uint8_t pos, uint8_t var) {
     buffer[pos++] = var;
     return pos;
+}
+
+uint8_t USBHandler::checkBufferOverrun(uint8_t currentPos, uint8_t dataToAdd,
+            uint8_t* overrun) {
+    if ((currentPos + dataToAdd) < USB_TX_BUFF_SIZE) {
+        return 0;
+    } else {
+        *overrun = 1;
+        return 1;
+    }
 }

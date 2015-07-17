@@ -69,6 +69,22 @@
 #define USB_CMD_SEND_GPS_DATA_TIME    0x13
 #define USB_CMD_SEND_GPS_DATA_POSITION     0x14
 
+
+/* custom frame
+ *
+ * PC sends custom frame command and identifiers for requested data
+ * terminated by one byte of DATA_ID_EOF
+ *
+ * USBHandler responds with requested data
+ * if requested frame is bigger than outbuffer last bytes until buffer is full
+ * will be DATA_ID_BUFFER_OVERRUN
+ *
+ * Unknown data id will be ignored
+ *
+ */
+
+#define USB_CMD_SEND_CUSTOM_FRAME       0x15
+
 /*******************/
 /* Config Commands
  *  (except USB_CMD_CONFIG_MODE)
@@ -109,6 +125,30 @@
 
 #define USB_TIMEOUT 				0xFFFF
 
+/*******************/
+/*
+ * Custom Frame Identifiers
+ */
+
+#define DATA_ID_GYRO                0x01
+#define DATA_ID_ACCEL               0x02
+#define DATA_ID_MAGNETOMETER        0x03
+#define DATA_ID_ANGLE               0x04
+#define DATA_ID_ANGLE_SP            0x05
+#define DATA_ID_VELOCITY            0x06
+#define DATA_ID_VELOCITY_SP         0x07
+#define DATA_ID_HEIGHT              0x08
+#define DATA_ID_RC                  0x09
+#define DATA_ID_MOTOR               0x0A
+#define DATA_ID_MOTOR_SP            0x0B
+#define DATA_ID_CPU                 0x0C
+#define DATA_ID_AKKU                0x0D
+#define DATA_ID_TEMP                0x0E
+
+#define DATA_ID_EOF                 0x00
+#define DATA_ID_BUFFER_OVERRUN      0xFF
+
+
 /**************************************************************************/
 /* USB_MODES */
 
@@ -140,6 +180,7 @@ private:
     ConfigReader* confReader;
     void usbTransmit(uint8_t* buffer, uint16_t len);
     void sendStatusFloat(uint8_t part);
+    void sendCustomFrame();
 
     /* fillBuffer returns next free pos in buffer*/
     uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, float var);
@@ -154,6 +195,7 @@ private:
     void sendConfig();
     void updateConfig();
     void resetTransmissionState();
+    uint8_t checkBufferOverrun(uint8_t currentPos, uint8_t dataToAdd, uint8_t* overrun);
 
 };
 
