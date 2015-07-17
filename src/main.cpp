@@ -187,15 +187,6 @@ void FlightMode() {
                           &pidRateZ, &usb, &akku, &baro,&gpsReceiver, &leds, &beep };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
-    beep.playToneOnBuzzer1(BUZZER_A4, 2000);
-    HAL_Delay(3000);
-    beep.playToneOnBuzzer1(10, 2000);
-    HAL_Delay(3000);
-    beep.playToneOnBuzzer1(4000, 2000);
-    HAL_Delay(3000);
-    beep.playToneOnBuzzer2(BUZZER_D4, 2000);
-    HAL_Delay(3000);
-    beep.playToneOnBuzzer2(BUZZER_E4, 2000);
 
     while (1) {
         if ((usb.usb_mode_request == USB_MODE_CONFIG)

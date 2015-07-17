@@ -206,10 +206,8 @@ void GPS::pollUBXMessage(uint8_t msgClass, uint8_t msgID) {
     SET_FLAG(transferState, GPS_COM_FLAG_TX_RUNNING);
     HAL_UART_Transmit_DMA(gpsUart, GPS_TX_buffer, 8);
 
-    /*get msg length with header and checksum*/
-    uint8_t msg_length = getUBXMsgLength(msgClass, msgID);
     /* Start Receiver */
-    receive(msg_length);
+    receive(getUBXMsgLength(msgClass, msgID));
 
 }
 
@@ -525,7 +523,7 @@ uint8_t GPS::updateReceiverConfig(uint8_t configID, uint8_t* buffer, uint16_t pa
     HAL_UART_Transmit(gpsUart,GPS_TX_buffer, payloadLength + 8, GPS_UART_TIMEOUT);
 
     /* receive ack*/
-    receive(10);
+    receive(UBX_MSG_LENGTH_ACK);
     uint32_t timeout = GPS_UART_TIMEOUT * 100;
     while ( GET_FLAG(transferState, GPS_COM_FLAG_RX_RUNNING) && (timeout > 0)) {
 

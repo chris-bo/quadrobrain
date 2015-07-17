@@ -12,24 +12,12 @@
 /**********************************************************************************/
 /* TODO GPS_TODOS:
  *
- * -initialize and config:
- *      -detection of standard config
- *          ->unset nmea
- *          ->set baudrate
- *      -check connection at initializing process
- *
+ * -check if intitializer works with standard config
  *
  * -poll/detect/decode NAV_SBAS ? -> msg length variable-> buffer size?
  *
  *
  * - decode flags in nav_sol /utc
- *
- * - increase speed
- *          problem might be time of receiver to answer
- *
- *  - add reception mode where gps receiver sends without polling
- *  - Bugs:
- *          -sometimes error when powering on
  *
  */
 /**********************************************************************************/
@@ -37,7 +25,7 @@
 /* Check Timeouts !! */
 /* Timeout for USART Communication
  * */
-#define GPS_INIT_TIMEOUT                    0x2ff
+#define GPS_INIT_TIMEOUT                    0xfff
 #define GPS_UART_TIMEOUT                    0xfff
 
 /* Polled messages in standard config */
@@ -128,22 +116,6 @@
 
 
 /**********************************************************************************/
-/* Type Defs */
-typedef enum{
-    NO_ERROR            = 0,
-    CONNECTION_ERROR    = 1,
-    TRANSMISSION_ERROR  = 2,
-    RECEPTION_ERROR     = 3,
-    DECODE_ERROR        = 4,
-    TIMEOUT_ERROR       = 5,
-    UNDEFINED_ERROR     = 6,
-    CONFIG_ERROR        = 7,
-    NACK_ERROR          = 8,
-    UPDATE_HALT         = 9
-
-
-} Neo6_ErrorTypeDef;
-
 
 typedef struct {
     uint8_t msgid;
