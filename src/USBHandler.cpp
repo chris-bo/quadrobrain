@@ -5,7 +5,7 @@
  *      Author: bohni
  */
 
-#include "usbhandler.h"
+#include <USBHandler.h>
 
 float byteToFloat(uint8_t* array, uint8_t offset)
 {
@@ -16,7 +16,7 @@ memcpy(&val,array + offset,4l);
 return val;
 }
 
-usb_handler::usb_handler(Status* statusPtr, uint8_t defaultPrio,
+USBHandler::USBHandler(Status* statusPtr, uint8_t defaultPrio,
             USBD_HandleTypeDef* husb)
             : Task(statusPtr, defaultPrio) {
 
@@ -27,11 +27,11 @@ usb_handler::usb_handler(Status* statusPtr, uint8_t defaultPrio,
     usbTransmitBusyCounter = 0;
 }
 
-usb_handler::~usb_handler() {
+USBHandler::~USBHandler() {
 
 }
 
-void usb_handler::update() {
+void USBHandler::update() {
     /* reset leds*/
     leds.off(USB_RECEIVE_LED);
     leds.off(USB_TRANSMIT_LED);
@@ -156,7 +156,7 @@ void usb_handler::update() {
     resetPriority();
 }
 
-void usb_handler::initialize(ConfigReader* _confReader) {
+void USBHandler::initialize(ConfigReader* _confReader) {
 
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 
@@ -164,7 +164,7 @@ void usb_handler::initialize(ConfigReader* _confReader) {
     USBD_CDC_ReceivePacket(usb);
 }
 
-void usb_handler::sendStatusFloat(uint8_t part) {
+void USBHandler::sendStatusFloat(uint8_t part) {
     /* needs to be updated, if new variables are needed to be sent */
 
     if (part == USB_CMD_SEND_STATUS_FLOAT) {
@@ -315,7 +315,7 @@ void usb_handler::sendStatusFloat(uint8_t part) {
     }
 }
 
-void usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
+void USBHandler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
 
     uint8_t* tmp = (uint8_t*) &var;
     buffer[pos] = *tmp++;
@@ -325,7 +325,7 @@ void usb_handler::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
 
 }
 
-void usb_handler::readEEPROM(uint8_t byteCount) {
+void USBHandler::readEEPROM(uint8_t byteCount) {
 
     switch (byteCount) {
         case 1: {
@@ -359,7 +359,7 @@ void usb_handler::readEEPROM(uint8_t byteCount) {
     usbTransmit(UserTxBufferFS, byteCount);
 }
 
-void usb_handler::writeEEPROM(uint8_t byteCount) {
+void USBHandler::writeEEPROM(uint8_t byteCount) {
 
     switch (byteCount) {
         case 1: {
@@ -387,7 +387,7 @@ void usb_handler::writeEEPROM(uint8_t byteCount) {
     usbTransmit(UserRxBufferFS, 1);
 }
 
-void usb_handler::sendConfig() {
+void USBHandler::sendConfig() {
 
     /* send config
      *
@@ -414,7 +414,7 @@ void usb_handler::sendConfig() {
 
 }
 
-void usb_handler::updateConfig() {
+void USBHandler::updateConfig() {
 
     status->pidSettigsAngleXY.p = byteToFloat(UserRxBufferFS, 1);
     status->pidSettigsAngleXY.i = byteToFloat(UserRxBufferFS, 5);
@@ -435,7 +435,7 @@ void usb_handler::updateConfig() {
 
 }
 
-void usb_handler::usbTransmit(uint8_t* buffer, uint16_t len) {
+void USBHandler::usbTransmit(uint8_t* buffer, uint16_t len) {
     usb_state = CDC_Transmit_FS(buffer, len);
 
     if (usb_state == USBD_BUSY) {
@@ -452,10 +452,10 @@ void usb_handler::usbTransmit(uint8_t* buffer, uint16_t len) {
 
 }
 
-void usb_handler::kill() {
+void USBHandler::kill() {
 }
 
-void usb_handler::resetTransmissionState() {
+void USBHandler::resetTransmissionState() {
     /* clear endpoint*/
     usb->pClass->DataIn(usb, 1);
     PCD_HandleTypeDef *hpcd = (PCD_HandleTypeDef *) usb->pData;

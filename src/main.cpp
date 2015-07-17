@@ -59,7 +59,7 @@ PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
 ConfigReader configReader(&hi2c1);
 
 /* PC communications */
-usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
+USBHandler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
 /* Sensor data fusion Filters*/
 ComplementaryFilter compFilterX(&status, 0, &status.accel.y, &status.accel.z,
