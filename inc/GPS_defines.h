@@ -17,8 +17,6 @@
  * -poll/detect/decode NAV_SBAS ? -> msg length variable-> buffer size?
  *
  *
- * - decode flags in nav_sol /utc
- *
  */
 /**********************************************************************************/
 
@@ -49,10 +47,11 @@
 /* Settings for UpdateCFG*/
 //#define CHANGE_DEFAULT_CFG_SBAS
 //#define CHANGE_DEFAULT_CFG_NAV
-
+#define USE_SBAS
+#define INCREASE_MEASUREMENT_RATE
 /* Save Settings to Battery Backed RAM*/
 #define SAVE_PORT_SETTINGS_TO_BBR
-
+#define SAVE_ALL_SETTINGS_TO_BBR
 
 /* Message lengths
  * Payload + 8
@@ -67,7 +66,6 @@
 #define UBX_MSG_LENGTH_NAV_TIMEUTC          (20+8)
 #define UBX_MSG_LENGTH_NAV_DOP              (18+8)
 #define UBX_MSG_LENGTH_NAV_STATUS           (16+8)
-#define UBX_MSG_LENGTH_NAV_SBAS             ()
 
 #define UBX_MSG_LENGTH_ACK                  (2+8)
 
@@ -97,8 +95,8 @@
 
 #define GPS_GET_VELECEF                     0x00100000
 #define GPS_GET_DATE                        0x00200000
-#define GPS_GET_NAV_DOP                     0x04000000
-#define GPS_GET_NAV_STATUS                  0x08000000
+#define GPS_GET_NAV_DOP                     0x00400000
+#define GPS_GET_NAV_STATUS                  0x00800000
 
 #define GPS_GET_DATA_BITMASK                0x0FFF0000
 
@@ -116,6 +114,29 @@
 
 
 /**********************************************************************************/
+typedef enum {
+    NO_FIX          = 0x00,
+    DEAD_RECKONING  = 0x01,
+    GPS_FIX_2D      = 0x02,
+    GPS_FIX_3D      = 0x03,
+    GPS_FIX         = 0x04,
+    TIME_ONLY       = 0x05
+
+}GPS_Fix_t;
+
+typedef enum{
+    ACCQUISITION    = 0x00,
+    TRACKING        = 0x01,
+    OPTIMIZED_TRACKING = 0x02,
+    INACTIVE        = 0x03
+
+}PSM_State_t;
+
+/* Nav status flags */
+#define NAV_STATUS_FLAGS_FIX_OK         0x01
+#define NAV_STATUS_FLAGS_DGPS_USED      0x02
+#define NAV_STATUS_FLAGS_GPS_WEEK_VALID 0x04
+#define NAV_STATUS_FLAGS_GPS_ITOW_VALID 0x08
 
 typedef struct {
     uint8_t msgid;
@@ -146,6 +167,10 @@ typedef struct {
     uint8_t validity;
 } GPS_Time_t;
 
+/* bitmask for flags in GPS_Time_t.validity*/
+#define GPS_TIME_ITOW_VALID     0x01
+#define GPS_TIME_WEEK_NR_VALID  0x02
+#define GPS_TIME_UTC_VALID      0x04
 
 /**
  * struct for ECEF Data
@@ -198,17 +223,17 @@ typedef struct {
 }GPS_LLH_t;
 
 /**
- * struct for dilution of precission (DOP) Data
+ * struct for dilution of precision (DOP) Data
  *
  */
 typedef struct {
     uint16_t pDOP;  // Position DOP scale 0.01
-    uint16_t gDOP;  // Geometric DOP
-    uint16_t tDOP;  // Time DOP
-    uint16_t vDOP;  // Vertical DOP
-    uint16_t hDOP;  // Horizontal DOP
-    uint16_t nDOP;  // Northing DOP
-    uint16_t eDOP;  // Easting DOP
+    uint16_t gDOP;  // Geometric DOP scale 0.01
+    uint16_t tDOP;  // Time DOP scale 0.01
+    uint16_t vDOP;  // Vertical DOP scale 0.01
+    uint16_t hDOP;  // Horizontal DOP scale 0.01
+    uint16_t nDOP;  // Northing DOP scale 0.01
+    uint16_t eDOP;  // Easting DOP scale 0.01
 }GPS_DOP_t;
 
 /**
@@ -220,8 +245,8 @@ typedef struct {
     GPS_Time_t time;
     uint8_t numSV;  // Number of SVs used in Nav Solution
 
-    uint8_t gpsFix;
-    uint8_t flags;
+    GPS_Fix_t gpsFix;
+    uint8_t navStatusFlags;
 
     uint32_t iTOW;  // Time of Week [ms]
 
@@ -236,7 +261,7 @@ typedef struct {
     uint32_t ttff;  // Time to first fix (millisecond time tag)
     uint32_t msss;  // Milliseconds since Startup / Reset
 
-    uint8_t flags2;
+    PSM_State_t psmState;
     uint8_t FixStatus;
     uint16_t padding_dummy;
 

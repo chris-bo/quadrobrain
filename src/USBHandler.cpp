@@ -363,11 +363,11 @@ void USBHandler::sendStatusFloat(uint8_t part) {
         fillBuffer(UserTxBufferFS,100, status->gpsData.dop.eDOP);
 
         /* fix + flags*/
-        fillBuffer(UserTxBufferFS,102, status->gpsData.gpsFix);
+        fillBuffer(UserTxBufferFS,102,(uint8_t) status->gpsData.gpsFix);
         fillBuffer(UserTxBufferFS,103, status->gpsData.FixStatus);
         fillBuffer(UserTxBufferFS,104, status->gpsData.numSV);
-        fillBuffer(UserTxBufferFS,105, status->gpsData.flags);
-        fillBuffer(UserTxBufferFS,106, status->gpsData.flags2);
+        fillBuffer(UserTxBufferFS,105, status->gpsData.navStatusFlags);
+        fillBuffer(UserTxBufferFS,106,(uint8_t) status->gpsData.psmState);
 
         usbTransmit(UserTxBufferFS, 107);
     }

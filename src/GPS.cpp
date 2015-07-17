@@ -99,7 +99,8 @@ void GPS::initialize() {
     /* Port Config accepted
      *  -> config receiver
      */
-#ifdef CHANGE_DEFAULT_CFG_SBAS
+
+#ifdef USE_SBAS
     /* SBAS_config
      * enabled
      * test mode
@@ -109,14 +110,12 @@ void GPS::initialize() {
      * autoscan
      *
      */
-
-    uint8_t SBAS_config[] = { 0x01, 0x07, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-    /* update SBAS config -> ack? */
-    if (updateReceiverConfig(UBX_CFG_SBAS, SBAS_config, 8) == 0) {
-        /* error*/
-    }
+      uint8_t use_sbas_config[] = {0x03, 0x07, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00};
+      updateReceiverConfig(UBX_CFG_SBAS, use_sbas_config, 8);
 #endif
+
+
+      // TODO gps cfg nav
 #ifdef CHANGE_DEFAULT_CFG_NAV
     /* NAV config:
      * Parameter Mask: 0xFF 0xFF update all
@@ -142,7 +141,17 @@ void GPS::initialize() {
         /* error */
     }
 #endif
+    // TODO INCREASE_MEASUREMENT_RATE
+#ifdef INCREASE_MEASUREMENT_RATE
 
+#endif
+
+    // TODO SAVE_ALL_SETTINGS_TO_BRR
+#ifdef SAVE_ALL_SETTINGS_TO_BRR
+
+
+
+#endif
     transferState = 0;
     setTransferState();
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
@@ -293,8 +302,8 @@ void GPS::decodeUBX_NAV() {
      * UBX_NAV_SOL
      * UBX_NAV_STATUS
      * UBX_NAV_DOP
-     * UBS_NAV_TIMEUTC
-     *
+     * UBX_NAV_TIMEUTC
+     * UBX_NAV_SBAS
      * resets transferState Flags
      */
     gpsData->iTOW = gps_rx_buffer_32offset(0);
@@ -337,8 +346,8 @@ void GPS::decodeUBX_NAV() {
             break;
         case UBX_NAV_SOL:
             gpsData->gpsWeek = (int16_t) gps_rx_buffer_16offset(8);
-            gpsData->gpsFix = (uint8_t) gps_rx_buffer_offset(10);
-            gpsData->flags = (uint8_t) gps_rx_buffer_offset(11);
+            gpsData->gpsFix = (GPS_Fix_t) gps_rx_buffer_offset(10);
+            gpsData->navStatusFlags = gps_rx_buffer_offset(11);
             gpsData->ecef_data.x = gps_rx_buffer_32offset(12);
             gpsData->ecef_data.y = gps_rx_buffer_32offset(16);
             gpsData->ecef_data.z = gps_rx_buffer_32offset(20);
@@ -363,10 +372,10 @@ void GPS::decodeUBX_NAV() {
             RESET_FLAG(transferState, GPS_GET_NAV_DOP);
             break;
         case UBX_NAV_STATUS:
-            gpsData->gpsFix = (uint8_t) gps_rx_buffer_offset(4);
-            gpsData->flags = (uint8_t) gps_rx_buffer_offset(5);
-            gpsData->FixStatus = (uint8_t) gps_rx_buffer_offset(6);
-            gpsData->flags2 = (uint8_t) gps_rx_buffer_offset(7);
+            gpsData->gpsFix = (GPS_Fix_t) gps_rx_buffer_offset(4);
+            gpsData->navStatusFlags = gps_rx_buffer_offset(5);
+            gpsData->FixStatus = gps_rx_buffer_offset(6);
+            gpsData->psmState = (PSM_State_t) gps_rx_buffer_offset(7);
             gpsData->ttff = gps_rx_buffer_32offset(8);
             gpsData->msss = gps_rx_buffer_32offset(12);
             RESET_FLAG(transferState, GPS_GET_NAV_STATUS);
