@@ -31,7 +31,7 @@
 #include "Compass.h"
 #include "PIDController.h"
 #include "MPU9150.h"
-#include "usbhandler.h"
+#include "USBHandler.h"
 #include "AkkuMonitor.h"
 #include "BMP180.h"
 #include "DiscoveryLEDs.h"

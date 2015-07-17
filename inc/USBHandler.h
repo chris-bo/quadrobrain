@@ -1,5 +1,5 @@
 /*
- * usbhandler.h
+ * USBHandler.h
  *
  *  Created on: Mar 29, 2015
  *      Author: bohni
@@ -122,10 +122,10 @@
 
 /**************************************************************************/
 
-class usb_handler: public Task {
+class USBHandler: public Task {
 public:
-    usb_handler(Status* statusPtr, uint8_t defaultPrio, USBD_HandleTypeDef* husb);
-    virtual ~usb_handler();
+    USBHandler(Status* statusPtr, uint8_t defaultPrio, USBD_HandleTypeDef* husb);
+    virtual ~USBHandler();
 
     void update();
     void initialize(ConfigReader* _confReader);

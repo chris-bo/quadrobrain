@@ -59,7 +59,7 @@ PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
 ConfigReader configReader(&hi2c1);
 
 /* PC communications */
-usb_handler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
+USBHandler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 
 /* GPS Receiver */
 GPS gpsReceiver(&status, GPS_DEFAULT_PRIORITY, &huart1);
