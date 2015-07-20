@@ -76,8 +76,8 @@
  * terminated by one byte of DATA_ID_EOF
  *
  * USBHandler responds with requested data
- * if requested frame is bigger than outbuffer last bytes until buffer is full
- * will be DATA_ID_BUFFER_OVERRUN
+ * if inserting data will cause buffer overrun. the remaining buffer
+ * will be 0xFF
  *
  * Unknown data id will be ignored
  *
@@ -195,7 +195,7 @@ private:
     void sendConfig();
     void updateConfig();
     void resetTransmissionState();
-    uint8_t checkBufferOverrun(uint8_t currentPos, uint8_t dataToAdd, uint8_t* overrun);
+    uint8_t checkTXBufferOverrun(uint8_t currentPos, uint8_t dataToAdd, uint8_t* overrun);
 
 };
 

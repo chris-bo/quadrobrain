@@ -506,11 +506,17 @@ void USBHandler::kill() {
 void USBHandler::sendCustomFrame() {
     uint8_t bufferPos = 0;
     uint8_t bufferOverrun = 0;
+    /* TODO reserve first byte to send number of data?
+     * bufferPos = 1;
+     */
     /* start loop at beginning of data ids */
     for (uint8_t i = 1; i < number_received_data; i++) {
+        /* add requested values
+         * but check fist if tx buffer has enough space
+         */
         switch (UserRxBufferFS[i]) {
             case DATA_ID_GYRO:
-                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->rate.x);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -520,7 +526,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_ACCEL:
-                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->accel.x);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -530,7 +536,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_MAGNETOMETER:
-                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->magnetfield.x);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -540,7 +546,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_ANGLE:
-                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->angle.x);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -550,7 +556,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_ANGLE_SP:
-                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->angleSetpoint.x);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -560,7 +566,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_VELOCITY:
-                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->velocity.x);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -570,7 +576,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_VELOCITY_SP:
-                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->velocitySetpoint.x);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -580,7 +586,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_HEIGHT:
-                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->height);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -589,7 +595,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_RC:
-                if (!checkBufferOverrun(bufferPos, 22, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 22, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->rcSignalNick);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -607,7 +613,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_MOTOR_SP:
-                if (!checkBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->motorSetpoint.x);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -617,7 +623,7 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_MOTOR:
-                if (!checkBufferOverrun(bufferPos, 16, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 16, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->motorValues[0]);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
@@ -629,39 +635,44 @@ void USBHandler::sendCustomFrame() {
                 }
                 break;
             case DATA_ID_CPU:
-                if (!checkBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->cpuLoad);
                 }
                 break;
             case DATA_ID_AKKU:
-                if (!checkBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->akkuVoltage);
                 }
                 break;
             case DATA_ID_TEMP:
-                if (!checkBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+                if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos, status->temp);
                 }
                 break;
             case DATA_ID_EOF:
+                /* end of frame*/
+
                 break;
             default:
+                /* unknown id */
                 break;
 
         }
         if (bufferOverrun == 1) {
             /* Buffer Overrun
-             * fill rest with  DATA_ID_BUFFER_OVERRUN
+             * not enough space to push requested data into buffer
+             *
+             * send only DATA_ID_BUFFER_OVERRUN
              */
-            for (uint8_t i = bufferPos; i < USB_TX_BUFF_SIZE; i++) {
-                UserTxBufferFS[i] = DATA_ID_BUFFER_OVERRUN;
-            }
-            bufferPos = 128;
+            UserTxBufferFS[0] = DATA_ID_BUFFER_OVERRUN;
+            bufferPos = 1;
             break;
         }
     }
+    /* buffersize(without this number) into first byte */
+    //UserTxBufferFS[0] = bufferPos - 1;
     usbTransmit(UserTxBufferFS, bufferPos);
 }
 
@@ -726,7 +737,7 @@ uint8_t USBHandler::fillBuffer(uint8_t* buffer, uint8_t pos, uint8_t var) {
     return pos;
 }
 
-uint8_t USBHandler::checkBufferOverrun(uint8_t currentPos, uint8_t dataToAdd,
+uint8_t USBHandler::checkTXBufferOverrun(uint8_t currentPos, uint8_t dataToAdd,
             uint8_t* overrun) {
     if ((currentPos + dataToAdd) < USB_TX_BUFF_SIZE) {
         return 0;
