@@ -79,8 +79,6 @@ Status::Status() {
 
     cpuLoad = 0;
 
-    buzzer1Busy = false;
-    buzzer2Busy = false;
 }
 
 Status::~Status() {

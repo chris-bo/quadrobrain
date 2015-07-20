@@ -15,39 +15,26 @@ Buzzer::Buzzer(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim)
 }
 
 void Buzzer::update() {
-    // check buzzer 1
-    if (elapsedLengthBuzzer == 0 && toneLengthBuzzer != 0) {
-        // start pwm timer
-        HAL_TIM_PWM_Start(buzzerHtim, TIM_CHANNEL_1);
-        elapsedLengthBuzzer = 1;
-    } else if (elapsedLengthBuzzer == toneLengthBuzzer) {
-        // stop pwm timer
-        HAL_TIM_PWM_Stop(buzzerHtim, TIM_CHANNEL_1);
-        // reset lengths
-        elapsedLengthBuzzer = 0;
-        toneLengthBuzzer = 0;
-        // reset buzzer status
-        // todo buzzer queue: brauchen wir das dann noch?
-        status->buzzer1Busy = false;
-    } else {
-        // go one timestep forward
-        elapsedLengthBuzzer++;
+    if (toneLengthBuzzer > 0) {
+        if (elapsedLengthBuzzer == toneLengthBuzzer) {
+            // stop pwm timer
+            HAL_TIM_PWM_Stop(buzzerHtim, TIM_CHANNEL_1);
+            // reset lengths
+            toneLengthBuzzer = 0;
+            if (queue.index != queue.currentTone) {
+                /* queue not empty */
+                playNextTone();
+            }
+        } else {
+            // go one timestep forward
+            elapsedLengthBuzzer++;
+        }
     }
+    resetPriority();
 }
 
 void Buzzer::playTone(float frequency, uint16_t length) {
-    // set lengts
-    elapsedLengthBuzzer = 0;
-    toneLengthBuzzer = length;
-    // set pwm timer
-    uint16_t temp = calculateReloadValue(frequency);
-    __HAL_TIM_SetAutoreload(buzzerHtim, temp);
-    // TODO: evtl. Lautst�rkenregelung �ber Pulsl�nge
-    __HAL_TIM_SetCompare(buzzerHtim, TIM_CHANNEL_1, temp / 2);
-
-    // set buzzer as busy
-    // todo buzzer queue: brauchen wir das dann noch?
-    status->buzzer1Busy = true;
+    addToneToQueue(frequency, length);
 }
 
 uint16_t Buzzer::calculateReloadValue(float frequency) {
@@ -60,3 +47,49 @@ Buzzer::~Buzzer() {
 
 }
 
+void Buzzer::addToneToQueue(float frequency, uint16_t length) {
+
+    /* check if timer is running */
+    uint8_t timerStopped = 0;
+    if ((queue.index == queue.currentTone) && (toneLengthBuzzer == 0)) {
+        timerStopped = 1;
+    }
+
+    /* goto next address */
+    queue.index++;
+    if (queue.index == BUZZER_QUEUE_SIZE) {
+        queue.index = 0;
+    }
+
+    /* add tone */
+    queue.frequency[queue.index] = frequency;
+    queue.lenght[queue.index] = length;
+
+    /* call playNextTone() if timer is stopped
+     */
+    if (timerStopped) {
+        playNextTone();
+    }
+}
+
+void Buzzer::playNextTone() {
+
+    /* goto next tone */
+    queue.currentTone++;
+    if (queue.currentTone == BUZZER_QUEUE_SIZE) {
+        queue.currentTone = 0;
+    }
+
+    // set length
+    toneLengthBuzzer = queue.lenght[queue.currentTone];
+    // set pwm timer
+    if (queue.frequency[queue.currentTone] > 0) {
+        uint16_t temp = calculateReloadValue(queue.frequency[queue.currentTone]);
+        __HAL_TIM_SetAutoreload(buzzerHtim, temp);
+        __HAL_TIM_SetCompare(buzzerHtim, TIM_CHANNEL_1, temp / 2);
+
+        /* start timer */
+        HAL_TIM_PWM_Start(buzzerHtim, TIM_CHANNEL_1);
+    }
+    elapsedLengthBuzzer = 1;
+}

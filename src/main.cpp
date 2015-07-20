@@ -199,6 +199,16 @@ void FlightMode() {
                           &beep1, &beep2 };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
+    beep1.playTone(BUZZER_C5,100);
+    beep1.playTone(BUZZER_PAUSE,20);
+    beep1.playTone(BUZZER_E5,100);
+    beep1.playTone(BUZZER_PAUSE,20);
+    beep1.playTone(BUZZER_G5,100);
+    beep1.playTone(BUZZER_PAUSE,20);
+    beep1.playTone(BUZZER_E5,100);
+    beep1.playTone(BUZZER_PAUSE,20);
+    beep1.playTone(BUZZER_C5,200);
+    HAL_Delay(700);
 
     while (1) {
         if ((usb.usb_mode_request == USB_MODE_CONFIG)

@@ -10,6 +10,7 @@
 
 #include <Task.h>
 
+#define BUZZER_PAUSE 0.0f
 #define BUZZER_B5	987.767f
 #define BUZZER_Ap5	932.328f
 #define BUZZER_A5	880.000f
@@ -59,10 +60,15 @@
 #define BUZZER_Cp2	69.2957f
 #define BUZZER_C2	65.4064f
 
+#define BUZZER_QUEUE_SIZE 16
 
-/*
- * TODO: Buzzer queue
- */
+typedef struct {
+    float frequency[BUZZER_QUEUE_SIZE];
+    uint16_t lenght[BUZZER_QUEUE_SIZE];
+    uint8_t index;
+    uint8_t currentTone;
+}Buzzer_Queue_t;
+
 class Buzzer: public Task {
 public:
 	Buzzer(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim );
@@ -72,9 +78,14 @@ public:
 
 private:
 	TIM_HandleTypeDef* buzzerHtim;
+    Buzzer_Queue_t queue;
+    uint16_t toneLengthBuzzer;
+    uint16_t elapsedLengthBuzzer;
+
 	uint16_t calculateReloadValue(float frequency);
-	uint16_t toneLengthBuzzer;
-	uint16_t elapsedLengthBuzzer;
+	void addToneToQueue(float frequency, uint16_t length);
+	void playNextTone();
+
 };
 
 #endif /* BUZZER_H_ */
