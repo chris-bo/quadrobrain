@@ -35,15 +35,12 @@ void AkkuMonitor::update() {
 	if (counter ==  1000 / SCHEDULER_INTERVALL_ms / MEASUREMENT_FREQUENCY) {
 			HAL_ADC_Start_IT(akkumonitor_adc);
 			counter = 0;
+
 	} else {
 		counter ++;
 	}
 
-	if (status->akkuVoltage < LOW_VOLTAGE_WARNING_THRESHOLD) {
-	    lowVoltageWarning();
-	} else {
-	    RESET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
-	}
+
 
 	resetPriority();
 }
@@ -54,11 +51,21 @@ void AkkuMonitor::conversionComplete() {
 	status->akkuVoltage = tmp * SCALE_FACTOR * VOLTAGE_DIVIDER_RATIO;
 	HAL_ADC_Stop_IT(akkumonitor_adc);
 
-
+    if (status->akkuVoltage < LOW_VOLTAGE_WARNING_THRESHOLD) {
+        lowVoltageWarning();
+    } else {
+        RESET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
+    }
 }
 
 void AkkuMonitor::lowVoltageWarning() {
     /* akkuVoltate below threshold */
     SET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
+#ifndef DISABLE_LOW_VOLTAGE_BUZZER_WARNING
+    status->addToneToQueue(&status->buzzerQueue2,BUZZER_PAUSE, 10);
+    status->addToneToQueue(&status->buzzerQueue2,BUZZER_A4, 100);
+    status->addToneToQueue(&status->buzzerQueue2,BUZZER_PAUSE, 10);
+    status->addToneToQueue(&status->buzzerQueue2,BUZZER_B4, 100);
+#endif
 
 }

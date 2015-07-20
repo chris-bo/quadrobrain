@@ -79,6 +79,9 @@ Status::Status() {
 
     cpuLoad = 0;
 
+//    buzzerQueue1 = {};
+//    buzzerQueue2 = { };
+
 }
 
 Status::~Status() {
@@ -138,7 +141,6 @@ void Status::reset() {
     globalFlags = 0;
 
     akkuVoltage = 0;
-
 }
 
 void Status::restoreConfig() {
@@ -170,5 +172,19 @@ void Status::restoreConfig() {
     pidSettingsacceleration.d = PID_ACCELERATION_D;
     pidSettingsacceleration.scaleSetPoint = PID_ACCELERATION_SCALE;
     pidSettingsacceleration.gain = PID_ACCELERATION_GAIN;
+
+}
+
+void Status::addToneToQueue(Buzzer_Queue_t* queue, float frequency, uint16_t length) {
+
+        /* goto next address */
+    queue->index++;
+        if (queue->index == BUZZER_QUEUE_SIZE) {
+            queue->index = 0;
+        }
+
+        /* add tone */
+        queue->frequency[queue->index] = frequency;
+        queue->lenght[queue->index] = length;
 
 }

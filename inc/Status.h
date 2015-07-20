@@ -28,6 +28,12 @@ typedef struct {
     float gain;
 }PID_Settings;
 
+typedef struct {
+    float frequency[BUZZER_QUEUE_SIZE];
+    uint16_t lenght[BUZZER_QUEUE_SIZE];
+    uint8_t index;
+    uint8_t currentTone;
+}Buzzer_Queue_t;
 
 class Status {
 public:
@@ -36,6 +42,7 @@ public:
 
     void reset();
     void restoreConfig();
+    void addToneToQueue(Buzzer_Queue_t* queue, float frequency, uint16_t length);
 
     /* all status variables */
 
@@ -109,9 +116,8 @@ public:
     /* cpu load calculated via idle time*/
     float cpuLoad; // %
 
-    /* Buzzer Status */
-    bool buzzer1Busy;
-    bool buzzer2Busy;
+    Buzzer_Queue_t buzzerQueue1;
+    Buzzer_Queue_t buzzerQueue2;
 
     /* GPS Data*/
     GPS_Data_t gpsData;

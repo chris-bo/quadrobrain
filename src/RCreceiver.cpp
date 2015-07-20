@@ -23,6 +23,7 @@ RCreceiver::RCreceiver(Status* statusPtr, uint8_t defaultPrio,
     rawRCvalues[0] = 0;
 
     signalLostTime = 0;
+    signalLostBuzzer = 0;
     RCreceiver_htim = htim;
 
 }
@@ -49,6 +50,14 @@ void RCreceiver::update() {
             status->rcSignalThrottle = 0.2f;
         }
         signalLostTime++;
+#ifndef DISABLE_RC_SIGNAL_LOST_BUZZER_WARNING
+        if (signalLostBuzzer++ == SCHEDULER_INTERVALL_ms * 1000) {
+            signalLostBuzzer = 0;
+            status->addToneToQueue(&status->buzzerQueue1,BUZZER_B5,300);
+            status->addToneToQueue(&status->buzzerQueue1,BUZZER_PAUSE,100);
+            status->addToneToQueue(&status->buzzerQueue1,BUZZER_B5,300);
+        }
+#endif
     } else {
         SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         computeValues();
