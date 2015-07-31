@@ -53,7 +53,8 @@ AkkuMonitor akku(&status, AKKUMONITOR_DEFAULT_PRIORITY, &hadc1);
 
 /* Motor Control */
 PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
-            &status.motorSetpoint.x, &status.motorSetpoint.y);
+            &status.motorSetpoint.x, &status.motorSetpoint.y,
+            &status.motorSetpoint.z, &status.rcSignalThrottle);
 
 /* EEPROM Configuration Management*/
 ConfigReader configReader(&hi2c1);
@@ -201,27 +202,27 @@ void FlightMode() {
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
     /* don't stop beliieeeving */
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_A4, 125);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Gp4, 250);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Gp4, 375);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_PAUSE, 125);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Fp4, 125);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_A4, 125);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Gp4, 250);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Gp4, 375);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_PAUSE, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 250);
     HAL_Delay(2000);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_PAUSE, 500);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_A4, 125);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Gp4, 125);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_A4, 125);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_B4, 125);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Cp5, 250);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_B4, 63);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Cp5, 62);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Gp4, 250);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_Fp4, 125);
-    status.addToneToQueue(&status.buzzerQueue1,BUZZER_E4, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 500);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 63);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 62);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_E4, 250);
     HAL_Delay(2000);
 
     while (1) {

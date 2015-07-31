@@ -59,7 +59,7 @@
 #define PPM_SETUP_TIME 3000000
 
 #define THROTTLE_SCALING                        0.7f
-
+#define PPM_GENERATOR_THROTTLE_THRESHOLD        0.1f
 /****************************/
 /* Sensorboard MPU9150
  *

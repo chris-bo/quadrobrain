@@ -7,8 +7,7 @@
 
 #include <MotionController.h>
 
-MotionController::MotionController(Status* _status,
-            int8_t _defaultPrio)
+MotionController::MotionController(Status* _status, int8_t _defaultPrio)
             : Task(_status, _defaultPrio) {
 
     horizontalAcceleration = {0,0,0};
@@ -18,9 +17,7 @@ MotionController::MotionController(Status* _status,
     /* todo set to throttle if automated control is enabled*/
     throttle_out = new float();
 
-    /* setup filters */
 
-    // TODO add ma filters for acceleration
     /* setup pids*/
 
     veloctityPIDx = new PIDController(_status, 0,
@@ -56,6 +53,7 @@ MotionController::MotionController(Status* _status,
                 0, &accelerationSetpoint.z, throttle_out, 1, ACCELERATION_PID_LIMIT,
                 ACCELERATION_PID_SUM_LIMIT, false);
 
+    /* setup filters */
     accelerationFilterX = new MAfilterF(status, 0 ,&horizontalAcceleration.x,
                 &horizontalAccelerationFiltered.x, ACCELERATION_MA_FILTER_SIZE);
 
@@ -107,7 +105,9 @@ void MotionController::update() {
 void MotionController::initialize(PID_Settings* _velocityPIDsettings,
             PID_Settings* _accelerationPIDsettings) {
 
-    // todo initialize?
+    accelerationFilterX->initialize();
+    accelerationFilterY->initialize();
+    accelerationFilterZ->initialize();
 
     veloctityPIDx->initialize(_velocityPIDsettings);
     veloctityPIDy->initialize(_velocityPIDsettings);

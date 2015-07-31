@@ -79,8 +79,23 @@ Status::Status() {
 
     cpuLoad = 0;
 
-//    buzzerQueue1 = {};
-//    buzzerQueue2 = { };
+    buzzerQueue1 = {};
+    buzzerQueue2 = {};
+
+    gpsData = {};
+    qcSettings = {};
+
+    /* Initialize Hardcoded Settings */
+#ifndef DISABLE_RC_SIGNAL_LOST_BUZZER_WARNING
+    qcSettings.enableBuzzerWarningRCLost = 1;
+#else
+    qcSettings.enableBuzzerWarningRCLost = 0;
+#endif
+#ifndef DISABLE_LOW_VOLTAGE_BUZZER_WARNING
+    qcSettings.enableBuzzerWarningLowVoltage = 1;
+#else
+    qcSettings.enableBuzzerWarningLowVoltage = 0;
+#endif
 
 }
 
@@ -175,16 +190,17 @@ void Status::restoreConfig() {
 
 }
 
-void Status::addToneToQueue(Buzzer_Queue_t* queue, float frequency, uint16_t length) {
+void Status::addToneToQueue(Buzzer_Queue_t* queue, float frequency,
+            uint16_t length) {
 
-        /* goto next address */
+    /* goto next address */
     queue->index++;
-        if (queue->index == BUZZER_QUEUE_SIZE) {
-            queue->index = 0;
-        }
+    if (queue->index == BUZZER_QUEUE_SIZE) {
+        queue->index = 0;
+    }
 
-        /* add tone */
-        queue->frequency[queue->index] = frequency;
-        queue->lenght[queue->index] = length;
+    /* add tone */
+    queue->frequency[queue->index] = frequency;
+    queue->lenght[queue->index] = length;
 
 }

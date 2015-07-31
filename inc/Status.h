@@ -35,6 +35,18 @@ typedef struct {
     uint8_t currentTone;
 }Buzzer_Queue_t;
 
+typedef struct {
+    uint8_t enableBuzzerWarningLowVoltage;
+    uint8_t enableBuzzerWarningRCLost;
+    /* TODO config struct
+     *
+     * disabling motors?
+     * disabling some sensor funktions? gps?
+     * disabling leds?
+     */
+
+}Quadrocopter_Settings_t;
+
 class Status {
 public:
     Status();
@@ -121,6 +133,9 @@ public:
 
     /* GPS Data*/
     GPS_Data_t gpsData;
+
+    /* QC Settings */
+    Quadrocopter_Settings_t qcSettings;
 };
 
 #endif /* STATUS_H_ */

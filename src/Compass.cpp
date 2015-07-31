@@ -31,6 +31,8 @@ void Compass::update() {
 	 * -> get angle between north(x a2) and y (a1)
 	 * */
 
+    /* todo fix compass */
+
 	float x1 = *a1 * cosf(*angle1 * M_PI / 180);
 	float x2 = *a2 * cosf(*angle2 * M_PI / 180);
 	tmp_acc_angle = atan2f(x1, x2) * 180.0f / M_PI;

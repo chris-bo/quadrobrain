@@ -18,13 +18,13 @@
  PC9     ------> TIM3_CH4
  */
 
-
 #define THROTTLE_MIN 0.1f
 
 class PPMGenerator: public Task {
 public:
     PPMGenerator(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim,
-                float* controllerValueX, float* controllerValueY);
+                float* controllerValueX, float* controllerValueY,
+                float* controllerValueRotZ, float* throttle);
     virtual ~PPMGenerator();
     void update();
     void initialize();
@@ -35,6 +35,8 @@ private:
     TIM_HandleTypeDef* PPMGenerator_htim;
     float* controllerValueX;
     float* controllerValueY;
+    float* controllerValueZ;
+    float* throttle;
 
     float motorValuesAvg[4];
     uint8_t counter;

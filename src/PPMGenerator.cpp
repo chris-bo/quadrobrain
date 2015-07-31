@@ -9,11 +9,14 @@
 
 PPMGenerator::PPMGenerator(Status* statusPtr, uint8_t defaultPrio,
             TIM_HandleTypeDef* htim, float* _controllerValueX,
-            float* _controllerValueY)
+            float* _controllerValueY, float* _controllerValueZ, float* _throttle)
             : Task(statusPtr, defaultPrio) {
     PPMGenerator_htim = htim;
-    this->controllerValueX = _controllerValueX;
-    this->controllerValueY = _controllerValueY;
+    controllerValueX = _controllerValueX;
+    controllerValueY = _controllerValueY;
+    controllerValueZ = _controllerValueZ;
+    throttle = _throttle;
+
     counter = 0;
     motorValuesAvg[0] = 0;
     motorValuesAvg[1] = 0;
@@ -33,22 +36,24 @@ void PPMGenerator::update() {
     // Motoren aktiviert?
     if (status->rcSignalEnable) {
         // Throttle hoch genug, damit Regler aktiv werden darf?
-        if (status->rcSignalThrottle > PID_THROTTLE_THRESHOLD) {
-            motorValuesAvg[0] += status->rcSignalThrottle * THROTTLE_SCALING
-                        - *controllerValueY;
-            motorValuesAvg[1] += status->rcSignalThrottle * THROTTLE_SCALING
-                        + *controllerValueX;
-            motorValuesAvg[2] += status->rcSignalThrottle * THROTTLE_SCALING
-                        + *controllerValueY;
-            motorValuesAvg[3] += status->rcSignalThrottle * THROTTLE_SCALING
-                        - *controllerValueX;
+
+        /* todo ppmgen: test sign of controllervalue Z*/
+        if (*throttle > PPM_GENERATOR_THROTTLE_THRESHOLD) {
+            motorValuesAvg[0] += *throttle * THROTTLE_SCALING
+                        - *controllerValueY - *controllerValueZ;
+            motorValuesAvg[1] += *throttle * THROTTLE_SCALING
+                        + *controllerValueX + *controllerValueZ;
+            motorValuesAvg[2] += *throttle * THROTTLE_SCALING
+                        + *controllerValueY - *controllerValueZ;
+            motorValuesAvg[3] += *throttle * THROTTLE_SCALING
+                        - *controllerValueX + *controllerValueZ;
             counter++;
         } else {
             // Throttle zu niedrig => Reglerwerte werden nicht beruecksichtig
-            motorValuesAvg[0] = status->rcSignalThrottle;
-            motorValuesAvg[1] = status->rcSignalThrottle;
-            motorValuesAvg[2] = status->rcSignalThrottle;
-            motorValuesAvg[3] = status->rcSignalThrottle;
+            motorValuesAvg[0] = *throttle;
+            motorValuesAvg[1] = *throttle;
+            motorValuesAvg[2] = *throttle;
+            motorValuesAvg[3] = *throttle;
             /* keine Mittelwertsbildung -> wert direkt uebernehmen */
             counter = 1;
         }

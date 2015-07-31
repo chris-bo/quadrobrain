@@ -23,7 +23,7 @@ RCreceiver::RCreceiver(Status* statusPtr, uint8_t defaultPrio,
     rawRCvalues[0] = 0;
 
     signalLostTime = 0;
-    signalLostBuzzer = 0;
+    signalLostBuzzerCounter = 0;
     RCreceiver_htim = htim;
 
 }
@@ -50,18 +50,22 @@ void RCreceiver::update() {
             status->rcSignalThrottle = 0.2f;
         }
         signalLostTime++;
-#ifndef DISABLE_RC_SIGNAL_LOST_BUZZER_WARNING
-        if (signalLostBuzzer++ == SCHEDULER_INTERVALL_ms * 1000) {
-            signalLostBuzzer = 0;
-            status->addToneToQueue(&status->buzzerQueue1,BUZZER_B5,300);
-            status->addToneToQueue(&status->buzzerQueue1,BUZZER_PAUSE,100);
-            status->addToneToQueue(&status->buzzerQueue1,BUZZER_B5,300);
+        if (status->qcSettings.enableBuzzerWarningRCLost) {
+            if (signalLostBuzzerCounter++ == SCHEDULER_INTERVALL_ms * 1000) {
+                signalLostBuzzerCounter = 0;
+                status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5, 300);
+                status->addToneToQueue(&status->buzzerQueue1, BUZZER_PAUSE, 100);
+                status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5, 300);
+            } else {
+                signalLostBuzzerCounter++;
+            }
         }
-#endif
+
     } else {
         SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         computeValues();
         signalLostTime = 0;
+        signalLostBuzzerCounter = 0;
     }
     resetPriority();
 }
@@ -80,7 +84,7 @@ void RCreceiver::computeValues() {
             tmp = 10000;
         }
         /* add lowpass filter and save rawRCvalue*/
-        rawRCvalues[i] = (uint16_t) (rawRCvalues[i] +  tmp) / 2;
+        rawRCvalues[i] = (uint16_t) (rawRCvalues[i] + tmp) / 2;
     }
     /* Channel Configuration:
      *
@@ -97,9 +101,9 @@ void RCreceiver::computeValues() {
 
     status->rcSignalRoll = (((float) (rawRCvalues[0]) / 10000.0f) - 0.5f);
     status->rcSignalNick = (((float) rawRCvalues[2]) / 10000.0f) - 0.5f;
-    status->rcSignalYaw = (((float) rawRCvalues[3] ) / 10000.0f) - 0.5f;
-    status->rcSignalThrottle = (float) (rawRCvalues[1] ) / 10000.0f;
-    status->rcSignalLinPoti = (float) (rawRCvalues[5] ) / 10000.0f;
+    status->rcSignalYaw = (((float) rawRCvalues[3]) / 10000.0f) - 0.5f;
+    status->rcSignalThrottle = (float) (rawRCvalues[1]) / 10000.0f;
+    status->rcSignalLinPoti = (float) (rawRCvalues[5]) / 10000.0f;
     if (rawRCvalues[4] > 8000) {
         status->rcSignalEnable = 1;
     } else {

@@ -24,8 +24,6 @@ public:
 
 private:
 
-    /* take these directly from status*/
-
     XYZ_Data horizontalAcceleration;
     XYZ_Data horizontalAccelerationFiltered;
     XYZ_Data accelerationSetpoint;
