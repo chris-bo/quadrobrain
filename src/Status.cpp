@@ -44,8 +44,8 @@ Status::Status() {
     motorValues[2] = 0;
     motorValues[3] = 0;
 
-    filterCoefficientXY = 0;
-    filterCoefficientZ = 0;
+    filterCoefficientXY = FILTER_COEFFICIENT_XY;
+    filterCoefficientZ = FILTER_COEFFICIENT_Z;
 
     pidSettigsAngleXY.p = PID_XY_P;
     pidSettigsAngleXY.i = PID_XY_I;
@@ -136,20 +136,20 @@ void Status::reset() {
     motorValues[2] = 0;
     motorValues[3] = 0;
 
-    filterCoefficientXY = 0;
-    filterCoefficientZ = 0;
-
-    pidSettigsAngleXY.p = PID_XY_P;
-    pidSettigsAngleXY.i = PID_XY_I;
-    pidSettigsAngleXY.d = PID_XY_D;
-    pidSettigsAngleXY.scaleSetPoint = PID_XY_SCALE;
-    pidSettigsAngleXY.gain = PID_XY_GAIN;
-
-    pidSettigsRotationZ.p = PID_Z_P;
-    pidSettigsRotationZ.i = PID_Z_I;
-    pidSettigsRotationZ.d = PID_Z_D;
-    pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
-    pidSettigsRotationZ.gain = PID_Z_GAIN;
+//    filterCoefficientXY = FILTER_COEFFICIENT_XY;
+//    filterCoefficientZ = FILTER_COEFFICIENT_Z;
+//
+//    pidSettigsAngleXY.p = PID_XY_P;
+//    pidSettigsAngleXY.i = PID_XY_I;
+//    pidSettigsAngleXY.d = PID_XY_D;
+//    pidSettigsAngleXY.scaleSetPoint = PID_XY_SCALE;
+//    pidSettigsAngleXY.gain = PID_XY_GAIN;
+//
+//    pidSettigsRotationZ.p = PID_Z_P;
+//    pidSettigsRotationZ.i = PID_Z_I;
+//    pidSettigsRotationZ.d = PID_Z_D;
+//    pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
+//    pidSettigsRotationZ.gain = PID_Z_GAIN;
 
     motorSetpoint = {0,0,0};
 

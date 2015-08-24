@@ -70,8 +70,8 @@ ComplementaryFilter compFilterX(&status, 0, &status.accel.y, &status.accel.z,
             &status.rate.x, &status.angle.x, &status.filterCoefficientXY);
 ComplementaryFilter compFilterY(&status, 0, &status.accel.x, &status.accel.z,
             &status.rate.y, &status.angle.y, &status.filterCoefficientXY);
-Compass compFilterNorth(&status, 0, &status.magnetfield.y, &status.magnetfield.x,
-            &status.angle.y, &status.angle.x, &status.rate.z, &status.angle.z,
+Compass compFilterNorth(&status, 0, &status.magnetfield.x, &status.magnetfield.y,
+            &status.angle.x, &status.angle.y, &status.rate.z, &status.angle.z,
             &status.filterCoefficientZ);
 
 /* PIDs low level */
