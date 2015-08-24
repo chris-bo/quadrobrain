@@ -601,7 +601,7 @@ void USBHandler::sendCustomFrame() {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
                                 status->height);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
-                                status->height);
+                                status->height_rel);
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos, status->d_h);
                 }
                 break;
