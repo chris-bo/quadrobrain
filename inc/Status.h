@@ -38,13 +38,8 @@ typedef struct {
 typedef struct {
     uint8_t enableBuzzerWarningLowVoltage;
     uint8_t enableBuzzerWarningRCLost;
-    /* TODO config struct
-     *
-     * disabling motors?
-     * disabling some sensor funktions? gps?
-     * disabling leds?
-     */
-
+    uint8_t enableFlightLeds;
+    uint8_t enableMotors;
 }Quadrocopter_Settings_t;
 
 class Status {

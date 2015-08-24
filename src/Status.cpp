@@ -96,7 +96,8 @@ Status::Status() {
 #else
     qcSettings.enableBuzzerWarningLowVoltage = 0;
 #endif
-
+    qcSettings.enableFlightLeds = 1;
+    qcSettings.enableMotors = 1;
 }
 
 Status::~Status() {

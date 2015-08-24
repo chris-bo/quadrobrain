@@ -506,9 +506,7 @@ void USBHandler::kill() {
 void USBHandler::sendCustomFrame() {
     uint8_t bufferPos = 0;
     uint8_t bufferOverrun = 0;
-    /* TODO reserve first byte to send number of data?
-     * bufferPos = 1;
-     */
+
     /* start loop at beginning of data ids */
     for (uint8_t i = 1; i < number_received_data; i++) {
         /* add requested values
