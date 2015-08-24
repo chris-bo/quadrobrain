@@ -23,7 +23,7 @@ GPS::~GPS() {
 }
 
 void GPS::initialize() {
-
+// TODO GPS::initialize() : check if initializer works with standard config
     gpsUart->Init.BaudRate = 115200;
     HAL_UART_Init(gpsUart);
 

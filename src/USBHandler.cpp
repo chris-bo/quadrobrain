@@ -458,7 +458,7 @@ void USBHandler::sendConfig() {
     fillBuffer(UserTxBufferFS, 40, status->filterCoefficientXY);
     fillBuffer(UserTxBufferFS, 44, status->filterCoefficientZ);
 
-    /* todo add qc setting
+    /* todo usbhandler add qcSettings
     fillBuffer(UserTxBufferFS, 48, status->qcSettings.enableBuzzerWarningLowVoltage);
     fillBuffer(UserTxBufferFS, 49, status->qcSettings.enableBuzzerWarningRCLost);
     fillBuffer(UserTxBufferFS, 50, status->qcSettings.enableFlightLeds);
@@ -485,12 +485,13 @@ void USBHandler::updateConfig() {
 
     status->filterCoefficientXY = byteToFloat(UserRxBufferFS, 41);
     status->filterCoefficientZ = byteToFloat(UserRxBufferFS, 45);
-/* todo add qc setting
+
+    /* todo usbhandler add qcSettings
     status->qcSettings.enableBuzzerWarningRCLost =  UserRxBufferFS[49];
     status->qcSettings.enableBuzzerWarningLowVoltage = UserRxBufferFS[50];
     status->qcSettings.enableFlightLeds = UserRxBufferFS[51];
     status->qcSettings.enableMotors = UserRxBufferFS[52];
-*/
+     */
     usbTransmit(UserRxBufferFS, 1);
 
 }

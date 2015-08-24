@@ -34,10 +34,7 @@ RCreceiver::~RCreceiver() {
 void RCreceiver::update() {
 
     if (GET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL)) {
-        /* TODO RCreceiver manage rc signal loss
-         *
-         * 		handle throttle and engines
-         * */
+
         RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
         SET_FLAG(status->globalFlags, ERROR_FLAG);
         /* disable control*/

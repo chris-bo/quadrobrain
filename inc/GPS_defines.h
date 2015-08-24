@@ -10,13 +10,6 @@
 
 
 /**********************************************************************************/
-/* TODO GPS_TODOS:
- *
- * -check if intitializer works with standard config
- *
- *
- */
-/**********************************************************************************/
 
 /* Check Timeouts !! */
 /* Timeout for USART Communication
