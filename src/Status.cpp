@@ -86,15 +86,15 @@ Status::Status() {
     qcSettings = {};
 
     /* Initialize Hardcoded Settings */
-#ifndef DISABLE_RC_SIGNAL_LOST_BUZZER_WARNING
-    qcSettings.enableBuzzerWarningRCLost = 1;
-#else
+#ifdef DISABLE_RC_SIGNAL_LOST_BUZZER_WARNING
     qcSettings.enableBuzzerWarningRCLost = 0;
-#endif
-#ifndef DISABLE_LOW_VOLTAGE_BUZZER_WARNING
-    qcSettings.enableBuzzerWarningLowVoltage = 1;
 #else
+    qcSettings.enableBuzzerWarningRCLost = 1;
+#endif
+#ifdef DISABLE_LOW_VOLTAGE_BUZZER_WARNING
     qcSettings.enableBuzzerWarningLowVoltage = 0;
+#else
+    qcSettings.enableBuzzerWarningLowVoltage = 1;
 #endif
     qcSettings.enableFlightLeds = 1;
     qcSettings.enableMotors = 1;

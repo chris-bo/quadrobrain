@@ -57,7 +57,7 @@ void AkkuMonitor::conversionComplete() {
 void AkkuMonitor::lowVoltageWarning() {
     /* akkuVoltate below threshold */
     SET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
-    if (&status->qcSettings.enableBuzzerWarningLowVoltage) {
+    if (status->qcSettings.enableBuzzerWarningLowVoltage) {
         status->addToneToQueue(&status->buzzerQueue2, BUZZER_PAUSE, 10);
         status->addToneToQueue(&status->buzzerQueue2, BUZZER_A4, 100);
         status->addToneToQueue(&status->buzzerQueue2, BUZZER_PAUSE, 10);

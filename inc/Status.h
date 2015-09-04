@@ -9,8 +9,8 @@
 #define STATUS_H_
 
 #include "stm32f3xx_hal.h"
-#include "config.h"
 #include "GPS_defines.h"
+#include "config.h"
 
 typedef struct {
     float x;

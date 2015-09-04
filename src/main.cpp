@@ -99,7 +99,7 @@ MotionController motionControl(&status, HorizontalMotionControl_PRIORITY);
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 Buzzer beep1(&status, BUZZER_DEFAULT_PRIORITY, &htim15, &status.buzzerQueue1);
 Buzzer beep2(&status, BUZZER_DEFAULT_PRIORITY, &htim17, &status.buzzerQueue2);
-
+FlightLED flightLEDs(&status, LEDs_DEFAULT_PRIORITY, &hspi2);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -167,6 +167,7 @@ void FlightMode() {
     MX_TIM4_Init();
     MX_ADC1_Init();
     MX_USART1_UART_Init();
+    MX_SPI2_Init();
 
     /* init Tasks */
     configReader.loadConfiguration(&status);
@@ -192,38 +193,38 @@ void FlightMode() {
 
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
-
+    flightLEDs.initialize();
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
                           &pidRateZ, &motionControl, &usb, &akku, &baro, &leds,
-                          &beep1, &beep2 };
+                          &beep1, &beep2,&flightLEDs };
 
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
     /* don't stop beliieeeving */
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 125);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 250);
-    HAL_Delay(2000);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 500);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 125);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 125);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 250);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 63);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 62);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
-    status.addToneToQueue(&status.buzzerQueue1, BUZZER_E4, 250);
-    HAL_Delay(2000);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 125);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 250);
+//    HAL_Delay(2000);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 500);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 125);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 125);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 250);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 63);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 62);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
+//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_E4, 250);
+//    HAL_Delay(2000);
 
     while (1) {
         if ((usb.usb_mode_request == USB_MODE_CONFIG)

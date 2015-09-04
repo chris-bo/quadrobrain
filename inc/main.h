@@ -19,6 +19,7 @@
 #include "gpio.h"
 #include "adc.h"
 #include "usart.h"
+#include "spi.h"
 
 /* classes  ---------------------------------------------------------*/
 #include "config.h"
@@ -39,6 +40,7 @@
 #include "Buzzer.h"
 #include "MotionController.h"
 #include "GPS.h"
+#include "FlightLED.h"
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -53,4 +55,5 @@ extern DiscoveryLEDs leds;
 extern Buzzer beep1;
 extern Buzzer beep2;
 extern GPS gpsReceiver;
+extern FlightLED flightLEDs;
 #endif /* MAIN_H_ */

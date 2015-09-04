@@ -136,6 +136,13 @@
 #define FLIGHT_DATA_RECEPTION_LED               LED9
 #define ERROR_LED                               LED10
 
+
+/* Flight LEDs
+ *
+ */
+
+#define FLIGHTLED_CS_PIN                        GPIO_PIN_12
+#define FLIGHTLED_CS_PORT                       GPIOB
 /****************************/
 /* Buzzer
  *

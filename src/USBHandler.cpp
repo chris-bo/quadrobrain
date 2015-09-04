@@ -59,7 +59,11 @@ void USBHandler::update() {
                 UserTxBufferFS[3] = (uint8_t) ((status->globalFlags) & 0xFF);
                 usbTransmit(UserTxBufferFS, 4);
                 break;
-
+            case USB_CMD_SET_FLIGHT_LED_PATTERN:
+                flightLEDs.setLEDpattern((uint16_t ) ((UserRxBufferFS[1] << 8) | UserRxBufferFS[2]));
+                /* send confirmation */
+                usbTransmit(UserRxBufferFS, 1);
+                break;
             case USB_CMD_CONFIG_MODE:
                 /* entering config mode */
                 if (usb_mode_request == USB_MODE_NORMAL) {

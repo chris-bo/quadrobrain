@@ -86,6 +86,10 @@
 #define USB_CMD_SEND_CUSTOM_FRAME       0x15
 
 /*******************/
+/* Set Flight LED Pattern */
+#define USB_CMD_SET_FLIGHT_LED_PATTERN  0x30
+
+/*******************/
 /* Config Commands
  *  (except USB_CMD_CONFIG_MODE)
  * */

@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file    stm32f3xx_it.h
-  * @date    23/03/2015 09:51:32
-  * @brief   This file contains the headers of the interrupt handlers.
+  * File Name          : SPI.h
+  * Description        : This file provides code for the configuration
+  *                      of the SPI instances.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -31,40 +31,31 @@
   *
   ******************************************************************************
   */
-
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F3xx_IT_H
-#define __STM32F3xx_IT_H
-
+#ifndef __spi_H
+#define __spi_H
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "stm32f3xx_hal.h"
 
-void NMI_Handler(void);
-void EXTI0_IRQHandler(void);
-void SysTick_Handler(void);
-void TIM2_IRQHandler(void);
-void TIM4_IRQHandler(void);
-void I2C1_ER_IRQHandler(void);
-void I2C1_EV_IRQHandler(void);
-void I2C2_EV_IRQHandler(void);
-void DMA1_Channel4_IRQHandler(void);
-void DMA1_Channel5_IRQHandler(void);
-void DMA1_Channel7_IRQHandler(void);
-void USB_LP_CAN_RX0_IRQHandler(void);
-void ADC1_2_IRQHandler(void);
-void SPI2_IRQHandler(void);
+extern SPI_HandleTypeDef hspi2;
+
+void MX_SPI2_Init(void);
 
 #ifdef __cplusplus
 }
 #endif
+#endif /*__ spi_H */
 
-#endif /* __STM32F3xx_IT_H */
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

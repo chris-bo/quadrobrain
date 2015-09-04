@@ -101,3 +101,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         gpsReceiver.RXCompleteCallback();
     }
 }
+
+/**
+  * @brief Tx Transfer completed callbacks
+  * @param hspi: SPI handle
+  * @retval None
+  */
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+ if (hspi == &hspi2 ) {
+     // disable spi to force cs low-high edge
+     __HAL_SPI_DISABLE(hspi);
+
+ }
+}
