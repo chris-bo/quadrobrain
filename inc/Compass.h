@@ -9,6 +9,7 @@
 #define COMPASS_H_
 
 #include "ComplementaryFilter.h"
+#include "MAfilterF.h"
 
 class Compass: public ComplementaryFilter {
 public:
@@ -21,6 +22,13 @@ public:
 private:
     float* angle1;
     float* angle2;
+
+    /* setup for filters*/
+    float tmpMag1;
+    float tmpMag2;
+
+    MAfilterF* mag1Filter;
+    MAfilterF* mag2Filter;
 };
 
 #endif /* COMPASS_H_ */
