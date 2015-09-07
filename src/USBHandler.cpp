@@ -60,7 +60,8 @@ void USBHandler::update() {
                 usbTransmit(UserTxBufferFS, 4);
                 break;
             case USB_CMD_SET_FLIGHT_LED_PATTERN:
-                flightLEDs.setLEDpattern((uint16_t ) ((UserRxBufferFS[1] << 8) | UserRxBufferFS[2]));
+                flightLEDs.setLEDpattern(
+                            (uint16_t) ((UserRxBufferFS[1] << 8) | UserRxBufferFS[2]));
                 /* send confirmation */
                 usbTransmit(UserRxBufferFS, 1);
                 break;
@@ -79,89 +80,6 @@ void USBHandler::update() {
                 /* reset puffer to prevent executing twice */
                 UserRxBufferFS[0] = 0;
                 break;
-                /* Config commands */
-            case USB_CMD_GET_CONFIG:
-                sendConfig();
-                break;
-            case USB_CMD_UPDATE_CONFIG:
-                updateConfig();
-                break;
-            case USB_CMD_READ_BYTE:
-                if (usb_mode_request == USB_MODE_CONFIG) {
-                    readEEPROM(1);
-                }
-                break;
-            case USB_CMD_READ_2BYTES:
-                if (usb_mode_request == USB_MODE_CONFIG) {
-                    readEEPROM(2);
-                }
-                break;
-            case USB_CMD_READ_4BYTES:
-                if (usb_mode_request == USB_MODE_CONFIG) {
-                    readEEPROM(4);
-                }
-                break;
-
-            case USB_CMD_WRITE_BYTE:
-                if (usb_mode_request == USB_MODE_CONFIG) {
-                    writeEEPROM(1);
-                }
-                break;
-            case USB_CMD_WRITE_2BYTES:
-                if (usb_mode_request == USB_MODE_CONFIG) {
-                    writeEEPROM(2);
-                }
-                break;
-            case USB_CMD_WRITE_4BYTES:
-                if (usb_mode_request == USB_MODE_CONFIG) {
-                    writeEEPROM(4);
-                }
-                break;
-            case USB_CMD_QUADROCONFIG:
-                /* check and set settings */
-                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_LOW_VOLT) {
-                    status->qcSettings.enableBuzzerWarningLowVoltage = 1;
-                } else {
-                    status->qcSettings.enableBuzzerWarningLowVoltage = 0;
-                }
-                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_RC_LOST) {
-                    status->qcSettings.enableBuzzerWarningRCLost = 1;
-                } else {
-                    status->qcSettings.enableBuzzerWarningRCLost = 0;
-                }
-                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_FLIGHTLED) {
-                    status->qcSettings.enableFlightLeds = 1;
-                } else {
-                    status->qcSettings.enableFlightLeds = 0;
-                }
-                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_MOTORS) {
-                    status->qcSettings.enableMotors = 1;
-                } else {
-                    status->qcSettings.enableMotors = 0;
-                }
-                /* send confirmation */
-                usbTransmit(UserRxBufferFS, 1);
-                break;
-            case USB_CMD_RELOAD_EEPROM:
-                if (usb_mode_request == USB_MODE_CONFIG) {
-                    usb_mode_request = USB_MODE_RELOAD_EEPROM;
-                    /* send confirmation */
-                    usbTransmit(UserRxBufferFS, 1);
-                }
-                break;
-            case USB_CMD_SAVE_CONFIG:
-                usb_mode_request = USB_MODE_SAVE_CONFIG;
-                /* send confirmation */
-                usbTransmit(UserRxBufferFS, 1);
-                break;
-
-            case USB_CMD_RESTORE_CONFIG:
-                status->restoreConfig();
-                /* send confirmation */
-                usbTransmit(UserRxBufferFS, 1);
-                /* reset puffer to prevent executing twice */
-                UserRxBufferFS[0] = 0;
-                break;
 
             case USB_CMD_RESET: {
                 /* Reset */
@@ -174,6 +92,10 @@ void USBHandler::update() {
             }
                 break;
             default:
+                /* Config commands */
+                if ((UserRxBufferFS[0] & 0xC0) == 0xC0) {
+                    decodeConfigMSG();
+                }
                 break;
         }
 
@@ -488,13 +410,13 @@ void USBHandler::sendConfig() {
     fillBuffer(UserTxBufferFS, 44, status->filterCoefficientZ);
 
     /* todo usbhandler add qcSettings
-    fillBuffer(UserTxBufferFS, 48, status->qcSettings.enableBuzzerWarningLowVoltage);
-    fillBuffer(UserTxBufferFS, 49, status->qcSettings.enableBuzzerWarningRCLost);
-    fillBuffer(UserTxBufferFS, 50, status->qcSettings.enableFlightLeds);
-    fillBuffer(UserTxBufferFS, 51, status->qcSettings.enableMotors);
-    usbTransmit(UserTxBufferFS, 52);
+     fillBuffer(UserTxBufferFS, 48, status->qcSettings.enableBuzzerWarningLowVoltage);
+     fillBuffer(UserTxBufferFS, 49, status->qcSettings.enableBuzzerWarningRCLost);
+     fillBuffer(UserTxBufferFS, 50, status->qcSettings.enableFlightLeds);
+     fillBuffer(UserTxBufferFS, 51, status->qcSettings.enableMotors);
+     usbTransmit(UserTxBufferFS, 52);
 
-    */
+     */
     usbTransmit(UserTxBufferFS, 48);
 }
 
@@ -516,10 +438,10 @@ void USBHandler::updateConfig() {
     status->filterCoefficientZ = byteToFloat(UserRxBufferFS, 45);
 
     /* todo usbhandler add qcSettings
-    status->qcSettings.enableBuzzerWarningRCLost =  UserRxBufferFS[49];
-    status->qcSettings.enableBuzzerWarningLowVoltage = UserRxBufferFS[50];
-    status->qcSettings.enableFlightLeds = UserRxBufferFS[51];
-    status->qcSettings.enableMotors = UserRxBufferFS[52];
+     status->qcSettings.enableBuzzerWarningRCLost =  UserRxBufferFS[49];
+     status->qcSettings.enableBuzzerWarningLowVoltage = UserRxBufferFS[50];
+     status->qcSettings.enableFlightLeds = UserRxBufferFS[51];
+     status->qcSettings.enableMotors = UserRxBufferFS[52];
      */
     usbTransmit(UserRxBufferFS, 1);
 
@@ -785,4 +707,95 @@ uint8_t USBHandler::checkTXBufferOverrun(uint8_t currentPos, uint8_t dataToAdd,
         *overrun = 1;
         return 1;
     }
+}
+
+void USBHandler::decodeConfigMSG() {
+
+    switch (UserRxBufferFS[0]) {
+        case USB_CMD_GET_CONFIG:
+            sendConfig();
+            break;
+        case USB_CMD_UPDATE_CONFIG:
+            updateConfig();
+            break;
+        case USB_CMD_READ_BYTE:
+            if (usb_mode_request == USB_MODE_CONFIG) {
+                readEEPROM(1);
+            }
+            break;
+        case USB_CMD_READ_2BYTES:
+            if (usb_mode_request == USB_MODE_CONFIG) {
+                readEEPROM(2);
+            }
+            break;
+        case USB_CMD_READ_4BYTES:
+            if (usb_mode_request == USB_MODE_CONFIG) {
+                readEEPROM(4);
+            }
+            break;
+
+        case USB_CMD_WRITE_BYTE:
+            if (usb_mode_request == USB_MODE_CONFIG) {
+                writeEEPROM(1);
+            }
+            break;
+        case USB_CMD_WRITE_2BYTES:
+            if (usb_mode_request == USB_MODE_CONFIG) {
+                writeEEPROM(2);
+            }
+            break;
+        case USB_CMD_WRITE_4BYTES:
+            if (usb_mode_request == USB_MODE_CONFIG) {
+                writeEEPROM(4);
+            }
+            break;
+        case USB_CMD_QUADROCONFIG:
+            /* check and set settings */
+            if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_LOW_VOLT) {
+                status->qcSettings.enableBuzzerWarningLowVoltage = 1;
+            } else {
+                status->qcSettings.enableBuzzerWarningLowVoltage = 0;
+            }
+            if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_RC_LOST) {
+                status->qcSettings.enableBuzzerWarningRCLost = 1;
+            } else {
+                status->qcSettings.enableBuzzerWarningRCLost = 0;
+            }
+            if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_FLIGHTLED) {
+                status->qcSettings.enableFlightLeds = 1;
+            } else {
+                status->qcSettings.enableFlightLeds = 0;
+            }
+            if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_MOTORS) {
+                status->qcSettings.enableMotors = 1;
+            } else {
+                status->qcSettings.enableMotors = 0;
+            }
+            /* send confirmation */
+            usbTransmit(UserRxBufferFS, 1);
+            break;
+        case USB_CMD_RELOAD_EEPROM:
+            if (usb_mode_request == USB_MODE_CONFIG) {
+                usb_mode_request = USB_MODE_RELOAD_EEPROM;
+                /* send confirmation */
+                usbTransmit(UserRxBufferFS, 1);
+            }
+            break;
+        case USB_CMD_SAVE_CONFIG:
+            usb_mode_request = USB_MODE_SAVE_CONFIG;
+            /* send confirmation */
+            usbTransmit(UserRxBufferFS, 1);
+            break;
+
+        case USB_CMD_RESTORE_CONFIG:
+            status->restoreConfig();
+            /* send confirmation */
+            usbTransmit(UserRxBufferFS, 1);
+            /* reset puffer to prevent executing twice */
+            UserRxBufferFS[0] = 0;
+            break;
+        default:
+            break;
+    }
+
 }

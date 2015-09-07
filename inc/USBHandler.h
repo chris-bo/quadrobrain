@@ -194,6 +194,8 @@ private:
     void sendStatusFloat(uint8_t part);
     void sendCustomFrame();
 
+    void decodeConfigMSG();
+
     /* fillBuffer returns next free pos in buffer*/
     uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, float var);
     uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint32_t var);
