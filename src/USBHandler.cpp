@@ -638,7 +638,8 @@ void USBHandler::sendCustomFrame() {
                 break;
             case DATA_ID_EOF:
                 /* end of frame*/
-
+                /* send buffer */
+                usbTransmit(UserTxBufferFS, bufferPos);
                 break;
             default:
                 /* unknown id */
@@ -653,12 +654,10 @@ void USBHandler::sendCustomFrame() {
              */
             UserTxBufferFS[0] = DATA_ID_BUFFER_OVERRUN;
             bufferPos = 1;
+            usbTransmit(UserTxBufferFS, bufferPos);
             break;
         }
     }
-    /* buffersize(without this number) into first byte */
-    //UserTxBufferFS[0] = bufferPos - 1;
-    usbTransmit(UserTxBufferFS, bufferPos);
 }
 
 void USBHandler::resetTransmissionState() {
