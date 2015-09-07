@@ -750,29 +750,44 @@ void USBHandler::decodeConfigMSG() {
             }
             break;
         case USB_CMD_QUADROCONFIG:
-            /* check and set settings */
-            if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_LOW_VOLT) {
-                status->qcSettings.enableBuzzerWarningLowVoltage = 1;
+            if (number_received_data == 2) {
+                /* check and set settings */
+                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_LOW_VOLT ) {
+                    status->qcSettings.enableBuzzerWarningLowVoltage = 1;
+                } else {
+                    status->qcSettings.enableBuzzerWarningLowVoltage = 0;
+                }
+                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_RC_LOST) {
+                    status->qcSettings.enableBuzzerWarningRCLost = 1;
+                } else {
+                    status->qcSettings.enableBuzzerWarningRCLost = 0;
+                }
+                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_FLIGHTLED) {
+                    status->qcSettings.enableFlightLeds = 1;
+                } else {
+                    status->qcSettings.enableFlightLeds = 0;
+                }
+                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_MOTORS) {
+                    status->qcSettings.enableMotors = 1;
+                } else {
+                    status->qcSettings.enableMotors = 0;
+                }
+
+                /* send confirmation */
+                usbTransmit(UserRxBufferFS, 1);
             } else {
-                status->qcSettings.enableBuzzerWarningLowVoltage = 0;
+                /* reply with current setting*/
+                UserTxBufferFS[0] = UserRxBufferFS[0];
+                UserTxBufferFS[1] = (status->qcSettings.enableMotors
+                            * QUADROCONFIG_ENABLE_MOTORS)
+                            | (status->qcSettings.enableFlightLeds
+                                        * QUADROCONFIG_ENABLE_FLIGHTLED)
+                            | (status->qcSettings.enableBuzzerWarningRCLost
+                                        * QUADROCONFIG_ENABLE_RC_LOST)
+                            | (status->qcSettings.enableBuzzerWarningLowVoltage
+                                        * QUADROCONFIG_ENABLE_LOW_VOLT);
+                usbTransmit(UserTxBufferFS, 2);
             }
-            if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_RC_LOST) {
-                status->qcSettings.enableBuzzerWarningRCLost = 1;
-            } else {
-                status->qcSettings.enableBuzzerWarningRCLost = 0;
-            }
-            if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_FLIGHTLED) {
-                status->qcSettings.enableFlightLeds = 1;
-            } else {
-                status->qcSettings.enableFlightLeds = 0;
-            }
-            if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_MOTORS) {
-                status->qcSettings.enableMotors = 1;
-            } else {
-                status->qcSettings.enableMotors = 0;
-            }
-            /* send confirmation */
-            usbTransmit(UserRxBufferFS, 1);
             break;
         case USB_CMD_RELOAD_EEPROM:
             if (usb_mode_request == USB_MODE_CONFIG) {

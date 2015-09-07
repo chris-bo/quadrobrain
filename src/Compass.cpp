@@ -43,11 +43,9 @@ void Compass::update() {
      * -> get angle between north x (a2) and y (a1)
      * */
 
-    /* todo fix compass */
-
+    /* update filters for mag data*/
     mag1Filter->update();
     mag2Filter->update();
-
 
     float x1 = *a1 * cosf(*angle1 * M_PI / 180);
     float x2 = *a2 * cosf(*angle2 * M_PI / 180);

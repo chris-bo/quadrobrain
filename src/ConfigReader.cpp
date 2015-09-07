@@ -37,11 +37,11 @@ void ConfigReader::loadConfiguration(Status* status) {
     loadVariable(&status->filterCoefficientXY, FILTERCOEFF_XY_ADDR);
     loadVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR);
 
-    //* TODO load qc Configs */
-  // loadVariable(&status->qcSettings.enableBuzzerWarningLowVoltage, QC_CONFIG_BUZZ_WARN_LOW_VOLT);
-  //  loadVariable(&status->qcSettings.enableBuzzerWarningRCLost, QC_CONFIG_BUZZ_WARN_RC_LOST);
-  //  loadVariable(&status->qcSettings.enableFlightLeds, QC_CONFIG_EN_LEDS);
-  //  loadVariable(&status->qcSettings.enableMotors, QC_CONFIG_EN_MOTORS);
+    /* load QC settings*/
+    loadVariable(&status->qcSettings.enableBuzzerWarningLowVoltage, QC_CONFIG_BUZZ_WARN_LOW_VOLT);
+    loadVariable(&status->qcSettings.enableBuzzerWarningRCLost, QC_CONFIG_BUZZ_WARN_RC_LOST);
+    loadVariable(&status->qcSettings.enableFlightLeds, QC_CONFIG_EN_LEDS);
+    loadVariable(&status->qcSettings.enableMotors, QC_CONFIG_EN_MOTORS);
 
 
     if (HAL_I2C_GetError(eeprom_i2c) == HAL_I2C_ERROR_NONE) {
@@ -71,7 +71,7 @@ void ConfigReader::saveConfiguration(Status* status) {
     saveVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR, 0);
 
 
-    //* save qc Configs */
+    /* save QC settings*/
     saveVariable(&status->qcSettings.enableBuzzerWarningLowVoltage, QC_CONFIG_BUZZ_WARN_LOW_VOLT, 0);
     saveVariable(&status->qcSettings.enableBuzzerWarningRCLost, QC_CONFIG_BUZZ_WARN_RC_LOST, 0);
     saveVariable(&status->qcSettings.enableFlightLeds, QC_CONFIG_EN_LEDS, 0);

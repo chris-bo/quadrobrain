@@ -189,6 +189,20 @@ void Status::restoreConfig() {
     pidSettingsacceleration.scaleSetPoint = PID_ACCELERATION_SCALE;
     pidSettingsacceleration.gain = PID_ACCELERATION_GAIN;
 
+    /* Restore Hardcoded Settings */
+#ifdef DISABLE_RC_SIGNAL_LOST_BUZZER_WARNING
+    qcSettings.enableBuzzerWarningRCLost = 0;
+#else
+    qcSettings.enableBuzzerWarningRCLost = 1;
+#endif
+#ifdef DISABLE_LOW_VOLTAGE_BUZZER_WARNING
+    qcSettings.enableBuzzerWarningLowVoltage = 0;
+#else
+    qcSettings.enableBuzzerWarningLowVoltage = 1;
+#endif
+    qcSettings.enableFlightLeds = 1;
+    qcSettings.enableMotors = 1;
+
 }
 
 void Status::addToneToQueue(Buzzer_Queue_t* queue, float frequency,
