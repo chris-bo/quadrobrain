@@ -184,12 +184,12 @@ void FlightMode() {
     compFilterNorth.initialize();
 
     /* Initialize PID for X and Y axis */
-    pidAngleX.initialize(&status.pidSettigsAngleXY);
-    pidAngleY.initialize(&status.pidSettigsAngleXY);
-    pidRateZ.initialize(&status.pidSettigsRotationZ);
+    pidAngleX.initialize(&status.pidSettingsAngleXY);
+    pidAngleY.initialize(&status.pidSettingsAngleXY);
+    pidRateZ.initialize(&status.pidSettingsRotationZ);
 
     motionControl.initialize(&status.pidSettingsVelocity,
-                &status.pidSettingsacceleration);
+                &status.pidSettingsAcceleration);
 
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);

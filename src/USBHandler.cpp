@@ -392,57 +392,80 @@ void USBHandler::sendConfig() {
      *
      */
     /* pid xy */
-    fillBuffer(UserTxBufferFS, 0, status->pidSettigsAngleXY.p);
-    fillBuffer(UserTxBufferFS, 4, status->pidSettigsAngleXY.i);
-    fillBuffer(UserTxBufferFS, 8, status->pidSettigsAngleXY.d);
-    fillBuffer(UserTxBufferFS, 12, status->pidSettigsAngleXY.gain);
-    fillBuffer(UserTxBufferFS, 16, status->pidSettigsAngleXY.scaleSetPoint);
+    fillBuffer(UserTxBufferFS, 0, status->pidSettingsAngleXY.p);
+    fillBuffer(UserTxBufferFS, 4, status->pidSettingsAngleXY.i);
+    fillBuffer(UserTxBufferFS, 8, status->pidSettingsAngleXY.d);
+    fillBuffer(UserTxBufferFS, 12, status->pidSettingsAngleXY.gain);
+    fillBuffer(UserTxBufferFS, 16, status->pidSettingsAngleXY.scaleSetPoint);
 
     /* pid z  */
-    fillBuffer(UserTxBufferFS, 20, status->pidSettigsRotationZ.p);
-    fillBuffer(UserTxBufferFS, 24, status->pidSettigsRotationZ.i);
-    fillBuffer(UserTxBufferFS, 28, status->pidSettigsRotationZ.d);
-    fillBuffer(UserTxBufferFS, 32, status->pidSettigsRotationZ.gain);
-    fillBuffer(UserTxBufferFS, 36, status->pidSettigsRotationZ.scaleSetPoint);
+    fillBuffer(UserTxBufferFS, 20, status->pidSettingsRotationZ.p);
+    fillBuffer(UserTxBufferFS, 24, status->pidSettingsRotationZ.i);
+    fillBuffer(UserTxBufferFS, 28, status->pidSettingsRotationZ.d);
+    fillBuffer(UserTxBufferFS, 32, status->pidSettingsRotationZ.gain);
+    fillBuffer(UserTxBufferFS, 36, status->pidSettingsRotationZ.scaleSetPoint);
 
     /* comp filter */
     fillBuffer(UserTxBufferFS, 40, status->filterCoefficientXY);
     fillBuffer(UserTxBufferFS, 44, status->filterCoefficientZ);
 
-    /* todo usbhandler add qcSettings
-     fillBuffer(UserTxBufferFS, 48, status->qcSettings.enableBuzzerWarningLowVoltage);
-     fillBuffer(UserTxBufferFS, 49, status->qcSettings.enableBuzzerWarningRCLost);
-     fillBuffer(UserTxBufferFS, 50, status->qcSettings.enableFlightLeds);
-     fillBuffer(UserTxBufferFS, 51, status->qcSettings.enableMotors);
-     usbTransmit(UserTxBufferFS, 52);
+    /* pid accel  */
+    fillBuffer(UserTxBufferFS, 48, status->pidSettingsAcceleration.p);
+    fillBuffer(UserTxBufferFS, 52, status->pidSettingsAcceleration.i);
+    fillBuffer(UserTxBufferFS, 56, status->pidSettingsAcceleration.d);
+    fillBuffer(UserTxBufferFS, 60, status->pidSettingsAcceleration.gain);
+    fillBuffer(UserTxBufferFS, 64, status->pidSettingsAcceleration.scaleSetPoint);
 
-     */
-    usbTransmit(UserTxBufferFS, 48);
+    /* pid vel */
+    fillBuffer(UserTxBufferFS, 68, status->pidSettingsVelocity.p);
+    fillBuffer(UserTxBufferFS, 72, status->pidSettingsVelocity.i);
+    fillBuffer(UserTxBufferFS, 76, status->pidSettingsVelocity.d);
+    fillBuffer(UserTxBufferFS, 80, status->pidSettingsVelocity.gain);
+    fillBuffer(UserTxBufferFS, 84, status->pidSettingsVelocity.scaleSetPoint);
+
+    /* qc settings*/
+     fillBuffer(UserTxBufferFS, 88, status->qcSettings.enableBuzzerWarningLowVoltage);
+     fillBuffer(UserTxBufferFS, 89, status->qcSettings.enableBuzzerWarningRCLost);
+     fillBuffer(UserTxBufferFS, 90, status->qcSettings.enableFlightLeds);
+     fillBuffer(UserTxBufferFS, 91, status->qcSettings.enableMotors);
+
+    usbTransmit(UserTxBufferFS, 92);
 }
 
 void USBHandler::updateConfig() {
 
-    status->pidSettigsAngleXY.p = byteToFloat(UserRxBufferFS, 1);
-    status->pidSettigsAngleXY.i = byteToFloat(UserRxBufferFS, 5);
-    status->pidSettigsAngleXY.d = byteToFloat(UserRxBufferFS, 9);
-    status->pidSettigsAngleXY.gain = byteToFloat(UserRxBufferFS, 13);
-    status->pidSettigsAngleXY.scaleSetPoint = byteToFloat(UserRxBufferFS, 17);
+    status->pidSettingsAngleXY.p = byteToFloat(UserRxBufferFS, 1);
+    status->pidSettingsAngleXY.i = byteToFloat(UserRxBufferFS, 5);
+    status->pidSettingsAngleXY.d = byteToFloat(UserRxBufferFS, 9);
+    status->pidSettingsAngleXY.gain = byteToFloat(UserRxBufferFS, 13);
+    status->pidSettingsAngleXY.scaleSetPoint = byteToFloat(UserRxBufferFS, 17);
 
-    status->pidSettigsRotationZ.p = byteToFloat(UserRxBufferFS, 21);
-    status->pidSettigsRotationZ.i = byteToFloat(UserRxBufferFS, 25);
-    status->pidSettigsRotationZ.d = byteToFloat(UserRxBufferFS, 29);
-    status->pidSettigsRotationZ.gain = byteToFloat(UserRxBufferFS, 33);
-    status->pidSettigsRotationZ.scaleSetPoint = byteToFloat(UserRxBufferFS, 37);
+    status->pidSettingsRotationZ.p = byteToFloat(UserRxBufferFS, 21);
+    status->pidSettingsRotationZ.i = byteToFloat(UserRxBufferFS, 25);
+    status->pidSettingsRotationZ.d = byteToFloat(UserRxBufferFS, 29);
+    status->pidSettingsRotationZ.gain = byteToFloat(UserRxBufferFS, 33);
+    status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(UserRxBufferFS, 37);
 
     status->filterCoefficientXY = byteToFloat(UserRxBufferFS, 41);
     status->filterCoefficientZ = byteToFloat(UserRxBufferFS, 45);
 
-    /* todo usbhandler add qcSettings
-     status->qcSettings.enableBuzzerWarningRCLost =  UserRxBufferFS[49];
-     status->qcSettings.enableBuzzerWarningLowVoltage = UserRxBufferFS[50];
-     status->qcSettings.enableFlightLeds = UserRxBufferFS[51];
-     status->qcSettings.enableMotors = UserRxBufferFS[52];
-     */
+    status->pidSettingsRotationZ.p = byteToFloat(UserRxBufferFS, 49);
+    status->pidSettingsRotationZ.i = byteToFloat(UserRxBufferFS, 53);
+    status->pidSettingsRotationZ.d = byteToFloat(UserRxBufferFS, 57);
+    status->pidSettingsRotationZ.gain = byteToFloat(UserRxBufferFS, 61);
+    status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(UserRxBufferFS, 65);
+
+    status->pidSettingsRotationZ.p = byteToFloat(UserRxBufferFS, 69);
+    status->pidSettingsRotationZ.i = byteToFloat(UserRxBufferFS, 73);
+    status->pidSettingsRotationZ.d = byteToFloat(UserRxBufferFS, 77);
+    status->pidSettingsRotationZ.gain = byteToFloat(UserRxBufferFS, 81);
+    status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(UserRxBufferFS, 85);
+
+     status->qcSettings.enableBuzzerWarningRCLost =  UserRxBufferFS[89];
+     status->qcSettings.enableBuzzerWarningLowVoltage = UserRxBufferFS[90];
+     status->qcSettings.enableFlightLeds = UserRxBufferFS[91];
+     status->qcSettings.enableMotors = UserRxBufferFS[92];
+
     usbTransmit(UserRxBufferFS, 1);
 
 }

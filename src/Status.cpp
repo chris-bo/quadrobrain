@@ -47,17 +47,17 @@ Status::Status() {
     filterCoefficientXY = FILTER_COEFFICIENT_XY;
     filterCoefficientZ = FILTER_COEFFICIENT_Z;
 
-    pidSettigsAngleXY.p = PID_XY_P;
-    pidSettigsAngleXY.i = PID_XY_I;
-    pidSettigsAngleXY.d = PID_XY_D;
-    pidSettigsAngleXY.scaleSetPoint = PID_XY_SCALE;
-    pidSettigsAngleXY.gain = PID_XY_GAIN;
+    pidSettingsAngleXY.p = PID_XY_P;
+    pidSettingsAngleXY.i = PID_XY_I;
+    pidSettingsAngleXY.d = PID_XY_D;
+    pidSettingsAngleXY.scaleSetPoint = PID_XY_SCALE;
+    pidSettingsAngleXY.gain = PID_XY_GAIN;
 
-    pidSettigsRotationZ.p = PID_Z_P;
-    pidSettigsRotationZ.i = PID_Z_I;
-    pidSettigsRotationZ.d = PID_Z_D;
-    pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
-    pidSettigsRotationZ.gain = PID_Z_GAIN;
+    pidSettingsRotationZ.p = PID_Z_P;
+    pidSettingsRotationZ.i = PID_Z_I;
+    pidSettingsRotationZ.d = PID_Z_D;
+    pidSettingsRotationZ.scaleSetPoint = PID_Z_SCALE;
+    pidSettingsRotationZ.gain = PID_Z_GAIN;
 
     pidSettingsVelocity.p = PID_VELOCITY_P;
     pidSettingsVelocity.i = PID_VELOCITY_I;
@@ -65,11 +65,11 @@ Status::Status() {
     pidSettingsVelocity.scaleSetPoint = PID_VELOCITY_SCALE;
     pidSettingsVelocity.gain = PID_VELOCITY_GAIN;
 
-    pidSettingsacceleration.p = PID_ACCELERATION_P;
-    pidSettingsacceleration.i = PID_ACCELERATION_I;
-    pidSettingsacceleration.d = PID_ACCELERATION_D;
-    pidSettingsacceleration.scaleSetPoint = PID_ACCELERATION_SCALE;
-    pidSettingsacceleration.gain = PID_ACCELERATION_GAIN;
+    pidSettingsAcceleration.p = PID_ACCELERATION_P;
+    pidSettingsAcceleration.i = PID_ACCELERATION_I;
+    pidSettingsAcceleration.d = PID_ACCELERATION_D;
+    pidSettingsAcceleration.scaleSetPoint = PID_ACCELERATION_SCALE;
+    pidSettingsAcceleration.gain = PID_ACCELERATION_GAIN;
 
     motorSetpoint = {0,0,0};
 
@@ -165,17 +165,17 @@ void Status::restoreConfig() {
     filterCoefficientXY = FILTER_COEFFICIENT_XY;
     filterCoefficientZ = FILTER_COEFFICIENT_Z;
 
-    pidSettigsAngleXY.p = PID_XY_P;
-    pidSettigsAngleXY.i = PID_XY_I;
-    pidSettigsAngleXY.d = PID_XY_D;
-    pidSettigsAngleXY.scaleSetPoint = PID_XY_SCALE;
-    pidSettigsAngleXY.gain = PID_XY_GAIN;
+    pidSettingsAngleXY.p = PID_XY_P;
+    pidSettingsAngleXY.i = PID_XY_I;
+    pidSettingsAngleXY.d = PID_XY_D;
+    pidSettingsAngleXY.scaleSetPoint = PID_XY_SCALE;
+    pidSettingsAngleXY.gain = PID_XY_GAIN;
 
-    pidSettigsRotationZ.p = PID_Z_P;
-    pidSettigsRotationZ.i = PID_Z_I;
-    pidSettigsRotationZ.d = PID_Z_D;
-    pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
-    pidSettigsRotationZ.gain = PID_Z_GAIN;
+    pidSettingsRotationZ.p = PID_Z_P;
+    pidSettingsRotationZ.i = PID_Z_I;
+    pidSettingsRotationZ.d = PID_Z_D;
+    pidSettingsRotationZ.scaleSetPoint = PID_Z_SCALE;
+    pidSettingsRotationZ.gain = PID_Z_GAIN;
 
     pidSettingsVelocity.p = PID_VELOCITY_P;
     pidSettingsVelocity.i = PID_VELOCITY_I;
@@ -183,11 +183,11 @@ void Status::restoreConfig() {
     pidSettingsVelocity.scaleSetPoint = PID_VELOCITY_SCALE;
     pidSettingsVelocity.gain = PID_VELOCITY_GAIN;
 
-    pidSettingsacceleration.p = PID_ACCELERATION_P;
-    pidSettingsacceleration.i = PID_ACCELERATION_I;
-    pidSettingsacceleration.d = PID_ACCELERATION_D;
-    pidSettingsacceleration.scaleSetPoint = PID_ACCELERATION_SCALE;
-    pidSettingsacceleration.gain = PID_ACCELERATION_GAIN;
+    pidSettingsAcceleration.p = PID_ACCELERATION_P;
+    pidSettingsAcceleration.i = PID_ACCELERATION_I;
+    pidSettingsAcceleration.d = PID_ACCELERATION_D;
+    pidSettingsAcceleration.scaleSetPoint = PID_ACCELERATION_SCALE;
+    pidSettingsAcceleration.gain = PID_ACCELERATION_GAIN;
 
     /* Restore Hardcoded Settings */
 #ifdef DISABLE_RC_SIGNAL_LOST_BUZZER_WARNING

@@ -111,11 +111,11 @@ public:
     float filterCoefficientZ;
 
     /* PID settings */
-    PID_Settings pidSettigsAngleXY;
-    PID_Settings pidSettigsRotationZ;
+    PID_Settings pidSettingsAngleXY;
+    PID_Settings pidSettingsRotationZ;
 
     PID_Settings pidSettingsVelocity;
-    PID_Settings pidSettingsacceleration;
+    PID_Settings pidSettingsAcceleration;
 
     /* PID Outputs */
     XYZ_Data motorSetpoint;
