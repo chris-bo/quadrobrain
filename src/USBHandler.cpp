@@ -117,6 +117,31 @@ void USBHandler::update() {
                     writeEEPROM(4);
                 }
                 break;
+            case USB_CMD_QUADROCONFIG:
+                /* check and set settings */
+                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_LOW_VOLT) {
+                    status->qcSettings.enableBuzzerWarningLowVoltage = 1;
+                } else {
+                    status->qcSettings.enableBuzzerWarningLowVoltage = 0;
+                }
+                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_RC_LOST) {
+                    status->qcSettings.enableBuzzerWarningRCLost = 1;
+                } else {
+                    status->qcSettings.enableBuzzerWarningRCLost = 0;
+                }
+                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_FLIGHTLED) {
+                    status->qcSettings.enableFlightLeds = 1;
+                } else {
+                    status->qcSettings.enableFlightLeds = 0;
+                }
+                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_MOTORS) {
+                    status->qcSettings.enableMotors = 1;
+                } else {
+                    status->qcSettings.enableMotors = 0;
+                }
+                /* send confirmation */
+                usbTransmit(UserRxBufferFS, 1);
+                break;
             case USB_CMD_RELOAD_EEPROM:
                 if (usb_mode_request == USB_MODE_CONFIG) {
                     usb_mode_request = USB_MODE_RELOAD_EEPROM;

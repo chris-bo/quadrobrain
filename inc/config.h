@@ -141,8 +141,6 @@
  *
  */
 
-#define FLIGHTLED_CS_PIN                        GPIO_PIN_12
-#define FLIGHTLED_CS_PORT                       GPIOB
 /****************************/
 /* Buzzer
  *

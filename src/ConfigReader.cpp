@@ -37,7 +37,7 @@ void ConfigReader::loadConfiguration(Status* status) {
     loadVariable(&status->filterCoefficientXY, FILTERCOEFF_XY_ADDR);
     loadVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR);
 
-    //* load qc Configs */
+    //* TODO load qc Configs */
   // loadVariable(&status->qcSettings.enableBuzzerWarningLowVoltage, QC_CONFIG_BUZZ_WARN_LOW_VOLT);
   //  loadVariable(&status->qcSettings.enableBuzzerWarningRCLost, QC_CONFIG_BUZZ_WARN_RC_LOST);
   //  loadVariable(&status->qcSettings.enableFlightLeds, QC_CONFIG_EN_LEDS);

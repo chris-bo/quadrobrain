@@ -116,6 +116,8 @@
 #define USB_CMD_WRITE_4BYTES        0xC8
 
 #define USB_CMD_RELOAD_EEPROM       0xC9
+
+#define USB_CMD_QUADROCONFIG        0xCA
 /* save config
  * triggers reset
  */
@@ -152,6 +154,12 @@
 #define DATA_ID_EOF                 0x00
 #define DATA_ID_BUFFER_OVERRUN      0xFF
 
+/****************/
+/* Quadroconfig */
+#define QUADROCONFIG_ENABLE_LOW_VOLT    0x01
+#define QUADROCONFIG_ENABLE_RC_LOST     0x02
+#define QUADROCONFIG_ENABLE_FLIGHTLED   0x04
+#define QUADROCONFIG_ENABLE_MOTORS      0x08
 
 /**************************************************************************/
 /* USB_MODES */
