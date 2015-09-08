@@ -22,54 +22,9 @@
 /* resend received */
 #define USB_CMD_LOOP				0x01
 
-#define USB_CMD_SEND_STATUS_8BIT	0x02
-
-/*old*/
-#define USB_CMD_SEND_STATUS_FLOAT	0x03
-
 #define USB_CMD_GLOBAL_FLAGS		0x04
 
 /*******************/
-/* Status Data sending Commands
- * */
-
-/* sends all sensor data:
- * accelerometer
- * gyro
- * magnetometer
- * barometer
- * rc receiver
- */
-#define USB_CMD_SEND_SENSOR_DATA    0x10
-
-
-/* angle
- * angle setpoint
- *
- * velocity
- * velocity setpoint
- *
- * motorSetpoint
- * motorValues
- */
-#define USB_CMD_SEND_FLIGHT_DATA    0x11
-
-/* system states
- *
- * uptime
- * akkuVoltage
- * cpuLoad
- *
- */
-#define USB_CMD_SEND_SYSTEM_STATE   0x12
-
-
-/* gps data */
-
-#define USB_CMD_SEND_GPS_DATA_TIME    0x13
-#define USB_CMD_SEND_GPS_DATA_POSITION     0x14
-
-
 /* custom frame
  *
  * PC sends custom frame command and identifiers for requested data
@@ -150,6 +105,24 @@
 #define DATA_ID_CPU                 0x0C
 #define DATA_ID_AKKU                0x0D
 #define DATA_ID_TEMP                0x0E
+#define DATA_ID_UPTIME              0x0F
+
+/* gps */
+#define DATA_ID_GPS_LLH             0x10
+#define DATA_ID_GPS_ECEF            0x11
+#define DATA_ID_GPS_TIME            0x12
+#define DATA_ID_GPS_FIX             0x13
+#define DATA_ID_GPS_DOP             0x14
+
+/* configuration */
+#define DATA_ID_COMP_FILTER         0x15
+#define DATA_ID_PID_ANGLE_XY        0x16
+#define DATA_ID_PID_ROT_Z           0x17
+#define DATA_ID_PID_VEL             0x18
+#define DATA_ID_PID_ACCEL           0x19
+#define DATA_ID_QC_SETTING          0x1A
+
+#define DATA_ID_GLOBAL_FLAGS        0x1B
 
 #define DATA_ID_EOF                 0x00
 #define DATA_ID_BUFFER_OVERRUN      0xFF
@@ -191,8 +164,8 @@ private:
 
     ConfigReader* confReader;
     void usbTransmit(uint8_t* buffer, uint16_t len);
-    void sendStatusFloat(uint8_t part);
     void sendCustomFrame();
+    void createCustomFrame(uint8_t frameID);
 
     void decodeConfigMSG();
 

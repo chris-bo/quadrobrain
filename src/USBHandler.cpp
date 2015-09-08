@@ -39,25 +39,11 @@ void USBHandler::update() {
             case USB_CMD_LOOP:
                 usbTransmit(UserRxBufferFS, number_received_data);
                 break;
-
-            case USB_CMD_SEND_SENSOR_DATA:
-            case USB_CMD_SEND_FLIGHT_DATA:
-            case USB_CMD_SEND_SYSTEM_STATE:
-            case USB_CMD_SEND_GPS_DATA_TIME:
-            case USB_CMD_SEND_GPS_DATA_POSITION:
-            case USB_CMD_SEND_STATUS_FLOAT:
-                sendStatusFloat(UserRxBufferFS[0]);
-                break;
             case USB_CMD_SEND_CUSTOM_FRAME:
                 sendCustomFrame();
                 break;
             case USB_CMD_GLOBAL_FLAGS:
-                /* HIGH -> LOW */
-                UserTxBufferFS[0] = (uint8_t) ((status->globalFlags >> 24) & 0xFF);
-                UserTxBufferFS[1] = (uint8_t) ((status->globalFlags >> 16) & 0xFF);
-                UserTxBufferFS[2] = (uint8_t) ((status->globalFlags >> 8) & 0xFF);
-                UserTxBufferFS[3] = (uint8_t) ((status->globalFlags) & 0xFF);
-                usbTransmit(UserTxBufferFS, 4);
+                createCustomFrame(USB_CMD_GLOBAL_FLAGS);
                 break;
             case USB_CMD_SET_FLIGHT_LED_PATTERN:
                 flightLEDs.setLEDpattern(
@@ -113,215 +99,6 @@ void USBHandler::initialize(ConfigReader* _confReader) {
 
     confReader = _confReader;
     USBD_CDC_ReceivePacket(usb);
-}
-
-void USBHandler::sendStatusFloat(uint8_t part) {
-    /* needs to be updated, if new variables are needed to be sent */
-
-    if (part == USB_CMD_SEND_STATUS_FLOAT) {
-        /* accelerometer XYZ in m/s^2 */
-        fillBuffer(UserTxBufferFS, 0, status->accel.x);
-        fillBuffer(UserTxBufferFS, 4, status->accel.y);
-        fillBuffer(UserTxBufferFS, 8, status->accel.z);
-
-        /* rate in deg/s */
-        fillBuffer(UserTxBufferFS, 12, status->rate.x);
-        fillBuffer(UserTxBufferFS, 16, status->rate.y);
-        fillBuffer(UserTxBufferFS, 20, status->rate.z);
-
-        /* magn in gauss ??? */
-        fillBuffer(UserTxBufferFS, 24, status->magnetfield.x);
-        fillBuffer(UserTxBufferFS, 28, status->magnetfield.y);
-        fillBuffer(UserTxBufferFS, 32, status->magnetfield.z);
-
-        /* angles in deg */
-        fillBuffer(UserTxBufferFS, 36, status->angle.x);
-        fillBuffer(UserTxBufferFS, 40, status->angle.y);
-        fillBuffer(UserTxBufferFS, 44, status->angle.z);
-
-        /* rc signals */
-        fillBuffer(UserTxBufferFS, 48, status->rcSignalRoll);
-        fillBuffer(UserTxBufferFS, 52, status->rcSignalNick);
-        fillBuffer(UserTxBufferFS, 56, status->rcSignalYaw);
-        fillBuffer(UserTxBufferFS, 60, status->rcSignalThrottle);
-        fillBuffer(UserTxBufferFS, 64, (float) status->rcSignalEnable);
-        fillBuffer(UserTxBufferFS, 68, (float) status->rcSignalSwitch);
-        fillBuffer(UserTxBufferFS, 72, status->rcSignalLinPoti);
-
-        /* motor control values */
-        fillBuffer(UserTxBufferFS, 76, status->motorValues[0]);
-        fillBuffer(UserTxBufferFS, 80, status->motorValues[1]);
-        fillBuffer(UserTxBufferFS, 84, status->motorValues[2]);
-        fillBuffer(UserTxBufferFS, 88, status->motorValues[3]);
-
-        /* Temperature */
-        fillBuffer(UserTxBufferFS, 92, status->temp);
-
-        /* Height */
-        fillBuffer(UserTxBufferFS, 96, status->height);
-        fillBuffer(UserTxBufferFS, 100, status->height_rel);
-        fillBuffer(UserTxBufferFS, 104, status->d_h);
-
-        /* AkkuVoltage */
-        fillBuffer(UserTxBufferFS, 108, status->akkuVoltage);
-
-        /* PID Outputs */
-        fillBuffer(UserTxBufferFS, 112, status->motorSetpoint.x);
-        fillBuffer(UserTxBufferFS, 116, status->motorSetpoint.y);
-        fillBuffer(UserTxBufferFS, 120, status->motorSetpoint.z);
-
-        /* cpu load */
-        fillBuffer(UserTxBufferFS, 124, status->cpuLoad);
-
-        usbTransmit(UserTxBufferFS, 128);
-    } else if (part == USB_CMD_SEND_SENSOR_DATA) {
-        /* accelerometer XYZ in m/s^2 */
-        fillBuffer(UserTxBufferFS, 0, status->accel.x);
-        fillBuffer(UserTxBufferFS, 4, status->accel.y);
-        fillBuffer(UserTxBufferFS, 8, status->accel.z);
-
-        /* rate in deg/s */
-        fillBuffer(UserTxBufferFS, 12, status->rate.x);
-        fillBuffer(UserTxBufferFS, 16, status->rate.y);
-        fillBuffer(UserTxBufferFS, 20, status->rate.z);
-
-        /* magn in gauss ??? */
-        fillBuffer(UserTxBufferFS, 24, status->magnetfield.x);
-        fillBuffer(UserTxBufferFS, 28, status->magnetfield.y);
-        fillBuffer(UserTxBufferFS, 32, status->magnetfield.z);
-
-        /* Temperature */
-        fillBuffer(UserTxBufferFS, 36, status->temp);
-
-        /* Height */
-        fillBuffer(UserTxBufferFS, 40, status->height);
-        fillBuffer(UserTxBufferFS, 44, status->height_rel);
-        fillBuffer(UserTxBufferFS, 48, status->d_h);
-
-        /* rc signals */
-        fillBuffer(UserTxBufferFS, 52, status->rcSignalRoll);
-        fillBuffer(UserTxBufferFS, 56, status->rcSignalNick);
-        fillBuffer(UserTxBufferFS, 60, status->rcSignalYaw);
-        fillBuffer(UserTxBufferFS, 64, status->rcSignalThrottle);
-        fillBuffer(UserTxBufferFS, 68, (float) status->rcSignalEnable);
-        fillBuffer(UserTxBufferFS, 72, (float) status->rcSignalSwitch);
-        fillBuffer(UserTxBufferFS, 76, status->rcSignalLinPoti);
-
-        usbTransmit(UserTxBufferFS, 80);
-    } else if (part == USB_CMD_SEND_FLIGHT_DATA) {
-
-        /* angles in deg */
-        fillBuffer(UserTxBufferFS, 0, status->angle.x);
-        fillBuffer(UserTxBufferFS, 4, status->angle.y);
-        fillBuffer(UserTxBufferFS, 8, status->angle.z);
-
-        fillBuffer(UserTxBufferFS, 12, status->angleSetpoint.x);
-        fillBuffer(UserTxBufferFS, 16, status->angleSetpoint.y);
-        fillBuffer(UserTxBufferFS, 20, status->angleSetpoint.z);
-
-        /* velocities in m/s */
-        fillBuffer(UserTxBufferFS, 24, status->velocity.x);
-        fillBuffer(UserTxBufferFS, 28, status->velocity.y);
-        fillBuffer(UserTxBufferFS, 32, status->velocity.z);
-
-        fillBuffer(UserTxBufferFS, 36, status->velocitySetpoint.x);
-        fillBuffer(UserTxBufferFS, 40, status->velocitySetpoint.y);
-        fillBuffer(UserTxBufferFS, 44, status->velocitySetpoint.z);
-
-        /* Height */
-        fillBuffer(UserTxBufferFS, 48, status->height);
-        fillBuffer(UserTxBufferFS, 52, status->height_rel);
-        fillBuffer(UserTxBufferFS, 56, status->d_h);
-
-        /* motor control values */
-        fillBuffer(UserTxBufferFS, 60, status->motorValues[0]);
-        fillBuffer(UserTxBufferFS, 64, status->motorValues[1]);
-        fillBuffer(UserTxBufferFS, 68, status->motorValues[2]);
-        fillBuffer(UserTxBufferFS, 72, status->motorValues[3]);
-
-        /* PID Outputs */
-        fillBuffer(UserTxBufferFS, 76, status->motorSetpoint.x);
-        fillBuffer(UserTxBufferFS, 80, status->motorSetpoint.y);
-        fillBuffer(UserTxBufferFS, 84, status->motorSetpoint.z);
-
-        usbTransmit(UserTxBufferFS, 88);
-    } else if (part == USB_CMD_SEND_SYSTEM_STATE) {
-
-        /* AkkuVoltage */
-        fillBuffer(UserTxBufferFS, 0, status->akkuVoltage);
-        /* cpu load */
-        fillBuffer(UserTxBufferFS, 4, status->cpuLoad);
-
-        /* uptime */
-        fillBuffer(UserTxBufferFS, 8, status->uptime);
-
-        usbTransmit(UserTxBufferFS, 12);
-    } else if (part == USB_CMD_SEND_GPS_DATA_TIME) {
-
-        /* gps time of week*/
-        fillBuffer(UserTxBufferFS, 0, status->gpsData.iTOW);
-        fillBuffer(UserTxBufferFS, 4, status->gpsData.gpsWeek);
-
-        /* gps time */
-        UserTxBufferFS[6] = status->gpsData.time.hours;
-        UserTxBufferFS[7] = status->gpsData.time.minutes;
-        UserTxBufferFS[8] = status->gpsData.time.seconds;
-        UserTxBufferFS[9] = status->gpsData.time.hundredths;
-        UserTxBufferFS[10] = status->gpsData.time.validity;
-
-        /* gps date*/
-        fillBuffer(UserTxBufferFS, 11, status->gpsData.date.year);
-        UserTxBufferFS[13] = status->gpsData.date.month;
-        UserTxBufferFS[14] = status->gpsData.date.day;
-
-        usbTransmit(UserTxBufferFS, 15);
-    } else if (part == USB_CMD_SEND_GPS_DATA_POSITION) {
-        /* postition llh with accuracy*/
-        fillBuffer(UserTxBufferFS, 0, status->gpsData.llh_data.lat);
-        fillBuffer(UserTxBufferFS, 4, status->gpsData.llh_data.lon);
-        fillBuffer(UserTxBufferFS, 8, status->gpsData.llh_data.h);
-        fillBuffer(UserTxBufferFS, 12, status->gpsData.llh_data.hMSL);
-        fillBuffer(UserTxBufferFS, 16, status->gpsData.llh_data.vAcc);
-        fillBuffer(UserTxBufferFS, 20, status->gpsData.llh_data.hAcc);
-
-        /* ned*/
-        fillBuffer(UserTxBufferFS, 24, status->gpsData.ned_data.vN);
-        fillBuffer(UserTxBufferFS, 28, status->gpsData.ned_data.vE);
-        fillBuffer(UserTxBufferFS, 32, status->gpsData.ned_data.vD);
-        fillBuffer(UserTxBufferFS, 36, status->gpsData.ned_data.speed);
-        fillBuffer(UserTxBufferFS, 40, status->gpsData.ned_data.gSpeed);
-        fillBuffer(UserTxBufferFS, 44, status->gpsData.ned_data.sAcc);
-        fillBuffer(UserTxBufferFS, 48, status->gpsData.ned_data.heading);
-        fillBuffer(UserTxBufferFS, 52, status->gpsData.ned_data.cAcc);
-
-        /* position ecef */
-        fillBuffer(UserTxBufferFS, 56, status->gpsData.ecef_data.x);
-        fillBuffer(UserTxBufferFS, 60, status->gpsData.ecef_data.y);
-        fillBuffer(UserTxBufferFS, 64, status->gpsData.ecef_data.z);
-        fillBuffer(UserTxBufferFS, 68, status->gpsData.ecef_data.vx);
-        fillBuffer(UserTxBufferFS, 72, status->gpsData.ecef_data.vy);
-        fillBuffer(UserTxBufferFS, 76, status->gpsData.ecef_data.vz);
-        fillBuffer(UserTxBufferFS, 80, status->gpsData.ecef_data.pAcc);
-        fillBuffer(UserTxBufferFS, 84, status->gpsData.ecef_data.sAcc);
-
-        /* dilution of precission*/
-        fillBuffer(UserTxBufferFS, 88, status->gpsData.dop.pDOP);
-        fillBuffer(UserTxBufferFS, 90, status->gpsData.dop.gDOP);
-        fillBuffer(UserTxBufferFS, 92, status->gpsData.dop.tDOP);
-        fillBuffer(UserTxBufferFS, 94, status->gpsData.dop.vDOP);
-        fillBuffer(UserTxBufferFS, 96, status->gpsData.dop.hDOP);
-        fillBuffer(UserTxBufferFS, 98, status->gpsData.dop.nDOP);
-        fillBuffer(UserTxBufferFS, 100, status->gpsData.dop.eDOP);
-
-        /* fix + flags*/
-        fillBuffer(UserTxBufferFS, 102, (uint8_t) status->gpsData.gpsFix);
-        fillBuffer(UserTxBufferFS, 103, status->gpsData.FixStatus);
-        fillBuffer(UserTxBufferFS, 104, status->gpsData.numSV);
-        fillBuffer(UserTxBufferFS, 105, status->gpsData.navStatusFlags);
-        fillBuffer(UserTxBufferFS, 106, (uint8_t) status->gpsData.psmState);
-
-        usbTransmit(UserTxBufferFS, 107);
-    }
 }
 
 void USBHandler::readEEPROM(uint8_t byteCount) {
@@ -386,52 +163,6 @@ void USBHandler::writeEEPROM(uint8_t byteCount) {
     usbTransmit(UserRxBufferFS, 1);
 }
 
-void USBHandler::sendConfig() {
-
-    /* send config
-     *
-     */
-    /* pid xy */
-    fillBuffer(UserTxBufferFS, 0, status->pidSettingsAngleXY.p);
-    fillBuffer(UserTxBufferFS, 4, status->pidSettingsAngleXY.i);
-    fillBuffer(UserTxBufferFS, 8, status->pidSettingsAngleXY.d);
-    fillBuffer(UserTxBufferFS, 12, status->pidSettingsAngleXY.gain);
-    fillBuffer(UserTxBufferFS, 16, status->pidSettingsAngleXY.scaleSetPoint);
-
-    /* pid z  */
-    fillBuffer(UserTxBufferFS, 20, status->pidSettingsRotationZ.p);
-    fillBuffer(UserTxBufferFS, 24, status->pidSettingsRotationZ.i);
-    fillBuffer(UserTxBufferFS, 28, status->pidSettingsRotationZ.d);
-    fillBuffer(UserTxBufferFS, 32, status->pidSettingsRotationZ.gain);
-    fillBuffer(UserTxBufferFS, 36, status->pidSettingsRotationZ.scaleSetPoint);
-
-    /* comp filter */
-    fillBuffer(UserTxBufferFS, 40, status->filterCoefficientXY);
-    fillBuffer(UserTxBufferFS, 44, status->filterCoefficientZ);
-
-    /* pid accel  */
-    fillBuffer(UserTxBufferFS, 48, status->pidSettingsAcceleration.p);
-    fillBuffer(UserTxBufferFS, 52, status->pidSettingsAcceleration.i);
-    fillBuffer(UserTxBufferFS, 56, status->pidSettingsAcceleration.d);
-    fillBuffer(UserTxBufferFS, 60, status->pidSettingsAcceleration.gain);
-    fillBuffer(UserTxBufferFS, 64, status->pidSettingsAcceleration.scaleSetPoint);
-
-    /* pid vel */
-    fillBuffer(UserTxBufferFS, 68, status->pidSettingsVelocity.p);
-    fillBuffer(UserTxBufferFS, 72, status->pidSettingsVelocity.i);
-    fillBuffer(UserTxBufferFS, 76, status->pidSettingsVelocity.d);
-    fillBuffer(UserTxBufferFS, 80, status->pidSettingsVelocity.gain);
-    fillBuffer(UserTxBufferFS, 84, status->pidSettingsVelocity.scaleSetPoint);
-
-    /* qc settings*/
-     fillBuffer(UserTxBufferFS, 88, status->qcSettings.enableBuzzerWarningLowVoltage);
-     fillBuffer(UserTxBufferFS, 89, status->qcSettings.enableBuzzerWarningRCLost);
-     fillBuffer(UserTxBufferFS, 90, status->qcSettings.enableFlightLeds);
-     fillBuffer(UserTxBufferFS, 91, status->qcSettings.enableMotors);
-
-    usbTransmit(UserTxBufferFS, 92);
-}
-
 void USBHandler::updateConfig() {
 
     status->pidSettingsAngleXY.p = byteToFloat(UserRxBufferFS, 1);
@@ -461,10 +192,10 @@ void USBHandler::updateConfig() {
     status->pidSettingsRotationZ.gain = byteToFloat(UserRxBufferFS, 81);
     status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(UserRxBufferFS, 85);
 
-     status->qcSettings.enableBuzzerWarningRCLost =  UserRxBufferFS[89];
-     status->qcSettings.enableBuzzerWarningLowVoltage = UserRxBufferFS[90];
-     status->qcSettings.enableFlightLeds = UserRxBufferFS[91];
-     status->qcSettings.enableMotors = UserRxBufferFS[92];
+    status->qcSettings.enableBuzzerWarningRCLost = UserRxBufferFS[89];
+    status->qcSettings.enableBuzzerWarningLowVoltage = UserRxBufferFS[90];
+    status->qcSettings.enableFlightLeds = UserRxBufferFS[91];
+    status->qcSettings.enableMotors = UserRxBufferFS[92];
 
     usbTransmit(UserRxBufferFS, 1);
 
@@ -488,6 +219,9 @@ void USBHandler::usbTransmit(uint8_t* buffer, uint16_t len) {
 }
 
 void USBHandler::kill() {
+    /* override default kill function
+     * usb must not be killed
+     */
 }
 
 void USBHandler::sendCustomFrame() {
@@ -636,6 +370,211 @@ void USBHandler::sendCustomFrame() {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos, status->temp);
                 }
                 break;
+            case DATA_ID_UPTIME:
+                if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->uptime);
+                }
+                break;
+            case DATA_ID_GPS_LLH:
+                if (!checkTXBufferOverrun(bufferPos, 56, &bufferOverrun)) {
+                    /* postition llh with accuracy*/
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.llh_data.lat);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.llh_data.lon);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.llh_data.h);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.llh_data.hMSL);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.llh_data.vAcc);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.llh_data.hAcc);
+                    /* ned*/
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ned_data.vN);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ned_data.vE);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ned_data.vD);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ned_data.speed);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ned_data.gSpeed);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ned_data.sAcc);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ned_data.heading);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ned_data.cAcc);
+
+                }
+                break;
+            case DATA_ID_GPS_ECEF:
+                if (!checkTXBufferOverrun(bufferPos, 32, &bufferOverrun)) {
+                    /* position ecef */
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ecef_data.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ecef_data.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ecef_data.z);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ecef_data.vx);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ecef_data.vy);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ecef_data.vz);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ecef_data.pAcc);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.ecef_data.sAcc);
+                }
+                break;
+            case DATA_ID_GPS_DOP:
+                if (!checkTXBufferOverrun(bufferPos, 14, &bufferOverrun)) {
+                    /* dilution of precission*/
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.dop.pDOP);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.dop.gDOP);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.dop.tDOP);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.dop.vDOP);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.dop.hDOP);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.dop.nDOP);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.dop.eDOP);
+                }
+                break;
+            case DATA_ID_GPS_TIME:
+                if (!checkTXBufferOverrun(bufferPos, 15, &bufferOverrun)) {
+                    /* gps time of week*/
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.iTOW);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.gpsWeek);
+                    /* gps time */
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.time.hours);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.time.minutes);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.time.seconds);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.time.hundredths);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.time.validity);
+                    /* gps date*/
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.date.year);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.date.month);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.date.day);
+                }
+                break;
+            case DATA_ID_GPS_FIX:
+                /* fix + flags*/
+                if (!checkTXBufferOverrun(bufferPos, 5, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                (uint8_t) status->gpsData.gpsFix);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.FixStatus);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.numSV);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->gpsData.navStatusFlags);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                (uint8_t) status->gpsData.psmState);
+                }
+                break;
+            case DATA_ID_COMP_FILTER:
+                if (!checkTXBufferOverrun(bufferPos, 8, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->filterCoefficientXY);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->filterCoefficientZ);
+                }
+                break;
+            case DATA_ID_PID_ANGLE_XY:
+                if (!checkTXBufferOverrun(bufferPos, 20, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAngleXY.p);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAngleXY.i);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAngleXY.d);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAngleXY.gain);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAngleXY.scaleSetPoint);
+                }
+                break;
+            case DATA_ID_PID_ROT_Z:
+                if (!checkTXBufferOverrun(bufferPos, 20, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsRotationZ.p);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsRotationZ.i);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsRotationZ.d);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsRotationZ.gain);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsRotationZ.scaleSetPoint);
+                }
+                break;
+            case DATA_ID_PID_VEL:
+                if (!checkTXBufferOverrun(bufferPos, 20, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsVelocity.p);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsVelocity.i);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsVelocity.d);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsVelocity.gain);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsVelocity.scaleSetPoint);
+                }
+                break;
+            case DATA_ID_PID_ACCEL:
+                if (!checkTXBufferOverrun(bufferPos, 20, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAcceleration.p);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAcceleration.i);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAcceleration.d);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAcceleration.gain);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->pidSettingsAcceleration.scaleSetPoint);
+                }
+                break;
+            case DATA_ID_QC_SETTING:
+                if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->qcSettings.enableBuzzerWarningLowVoltage);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->qcSettings.enableBuzzerWarningRCLost);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->qcSettings.enableFlightLeds);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->qcSettings.enableMotors);
+                }
+                break;
+            case DATA_ID_GLOBAL_FLAGS:
+                if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->globalFlags );
+                }
+                break;
             case DATA_ID_EOF:
                 /* end of frame*/
                 /* send buffer */
@@ -735,7 +674,7 @@ void USBHandler::decodeConfigMSG() {
 
     switch (UserRxBufferFS[0]) {
         case USB_CMD_GET_CONFIG:
-            sendConfig();
+            createCustomFrame(USB_CMD_GET_CONFIG);
             break;
         case USB_CMD_UPDATE_CONFIG:
             updateConfig();
@@ -774,7 +713,7 @@ void USBHandler::decodeConfigMSG() {
         case USB_CMD_QUADROCONFIG:
             if (number_received_data == 2) {
                 /* check and set settings */
-                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_LOW_VOLT ) {
+                if (UserRxBufferFS[1] & QUADROCONFIG_ENABLE_LOW_VOLT) {
                     status->qcSettings.enableBuzzerWarningLowVoltage = 1;
                 } else {
                     status->qcSettings.enableBuzzerWarningLowVoltage = 0;
@@ -835,4 +774,35 @@ void USBHandler::decodeConfigMSG() {
             break;
     }
 
+}
+
+/* generated array of frame idetifiers for old usb cmds */
+void USBHandler::createCustomFrame(uint8_t frameID) {
+    switch (frameID) {
+        case USB_CMD_GET_CONFIG:
+            /* pid xy */
+            UserRxBufferFS[1] = DATA_ID_PID_ANGLE_XY;
+            /* pid z  */
+            UserRxBufferFS[2] = DATA_ID_PID_ROT_Z;
+            /* comp filter */
+            UserRxBufferFS[3] = DATA_ID_COMP_FILTER;
+            /* pid accel  */
+            UserRxBufferFS[4] = DATA_ID_PID_ACCEL;
+            /* pid vel */
+            UserRxBufferFS[5] = DATA_ID_PID_VEL;
+            /* qc settings*/
+            UserRxBufferFS[6] = DATA_ID_QC_SETTING;
+            number_received_data = 7;
+            break;
+        case USB_CMD_GLOBAL_FLAGS:
+            UserRxBufferFS[1] = DATA_ID_GLOBAL_FLAGS;
+            number_received_data = 2;
+            break;
+        default:
+            break;
+    }
+
+    UserRxBufferFS[number_received_data++] = DATA_ID_EOF;
+    /* send generated custom frame */
+    sendCustomFrame();
 }
