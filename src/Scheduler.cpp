@@ -259,12 +259,11 @@ void Scheduler::initializeTaskDurations() {
 void Scheduler::kill() {
 
     reset();
-    /* reset Flags*/
-    status->globalFlags = 0;
     for (uint8_t i = 0; i < numberOfTasks; i++) {
         taskArray[i]->kill();
     }
-
+    /* reset Status */
+    status->reset();
 }
 
 void Scheduler::overrunError() {

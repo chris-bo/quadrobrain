@@ -7,7 +7,7 @@
 
 #include <USBHandler.h>
 
-float byteToFloat(uint8_t* array, uint8_t offset) {
+static float byteToFloat(uint8_t* array, uint8_t offset) {
     float val;
     memcpy(&val, array + offset, 4l);
     return val;
@@ -739,14 +739,14 @@ void USBHandler::decodeConfigMSG() {
             } else {
                 /* reply with current setting*/
                 UserTxBufferFS[0] = UserRxBufferFS[0];
-                UserTxBufferFS[1] = (status->qcSettings.enableMotors
+                UserTxBufferFS[1] = (uint8_t) ((status->qcSettings.enableMotors
                             * QUADROCONFIG_ENABLE_MOTORS)
                             | (status->qcSettings.enableFlightLeds
                                         * QUADROCONFIG_ENABLE_FLIGHTLED)
                             | (status->qcSettings.enableBuzzerWarningRCLost
                                         * QUADROCONFIG_ENABLE_RC_LOST)
                             | (status->qcSettings.enableBuzzerWarningLowVoltage
-                                        * QUADROCONFIG_ENABLE_LOW_VOLT);
+                                        * QUADROCONFIG_ENABLE_LOW_VOLT));
                 usbTransmit(UserTxBufferFS, 2);
             }
             break;

@@ -34,7 +34,6 @@ public:
 
     void initialize();
     void update();
-
     void conversionComplete();
 
 private:

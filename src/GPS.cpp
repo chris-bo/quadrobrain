@@ -79,6 +79,7 @@ void GPS::initialize() {
             } else {
                 /* 2nd try failed */
                 /* no gps */
+                /* task will not be activated */
                 return;
             }
 
@@ -191,7 +192,10 @@ void GPS::pollUBXMessage(uint8_t msgClass, uint8_t msgID) {
     receive(getUBXMsgLength(msgClass, msgID));
 
 }
-
+/* calculates ubx checksum
+ * appends two bytes to the buffer
+ * beginning with position "bufferSize"
+ */
 void GPS::appendUBXChecksumTX(uint8_t bufferSize) {
     /*
      * CK_A = 0, CK_B = 0
@@ -380,7 +384,6 @@ void GPS::generateUBXHeader(uint8_t msgClass, uint8_t msgID,
 
 void GPS::receive(uint8_t msgLenght) {
 
-
     HAL_UART_Receive_DMA(gpsUart, GPS_RX_buffer, msgLenght);
     SET_FLAG(transferState, GPS_COM_FLAG_RX_RUNNING);
 }
@@ -516,7 +519,6 @@ uint8_t GPS::updateReceiverConfig(uint8_t configID, uint8_t* buffer, uint16_t pa
             if (lastACK.msgid == configID) {
                 /* ACK SUCCESS*/
                 /* clear last ack */
-
                 lastACK.ack = 0;
                 lastACK.classid = 0;
                 lastACK.msgid = 0;

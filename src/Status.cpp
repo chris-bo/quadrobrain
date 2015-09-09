@@ -10,8 +10,6 @@
 Status::Status() {
     /* init status variables */
 
-    uptime = 0;
-
     accel = {0,0,0};
 
     rate = {0,0,0};
@@ -25,7 +23,6 @@ Status::Status() {
     velocitySetpoint = {0,0,0};
 
     temp = 0;
-
     pressure = 0;
     height = 0;
     height_rel = 0;
@@ -39,10 +36,21 @@ Status::Status() {
     rcSignalSwitch = 0;
     rcSignalEnable = 0;
 
+    motorSetpoint = {0,0,0};
     motorValues[0] = 0;
     motorValues[1] = 0;
     motorValues[2] = 0;
     motorValues[3] = 0;
+
+    gpsData = {};
+
+    uptime = 0;
+    akkuVoltage = 0;
+    globalFlags = 0;
+    cpuLoad = 0;
+
+    buzzerQueue1 = {};
+    buzzerQueue2 = {};
 
     filterCoefficientXY = FILTER_COEFFICIENT_XY;
     filterCoefficientZ = FILTER_COEFFICIENT_Z;
@@ -71,18 +79,6 @@ Status::Status() {
     pidSettingsAcceleration.scaleSetPoint = PID_ACCELERATION_SCALE;
     pidSettingsAcceleration.gain = PID_ACCELERATION_GAIN;
 
-    motorSetpoint = {0,0,0};
-
-    globalFlags = 0;
-
-    akkuVoltage = 0;
-
-    cpuLoad = 0;
-
-    buzzerQueue1 = {};
-    buzzerQueue2 = {};
-
-    gpsData = {};
     qcSettings = {};
 
     /* Initialize Hardcoded Settings */
@@ -105,6 +101,7 @@ Status::~Status() {
 
 void Status::reset() {
     /* reset status variables */
+
     accel = {0,0,0};
 
     rate = {0,0,0};
@@ -118,7 +115,6 @@ void Status::reset() {
     velocitySetpoint = {0,0,0};
 
     temp = 0;
-
     pressure = 0;
     height = 0;
     height_rel = 0;
@@ -132,31 +128,23 @@ void Status::reset() {
     rcSignalSwitch = 0;
     rcSignalEnable = 0;
 
+    motorSetpoint = {0,0,0};
     motorValues[0] = 0;
     motorValues[1] = 0;
     motorValues[2] = 0;
     motorValues[3] = 0;
 
-//    filterCoefficientXY = FILTER_COEFFICIENT_XY;
-//    filterCoefficientZ = FILTER_COEFFICIENT_Z;
-//
-//    pidSettigsAngleXY.p = PID_XY_P;
-//    pidSettigsAngleXY.i = PID_XY_I;
-//    pidSettigsAngleXY.d = PID_XY_D;
-//    pidSettigsAngleXY.scaleSetPoint = PID_XY_SCALE;
-//    pidSettigsAngleXY.gain = PID_XY_GAIN;
-//
-//    pidSettigsRotationZ.p = PID_Z_P;
-//    pidSettigsRotationZ.i = PID_Z_I;
-//    pidSettigsRotationZ.d = PID_Z_D;
-//    pidSettigsRotationZ.scaleSetPoint = PID_Z_SCALE;
-//    pidSettigsRotationZ.gain = PID_Z_GAIN;
+    gpsData = {};
 
-    motorSetpoint = {0,0,0};
-
-    globalFlags = 0;
-
+    /* do not reset uptime */
     akkuVoltage = 0;
+    globalFlags = 0;
+    cpuLoad = 0;
+
+    buzzerQueue1 = {};
+    buzzerQueue2 = {};
+
+    /* Do not reset filter coefficients */
 }
 
 void Status::restoreConfig() {

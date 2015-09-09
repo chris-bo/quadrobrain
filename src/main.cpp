@@ -183,23 +183,26 @@ void FlightMode() {
     compFilterY.initialize();
     compFilterNorth.initialize();
 
-    /* Initialize PID for X and Y axis */
+    /* Initialize PID for X Y and Z axis */
     pidAngleX.initialize(&status.pidSettingsAngleXY);
     pidAngleY.initialize(&status.pidSettingsAngleXY);
     pidRateZ.initialize(&status.pidSettingsRotationZ);
 
+    /* initialize motionController */
     motionControl.initialize(&status.pidSettingsVelocity,
                 &status.pidSettingsAcceleration);
 
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
+
+    /* activate flight LEDs*/
     flightLEDs.initialize();
+
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
                           &pidRateZ, &motionControl, &usb, &akku, &baro, &leds,
-                          &beep1, &beep2,&flightLEDs };
-
+                          &beep1, &beep2, &flightLEDs };
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
     /* don't stop beliieeeving */

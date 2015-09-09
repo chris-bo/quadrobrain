@@ -158,15 +158,15 @@ public:
     uint8_t usb_mode_request;
 
 private:
+    USBD_HandleTypeDef* usb;
+    ConfigReader* confReader;
+
     uint8_t usb_state;
     uint8_t usbTransmitBusyCounter;
-    USBD_HandleTypeDef* usb;
 
-    ConfigReader* confReader;
     void usbTransmit(uint8_t* buffer, uint16_t len);
     void sendCustomFrame();
     void createCustomFrame(uint8_t frameID);
-
     void decodeConfigMSG();
 
     /* fillBuffer returns next free pos in buffer*/

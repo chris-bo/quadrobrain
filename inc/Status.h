@@ -16,7 +16,7 @@ typedef struct {
     float x;
     float y;
     float z;
-}XYZ_Data;
+} XYZ_Data;
 
 typedef struct {
     float p;
@@ -26,21 +26,21 @@ typedef struct {
     float scaleSetPoint;
     /* overall gain added to pid output*/
     float gain;
-}PID_Settings;
+} PID_Settings;
 
 typedef struct {
     float frequency[BUZZER_QUEUE_SIZE];
     uint16_t lenght[BUZZER_QUEUE_SIZE];
     uint8_t index;
     uint8_t currentTone;
-}Buzzer_Queue_t;
+} Buzzer_Queue_t;
 
 typedef struct {
     uint8_t enableBuzzerWarningLowVoltage;
     uint8_t enableBuzzerWarningRCLost;
     uint8_t enableFlightLeds;
     uint8_t enableMotors;
-}Quadrocopter_Settings_t;
+} Quadrocopter_Settings_t;
 
 class Status {
 public:
@@ -51,17 +51,8 @@ public:
     void restoreConfig();
     void addToneToQueue(Buzzer_Queue_t* queue, float frequency, uint16_t length);
 
-    /* all status variables */
-
-    /* uptime since power on [SCHEDULER_INTERVALL_ms]*/
-
-    uint32_t uptime;
-
-    /* Akku Voltage*/
-    float akkuVoltage;
-
-    /* status flags */
-    uint32_t globalFlags;
+    /****************************/
+    /* position and sensor data */
 
     /* acceleration [m/s ^ 2]*/
     XYZ_Data accel;
@@ -105,6 +96,31 @@ public:
      * 0.0f ^= min
      */
     float motorValues[4];
+    XYZ_Data motorSetpoint;
+
+    /* GPS Data*/
+    GPS_Data_t gpsData;
+
+    /************************/
+    /* CPU and feedback     */
+
+    /* uptime since power on [SCHEDULER_INTERVALL_ms]*/
+    uint32_t uptime;
+
+    /* Akku Voltage*/
+    float akkuVoltage;
+
+    /* status flags */
+    uint32_t globalFlags;
+
+    /* cpu load calculated via idle time*/
+    float cpuLoad;  // %
+
+    Buzzer_Queue_t buzzerQueue1;
+    Buzzer_Queue_t buzzerQueue2;
+
+    /************************/
+    /* Settings             */
 
     /* Filter Coefficients */
     float filterCoefficientXY;
@@ -116,18 +132,6 @@ public:
 
     PID_Settings pidSettingsVelocity;
     PID_Settings pidSettingsAcceleration;
-
-    /* PID Outputs */
-    XYZ_Data motorSetpoint;
-
-    /* cpu load calculated via idle time*/
-    float cpuLoad; // %
-
-    Buzzer_Queue_t buzzerQueue1;
-    Buzzer_Queue_t buzzerQueue2;
-
-    /* GPS Data*/
-    GPS_Data_t gpsData;
 
     /* QC Settings */
     Quadrocopter_Settings_t qcSettings;
