@@ -7,12 +7,13 @@
 
 #include <USBHandler.h>
 
-static float byteToFloat(uint8_t* array, uint8_t offset) {
+static float byteToFloat(uint8_t* array, uint8_t* offset) {
     float val;
-    memcpy(&val, array + offset, 4l);
+    memcpy(&val, array + *offset, 4l);
+    *offset = *offset + 4;
     return val;
-}
 
+}
 USBHandler::USBHandler(Status* statusPtr, uint8_t defaultPrio,
             USBD_HandleTypeDef* husb)
             : Task(statusPtr, defaultPrio) {
@@ -164,41 +165,96 @@ void USBHandler::writeEEPROM(uint8_t byteCount) {
 }
 
 void USBHandler::updateConfig() {
+    /* set position to 1
+     * select first idetifier
+     */
+    uint8_t bufferpos = 1;
+    while (bufferpos < number_received_data) {
 
-    status->pidSettingsAngleXY.p = byteToFloat(UserRxBufferFS, 1);
-    status->pidSettingsAngleXY.i = byteToFloat(UserRxBufferFS, 5);
-    status->pidSettingsAngleXY.d = byteToFloat(UserRxBufferFS, 9);
-    status->pidSettingsAngleXY.gain = byteToFloat(UserRxBufferFS, 13);
-    status->pidSettingsAngleXY.scaleSetPoint = byteToFloat(UserRxBufferFS, 17);
-
-    status->pidSettingsRotationZ.p = byteToFloat(UserRxBufferFS, 21);
-    status->pidSettingsRotationZ.i = byteToFloat(UserRxBufferFS, 25);
-    status->pidSettingsRotationZ.d = byteToFloat(UserRxBufferFS, 29);
-    status->pidSettingsRotationZ.gain = byteToFloat(UserRxBufferFS, 33);
-    status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(UserRxBufferFS, 37);
-
-    status->filterCoefficientXY = byteToFloat(UserRxBufferFS, 41);
-    status->filterCoefficientZ = byteToFloat(UserRxBufferFS, 45);
-
-    status->pidSettingsRotationZ.p = byteToFloat(UserRxBufferFS, 49);
-    status->pidSettingsRotationZ.i = byteToFloat(UserRxBufferFS, 53);
-    status->pidSettingsRotationZ.d = byteToFloat(UserRxBufferFS, 57);
-    status->pidSettingsRotationZ.gain = byteToFloat(UserRxBufferFS, 61);
-    status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(UserRxBufferFS, 65);
-
-    status->pidSettingsRotationZ.p = byteToFloat(UserRxBufferFS, 69);
-    status->pidSettingsRotationZ.i = byteToFloat(UserRxBufferFS, 73);
-    status->pidSettingsRotationZ.d = byteToFloat(UserRxBufferFS, 77);
-    status->pidSettingsRotationZ.gain = byteToFloat(UserRxBufferFS, 81);
-    status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(UserRxBufferFS, 85);
-
-    status->qcSettings.enableBuzzerWarningRCLost = UserRxBufferFS[89];
-    status->qcSettings.enableBuzzerWarningLowVoltage = UserRxBufferFS[90];
-    status->qcSettings.enableFlightLeds = UserRxBufferFS[91];
-    status->qcSettings.enableMotors = UserRxBufferFS[92];
-
-    usbTransmit(UserRxBufferFS, 1);
-
+        switch (UserRxBufferFS[bufferpos]) {
+            /* each case:
+             *   jump to first value:
+             *   bufferpos++
+             *   then set values with byteToFloat function
+             *   byteToFloat increases bufferpos by 4
+             */
+            case DATA_ID_PID_ANGLE_XY:
+                bufferpos++;
+                status->pidSettingsAngleXY.p = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsAngleXY.i = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsAngleXY.d = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsAngleXY.gain = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsAngleXY.scaleSetPoint = byteToFloat(
+                            UserRxBufferFS, &bufferpos);
+                break;
+            case DATA_ID_PID_ROT_Z:
+                bufferpos++;
+                status->pidSettingsRotationZ.p = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsRotationZ.i = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsRotationZ.d = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsRotationZ.gain = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(
+                            UserRxBufferFS, &bufferpos);
+                break;
+            case DATA_ID_COMP_FILTER:
+                bufferpos++;
+                status->filterCoefficientXY = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->filterCoefficientZ = byteToFloat(UserRxBufferFS, &bufferpos);
+                break;
+            case DATA_ID_PID_ACCEL:
+                bufferpos++;
+                status->pidSettingsAcceleration.p = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsAcceleration.i = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsAcceleration.d = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsAcceleration.gain = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsAcceleration.scaleSetPoint = byteToFloat(
+                            UserRxBufferFS, &bufferpos);
+                break;
+            case DATA_ID_PID_VEL:
+                bufferpos++;
+                status->pidSettingsVelocity.p = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsVelocity.i = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsVelocity.d = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsVelocity.gain = byteToFloat(UserRxBufferFS,
+                            &bufferpos);
+                status->pidSettingsVelocity.scaleSetPoint = byteToFloat(
+                            UserRxBufferFS, &bufferpos);
+                break;
+            case DATA_ID_QC_SETTING:
+                bufferpos++;
+                status->qcSettings.enableBuzzerWarningRCLost =
+                            UserRxBufferFS[bufferpos++];
+                status->qcSettings.enableBuzzerWarningLowVoltage =
+                            UserRxBufferFS[bufferpos++];
+                status->qcSettings.enableFlightLeds = UserRxBufferFS[bufferpos++];
+                status->qcSettings.enableMotors = UserRxBufferFS[bufferpos++];
+                break;
+            case DATA_ID_EOF:
+                bufferpos++;
+                /* send Confirmation*/
+                usbTransmit(UserRxBufferFS, 1);
+                break;
+            default:
+                /* error*/
+                break;
+        }
+    }
 }
 
 void USBHandler::usbTransmit(uint8_t* buffer, uint16_t len) {
@@ -572,7 +628,7 @@ void USBHandler::sendCustomFrame() {
             case DATA_ID_GLOBAL_FLAGS:
                 if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
-                                status->globalFlags );
+                                status->globalFlags);
                 }
                 break;
             case DATA_ID_EOF:
@@ -776,7 +832,7 @@ void USBHandler::decodeConfigMSG() {
 
 }
 
-/* generated array of frame idetifiers for old usb cmds */
+/* generated array of frame identifiers for old usb cmds */
 void USBHandler::createCustomFrame(uint8_t frameID) {
     switch (frameID) {
         case USB_CMD_GET_CONFIG:
