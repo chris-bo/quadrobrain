@@ -91,7 +91,6 @@ void USBHandler::update() {
         }
         USBD_CDC_ReceivePacket(usb);
     }
-    resetPriority();
 }
 
 void USBHandler::initialize(ConfigReader* _confReader) {

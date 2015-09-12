@@ -37,8 +37,6 @@ void MAfilterF::update() {
     if (counter == buffersize) {
         counter = 0;
     }
-
-    resetPriority();
 }
 
 void MAfilterF::kill() {

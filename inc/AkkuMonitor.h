@@ -23,7 +23,7 @@
 //#define VOLTAGE_DIVIDER_RATIO 		5.68f
 #define VOLTAGE_DIVIDER_RATIO       7.193f
 #define MEASUREMENT_FREQUENCY		1  // Hz
-#define SCALE_FACTOR				REFERENCE_VOLTAGE / 4095.0f
+#define SCALE_FACTOR				(REFERENCE_VOLTAGE / 4095.0f)
 
 /****************************/
 

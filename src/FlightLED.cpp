@@ -20,7 +20,6 @@ FlightLED::~FlightLED() {
 }
 void FlightLED::update() {
 
-    resetPriority();
 }
 
 void FlightLED::initialize() {

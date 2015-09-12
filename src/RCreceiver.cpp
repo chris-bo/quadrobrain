@@ -64,7 +64,6 @@ void RCreceiver::update() {
         signalLostTime = 0;
         signalLostBuzzerCounter = 0;
     }
-    resetPriority();
 }
 
 void RCreceiver::computeValues() {

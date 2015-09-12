@@ -84,6 +84,8 @@ void Scheduler::executeTasks() {
                      *
                      * */
                     taskArray[k]->update();
+                    /* reset priority after task update*/
+                    taskArray[k]->resetPriority();
 
                     /* update maxDuration */
                     timerTmp -= __HAL_TIM_GetCounter(scheduler_htim);

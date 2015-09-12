@@ -30,7 +30,6 @@ void Buzzer::update() {
         /* queue not empty */
         playNextTone();
     }
-    resetPriority();
 }
 
 void Buzzer::playTone(float frequency, uint16_t length) {

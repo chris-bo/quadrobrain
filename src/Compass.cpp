@@ -62,5 +62,4 @@ void Compass::update() {
     } else if (*out < -180.0f) {
         *out = *out + 180.0f;
     }
-
 }

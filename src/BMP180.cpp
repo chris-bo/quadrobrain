@@ -87,7 +87,6 @@ void BMP180::update() {
             cycle_counter++;
         }
     }
-    resetPriority();
 }
 
 void BMP180::initialize() {

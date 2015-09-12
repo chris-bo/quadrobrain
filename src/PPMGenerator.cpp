@@ -109,7 +109,6 @@ void PPMGenerator::update() {
         __HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_4, temp);
 
     }
-    resetPriority();
 }
 
 void PPMGenerator::initialize() {

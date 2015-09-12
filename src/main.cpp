@@ -201,7 +201,7 @@ void FlightMode() {
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
                           &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
-                          &pidRateZ, &motionControl, &usb, &akku, &baro, &leds,
+                          &pidRateZ, &motionControl, &gpsReceiver, &usb, &akku, &baro, &leds,
                           &beep1, &beep2, &flightLEDs };
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 

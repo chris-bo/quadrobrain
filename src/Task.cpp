@@ -31,8 +31,6 @@ void Task::update() {
 
 	/* Standard update function */
 
-	/* reset priority to default after execution */
-
 }
 
 void Task::initialize() {

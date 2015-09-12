@@ -68,7 +68,6 @@ void MPU9150::update() {
         RESET_FLAG(taskStatusFlags, MPU9150_FLAG_ERROR);
         getRawData();
     }
-
 }
 
 void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {

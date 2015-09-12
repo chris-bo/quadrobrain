@@ -21,7 +21,7 @@
 
 #define POLL_NAV_TIMEUTC
 #define POLL_NAV_SOL
-#define POLL_NAV_POSECEV
+#define POLL_NAV_POSECEF
 #define POLL_NAV_POSLLH
 #define POLL_NAV_VELECEF
 #define POLL_NAV_VELNED
@@ -89,12 +89,17 @@
 #define GPS_CONTINUOUS_REC                  0x80000000
 
 /* Optimization of Polling Defines */
+#ifdef POLL_NAV_SOL
+#undef POLL_NAV_POSECEF
+#undef POLL_NAV_VELECEF
+#endif
 
 #ifdef POLL_NAV_VELECEF
-#undef POLL_NAV_POSECEV
+#undef POLL_NAV_POSECEF
 #undef POLL_NAV_VELECEF
 #define POLL_NAV_SOL
 #endif
+
 
 
 

@@ -173,7 +173,6 @@ void GPS::update() {
     }
     // TODO GPS::update() check errors
 
-    resetPriority();
 }
 
 void GPS::pollUBXMessage(uint8_t msgClass, uint8_t msgID) {
@@ -415,8 +414,8 @@ void GPS::setTransferState() {
 #ifdef POLL_NAV_SOL
     transferState |= GPS_GET_NAV_SOL;
 #endif
-#ifdef POLL_NAV_POSECEV
-    transferState |= GPS_GET_ECEV;
+#ifdef POLL_NAV_POSECEF
+    transferState |= GPS_GET_ECEF;
 #endif
 #ifdef POLL_NAV_POSLLH
     transferState |= GPS_GET_LLH;

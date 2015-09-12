@@ -24,7 +24,7 @@ public:
     virtual void initialize();
     virtual void reset();
     virtual void kill();
-
+    void resetPriority();
     uint32_t duration;
     int8_t priority;
     int8_t defaultPriority;
@@ -40,7 +40,7 @@ protected:
 
     Status* status;
 
-    void resetPriority();
+
 };
 
 #endif /* TASK_H_ */

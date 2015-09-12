@@ -37,14 +37,12 @@ void AkkuMonitor::update() {
     } else {
         counter++;
     }
-
-    resetPriority();
 }
 
 void AkkuMonitor::conversionComplete() {
 
     uint32_t tmp = HAL_ADC_GetValue(akkumonitor_adc);
-    status->akkuVoltage = tmp * SCALE_FACTOR * VOLTAGE_DIVIDER_RATIO;
+    status->akkuVoltage = (float) (tmp * SCALE_FACTOR * VOLTAGE_DIVIDER_RATIO);
     HAL_ADC_Stop_IT(akkumonitor_adc);
 
     if (status->akkuVoltage < LOW_VOLTAGE_WARNING_THRESHOLD) {
