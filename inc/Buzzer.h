@@ -9,7 +9,14 @@
 #define BUZZER_H_
 
 #include <Task.h>
-
+/************************
+ * PINS
+ *
+ * BUZZER1: PF9 (TIM15)
+ * BUZZER2: PB9 (TIM17)
+ *
+ *
+ */
 
 class Buzzer: public Task {
 public:
