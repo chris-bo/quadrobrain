@@ -45,11 +45,14 @@ void AkkuMonitor::conversionComplete() {
     status->akkuVoltage = (float) (tmp * SCALE_FACTOR * VOLTAGE_DIVIDER_RATIO);
     HAL_ADC_Stop_IT(akkumonitor_adc);
 
-    if (status->akkuVoltage < LOW_VOLTAGE_WARNING_THRESHOLD) {
-        lowVoltageWarning();
-    } else {
-        RESET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
+    if (status->akkuVoltage > ONLY_USB_POWER_VOLTAGE_THRESHOLD) {
+        if (status->akkuVoltage < LOW_VOLTAGE_WARNING_THRESHOLD) {
+            lowVoltageWarning();
+        } else {
+            RESET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
+        }
     }
+    // else ignore akku voltage
 }
 
 void AkkuMonitor::lowVoltageWarning() {

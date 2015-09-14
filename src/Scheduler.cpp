@@ -220,7 +220,7 @@ void Scheduler::errorHandler() {
      */
     if ((!GET_FLAG(status->globalFlags,
                 (LOW_VOLTAGE_FLAG | USB_ERROR_FLAG | CPU_OVERLOAD_FLAG)))
-                && GET_FLAG(status->globalFlags, (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
+                && GET_FLAGS(status->globalFlags, (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
 
         /* at this time, there are no error flags set
          * -> reset error_flag and switch led error off

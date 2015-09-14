@@ -47,16 +47,18 @@ void RCreceiver::update() {
             status->rcSignalThrottle = 0.2f;
         }
         signalLostTime++;
-        if (status->qcSettings.enableBuzzerWarningRCLost) {
-            if (signalLostBuzzerCounter++ == SCHEDULER_INTERVALL_ms * 1000) {
-                signalLostBuzzerCounter = 0;
-                status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5, 300);
-                status->addToneToQueue(&status->buzzerQueue1, BUZZER_PAUSE, 100);
-                status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5, 300);
-            } else {
-                signalLostBuzzerCounter++;
+        if (GET_FLAG(taskStatusFlags, RC_RECEIVER_HAD_SIGNAL)) {
+            if (status->qcSettings.enableBuzzerWarningRCLost) {
+                if (signalLostBuzzerCounter++ == SCHEDULER_INTERVALL_ms * 1000) {
+                    signalLostBuzzerCounter = 0;
+                    status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5, 300);
+                    status->addToneToQueue(&status->buzzerQueue1, BUZZER_PAUSE, 100);
+                    status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5, 300);
+                } else {
+                    signalLostBuzzerCounter++;
+                }
             }
-        }
+        }  // else ignore signal lost (never had signal)
 
     } else {
         SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
@@ -111,6 +113,9 @@ void RCreceiver::computeValues() {
         status->rcSignalSwitch = 0;
     }
 
+    /* set had signal */
+    SET_FLAG(taskStatusFlags, RC_RECEIVER_HAD_SIGNAL);
+
 }
 
 void RCreceiver::overrunIRQ() {
@@ -139,13 +144,13 @@ void RCreceiver::captureIRQ() {
                     RCreceiver_htim,
                     RC_RECEIVER_INPUT_CHANNEL);
         __HAL_TIM_SetCounter(RCreceiver_htim, 0);
-        if (currentChannel == 7) {
+        currentChannel++;
+        if (currentChannel == 8) {
             /* all pulses detected and saved */
             /* waiting for overrun interrupt to resync */
             /* reset no signal flag*/
             RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
         }
-        currentChannel++;
     }
 }
 

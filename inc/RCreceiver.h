@@ -21,6 +21,7 @@
 #define RC_RECEIVER_FLAG_SEQUENCE_COMPLETE 		0x0200
 
 #define RC_RECEIVER_FLAG_NO_SIGNAL		 		0x0400
+#define RC_RECEIVER_HAD_SIGNAL                  0x0800
 #define RC_RECEIVER_FLAG_ERROR					0x8000
 
 /* number of stored rec channels */

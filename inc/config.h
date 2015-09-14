@@ -108,6 +108,8 @@
  * */
 #define AKKUMONITOR_DEFAULT_PRIORITY			10
 #define LOW_VOLTAGE_WARNING_THRESHOLD           10.5f // [V]
+#define ONLY_USB_POWER_VOLTAGE_THRESHOLD        1.0f //[V] assume only usb
+                                                     // power below this threshold
 
 /****************************/
 /* Pressure Sensor */
