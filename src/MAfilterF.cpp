@@ -17,6 +17,10 @@ MAfilterF::MAfilterF(Status* statusPtr, int8_t defaultPrio, float* _input,
     buffersize = _buffersize;
     buffer = new float[buffersize];
 
+    for (uint16_t i = 0; i < buffersize; i++) {
+        buffer[i] = 0;
+    }
+
 }
 
 MAfilterF::~MAfilterF() {

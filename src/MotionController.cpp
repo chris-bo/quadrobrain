@@ -80,8 +80,10 @@ void MotionController::update() {
     accelerationFilterZ->update();
 
     /* cut horizontal acceleration noise
-     *
      */
+//    horizontalAccelerationFiltered.x = (float) (((int32_t) (horizontalAccelerationFiltered.x * 1000)) / 1000.0f);
+//    horizontalAccelerationFiltered.y = (float) (((int32_t) (horizontalAccelerationFiltered.y * 1000)) / 1000.0f);
+//    horizontalAccelerationFiltered.z = (float) (((int32_t) (horizontalAccelerationFiltered.z * 1000)) / 1000.0f);
 
     /* calc velocities */
 
