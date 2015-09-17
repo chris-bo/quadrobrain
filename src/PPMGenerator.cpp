@@ -40,13 +40,13 @@ void PPMGenerator::update() {
         /* todo ppmgen: test sign of controllervalue Z*/
         if (*throttle > PPM_GENERATOR_THROTTLE_THRESHOLD) {
             motorValuesAvg[0] += *throttle * THROTTLE_SCALING
-                        - *controllerValueY - *controllerValueZ;
+                        - *controllerValueY + *controllerValueZ;
             motorValuesAvg[1] += *throttle * THROTTLE_SCALING
-                        + *controllerValueX + *controllerValueZ;
+                        + *controllerValueX - *controllerValueZ;
             motorValuesAvg[2] += *throttle * THROTTLE_SCALING
-                        + *controllerValueY - *controllerValueZ;
+                        + *controllerValueY + *controllerValueZ;
             motorValuesAvg[3] += *throttle * THROTTLE_SCALING
-                        - *controllerValueX + *controllerValueZ;
+                        - *controllerValueX - *controllerValueZ;
             counter++;
         } else {
             // Throttle zu niedrig => Reglerwerte werden nicht beruecksichtig

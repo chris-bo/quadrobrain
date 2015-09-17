@@ -77,7 +77,7 @@
  */
 #define PID_DEFAULT_PRIORITY					0
 #define PID_THROTTLE_THRESHOLD                  0.1f
-#define PID_LIMIT                               100.0f // Range -100% -> +100%
+#define PID_LIMIT                               0.30f
 
 /* set to zero to disable limiting e_sum */
 #define PID_SUM_LIMIT                           INFINITY
@@ -88,12 +88,12 @@
 /* HorizontalMotion Control */
 #define HorizontalMotionControl_PRIORITY        0
 
-#define ACCELERATION_MA_FILTER_SIZE             5
+#define ACCELERATION_MA_FILTER_SIZE             10
 
 #define VELOCITY_PID_LIMIT                      INFINITY
 #define VELOCITY_PID_SUM_LIMIT                  INFINITY
 
-#define ACCELERATION_PID_LIMIT                  INFINITY
+#define ACCELERATION_PID_LIMIT                  5
 #define ACCELERATION_PID_SUM_LIMIT              INFINITY
 /****************************/
 /* USB
@@ -108,7 +108,7 @@
  * */
 #define AKKUMONITOR_DEFAULT_PRIORITY			10
 #define LOW_VOLTAGE_WARNING_THRESHOLD           10.5f // [V]
-#define ONLY_USB_POWER_VOLTAGE_THRESHOLD        1.0f //[V] assume only usb
+#define ONLY_USB_POWER_VOLTAGE_THRESHOLD        4.0f //[V] assume only usb
                                                      // power below this threshold
 
 /****************************/

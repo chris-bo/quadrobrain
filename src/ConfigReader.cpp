@@ -34,8 +34,21 @@ void ConfigReader::loadConfiguration(Status* status) {
     loadVariable(&status->pidSettingsRotationZ.d, PID_Z_D_ADDR);
     loadVariable(&status->pidSettingsRotationZ.gain, PID_Z_GAIN_ADDR);
     loadVariable(&status->pidSettingsRotationZ.scaleSetPoint, PID_Z_SCALE_ADDR);
+
     loadVariable(&status->filterCoefficientXY, FILTERCOEFF_XY_ADDR);
     loadVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR);
+
+    loadVariable(&status->pidSettingsVelocity.p, PID_VEL_P_ADDR);
+    loadVariable(&status->pidSettingsVelocity.i, PID_VEL_I_ADDR);
+    loadVariable(&status->pidSettingsVelocity.d, PID_VEL_D_ADDR);
+    loadVariable(&status->pidSettingsVelocity.gain, PID_VEL_GAIN_ADDR);
+    loadVariable(&status->pidSettingsVelocity.scaleSetPoint, PID_VEL_SCALE_ADDR);
+
+    loadVariable(&status->pidSettingsAcceleration.p, PID_ACCEL_P_ADDR);
+    loadVariable(&status->pidSettingsAcceleration.i, PID_ACCEL_I_ADDR);
+    loadVariable(&status->pidSettingsAcceleration.d, PID_ACCEL_D_ADDR);
+    loadVariable(&status->pidSettingsAcceleration.gain, PID_ACCEL_GAIN_ADDR);
+    loadVariable(&status->pidSettingsAcceleration.scaleSetPoint, PID_ACCEL_SCALE_ADDR);
 
     /* load QC settings*/
     loadVariable(&status->qcSettings.enableBuzzerWarningLowVoltage, QC_CONFIG_BUZZ_WARN_LOW_VOLT);
@@ -69,6 +82,18 @@ void ConfigReader::saveConfiguration(Status* status) {
     saveVariable(&status->pidSettingsRotationZ.scaleSetPoint, PID_Z_SCALE_ADDR, 0);
     saveVariable(&status->filterCoefficientXY, FILTERCOEFF_XY_ADDR, 0);
     saveVariable(&status->filterCoefficientZ, FILTERCOEFF_Z_ADDR, 0);
+
+    saveVariable(&status->pidSettingsVelocity.p, PID_VEL_P_ADDR, 0);
+    saveVariable(&status->pidSettingsVelocity.i, PID_VEL_I_ADDR, 0);
+    saveVariable(&status->pidSettingsVelocity.d, PID_VEL_D_ADDR, 0);
+    saveVariable(&status->pidSettingsVelocity.gain, PID_VEL_GAIN_ADDR, 0);
+    saveVariable(&status->pidSettingsVelocity.scaleSetPoint, PID_VEL_SCALE_ADDR, 0);
+
+    saveVariable(&status->pidSettingsAcceleration.p, PID_ACCEL_P_ADDR, 0);
+    saveVariable(&status->pidSettingsAcceleration.i, PID_ACCEL_I_ADDR, 0);
+    saveVariable(&status->pidSettingsAcceleration.d, PID_ACCEL_D_ADDR, 0);
+    saveVariable(&status->pidSettingsAcceleration.gain, PID_ACCEL_GAIN_ADDR, 0);
+    saveVariable(&status->pidSettingsAcceleration.scaleSetPoint, PID_ACCEL_SCALE_ADDR, 0);
 
 
     /* save QC settings*/

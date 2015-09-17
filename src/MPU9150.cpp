@@ -192,7 +192,6 @@ void MPU9150::scaleRawData() {
 
     /* use temp measurement of bmp180 */
     //status->temp = rawTempData * MPU9150_TEMPERATURE_SCALE_FACTOR + 35;
-
     if (GET_FLAG(taskStatusFlags, MPU9150_FLAG_CONTINUOUS_RECEPTION)) {
         getRawData();
     }
@@ -203,7 +202,7 @@ void MPU9150::getBias() {
     int32_t bias[3] = { 0, 0, 0 };
     int16_t bias_tmp[3];
 
-    for (uint8_t i = 0; i < NUMBER_OFFSET_VALUES; i++) {
+    for (uint16_t i = 0; i < NUMBER_OFFSET_VALUES; i++) {
         HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_XOUT_H,
                     I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
 
@@ -404,108 +403,112 @@ void MPU9150::disableMagnetData() {
 
 void MPU9150::configOffsetRegisters() {
 
-    int64_t offset_tmp[3] = { 0, 0, 0 };
-    int16_t raw_offset_tmp[3] = { 0, 0, 0 };
-    int16_t accel_offset[3] = { 0, 0, 0 };
+    int32_t gyro_offset_tmp[3] = { 0, 0, 0 };  // temp var for loop
+    int16_t gyro_raw_offset_tmp[3] = { 0, 0, 0 };
+    int16_t gyro_offset_reg[3] = { 0, 0, 0 };   // content of offset reg
 
-    /* Gyro Offset:
-     * set to FULLSCALLE_1000
-     * get NUMBER_Offset_VALUES Values
-     * compute average
-     * write to offset registers
+    int32_t accel_offset_tmp[3] = { 0, 0, 0 };  // temp var for loop
+    int16_t accel_raw_offset_tmp[3] = { 0, 0, 0 };
+    int16_t accel_offset_reg[3] = { 0, 0, 0 };  // content of offset reg
+
+    /* offsets
+     * set gyro to MPU9150_GYRO_FULLSCALE_1000
+     * set accel to MPU9150_ACCEL_FULLSCALE_16g (error in datasheet)
+     * get content of offset regs
+     *
+     * get NUMBER_OFFSET_VALUES measurements
+     *
+     * compute average and new offset_reg content
+     * update offset regs
      */
+
+    /* fullscale config*/
     i2c_buffer[0] = MPU9150_GYRO_FULLSCALE_1000;
     HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_GYRO_CONFIG,
                 I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
-
-    for (uint8_t i = 0; i < NUMBER_OFFSET_VALUES; i++) {
-        HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_GYRO_XOUT_H,
-                    I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
-
-        raw_offset_tmp[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
-        raw_offset_tmp[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
-        raw_offset_tmp[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
-
-        offset_tmp[0] += raw_offset_tmp[0];
-        offset_tmp[1] += raw_offset_tmp[1];
-        offset_tmp[2] += raw_offset_tmp[2];
-        HAL_Delay(5);
-    }
-
-    /* convert values and transfer to MPU Offset Registers*/
-    raw_offset_tmp[0] = (int16_t) ((-offset_tmp[0]) / NUMBER_OFFSET_VALUES);
-    raw_offset_tmp[1] = (int16_t) ((-offset_tmp[1]) / NUMBER_OFFSET_VALUES);
-    raw_offset_tmp[2] = (int16_t) ((-offset_tmp[2]) / NUMBER_OFFSET_VALUES);
-
-    i2c_buffer[0] = (uint8_t) ((raw_offset_tmp[0] >> 8) & 0xFF);
-    i2c_buffer[1] = (uint8_t) (raw_offset_tmp[0] & 0xFF);
-    i2c_buffer[2] = (uint8_t) ((raw_offset_tmp[1] >> 8) & 0xFF);
-    i2c_buffer[3] = (uint8_t) (raw_offset_tmp[1] & 0xFF);
-    i2c_buffer[4] = (uint8_t) ((raw_offset_tmp[2] >> 8) & 0xFF);
-    i2c_buffer[5] = (uint8_t) (raw_offset_tmp[2] & 0xFF);
-
-    HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XG_OFFS_USRH,
-                I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
-
-    /* Accel Offset:
-     * set to FULLSCALLE_8G
-     * Read offset registers
-     * get NUMBER_OFFSET_VALUES Values
-     * compute average
-     * new reg value = ((computed_bias - initial_offset) &~1)
-     *
-     */
-
-    i2c_buffer[0] = MPU9150_ACCEL_FULLSCALE_8g;
+    i2c_buffer[0] = MPU9150_ACCEL_FULLSCALE_16g;
     HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_CONFIG,
                 I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
+
+    /* get offset regs*/
+    HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XG_OFFS_USRH,
+                I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
+
+    gyro_offset_reg[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
+    gyro_offset_reg[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
+    gyro_offset_reg[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
 
     HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XA_OFFS_USRH,
                 I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
 
-    accel_offset[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
-    accel_offset[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
-    accel_offset[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
+    accel_offset_reg[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
+    accel_offset_reg[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
+    accel_offset_reg[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
 
-    offset_tmp[0] = 0;
-    offset_tmp[1] = 0;
-    offset_tmp[2] = 0;
-
-    for (uint8_t i = 0; i < NUMBER_OFFSET_VALUES; i++) {
+    for (uint16_t i = 0; i < NUMBER_OFFSET_VALUES; i++) {
+        /* read all data regs (accel , temp, gyro) */
         HAL_I2C_Mem_Read(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_ACCEL_XOUT_H,
-                    I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
+                    I2C_MEMADD_SIZE_8BIT, i2c_buffer, 14, MPU9150_I2C_TIMEOUT);
 
-        raw_offset_tmp[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
-        raw_offset_tmp[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
-        raw_offset_tmp[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
+        accel_raw_offset_tmp[0] = (int16_t) (i2c_buffer[1] | (i2c_buffer[0] << 8));
+        accel_raw_offset_tmp[1] = (int16_t) (i2c_buffer[3] | (i2c_buffer[2] << 8));
+        accel_raw_offset_tmp[2] = (int16_t) (i2c_buffer[5] | (i2c_buffer[4] << 8));
 
-        offset_tmp[0] += raw_offset_tmp[0];
-        offset_tmp[1] += raw_offset_tmp[1];
-        offset_tmp[2] += raw_offset_tmp[2];
-        HAL_Delay(5);
+        accel_offset_tmp[0] += accel_raw_offset_tmp[0];
+        accel_offset_tmp[1] += accel_raw_offset_tmp[1];
+        accel_offset_tmp[2] += accel_raw_offset_tmp[2];
+
+        gyro_raw_offset_tmp[0] = (int16_t) (i2c_buffer[9] | (i2c_buffer[8] << 8));
+        gyro_raw_offset_tmp[1] = (int16_t) (i2c_buffer[11] | (i2c_buffer[10] << 8));
+        gyro_raw_offset_tmp[2] = (int16_t) (i2c_buffer[13] | (i2c_buffer[12] << 8));
+
+        gyro_offset_tmp[0] += gyro_raw_offset_tmp[0];
+        gyro_offset_tmp[1] += gyro_raw_offset_tmp[1];
+        gyro_offset_tmp[2] += gyro_raw_offset_tmp[2];
+
+        HAL_Delay(4);
     }
 
-    raw_offset_tmp[0] = (offset_tmp[0] / NUMBER_OFFSET_VALUES);
-    raw_offset_tmp[1] = (offset_tmp[1] / NUMBER_OFFSET_VALUES);
-    raw_offset_tmp[2] = (offset_tmp[2] / NUMBER_OFFSET_VALUES);
+    /* compute measured offset */
+    accel_raw_offset_tmp[0] = (int16_t) (accel_offset_tmp[0] / NUMBER_OFFSET_VALUES);
+    accel_raw_offset_tmp[1] = (int16_t) (accel_offset_tmp[1] / NUMBER_OFFSET_VALUES);
+    accel_raw_offset_tmp[2] = (int16_t) (accel_offset_tmp[2] / NUMBER_OFFSET_VALUES);
 
-    // compensate G on Z axis
-    if (raw_offset_tmp[2] > 0) {
-        raw_offset_tmp[2] = (int16_t) (raw_offset_tmp[2] - 4096);
+    gyro_raw_offset_tmp[0] = (int16_t) (gyro_offset_tmp[0] / NUMBER_OFFSET_VALUES);
+    gyro_raw_offset_tmp[1] = (int16_t) (gyro_offset_tmp[1] / NUMBER_OFFSET_VALUES);
+    gyro_raw_offset_tmp[2] = (int16_t) (gyro_offset_tmp[2] / NUMBER_OFFSET_VALUES);
+
+    gyro_offset_reg[0] -= gyro_raw_offset_tmp[0];
+    gyro_offset_reg[1] -= gyro_raw_offset_tmp[1];
+    gyro_offset_reg[2] -= gyro_raw_offset_tmp[2];
+
+    /* compensate G on Z axis */
+    if (accel_raw_offset_tmp[2] > 0) {
+        accel_raw_offset_tmp[2] -= (int16_t) 2048;
     } else {
-        raw_offset_tmp[2] = (int16_t) (raw_offset_tmp[2] + 4096);
+        accel_raw_offset_tmp[2] += (int16_t) 2048;
     }
+    accel_offset_reg[0] -= (accel_raw_offset_tmp[0] & ~1);
+    accel_offset_reg[1] -= (accel_raw_offset_tmp[1] & ~1);
+    accel_offset_reg[2] -= (accel_raw_offset_tmp[2] & ~1);
 
-    accel_offset[0] = (int16_t) ((accel_offset[0] - raw_offset_tmp[0]) & ~1);
-    accel_offset[1] = (int16_t) ((accel_offset[1] - raw_offset_tmp[1]) & ~1);
-    accel_offset[2] = (int16_t) ((accel_offset[2] - raw_offset_tmp[2]) & ~1);
+    /* write gyro offset */
+    i2c_buffer[0] = (uint8_t) ((gyro_offset_reg[0] >> 8) & 0xFF);
+    i2c_buffer[1] = (uint8_t) (gyro_offset_reg[0] & 0xFF);
+    i2c_buffer[2] = (uint8_t) ((gyro_offset_reg[1] >> 8) & 0xFF);
+    i2c_buffer[3] = (uint8_t) (gyro_offset_reg[1] & 0xFF);
+    i2c_buffer[4] = (uint8_t) ((gyro_offset_reg[2] >> 8) & 0xFF);
+    i2c_buffer[5] = (uint8_t) (gyro_offset_reg[2] & 0xFF);
 
-    i2c_buffer[0] = (uint8_t) ((accel_offset[0] >> 8) & 0xFF);
-    i2c_buffer[1] = (uint8_t) (accel_offset[0] & 0xFF);
-    i2c_buffer[2] = (uint8_t) ((accel_offset[1] >> 8) & 0xFF);
-    i2c_buffer[3] = (uint8_t) (accel_offset[1] & 0xFF);
-    i2c_buffer[4] = (uint8_t) ((accel_offset[2] >> 8) & 0xFF);
-    i2c_buffer[5] = (uint8_t) (accel_offset[2] & 0xFF);
+    HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XG_OFFS_USRH,
+                I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);
+    /* write accel offset */
+    i2c_buffer[0] = (uint8_t) ((accel_offset_reg[0] >> 8) & 0xFF);
+    i2c_buffer[1] = (uint8_t) (accel_offset_reg[0] & 0xFF);
+    i2c_buffer[2] = (uint8_t) ((accel_offset_reg[1] >> 8) & 0xFF);
+    i2c_buffer[3] = (uint8_t) (accel_offset_reg[1] & 0xFF);
+    i2c_buffer[4] = (uint8_t) ((accel_offset_reg[2] >> 8) & 0xFF);
+    i2c_buffer[5] = (uint8_t) (accel_offset_reg[2] & 0xFF);
 
     HAL_I2C_Mem_Write(mpu9150_i2c, MPU9150_I2C_ADDRESS, MPU9150_XA_OFFS_USRH,
                 I2C_MEMADD_SIZE_8BIT, i2c_buffer, 6, MPU9150_I2C_TIMEOUT);

@@ -38,6 +38,17 @@
 #define QC_CONFIG_EN_MOTORS             0x0033
 
 
+#define PID_VEL_P_ADDR                   0x0040
+#define PID_VEL_I_ADDR                   0x0044
+#define PID_VEL_D_ADDR                   0x0048
+#define PID_VEL_GAIN_ADDR                0x004C
+#define PID_VEL_SCALE_ADDR               0x0050
+#define PID_ACCEL_P_ADDR                 0x0054
+#define PID_ACCEL_I_ADDR                 0x0058
+#define PID_ACCEL_D_ADDR                 0x005C
+#define PID_ACCEL_GAIN_ADDR              0x0060
+#define PID_ACCEL_SCALE_ADDR             0x0064
+
 class ConfigReader {
 public:
     ConfigReader(I2C_HandleTypeDef* i2c);

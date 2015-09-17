@@ -190,7 +190,7 @@
 /* End Flags */
 /********************************************************************/
 /* Settings */
-#define NUMBER_OFFSET_VALUES					100
+#define NUMBER_OFFSET_VALUES					500
 
 #define I_AM_MPU9150						0x68
 #define I_AM_AK8975C						0x48
@@ -212,7 +212,7 @@
 
 /* sets initial fullscale setting */
 #define MPU9150_GYRO_FULL_SCALE				MPU9150_GYRO_FULLSCALE_1000
-#define MPU9150_ACCEL_FULL_SCALE			MPU9150_ACCEL_FULLSCALE_4g
+#define MPU9150_ACCEL_FULL_SCALE			MPU9150_ACCEL_FULLSCALE_8g
 
 /* Scale factors 
  * real_value = register_value * scale
