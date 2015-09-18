@@ -19,6 +19,9 @@ Status::Status() {
     angle = {0,0,0};
     angleSetpoint = {0,0,0};
 
+    horizontalAcceleration = {0,0,0};
+    accelerationSetpoint = {0,0,0};
+
     velocity = {0,0,0};
     velocitySetpoint = {0,0,0};
 
@@ -110,6 +113,9 @@ void Status::reset() {
 
     angle = {0,0,0};
     angleSetpoint = {0,0,0};
+
+    horizontalAcceleration = {0,0,0};
+    accelerationSetpoint = {0,0,0};
 
     velocity = {0,0,0};
     velocitySetpoint = {0,0,0};

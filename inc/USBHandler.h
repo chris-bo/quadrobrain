@@ -96,6 +96,8 @@
 #define DATA_ID_MAGNETOMETER        0x03
 #define DATA_ID_ANGLE               0x04
 #define DATA_ID_ANGLE_SP            0x05
+#define DATA_ID_HOR_ACCEL           0x1C
+#define DATA_ID_ACCEL_SP            0x1D
 #define DATA_ID_VELOCITY            0x06
 #define DATA_ID_VELOCITY_SP         0x07
 #define DATA_ID_HEIGHT              0x08
@@ -123,6 +125,9 @@
 #define DATA_ID_QC_SETTING          0x1A
 
 #define DATA_ID_GLOBAL_FLAGS        0x1B
+
+/* 0x1c and 0x1d used (acceleration)*/
+//next free data_id         0x1E
 
 #define DATA_ID_EOF                 0x00
 #define DATA_ID_BUFFER_OVERRUN      0xFF

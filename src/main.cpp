@@ -230,6 +230,14 @@ void FlightMode() {
 //    HAL_Delay(2000);
 
     while (1) {
+        /* testcode to stop after some time */
+        if (status.uptime == (3*60*1000)){
+             while (1) {
+                     HAL_Delay(2000);
+             }
+         }
+
+
         if ((usb.usb_mode_request == USB_MODE_CONFIG)
                     || (usb.usb_mode_request == USB_MODE_SAVE_CONFIG)) {
             ConfigMode();

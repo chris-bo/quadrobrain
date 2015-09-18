@@ -10,55 +10,53 @@
 MotionController::MotionController(Status* _status, int8_t _defaultPrio)
             : Task(_status, _defaultPrio) {
 
-    horizontalAcceleration = {0,0,0};
     horizontalAccelerationFiltered = {0,0,0};
-    accelerationSetpoint = {0,0,0};
 
     /* todo set to throttle if automated control is enabled*/
     throttle_out = new float();
 
     /* setup filters */
-    accelerationFilterX = new MAfilterF(status, 0 ,&horizontalAcceleration.x,
+    accelerationFilterX = new MAfilterF(status, 0 ,&status->horizontalAcceleration.x,
                 &horizontalAccelerationFiltered.x, ACCELERATION_MA_FILTER_SIZE);
 
-    accelerationFilterY = new MAfilterF(status, 0 ,&horizontalAcceleration.y,
+    accelerationFilterY = new MAfilterF(status, 0 ,&status->horizontalAcceleration.y,
                 &horizontalAccelerationFiltered.y, ACCELERATION_MA_FILTER_SIZE);
 
-    accelerationFilterZ = new MAfilterF(status, 0 ,&horizontalAcceleration.z,
+    accelerationFilterZ = new MAfilterF(status, 0 ,&status->horizontalAcceleration.z,
                 &horizontalAccelerationFiltered.z, ACCELERATION_MA_FILTER_SIZE);
 
     /* setup pids*/
     veloctityPIDx = new PIDController(_status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status->velocity.x,
                 &horizontalAccelerationFiltered.x, &status->velocitySetpoint.x,
-                &accelerationSetpoint.x, 1, VELOCITY_PID_LIMIT,
+                &status->accelerationSetpoint.x, 1, VELOCITY_PID_LIMIT,
                 VELOCITY_PID_SUM_LIMIT, true);
 
     veloctityPIDy = new PIDController(status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status->velocity.y,
                 &horizontalAccelerationFiltered.y, &status->velocitySetpoint.y,
-                &accelerationSetpoint.y, 1, VELOCITY_PID_LIMIT,
+                &status->accelerationSetpoint.y, 1, VELOCITY_PID_LIMIT,
                 VELOCITY_PID_SUM_LIMIT, true);
 
     veloctityPIDz = new PIDController(status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status->velocity.z,
                 &horizontalAccelerationFiltered.z, &status->velocitySetpoint.z,
-                &accelerationSetpoint.z, 1, VELOCITY_PID_LIMIT,
+                &status->accelerationSetpoint.z, 1, VELOCITY_PID_LIMIT,
                 VELOCITY_PID_SUM_LIMIT, true);
 
     accelerationPIDx = new PIDController(status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &horizontalAccelerationFiltered.x,
-                0, &accelerationSetpoint.x, &status->angleSetpoint.x, 1,
+                0, &status->accelerationSetpoint.x, &status->angleSetpoint.x, 1,
                 ACCELERATION_PID_LIMIT, ACCELERATION_PID_SUM_LIMIT, false);
 
     accelerationPIDy = new PIDController(status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &horizontalAccelerationFiltered.y,
-                0, &accelerationSetpoint.y, &status->angleSetpoint.y, 1,
+                0, &status->accelerationSetpoint.y, &status->angleSetpoint.y, 1,
                 ACCELERATION_PID_LIMIT, ACCELERATION_PID_SUM_LIMIT, false);
 
     accelerationPIDz = new PIDController(status, 0,
                 (float) SCHEDULER_INTERVALL_ms / 1000.0f, &horizontalAccelerationFiltered.z,
-                0, &accelerationSetpoint.z, throttle_out, 1, ACCELERATION_PID_LIMIT,
+                0, &status->accelerationSetpoint.z, throttle_out, 1, ACCELERATION_PID_LIMIT,
                 ACCELERATION_PID_SUM_LIMIT, false);
 }
 MotionController::~MotionController() {
@@ -69,21 +67,15 @@ void MotionController::update() {
 
     /* calc horizontal accelerations */
 
-    horizontalAcceleration.x = cosf(status->angle.y) * status->accel.x;
-    horizontalAcceleration.y = cosf(status->angle.x) * status->accel.y;
-    horizontalAcceleration.z = cosf(status->angle.x) * cosf(status->angle.y)
+    status->horizontalAcceleration.x = cosf(status->angle.y) * status->accel.x;
+    status->horizontalAcceleration.y = cosf(status->angle.x) * status->accel.y;
+    status->horizontalAcceleration.z = cosf(status->angle.x) * cosf(status->angle.y)
                 * status->accel.z - G;
 
     /* filter accelerations */
     accelerationFilterX->update();
     accelerationFilterY->update();
     accelerationFilterZ->update();
-
-    /* cut horizontal acceleration noise
-     */
-//    horizontalAccelerationFiltered.x = (float) (((int32_t) (horizontalAccelerationFiltered.x * 1000)) / 1000.0f);
-//    horizontalAccelerationFiltered.y = (float) (((int32_t) (horizontalAccelerationFiltered.y * 1000)) / 1000.0f);
-//    horizontalAccelerationFiltered.z = (float) (((int32_t) (horizontalAccelerationFiltered.z * 1000)) / 1000.0f);
 
     /* calc velocities */
 
@@ -133,8 +125,4 @@ void MotionController::reset() {
     accelerationPIDx->reset();
     accelerationPIDy->reset();
     accelerationPIDz->reset();
-
-    horizontalAcceleration = {0,0,0};
-    accelerationSetpoint = {0,0,0};
-
 }

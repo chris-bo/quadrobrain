@@ -90,9 +90,11 @@
 
 #define ACCELERATION_MA_FILTER_SIZE             10
 
-#define VELOCITY_PID_LIMIT                      INFINITY
+/* velocity pid limit = acceleration setpoint limit */
+#define VELOCITY_PID_LIMIT                      G
 #define VELOCITY_PID_SUM_LIMIT                  INFINITY
 
+/* acceleration pid limit ^= angle setpoint limit */
 #define ACCELERATION_PID_LIMIT                  5
 #define ACCELERATION_PID_SUM_LIMIT              INFINITY
 /****************************/

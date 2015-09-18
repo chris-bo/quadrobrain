@@ -339,6 +339,26 @@ void USBHandler::sendCustomFrame() {
                                 status->angleSetpoint.z);
                 }
                 break;
+            case DATA_ID_HOR_ACCEL:
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->horizontalAcceleration.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->horizontalAcceleration.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->horizontalAcceleration.z);
+                }
+                break;
+            case DATA_ID_ACCEL_SP:
+                if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->accelerationSetpoint.x);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->accelerationSetpoint.y);
+                    bufferPos = fillBuffer(UserTxBufferFS, bufferPos,
+                                status->accelerationSetpoint.z);
+                }
+                break;
             case DATA_ID_VELOCITY:
                 if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
                     bufferPos = fillBuffer(UserTxBufferFS, bufferPos,

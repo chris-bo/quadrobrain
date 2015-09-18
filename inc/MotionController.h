@@ -24,9 +24,7 @@ public:
 
 private:
 
-    XYZ_Data horizontalAcceleration;
     XYZ_Data horizontalAccelerationFiltered;
-    XYZ_Data accelerationSetpoint;
 
     PIDController* veloctityPIDx;
     PIDController* veloctityPIDy;

@@ -70,6 +70,10 @@ public:
     XYZ_Data angle;
     XYZ_Data angleSetpoint;
 
+
+    XYZ_Data horizontalAcceleration;
+    XYZ_Data accelerationSetpoint;
+
     /* velocity setpoint */
     XYZ_Data velocitySetpoint;
     XYZ_Data velocity;
