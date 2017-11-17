@@ -65,14 +65,6 @@ USBHandler usb(&status, USB_DEFAULT_PRIORITY, &hUsbDeviceFS);
 /* GPS Receiver */
 GPS gpsReceiver(&status, GPS_DEFAULT_PRIORITY, &huart1);
 
-/* Sensor data fusion Filters*/
-ComplementaryFilter compFilterX(&status, 0, &status.accel.y, &status.accel.z,
-            &status.rate.x, &status.angle.x, &status.filterCoefficientXY);
-ComplementaryFilter compFilterY(&status, 0, &status.accel.x, &status.accel.z,
-            &status.rate.y, &status.angle.y, &status.filterCoefficientXY);
-Compass compFilterNorth(&status, 0, &status.magnetfield.x, &status.magnetfield.y,
-            &status.angle.x, &status.angle.y, &status.rate.z, &status.angle.z,
-            &status.filterCoefficientZ);
 
 /* PIDs low level */
 PIDController pidAngleX(&status, PID_DEFAULT_PRIORITY,
@@ -89,6 +81,12 @@ PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
             (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rate.z, 0,
             &status.rcSignalYaw, &status.motorSetpoint.z, PID_Z_CONTROL_VALUE_GAIN,
             PID_LIMIT, PID_SUM_LIMIT, false);
+
+/* IMU to get orientation */
+IMU imu(&status, IMU_DEFAULT_PRIRORITY);
+
+/* Altimeter */
+Altimeter altimeter(&status, ALTIMETER_DEFAULT_PRIRORITY);
 
 /* Motion Control
  * includes PIDs for velocity and acceleration
@@ -179,9 +177,9 @@ void FlightMode() {
     baro.initialize();
     gpsReceiver.initialize();
 
-    compFilterX.initialize();
-    compFilterY.initialize();
-    compFilterNorth.initialize();
+    imu.initialize();
+    altimeter.initialize();
+
 
     /* Initialize PID for X Y and Z axis */
     pidAngleX.initialize(&status.pidSettingsAngleXY);
@@ -199,8 +197,8 @@ void FlightMode() {
     flightLEDs.initialize();
 
     /* create tasks and start scheduler */
-    Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
-                          &compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY,
+    Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &imu, &altimeter,
+                          &pidAngleX, &pidAngleY,
                           &pidRateZ, &motionControl, &gpsReceiver, &usb, &akku, &baro, &leds,
                           &beep1, &beep2, &flightLEDs };
     scheduler.start(taskarray, sizeof(taskarray) / 4);

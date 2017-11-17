@@ -14,7 +14,6 @@ BMP180::BMP180(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
 
     bmp_i2c = i2c;
     temp = 0;
-    height_start = 0;
 
     ac1 = 0;
     ac2 = 0;
@@ -208,6 +207,7 @@ void BMP180::calculateTemp() {
     x2 = (mc * 2048) / (x1 + md);
     b5 = x1 + x2;
     temp = (b5 + 8) / 16;
+    status->temp =  (float) temp / 10.0f;
 
 }
 
@@ -252,28 +252,9 @@ void BMP180::calculatePressure() {
         status->pressure = (p * BMP180_PRESSURE_TP
                     + status->pressure * (100 - BMP180_PRESSURE_TP)) / 100;
     }
-    calculateHeight();
 }
 
-void BMP180::calculateHeight() {
-    float x1 = (float) (status->pressure) / 101325.0f;
-    float x2 = (1 - powf(x1, 0.190294957f));
-    x2 = x2 * 44330;
 
-    if (!GET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE)) {
-        // initializing routine
-        status->height = x2;
-        height_start =  x2;
-        status->height_rel = 0;
-        status->d_h =0;
-    } else {
-        status->d_h = x2  - status->height;
-        status->height = x2;
-        status->height_rel = status->height - height_start;
-        status->temp = (float) temp / 10.0f;
-    }
-
-}
 
 void BMP180::kill() {
 
@@ -295,7 +276,7 @@ void BMP180::kill() {
 
     cycle_counter = 0;
     pressure_counter = 0;
-    height_start = 0;
+
 
     RESET_FLAG(status->globalFlags, BMP180_OK_FLAG);
     RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);

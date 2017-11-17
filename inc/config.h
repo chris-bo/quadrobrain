@@ -125,6 +125,21 @@
  */
 
 #define GPS_DEFAULT_PRIORITY                    5
+
+/****************************/
+/* IMU
+ *
+ */
+#define IMU_DEFAULT_PRIRORITY					0
+
+
+
+/****************************/
+/* IMU
+ *
+ */
+#define ALTIMETER_DEFAULT_PRIRORITY				0
+
 /****************************/
 /* LEDs
  *
