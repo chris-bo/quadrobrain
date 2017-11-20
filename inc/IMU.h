@@ -32,9 +32,10 @@ private:
     ComplementaryFilter* compFilterY;
     Compass* compFilterNorth;
 
-    /* filter for horizontal acceleration */
+    /* unfiltered data for horizontal acceleration */
     XYZ_Data horizontalAccelerationUnfiltered;
 
+    /* Filter accelerations */
     MAfilterF* accelerationFilterX;
     MAfilterF* accelerationFilterY;
     MAfilterF* accelerationFilterZ;
