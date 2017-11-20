@@ -33,7 +33,7 @@ private:
     Compass* compFilterNorth;
 
     /* filter for horizontal acceleration */
-    XYZ_Data horizontalAccelerationFiltered;
+    XYZ_Data horizontalAccelerationUnfiltered;
 
     MAfilterF* accelerationFilterX;
     MAfilterF* accelerationFilterY;

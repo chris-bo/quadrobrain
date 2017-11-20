@@ -19,20 +19,20 @@ IMU::IMU(Status* _status, int8_t _defaultPrio) :
 			&status->angle.x, &status->angle.y, &status->rate.z,
 			&status->angle.z, &status->filterCoefficientZ);
 
-	horizontalAccelerationFiltered = {0,0,0};
+	horizontalAccelerationUnfiltered = {0,0,0};
 
 	/* setup filters  for horizontal acceleration*/
 	accelerationFilterX = new MAfilterF(status, 0,
-			&status->horizontalAcceleration.x,
-			&horizontalAccelerationFiltered.x, ACCELERATION_MA_FILTER_SIZE);
+			&horizontalAccelerationUnfiltered.x,
+			&status->horizontalAcceleration.x, ACCELERATION_MA_FILTER_SIZE);
 
 	accelerationFilterY = new MAfilterF(status, 0,
-			&status->horizontalAcceleration.y,
-			&horizontalAccelerationFiltered.y, ACCELERATION_MA_FILTER_SIZE);
+			&horizontalAccelerationUnfiltered.y,
+			&status->horizontalAcceleration.y, ACCELERATION_MA_FILTER_SIZE);
 
 	accelerationFilterZ = new MAfilterF(status, 0,
-			&status->horizontalAcceleration.z,
-			&horizontalAccelerationFiltered.z, ACCELERATION_MA_FILTER_SIZE);
+			&horizontalAccelerationUnfiltered.z,
+			&status->horizontalAcceleration.z, ACCELERATION_MA_FILTER_SIZE);
 
 }
 
@@ -61,9 +61,9 @@ void IMU::update() {
 
 	/* calc horizontal accelerations */
 
-	status->horizontalAcceleration.x = cosf(status->angle.y) * status->accel.x;
-	status->horizontalAcceleration.y = cosf(status->angle.x) * status->accel.y;
-	status->horizontalAcceleration.z = cosf(status->angle.x)
+	horizontalAccelerationUnfiltered.x = cosf(status->angle.y) * status->accel.x;
+	horizontalAccelerationUnfiltered.y = cosf(status->angle.x) * status->accel.y;
+	horizontalAccelerationUnfiltered.z = cosf(status->angle.x)
 			* cosf(status->angle.y) * status->accel.z - G;
 
 	/* filter accelerations */
@@ -73,11 +73,11 @@ void IMU::update() {
 
 	/* calc velocities */
 
-	status->velocity.x += horizontalAccelerationFiltered.x
+	status->velocity.x += status->horizontalAcceleration.x
 			* (float) SCHEDULER_INTERVALL_ms / 1000.0f;
-	status->velocity.y += horizontalAccelerationFiltered.y
+	status->velocity.y += status->horizontalAcceleration.y
 			* (float) SCHEDULER_INTERVALL_ms / 1000.0f;
-	status->velocity.z += horizontalAccelerationFiltered.z
+	status->velocity.z += status->horizontalAcceleration.z
 			* (float) SCHEDULER_INTERVALL_ms / 1000.0f;
 }
 
@@ -88,7 +88,7 @@ void IMU::reset() {
 	compFilterY->kill();
 	compFilterNorth->kill();
 
-	horizontalAccelerationFiltered = {0,0,0};
+	horizontalAccelerationUnfiltered = {0,0,0};
 
 	status->velocity.x = 0;
 	status->velocity.y = 0;
