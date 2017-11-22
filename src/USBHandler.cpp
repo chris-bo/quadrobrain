@@ -21,7 +21,6 @@ USBHandler::USBHandler(Status* statusPtr, uint8_t defaultPrio,
     usb_state = USBD_BUSY;
     usb = husb;
     usb_mode_request = 0;
-    confReader = NULL;
     usbTransmitBusyCounter = 0;
 }
 

@@ -141,6 +141,11 @@
 #define ERROR_LED                               LED10
 
 
+/* comms
+ *
+ */
+
+#define RXTX_BUFF_SIZE 							256
 /* Flight LEDs
  *
  */
@@ -271,7 +276,8 @@
 
 #define EMERGENCY_FLAG              0x80000000
 
-#define RESET_TO_CONFIG             0x01
-#define RESET_TO_FLIGHT             0x00
+#define RESET_TO_CONFIG             0x01000000
+#define RESET_TO_FLIGHT             0x02000000
+#define RESET_REQUEST				0x04000000
 
 #endif /* CONFIG_H_ */

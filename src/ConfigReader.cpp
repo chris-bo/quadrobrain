@@ -19,11 +19,6 @@ ConfigReader::~ConfigReader() {
  */
 void ConfigReader::loadConfiguration(Status* status) {
     /* reinit i2c if communication is crashed after reset */
-
-    HAL_I2C_Init(eeprom_i2c);
-
-    HAL_Delay(2);
-
     loadVariable(&status->pidSettingsAngleXY.p, PID_XY_P_ADDR);
     loadVariable(&status->pidSettingsAngleXY.i, PID_XY_I_ADDR);
     loadVariable(&status->pidSettingsAngleXY.d, PID_XY_D_ADDR);
@@ -207,4 +202,14 @@ void ConfigReader::save(uint8_t* variable, uint16_t address, uint16_t byteCount,
     if (nodelay == 0) {
         HAL_Delay(EEPROM_WAIT);
     }
+}
+
+void ConfigReader::initialize(Status* status) {
+
+	/*init i2c and load config */
+    HAL_I2C_Init(eeprom_i2c);
+
+    HAL_Delay(2);
+
+    loadConfiguration(status);
 }

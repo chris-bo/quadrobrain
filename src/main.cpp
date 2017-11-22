@@ -170,7 +170,8 @@ void FlightMode() {
     MX_SPI2_Init();
 
     /* init Tasks */
-    configReader.loadConfiguration(&status);
+
+    configReader.initialize(&status);
     mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
     mpu9150.startReception();
     rcReceiver.initialize();
@@ -231,11 +232,11 @@ void FlightMode() {
 
     while (1) {
         /* testcode to stop after some time */
-        if (status.uptime == (3*60*1000)){
-             while (1) {
-                     HAL_Delay(2000);
-             }
-         }
+//        if (status.uptime == (3*60*1000)){
+//             while (1) {
+//                     HAL_Delay(2000);
+//             }
+//         }
 
 
         if ((usb.usb_mode_request == USB_MODE_CONFIG)

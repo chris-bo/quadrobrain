@@ -8,8 +8,8 @@
 #ifndef TASK_H_
 #define TASK_H_
 
-#include "Status.h"
-#include "config.h"
+#include <Status.h>
+#include <config.h>
 
 #define TASK_FLAG_ACTIVE		0x0001
 #define TASK_FLAG_CHECKED		0x0002

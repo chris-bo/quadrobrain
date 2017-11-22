@@ -53,6 +53,7 @@ class ConfigReader {
 public:
     ConfigReader(I2C_HandleTypeDef* i2c);
     virtual ~ConfigReader();
+    void initialize(Status* status);
     void loadConfiguration(Status* status);
     void saveConfiguration(Status* status);
     void loadVariable(uint8_t* variable, uint16_t address);
