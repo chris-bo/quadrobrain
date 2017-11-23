@@ -39,12 +39,13 @@ void QCcoms::update() {
 	/* reset transmission led */
 	rxtxHandler->setLED(false);
 
-	if (rxtxHandler->newDataReceived) {
+	if (rxtxHandler->newDataReceived
+			|| (*rxtxHandler->numberReceivedData > 0)) {
 		/* go trough fist received byte */
 		switch (rxtxHandler->RxBuffer[0]) {
 		case QC_CMD_LOOP:
 			/* loop received stuff */
-			rxtxHandler->loopback();
+			loopback();
 			break;
 		case QC_CMD_SEND_CUSTOM_FRAME:
 			answerCusomFrame();
@@ -53,7 +54,7 @@ void QCcoms::update() {
 			/* create new frame with global flags */
 			rxtxHandler->RxBuffer[1] = DATA_ID_GLOBAL_FLAGS;
 			rxtxHandler->RxBuffer[2] = DATA_ID_EOF;
-			rxtxHandler->numberReceivedData = 3;
+			*rxtxHandler->numberReceivedData = 3;
 			answerCusomFrame();
 			break;
 		case QC_CMD_SET_FLIGHT_LED_PATTERN:
@@ -80,7 +81,7 @@ void QCcoms::update() {
 			/* create new frame with settings */
 			rxtxHandler->RxBuffer[1] = DATA_ID_QC_SETTINGS;
 			rxtxHandler->RxBuffer[2] = DATA_ID_EOF;
-			rxtxHandler->numberReceivedData = 3;
+			*rxtxHandler->numberReceivedData = 3;
 			answerCusomFrame();
 			break;
 		case QC_CMD_RESET:
@@ -105,7 +106,13 @@ void QCcoms::update() {
 			}
 			break;
 		}
+
+		/* listen for new messages */
+		*rxtxHandler->numberReceivedData = 0;
+		rxtxHandler->newDataReceived = false;
+
 	}
+	rxtxHandler->startRX();
 }
 
 void QCcoms::reset() {
@@ -119,7 +126,7 @@ void QCcoms::answerCusomFrame() {
 	uint8_t bufferOverrun = 0;
 
 	/* start loop at beginning of data ids */
-	for (uint8_t i = 1; i < rxtxHandler->numberReceivedData; i++) {
+	for (uint8_t i = 1; i < *rxtxHandler->numberReceivedData; i++) {
 		/* add requested values
 		 * but check fist if tx buffer has enough space
 		 */
@@ -526,7 +533,7 @@ void QCcoms::decodeConfigMSG() {
 			/* create new frame with settings */
 			rxtxHandler->RxBuffer[1] = DATA_ID_QC_SETTINGS;
 			rxtxHandler->RxBuffer[2] = DATA_ID_EOF;
-			rxtxHandler->numberReceivedData = 3;
+			*rxtxHandler->numberReceivedData = 3;
 			answerCusomFrame();
 			break;
 
@@ -553,7 +560,7 @@ void QCcoms::decodeConfigMSG() {
 			break;
 
 		case QC_CMD_QUADROCONFIG:
-			if (rxtxHandler->numberReceivedData == 2) {
+			if (*rxtxHandler->numberReceivedData == 2) {
 				/* check and set settings */
 				if (rxtxHandler->RxBuffer[1] & QUADROCONFIG_ENABLE_LOW_VOLT) {
 					status->qcSettings.enableBuzzerWarningLowVoltage = 1;
@@ -619,7 +626,7 @@ void QCcoms::updateConfig() {
 	 * select first idetifier
 	 */
 	uint8_t bufferpos = 1;
-	while (bufferpos < rxtxHandler->numberReceivedData) {
+	while (bufferpos < *rxtxHandler->numberReceivedData) {
 
 		switch (rxtxHandler->RxBuffer[bufferpos]) {
 		/* each case:
@@ -838,4 +845,13 @@ uint8_t QCcoms::checkTXBufferOverrun(uint8_t currentPos, uint8_t dataToAdd,
 		*overrun = 1;
 		return 1;
 	}
+}
+
+void QCcoms::loopback() {
+	/* copy input buffer into output buffer
+	 * and send
+	 */
+	memcpy(rxtxHandler->TxBuffer, rxtxHandler->RxBuffer,
+			*rxtxHandler->numberReceivedData);
+	rxtxHandler->sendTXBuffer(*rxtxHandler->numberReceivedData);
 }

@@ -83,10 +83,8 @@
 /* restore hardcoded config values*/
 #define QC_CMD_RESTORE_HARDCODED_CONFIG     0xCF
 
-
 /*******************/
 #define QC_CMD_RESET               0xFF
-
 
 /*******************/
 /*
@@ -130,7 +128,6 @@
 
 /* 0x1c and 0x1d used (acceleration)*/
 //next free data_id         0x1E
-
 #define DATA_ID_EOF                 0x00
 #define DATA_ID_BUFFER_OVERRUN      0xFF
 
@@ -141,13 +138,10 @@
 #define QUADROCONFIG_ENABLE_FLIGHTLED   0x04
 #define QUADROCONFIG_ENABLE_MOTORS      0x08
 
-
-
-
-
 class QCcoms: public Task {
 public:
-	QCcoms(Status* statusPtr, uint8_t defaultPrio,ConfigReader* _confReader, RxTxHandler* _rxtxHandler, FlightLED* _flightLEDs);
+	QCcoms(Status* statusPtr, uint8_t defaultPrio, ConfigReader* _confReader,
+			RxTxHandler* _rxtxHandler, FlightLED* _flightLEDs);
 	virtual ~QCcoms();
 
 	void initialize();
@@ -159,6 +153,9 @@ private:
 	RxTxHandler* rxtxHandler;
 	ConfigReader* confReader;
 	FlightLED* flightLEDs;
+
+	/* loopback for communication test */
+	void loopback();
 
 	/* reply to custom frame request */
 	void answerCusomFrame();
@@ -172,19 +169,19 @@ private:
 	void decodeConfigMSG();
 	void updateConfig();
 
+	/* fillBuffer returns next free pos in buffer*/
+	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, float var);
+	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint32_t var);
+	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int32_t var);
+	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int16_t var);
+	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint16_t var);
+	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int8_t var);
+	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint8_t var);
+	void readEEPROM(uint8_t byteCount);
+	void writeEEPROM(uint8_t byteCount);
 
-    /* fillBuffer returns next free pos in buffer*/
-    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, float var);
-    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint32_t var);
-    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int32_t var);
-    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int16_t var);
-    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint16_t var);
-    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int8_t var);
-    uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint8_t var);
-    void readEEPROM(uint8_t byteCount);
-    void writeEEPROM(uint8_t byteCount);
-
-    uint8_t checkTXBufferOverrun(uint8_t currentPos, uint8_t dataToAdd, uint8_t* overrun);
+	uint8_t checkTXBufferOverrun(uint8_t currentPos, uint8_t dataToAdd,
+			uint8_t* overrun);
 
 };
 

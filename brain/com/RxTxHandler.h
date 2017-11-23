@@ -9,24 +9,32 @@
 #define RXTXHANDLER_H_
 
 #include <core/Task.h>
+#include <utility/DiscoveryLEDs.h>
 
 class RxTxHandler: public Task {
 public:
-	RxTxHandler(Status* statusPtr, uint8_t defaultPrio);
+	RxTxHandler(Status* statusPtr, uint8_t defaultPrio, DiscoveryLEDs* _ledctrl,
+			Led_TypeDef _led);
 	virtual ~RxTxHandler();
 
-	void startRX();
-	void sendTXBuffer(uint8_t byte_count);
-	void loopback();
-	void setLED(bool on);
+	void initializeBuffers(uint8_t* RxBuf, uint8_t* TxBuf,
+			uint8_t* numberReceived);
 
-	void reset();
+	virtual void startRX();
+	virtual void sendTXBuffer(uint16_t byte_count);
+	virtual void setLED(bool on);
+
+	virtual void reset();
 
 	bool newDataReceived;
 
-	uint8_t numberReceivedData;
-	uint8_t RxBuffer[RXTX_BUFF_SIZE];
-	uint8_t TxBuffer[RXTX_BUFF_SIZE];
+	Led_TypeDef led;
+	DiscoveryLEDs* ledctrl;
+
+	uint8_t* numberReceivedData;
+	uint8_t* RxBuffer;
+	uint8_t* TxBuffer;
+
 };
 
 #endif /* RXTXHANDLER_H_ */

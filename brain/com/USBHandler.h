@@ -16,7 +16,6 @@
 
 #define USB_TIMEOUT 				0xFFFF
 
-
 /**************************************************************************/
 /* USB_MODES */
 
@@ -32,24 +31,24 @@
 
 class USBHandler: public RxTxHandler {
 public:
-    USBHandler(Status* statusPtr, uint8_t defaultPrio, USBD_HandleTypeDef* husb);
-    virtual ~USBHandler();
+	USBHandler(Status* statusPtr, uint8_t defaultPrio, DiscoveryLEDs* _ledctrl,
+			Led_TypeDef _led, USBD_HandleTypeDef* husb);
+	virtual ~USBHandler();
 
+//      void update();
+	void initialize();
+	void kill();
+	void startRX();
 
-//    void update();
-//    void initialize();
-//    void kill();
-//    uint8_t usb_mode_request;
+	void sendTXBuffer(uint16_t byte_count);
 
 private:
-    USBD_HandleTypeDef* usb;
+	USBD_HandleTypeDef* usb_handle;
 
-    uint8_t usb_state;
-    uint8_t usbTransmitBusyCounter;
+	USBD_StatusTypeDef usb_state;
+	uint8_t usbTransmitBusyCounter;
 
-    void usbTransmit(uint8_t* buffer, uint16_t len);
-
-    void resetTransmissionState();
+	void resetTransmissionState();
 
 };
 
