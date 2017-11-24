@@ -56,7 +56,7 @@ extern uint8_t UserRxBufferFS[RXTX_BUFF_SIZE];
  /* Send Data over USB CDC are stored in this buffer       */
 extern uint8_t UserTxBufferFS[RXTX_BUFF_SIZE];
 
-extern uint8_t number_received_data;
+extern uint16_t number_received_data;
 
 extern USBD_CDC_ItfTypeDef  USBD_Interface_fops_FS;
 

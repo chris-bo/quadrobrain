@@ -25,17 +25,22 @@ void RxTxHandler::sendTXBuffer(uint16_t byte_count) {
 }
 
 void RxTxHandler::initializeBuffers(uint8_t* RxBuf, uint8_t* TxBuf,
-		uint8_t* numberReceived) {
+		uint16_t* numberReceived) {
 	/* needed to setup buffers */
 	RxBuffer = RxBuf;
 	TxBuffer = TxBuf;
 	numberReceivedData = numberReceived;
 
+	memset(TxBuffer, 0, RXTX_BUFF_SIZE);
+	memset(RxBuffer, 0, RXTX_BUFF_SIZE);
+	*numberReceivedData = 0;
+
 }
 
 void RxTxHandler::reset() {
 	// todo flush  buffers reset transmit states
-
+	memset(TxBuffer, 0, RXTX_BUFF_SIZE);
+	memset(RxBuffer, 0, RXTX_BUFF_SIZE);
 }
 
 void RxTxHandler::startRX() {

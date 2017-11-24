@@ -50,14 +50,14 @@ void USBHandler::initialize() {
 	initializeBuffers(UserRxBufferFS, UserTxBufferFS, &number_received_data);
 
 	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
-
-	startRX();
 }
 
 void USBHandler::kill() {
 	/* override default kill function
 	 * usb must not be killed
 	 */
+	memset(TxBuffer, 0, RXTX_BUFF_SIZE);
+	memset(RxBuffer, 0, RXTX_BUFF_SIZE);
 }
 
 void USBHandler::startRX() {
@@ -65,5 +65,6 @@ void USBHandler::startRX() {
 //			numberReceivedData = 0;
 //			newDataReceived = false;
 //	}
+
 	usb_state = (USBD_StatusTypeDef) USBD_CDC_ReceivePacket(usb_handle);
 }

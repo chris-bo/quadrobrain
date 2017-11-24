@@ -12,20 +12,21 @@
 #include "usbd_cdc_if.h"
 #include <com/RxTxHandler.h>
 
+
 /**************************************************************************/
 
 #define USB_TIMEOUT 				0xFFFF
 
 /**************************************************************************/
-/* USB_MODES */
-
-#define USB_MODE_NORMAL             0x00
-#define USB_MODE_CONFIG             0x01
-#define USB_MODE_LEAVE_CONFIG       0x02
-#define USB_MODE_SAVE_CONFIG        0x03
-#define USB_MODE_RELOAD_EEPROM      0x04
-
-#define USB_MODE_RESET              0xFF
+///* USB_MODES */
+//
+//#define USB_MODE_NORMAL             0x00
+//#define USB_MODE_CONFIG             0x01
+//#define USB_MODE_LEAVE_CONFIG       0x02
+//#define USB_MODE_SAVE_CONFIG        0x03
+//#define USB_MODE_RELOAD_EEPROM      0x04
+//
+//#define USB_MODE_RESET              0xFF
 
 /**************************************************************************/
 

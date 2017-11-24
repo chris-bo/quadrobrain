@@ -81,12 +81,12 @@
 /* Create buffer for reception and transmission           */
 /* It's up to user to redefine and/or remove those define */
 /* Received Data over USB are stored in this buffer       */
-uint8_t UserRxBufferFS[RXTX_BUFF_SIZE];
+uint8_t UserRxBufferFS[RXTX_BUFF_SIZE] = {0};
 
 /* Send Data over USB CDC are stored in this buffer       */
-uint8_t UserTxBufferFS[RXTX_BUFF_SIZE];
+uint8_t UserTxBufferFS[RXTX_BUFF_SIZE] = {0};
 
-uint8_t number_received_data;
+uint16_t number_received_data;
 /* USB handler declaration */
 /* Handle for USB Full Speed IP */
 USBD_HandleTypeDef  *hUsbDevice_0;

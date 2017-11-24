@@ -7,7 +7,7 @@
 
 #include "QCcoms.h"
 
-static float byteToFloat(uint8_t* array, uint8_t* offset) {
+static float byteToFloat(uint8_t* array, uint16_t* offset) {
 	float val;
 	memcpy(&val, array + *offset, 4l);
 	*offset = *offset + 4;
@@ -68,7 +68,7 @@ void QCcoms::update() {
 			/*entering config mode */
 			/* trigger quadrocopter reset */
 			/* switch current mode */
-			if (GET_FLAG(status->globalFlags, RESET_TO_CONFIG)) {
+			if (GET_FLAG(status->globalFlags,CONFIG_MODE_FLAG )) {
 				SET_FLAG(status->globalFlags, RESET_TO_FLIGHT);
 			} else {
 				SET_FLAG(status->globalFlags, RESET_TO_CONFIG);
@@ -78,10 +78,22 @@ void QCcoms::update() {
 			sendConfirmation();
 			break;
 		case QC_CMD_READ_CONFIG:
-			/* create new frame with settings */
-			rxtxHandler->RxBuffer[1] = DATA_ID_QC_SETTINGS;
-			rxtxHandler->RxBuffer[2] = DATA_ID_EOF;
-			*rxtxHandler->numberReceivedData = 3;
+			/* create custom frame */
+            /* pid xy */
+			rxtxHandler->RxBuffer[1] = DATA_ID_PID_ANGLE_XY;
+            /* pid z  */
+            rxtxHandler->RxBuffer[2] = DATA_ID_PID_ROT_Z;
+            /* comp filter */
+            rxtxHandler->RxBuffer[3] = DATA_ID_COMP_FILTER;
+            /* pid accel  */
+            rxtxHandler->RxBuffer[4] = DATA_ID_PID_ACCEL;
+            /* pid vel */
+            rxtxHandler->RxBuffer[5] = DATA_ID_PID_VEL;
+            /* qc settings*/
+            rxtxHandler->RxBuffer[6] = DATA_ID_QC_SETTINGS;
+
+			rxtxHandler->RxBuffer[7] = DATA_ID_EOF;
+			*rxtxHandler->numberReceivedData = 8;
 			answerCusomFrame();
 			break;
 		case QC_CMD_RESET:
@@ -122,11 +134,11 @@ void QCcoms::reset() {
 
 void QCcoms::answerCusomFrame() {
 
-	uint8_t bufferPos = 0;
-	uint8_t bufferOverrun = 0;
+	uint16_t bufferPos = 0;
+	uint16_t bufferOverrun = 0;
 
 	/* start loop at beginning of data ids */
-	for (uint8_t i = 1; i < *rxtxHandler->numberReceivedData; i++) {
+	for (uint16_t i = 1; i < *rxtxHandler->numberReceivedData; i++) {
 		/* add requested values
 		 * but check fist if tx buffer has enough space
 		 */
@@ -530,10 +542,22 @@ void QCcoms::decodeConfigMSG() {
 
 		switch (rxtxHandler->RxBuffer[0]) {
 		case QC_CMD_READ_CONFIG:
-			/* create new frame with settings */
-			rxtxHandler->RxBuffer[1] = DATA_ID_QC_SETTINGS;
-			rxtxHandler->RxBuffer[2] = DATA_ID_EOF;
-			*rxtxHandler->numberReceivedData = 3;
+			/* create custom frame */
+            /* pid xy */
+			rxtxHandler->RxBuffer[1] = DATA_ID_PID_ANGLE_XY;
+            /* pid z  */
+            rxtxHandler->RxBuffer[2] = DATA_ID_PID_ROT_Z;
+            /* comp filter */
+            rxtxHandler->RxBuffer[3] = DATA_ID_COMP_FILTER;
+            /* pid accel  */
+            rxtxHandler->RxBuffer[4] = DATA_ID_PID_ACCEL;
+            /* pid vel */
+            rxtxHandler->RxBuffer[5] = DATA_ID_PID_VEL;
+            /* qc settings*/
+            rxtxHandler->RxBuffer[6] = DATA_ID_QC_SETTINGS;
+
+			rxtxHandler->RxBuffer[7] = DATA_ID_EOF;
+			*rxtxHandler->numberReceivedData = 8;
 			answerCusomFrame();
 			break;
 
@@ -625,7 +649,7 @@ void QCcoms::updateConfig() {
 	/* set position to 1
 	 * select first idetifier
 	 */
-	uint8_t bufferpos = 1;
+	uint16_t bufferpos = 1;
 	while (bufferpos < *rxtxHandler->numberReceivedData) {
 
 		switch (rxtxHandler->RxBuffer[bufferpos]) {
@@ -717,7 +741,7 @@ void QCcoms::updateConfig() {
 	}
 }
 
-uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
+uint16_t QCcoms::fillBuffer(uint8_t* buffer, uint16_t pos, float var) {
 	uint8_t* tmp = (uint8_t*) &var;
 	buffer[pos++] = *tmp++;
 	buffer[pos++] = *(tmp++);
@@ -726,7 +750,7 @@ uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, float var) {
 	return pos;
 }
 
-uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, uint32_t var) {
+uint16_t QCcoms::fillBuffer(uint8_t* buffer, uint16_t pos, uint32_t var) {
 	uint8_t* tmp = (uint8_t*) &var;
 	buffer[pos++] = *tmp++;
 	buffer[pos++] = *(tmp++);
@@ -735,7 +759,7 @@ uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, uint32_t var) {
 	return pos;
 }
 
-uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, int32_t var) {
+uint16_t QCcoms::fillBuffer(uint8_t* buffer, uint16_t pos, int32_t var) {
 	uint8_t* tmp = (uint8_t*) &var;
 	buffer[pos++] = *tmp++;
 	buffer[pos++] = *(tmp++);
@@ -744,26 +768,26 @@ uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, int32_t var) {
 	return pos;
 }
 
-uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, int16_t var) {
+uint16_t QCcoms::fillBuffer(uint8_t* buffer, uint16_t pos, int16_t var) {
 	uint8_t* tmp = (uint8_t*) &var;
 	buffer[pos++] = *tmp++;
 	buffer[pos++] = *(tmp);
 	return pos;
 }
 
-uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, uint16_t var) {
+uint16_t QCcoms::fillBuffer(uint8_t* buffer, uint16_t pos, uint16_t var) {
 	uint8_t* tmp = (uint8_t*) &var;
 	buffer[pos++] = *tmp++;
 	buffer[pos++] = *(tmp);
 	return pos;
 }
 
-uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, int8_t var) {
+uint16_t QCcoms::fillBuffer(uint8_t* buffer, uint16_t pos, int8_t var) {
 	buffer[pos++] = var;
 	return pos;
 }
 
-uint8_t QCcoms::fillBuffer(uint8_t* buffer, uint8_t pos, uint8_t var) {
+uint16_t QCcoms::fillBuffer(uint8_t* buffer, uint16_t pos, uint8_t var) {
 	buffer[pos++] = var;
 	return pos;
 }
@@ -837,8 +861,8 @@ void QCcoms::writeEEPROM(uint8_t byteCount) {
 	sendConfirmation();
 }
 
-uint8_t QCcoms::checkTXBufferOverrun(uint8_t currentPos, uint8_t dataToAdd,
-		uint8_t* overrun) {
+uint16_t QCcoms::checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd,
+		uint16_t* overrun) {
 	if ((currentPos + dataToAdd) < RXTX_BUFF_SIZE) {
 		return 0;
 	} else {

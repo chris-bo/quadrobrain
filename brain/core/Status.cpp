@@ -142,9 +142,10 @@ void Status::reset() {
 
     gpsData = {};
 
-    /* do not reset uptime */
+    /* do not reset uptime and flags */
     akkuVoltage = 0;
-    globalFlags = 0;
+    // TODO flag reset verbessern
+    // globalFlags = 0;
     cpuLoad = 0;
 
     buzzerQueue1 = {};

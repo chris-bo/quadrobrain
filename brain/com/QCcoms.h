@@ -170,18 +170,18 @@ private:
 	void updateConfig();
 
 	/* fillBuffer returns next free pos in buffer*/
-	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, float var);
-	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint32_t var);
-	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int32_t var);
-	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int16_t var);
-	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint16_t var);
-	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, int8_t var);
-	uint8_t fillBuffer(uint8_t* buffer, uint8_t pos, uint8_t var);
+	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, float var);
+	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint32_t var);
+	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int32_t var);
+	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int16_t var);
+	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint16_t var);
+	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int8_t var);
+	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint8_t var);
 	void readEEPROM(uint8_t byteCount);
 	void writeEEPROM(uint8_t byteCount);
 
-	uint8_t checkTXBufferOverrun(uint8_t currentPos, uint8_t dataToAdd,
-			uint8_t* overrun);
+	uint16_t checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd,
+			uint16_t* overrun);
 
 };
 

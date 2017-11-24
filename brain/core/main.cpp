@@ -129,10 +129,8 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_USB_DEVICE_Init();
 
-	HAL_Delay(2000);
-
 	usb.initialize();
-	usbCom.initialize();
+
 
 	/* onboard leds*/
 	leds.initialize();
@@ -177,6 +175,7 @@ void FlightMode() {
 	MX_SPI2_Init();
 
 	/* init Tasks */
+	usbCom.initialize();
 
 	configReader.initialize(&status);
 	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
@@ -251,14 +250,16 @@ void SoftwareReset() {
 	/* kill processes*/
 	scheduler.kill();
 
-	if (GET_FLAGS(status.globalFlags, (RESET_REQUEST | RESET_TO_CONFIG))) {
+	RESET_FLAG(status.globalFlags, RESET_REQUEST);
+
+	if (GET_FLAG(status.globalFlags, (RESET_TO_CONFIG))) {
 		/* clear reset request */
-		RESET_FLAG(status.globalFlags, (RESET_REQUEST | RESET_TO_CONFIG));
+		RESET_FLAG(status.globalFlags, (RESET_TO_CONFIG));
 		/* goto config mode */
 		ConfigMode();
 	} else {
 		/* clear reset request */
-		RESET_FLAG(status.globalFlags, (RESET_REQUEST | RESET_TO_FLIGHT));
+		RESET_FLAG(status.globalFlags, (RESET_TO_FLIGHT));
 		/* recall flight mode */
 		FlightMode();
 	}
@@ -292,9 +293,9 @@ void ConfigMode() {
 	 * and usb Task needed
 	 * */
 	leds.setFrequency(CONFIG_LED, 1);
-	usb.initialize();
+	usbCom.initialize();
 
-	Task* tasks_config[] = { &usb, &leds, &beep1, &beep2 };
+	Task* tasks_config[] = { &usbCom, &leds, &beep1, &beep2 };
 	scheduler.start(tasks_config, sizeof(tasks_config) / 4);
 
 	while (1) {

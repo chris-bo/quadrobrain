@@ -10,6 +10,7 @@
 
 #include <core/Task.h>
 #include <utility/DiscoveryLEDs.h>
+#include <string.h>
 
 class RxTxHandler: public Task {
 public:
@@ -18,7 +19,7 @@ public:
 	virtual ~RxTxHandler();
 
 	void initializeBuffers(uint8_t* RxBuf, uint8_t* TxBuf,
-			uint8_t* numberReceived);
+			uint16_t* numberReceived);
 
 	virtual void startRX();
 	virtual void sendTXBuffer(uint16_t byte_count);
@@ -31,7 +32,7 @@ public:
 	Led_TypeDef led;
 	DiscoveryLEDs* ledctrl;
 
-	uint8_t* numberReceivedData;
+	uint16_t* numberReceivedData;
 	uint8_t* RxBuffer;
 	uint8_t* TxBuffer;
 
