@@ -4,3 +4,7 @@
 /.git/
 /quadrobrain Debug.launch
 /quadrobrain Debug qemu.launch
+/cubeMXProj/Inc/
+/cubeMXProj/Src/
+/cubeMXProj/Drivers/
+/cubeMXProj/Middlewares/
