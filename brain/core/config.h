@@ -144,8 +144,8 @@
 /* comms
  *
  */
-
-#define RXTX_BUFF_SIZE 							256
+/* fixed because of usb package */
+#define RXTX_BUFF_SIZE 							64
 /* Flight LEDs
  *
  */

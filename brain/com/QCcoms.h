@@ -180,9 +180,10 @@ private:
 	void readEEPROM(uint8_t byteCount);
 	void writeEEPROM(uint8_t byteCount);
 
-	uint16_t checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd,
-			uint16_t* overrun);
-
+	/* used to create packages of RXTX buffsize*/
+	uint16_t checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd);
+	uint16_t bufferOverrun;
+	uint16_t customFramePos;
 };
 
 #endif /* QCCOMS_H_ */

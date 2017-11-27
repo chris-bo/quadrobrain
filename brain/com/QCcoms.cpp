@@ -22,6 +22,8 @@ QCcoms::QCcoms(Status* statusPtr, uint8_t defaultPrio,
 	confReader = _confReader;
 	rxtxHandler = _rxtxHandler;
 	flightLEDs = _flightLEDs;
+	bufferOverrun = 0;
+	customFramePos = 1;
 }
 
 QCcoms::~QCcoms() {
@@ -39,8 +41,12 @@ void QCcoms::update() {
 	/* reset transmission led */
 	rxtxHandler->setLED(false);
 
-	if (rxtxHandler->newDataReceived
-			|| (*rxtxHandler->numberReceivedData > 0)) {
+	if (bufferOverrun > 0) {
+		/* continue transmission if needed to be splitted 
+		 * RX is still blocked
+		 */
+		answerCusomFrame();
+	} else 	if (*rxtxHandler->numberReceivedData > 0) {
 		/* go trough fist received byte */
 		switch (rxtxHandler->RxBuffer[0]) {
 		case QC_CMD_LOOP:
@@ -118,13 +124,13 @@ void QCcoms::update() {
 			}
 			break;
 		}
-
-		/* listen for new messages */
-		*rxtxHandler->numberReceivedData = 0;
-		rxtxHandler->newDataReceived = false;
-
 	}
-	rxtxHandler->startRX();
+	if (bufferOverrun == 0) {
+		/* previous request completed 
+		 * start RX again 
+		 */
+		rxtxHandler->startRX();
+	}
 }
 
 void QCcoms::reset() {
@@ -135,16 +141,15 @@ void QCcoms::reset() {
 void QCcoms::answerCusomFrame() {
 
 	uint16_t bufferPos = 0;
-	uint16_t bufferOverrun = 0;
-
-	/* start loop at beginning of data ids */
-	for (uint16_t i = 1; i < *rxtxHandler->numberReceivedData; i++) {
+	bufferOverrun = 0;
+	/* start loop at beginning of data ids or last position before overrun */
+	for (uint16_t i = customFramePos; i < *rxtxHandler->numberReceivedData; i++) {
 		/* add requested values
 		 * but check fist if tx buffer has enough space
 		 */
 		switch (rxtxHandler->RxBuffer[i]) {
 		case DATA_ID_GYRO:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->rate.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -154,7 +159,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_ACCEL:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->accel.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -164,7 +169,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_MAGNETOMETER:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->magnetfield.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -174,7 +179,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_ANGLE:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->angle.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -184,7 +189,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_ANGLE_SP:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->angleSetpoint.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -194,7 +199,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_HOR_ACCEL:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->horizontalAcceleration.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -204,7 +209,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_ACCEL_SP:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->accelerationSetpoint.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -214,7 +219,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_VELOCITY:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->velocity.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -224,7 +229,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_VELOCITY_SP:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->velocitySetpoint.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -234,7 +239,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_HEIGHT:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->height);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -244,7 +249,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_RC:
-			if (!checkTXBufferOverrun(bufferPos, 22, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 22)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->rcSignalNick);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -262,7 +267,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_MOTOR_SP:
-			if (!checkTXBufferOverrun(bufferPos, 12, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 12)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->motorSetpoint.x);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -272,7 +277,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_MOTOR:
-			if (!checkTXBufferOverrun(bufferPos, 16, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 16)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->motorValues[0]);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -284,31 +289,31 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_CPU:
-			if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 4)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->cpuLoad);
 			}
 			break;
 		case DATA_ID_AKKU:
-			if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 4)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->akkuVoltage);
 			}
 			break;
 		case DATA_ID_TEMP:
-			if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 4)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->temp);
 			}
 			break;
 		case DATA_ID_UPTIME:
-			if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 4)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->uptime);
 			}
 			break;
 		case DATA_ID_GPS_LLH:
-			if (!checkTXBufferOverrun(bufferPos, 56, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 56)) {
 				/* postition llh with accuracy*/
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->gpsData.llh_data.lat);
@@ -343,7 +348,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_GPS_ECEF:
-			if (!checkTXBufferOverrun(bufferPos, 32, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 32)) {
 				/* position ecef */
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->gpsData.ecef_data.x);
@@ -364,7 +369,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_GPS_DOP:
-			if (!checkTXBufferOverrun(bufferPos, 14, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 14)) {
 				/* dilution of precission*/
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->gpsData.dop.pDOP);
@@ -383,7 +388,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_GPS_TIME:
-			if (!checkTXBufferOverrun(bufferPos, 15, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 15)) {
 				/* gps time of week*/
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->gpsData.iTOW);
@@ -411,7 +416,7 @@ void QCcoms::answerCusomFrame() {
 			break;
 		case DATA_ID_GPS_FIX:
 			/* fix + flags*/
-			if (!checkTXBufferOverrun(bufferPos, 5, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 5)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						(uint8_t) status->gpsData.gpsFix);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -425,7 +430,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_COMP_FILTER:
-			if (!checkTXBufferOverrun(bufferPos, 8, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 8)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->filterCoefficientXY);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -433,7 +438,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_PID_ANGLE_XY:
-			if (!checkTXBufferOverrun(bufferPos, 20, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 20)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->pidSettingsAngleXY.p);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -447,7 +452,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_PID_ROT_Z:
-			if (!checkTXBufferOverrun(bufferPos, 20, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 20)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->pidSettingsRotationZ.p);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -461,7 +466,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_PID_VEL:
-			if (!checkTXBufferOverrun(bufferPos, 20, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 20)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->pidSettingsVelocity.p);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -475,7 +480,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_PID_ACCEL:
-			if (!checkTXBufferOverrun(bufferPos, 20, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 20)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->pidSettingsAcceleration.p);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -489,7 +494,7 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_QC_SETTINGS:
-			if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 4)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->qcSettings.enableBuzzerWarningLowVoltage);
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
@@ -501,14 +506,17 @@ void QCcoms::answerCusomFrame() {
 			}
 			break;
 		case DATA_ID_GLOBAL_FLAGS:
-			if (!checkTXBufferOverrun(bufferPos, 4, &bufferOverrun)) {
+			if (!checkTXBufferOverrun(bufferPos, 4)) {
 				bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
 						status->globalFlags);
 			}
 			break;
 		case DATA_ID_EOF:
-			/* end of frame*/
-			/* send buffer */
+			/* end of frame
+			 * reset position for next request
+			 * send buffer */
+			bufferOverrun = 0;
+			customFramePos = 1;
 			rxtxHandler->sendTXBuffer(bufferPos);
 			break;
 		default:
@@ -518,14 +526,13 @@ void QCcoms::answerCusomFrame() {
 		}
 		if (bufferOverrun == 1) {
 			/* Buffer Overrun
-			 * not enough space to push requested data into buffer
-			 *
-			 * send only DATA_ID_BUFFER_OVERRUN
+			 * save position in custom frame
+			 * send package 
+			 * next update will continue sending data
 			 */
-			rxtxHandler->TxBuffer[0] = DATA_ID_BUFFER_OVERRUN;
-			bufferPos = 1;
+			customFramePos=i;
 			rxtxHandler->sendTXBuffer(bufferPos);
-			break;
+			return;
 		}
 	}
 }
@@ -861,12 +868,12 @@ void QCcoms::writeEEPROM(uint8_t byteCount) {
 	sendConfirmation();
 }
 
-uint16_t QCcoms::checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd,
-		uint16_t* overrun) {
+uint16_t QCcoms::checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd) {
 	if ((currentPos + dataToAdd) < RXTX_BUFF_SIZE) {
+		bufferOverrun = 0;
 		return 0;
 	} else {
-		*overrun = 1;
+		bufferOverrun = 1;
 		return 1;
 	}
 }

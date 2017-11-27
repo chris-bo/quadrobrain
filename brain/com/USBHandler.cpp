@@ -23,7 +23,7 @@ void USBHandler::sendTXBuffer(uint16_t byte_count) {
 	setLED(true);
 	usb_state = (USBD_StatusTypeDef) CDC_Transmit_FS(TxBuffer, byte_count);
 
-	if (usb_state == USBD_BUSY) {
+	if (usb_state != USBD_OK) {
 		usbTransmitBusyCounter++;
 		if (usbTransmitBusyCounter == USB_TRANSMIT_BUSY_MAX) {
 			resetTransmissionState();
@@ -61,10 +61,8 @@ void USBHandler::kill() {
 }
 
 void USBHandler::startRX() {
-//	if (usb_state == USBD_OK) {
-//			numberReceivedData = 0;
-//			newDataReceived = false;
-//	}
 
-	usb_state = (USBD_StatusTypeDef) USBD_CDC_ReceivePacket(usb_handle);
+	/* listen for new messages */
+	*numberReceivedData = 0;
+	(USBD_StatusTypeDef) USBD_CDC_ReceivePacket(usb_handle);
 }

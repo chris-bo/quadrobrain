@@ -16,7 +16,6 @@ RxTxHandler::RxTxHandler(Status* statusPtr, uint8_t defaultPrio,
 	numberReceivedData = NULL;
 	RxBuffer = NULL;
 	TxBuffer = NULL;
-	newDataReceived = false;
 }
 
 void RxTxHandler::sendTXBuffer(uint16_t byte_count) {
@@ -45,7 +44,10 @@ void RxTxHandler::reset() {
 
 void RxTxHandler::startRX() {
 	/*
-	 * start reception data routine */
+	 * start reception data routine
+	 * overwrite
+	 * */
+
 }
 
 RxTxHandler::~RxTxHandler() {

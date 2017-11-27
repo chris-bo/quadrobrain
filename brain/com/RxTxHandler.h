@@ -27,11 +27,10 @@ public:
 
 	virtual void reset();
 
-	bool newDataReceived;
-
 	Led_TypeDef led;
 	DiscoveryLEDs* ledctrl;
 
+	/* pointer to low level driver buffer*/
 	uint16_t* numberReceivedData;
 	uint8_t* RxBuffer;
 	uint8_t* TxBuffer;
