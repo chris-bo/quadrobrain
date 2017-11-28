@@ -36,6 +36,8 @@
 #include <sensor/RCreceiver.h>
 #include <sensor/ComplementaryFilter.h>
 #include <sensor/Compass.h>
+#include <sensor/IMU.h>
+#include <sensor/Altimeter.h>
 
 #include <utility/ConfigReader.h>
 #include <utility/Buzzer.h>

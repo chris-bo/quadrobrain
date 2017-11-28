@@ -68,13 +68,11 @@ QCcoms usbCom(&status, USB_DEFAULT_PRIORITY, &configReader, &usb, &flightLEDs);
 GPS gpsReceiver(&status, GPS_DEFAULT_PRIORITY, &huart1);
 
 /* Sensor data fusion Filters*/
-ComplementaryFilter compFilterX(&status, 0, &status.accel.y, &status.accel.z,
-		&status.rate.x, &status.angle.x, &status.filterCoefficientXY);
-ComplementaryFilter compFilterY(&status, 0, &status.accel.x, &status.accel.z,
-		&status.rate.y, &status.angle.y, &status.filterCoefficientXY);
-Compass compFilterNorth(&status, 0, &status.magnetfield.x,
-		&status.magnetfield.y, &status.angle.x, &status.angle.y, &status.rate.z,
-		&status.angle.z, &status.filterCoefficientZ);
+/* IMU to get orientation */
+IMU imu(&status, IMU_DEFAULT_PRIRORITY);
+
+/* Altimeter */
+Altimeter altimeter(&status, ALTIMETER_DEFAULT_PRIRORITY);
 
 /* PIDs low level */
 PIDController pidAngleX(&status, PID_DEFAULT_PRIORITY,
@@ -131,7 +129,6 @@ int main(void) {
 
 	usb.initialize();
 
-
 	/* onboard leds*/
 	leds.initialize();
 	leds.on(ALL);
@@ -186,9 +183,8 @@ void FlightMode() {
 	baro.initialize();
 	gpsReceiver.initialize();
 
-	compFilterX.initialize();
-	compFilterY.initialize();
-	compFilterNorth.initialize();
+	imu.initialize();
+	altimeter.initialize();
 
 	/* Initialize PID for X Y and Z axis */
 	pidAngleX.initialize(&status.pidSettingsAngleXY);
@@ -202,10 +198,9 @@ void FlightMode() {
 	flightLEDs.initialize();
 
 	/* create tasks and start scheduler */
-	Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &compFilterX,
-			&compFilterY, &compFilterNorth, &pidAngleX, &pidAngleY, &pidRateZ,
-			&gpsReceiver, &usbCom, &akku, &baro, &leds, &beep1, &beep2,
-			&flightLEDs };
+	Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &imu,
+			&altimeter, &pidAngleX, &pidAngleY, &pidRateZ, &gpsReceiver,
+			&usbCom, &akku, &baro, &leds, &beep1, &beep2, &flightLEDs };
 	scheduler.start(taskarray, sizeof(taskarray) / 4);
 
 	/* don't stop beliieeeving */
@@ -232,12 +227,6 @@ void FlightMode() {
 //    status.addToneToQueue(&status.buzzerQueue1, BUZZER_E4, 250);
 //    HAL_Delay(2000);
 	while (1) {
-		/* testcode to stop after some time */
-//        if (status.uptime == (3*60*1000)){
-//             while (1) {
-//                     HAL_Delay(2000);
-//             }
-//         }
 
 		if (GET_FLAG(status.globalFlags, RESET_REQUEST)) {
 			SoftwareReset();

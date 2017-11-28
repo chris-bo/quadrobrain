@@ -115,9 +115,6 @@ private:
 
     void calculateTemp();
     void calculatePressure();
-    void calculateHeight();
-
-    float height_start;
 
     int32_t temp;
 
