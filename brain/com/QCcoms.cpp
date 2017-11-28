@@ -869,7 +869,7 @@ void QCcoms::writeEEPROM(uint8_t byteCount) {
 }
 
 uint16_t QCcoms::checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd) {
-	if ((currentPos + dataToAdd) < RXTX_BUFF_SIZE) {
+	if ((currentPos + dataToAdd) < rxtxHandler->rxtxBuffersize) {
 		bufferOverrun = 0;
 		return 0;
 	} else {

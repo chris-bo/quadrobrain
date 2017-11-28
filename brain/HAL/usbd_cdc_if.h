@@ -51,10 +51,10 @@
 /* Exported cariables --------------------------------------------------------*/
 
  /* Received Data over USB are stored in this buffer       */
-extern uint8_t UserRxBufferFS[RXTX_BUFF_SIZE];
+extern uint8_t UserRxBufferFS[USB_RXTX_BUFF_SIZE];
 
  /* Send Data over USB CDC are stored in this buffer       */
-extern uint8_t UserTxBufferFS[RXTX_BUFF_SIZE];
+extern uint8_t UserTxBufferFS[USB_RXTX_BUFF_SIZE];
 
 extern uint16_t number_received_data;
 

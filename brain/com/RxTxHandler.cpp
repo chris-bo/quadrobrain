@@ -16,30 +16,33 @@ RxTxHandler::RxTxHandler(Status* statusPtr, uint8_t defaultPrio,
 	numberReceivedData = NULL;
 	RxBuffer = NULL;
 	TxBuffer = NULL;
+	rxtxBuffersize = 0;
 }
 
 void RxTxHandler::sendTXBuffer(uint16_t byte_count) {
 	/*
-	 * send data routine */
+	 * send data routine
+	 * overwrite
+	 * */
 }
 
 void RxTxHandler::initializeBuffers(uint8_t* RxBuf, uint8_t* TxBuf,
-		uint16_t* numberReceived) {
+		uint16_t* numberReceived, uint16_t rxtxBufsize) {
 	/* needed to setup buffers */
 	RxBuffer = RxBuf;
 	TxBuffer = TxBuf;
 	numberReceivedData = numberReceived;
-
-	memset(TxBuffer, 0, RXTX_BUFF_SIZE);
-	memset(RxBuffer, 0, RXTX_BUFF_SIZE);
+	rxtxBuffersize = rxtxBufsize;
+	memset(TxBuffer, 0, rxtxBuffersize);
+	memset(RxBuffer, 0, rxtxBuffersize);
 	*numberReceivedData = 0;
 
 }
 
 void RxTxHandler::reset() {
-	// todo flush  buffers reset transmit states
-	memset(TxBuffer, 0, RXTX_BUFF_SIZE);
-	memset(RxBuffer, 0, RXTX_BUFF_SIZE);
+	/* flush  buffers reset transmit states */
+	memset(TxBuffer, 0, rxtxBuffersize);
+	memset(RxBuffer, 0, rxtxBuffersize);
 }
 
 void RxTxHandler::startRX() {

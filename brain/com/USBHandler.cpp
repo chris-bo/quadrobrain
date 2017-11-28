@@ -22,7 +22,6 @@ USBHandler::~USBHandler() {
 void USBHandler::sendTXBuffer(uint16_t byte_count) {
 	setLED(true);
 	usb_state = (USBD_StatusTypeDef) CDC_Transmit_FS(TxBuffer, byte_count);
-
 	if (usb_state != USBD_OK) {
 		usbTransmitBusyCounter++;
 		if (usbTransmitBusyCounter == USB_TRANSMIT_BUSY_MAX) {
@@ -47,7 +46,7 @@ void USBHandler::resetTransmissionState() {
 
 void USBHandler::initialize() {
 
-	initializeBuffers(UserRxBufferFS, UserTxBufferFS, &number_received_data);
+	initializeBuffers(UserRxBufferFS, UserTxBufferFS, &number_received_data, USB_RXTX_BUFF_SIZE);
 
 	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }
@@ -56,8 +55,7 @@ void USBHandler::kill() {
 	/* override default kill function
 	 * usb must not be killed
 	 */
-	memset(TxBuffer, 0, RXTX_BUFF_SIZE);
-	memset(RxBuffer, 0, RXTX_BUFF_SIZE);
+	reset();
 }
 
 void USBHandler::startRX() {
