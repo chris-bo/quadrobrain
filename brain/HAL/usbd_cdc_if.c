@@ -73,10 +73,6 @@
  * @{
  */
 /* USER CODE BEGIN PRIVATE_DEFINES */
-/* Define size for the receive and transmit buffer over CDC */
-/* It's up to user to redefine and/or remove those define */
-#define APP_RX_DATA_SIZE  2048
-#define APP_TX_DATA_SIZE  2048
 /* USER CODE END PRIVATE_DEFINES */
 /**
  * @}
@@ -98,10 +94,10 @@
 /* Create buffer for reception and transmission           */
 /* It's up to user to redefine and/or remove those define */
 /* Received Data over USB are stored in this buffer       */
-uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
+uint8_t UserRxBufferFS[USB_RXTX_BUFF_SIZE];
 
 /* Send Data over USB CDC are stored in this buffer       */
-uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
+uint8_t UserTxBufferFS[USB_RXTX_BUFF_SIZE];
 
 uint16_t number_received_data;
 /* USER CODE BEGIN PRIVATE_VARIABLES */

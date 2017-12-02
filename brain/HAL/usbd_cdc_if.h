@@ -72,13 +72,11 @@ extern "C" {
  * @{
  */
 /* USER CODE BEGIN EXPORTED_DEFINES */
-#define APP_RX_DATA_SIZE  2048
-#define APP_TX_DATA_SIZE  2048
 
 /* Received Data over USB are stored in this buffer       */
-extern uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
+extern uint8_t UserRxBufferFS[USB_RXTX_BUFF_SIZE];
 /* Send Data over USB CDC are stored in this buffer       */
-extern uint8_t UserTxBufferFS[APP_RX_DATA_SIZE];
+extern uint8_t UserTxBufferFS[USB_RXTX_BUFF_SIZE];
 
 extern uint16_t number_received_data;
 
