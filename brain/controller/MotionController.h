@@ -18,7 +18,7 @@ public:
     virtual ~MotionController();
 
     void initialize(PID_Settings* _velocityPIDsettings,
-                PID_Settings* _accelerationPIDsettings);
+            PID_Settings* _accelerationPIDsettings);
     void update();
     void reset();
 

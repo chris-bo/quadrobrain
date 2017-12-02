@@ -22,9 +22,10 @@
 
 class PPMGenerator: public Task {
 public:
-    PPMGenerator(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim,
-                float* controllerValueX, float* controllerValueY,
-                float* controllerValueRotZ, float* throttle);
+    PPMGenerator(Status* statusPtr, uint8_t defaultPrio,
+            TIM_HandleTypeDef* htim, float* controllerValueX,
+            float* controllerValueY, float* controllerValueRotZ,
+            float* throttle);
     virtual ~PPMGenerator();
     void update();
     void initialize();

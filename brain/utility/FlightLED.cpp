@@ -7,8 +7,9 @@
 
 #include "FlightLED.h"
 
-FlightLED::FlightLED(Status* statusPtr, uint8_t defaultPrio, SPI_HandleTypeDef* spi)
-            : Task(statusPtr, defaultPrio) {
+FlightLED::FlightLED(Status* statusPtr, uint8_t defaultPrio,
+        SPI_HandleTypeDef* spi) :
+        Task(statusPtr, defaultPrio) {
 
     ledSpi = spi;
     ledPattern = 0;

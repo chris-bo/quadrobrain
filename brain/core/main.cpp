@@ -53,15 +53,15 @@ AkkuMonitor akku(&status, AKKUMONITOR_DEFAULT_PRIORITY, &hadc1);
 
 /* Motor Control */
 PPMGenerator ppmgenerator(&status, PPMGENERATOR_DEFAULT_PRIORITY, &htim3,
-		&status.motorSetpoint.x, &status.motorSetpoint.y,
-		&status.motorSetpoint.z, &status.rcSignalThrottle);
+        &status.motorSetpoint.x, &status.motorSetpoint.y,
+        &status.motorSetpoint.z, &status.rcSignalThrottle);
 
 /* EEPROM Configuration Management*/
 ConfigReader configReader(&hi2c1);
 
 /* PC communications */
 USBHandler usb(&status, USB_DEFAULT_PRIORITY, &leds, USB_TRANSMIT_LED,
-		&hUsbDeviceFS);
+        &hUsbDeviceFS);
 
 QCcoms usbCom(&status, USB_DEFAULT_PRIORITY, &configReader, &usb, &flightLEDs);
 /* GPS Receiver */
@@ -76,19 +76,19 @@ Altimeter altimeter(&status, ALTIMETER_DEFAULT_PRIRORITY);
 
 /* PIDs low level */
 PIDController pidAngleX(&status, PID_DEFAULT_PRIORITY,
-		(float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.x,
-		&status.rate.x, &status.angleSetpoint.x, &status.motorSetpoint.x,
-		PID_XY_CONTROL_VALUE_GAIN,
-		PID_LIMIT, PID_SUM_LIMIT, true);
+        (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.x,
+        &status.rate.x, &status.angleSetpoint.x, &status.motorSetpoint.x,
+        PID_XY_CONTROL_VALUE_GAIN,
+        PID_LIMIT, PID_SUM_LIMIT, true);
 PIDController pidAngleY(&status, PID_DEFAULT_PRIORITY,
-		(float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.y,
-		&status.rate.y, &status.angleSetpoint.y, &status.motorSetpoint.y,
-		PID_XY_CONTROL_VALUE_GAIN,
-		PID_LIMIT, PID_SUM_LIMIT, true);
+        (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.angle.y,
+        &status.rate.y, &status.angleSetpoint.y, &status.motorSetpoint.y,
+        PID_XY_CONTROL_VALUE_GAIN,
+        PID_LIMIT, PID_SUM_LIMIT, true);
 PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
-		(float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rate.z, 0,
-		&status.rcSignalYaw, &status.motorSetpoint.z, PID_Z_CONTROL_VALUE_GAIN,
-		PID_LIMIT, PID_SUM_LIMIT, false);
+        (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rate.z, 0,
+        &status.rcSignalYaw, &status.motorSetpoint.z, PID_Z_CONTROL_VALUE_GAIN,
+        PID_LIMIT, PID_SUM_LIMIT, false);
 
 /* Motion Control
  * includes PIDs for velocity and acceleration
@@ -116,95 +116,95 @@ void SoftwareReset();
 /* USER CODE END 0 */
 
 int main(void) {
-	/* MCU Configuration----------------------------------------------------------*/
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+    /* MCU Configuration----------------------------------------------------------*/
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    HAL_Init();
 
-	/* Configure the system clock */
-	SystemClock_Config();
+    /* Configure the system clock */
+    SystemClock_Config();
 
-	/* Initialize GPIO and USB and UART for bluetooth*/
-	MX_GPIO_Init();
-	MX_USB_DEVICE_Init();
-	MX_USART2_UART_Init();
+    /* Initialize GPIO and USB and UART for bluetooth*/
+    MX_GPIO_Init();
+    MX_USB_DEVICE_Init();
+    MX_USART2_UART_Init();
 
-	usb.initialize();
+    usb.initialize();
 
-	/* onboard leds*/
-	leds.initialize();
-	leds.on(ALL);
+    /* onboard leds*/
+    leds.initialize();
+    leds.on(ALL);
 
-	/* Buzzer*/
-	MX_TIM15_Init();
+    /* Buzzer*/
+    MX_TIM15_Init();
 //	MX_TIM17_Init();
-	beep1.initialize();
+    beep1.initialize();
 //	beep2.initialize();
 
-	/* Short Delay to check all leds */
-	HAL_Delay(10);
+    /* Short Delay to check all leds */
+    HAL_Delay(10);
 
-	/* Call Normal Flight Mode*/
-	FlightMode();
+    /* Call Normal Flight Mode*/
+    FlightMode();
 
-	/* Infinite loop */
-	while (1)
-		;
+    /* Infinite loop */
+    while (1)
+        ;
 
 }
 
 void FlightMode() {
 
-	leds.off(ALL);
-	leds.on(POWER_LED);
-	leds.on(FLIGHT_LED);
+    leds.off(ALL);
+    leds.on(POWER_LED);
+    leds.on(FLIGHT_LED);
 
-	RESET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
-	SET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
+    RESET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
+    SET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
 
-	/* init peripherals */
-	MX_DMA_Init();
-	MX_I2C1_Init();
-	MX_I2C2_Init();
-	MX_TIM2_Init();
-	MX_TIM3_Init();
-	MX_TIM4_Init();
-	MX_ADC1_Init();
-	MX_USART1_UART_Init();
-	MX_SPI2_Init();
+    /* init peripherals */
+    MX_DMA_Init();
+    MX_I2C1_Init();
+    MX_I2C2_Init();
+    MX_TIM2_Init();
+    MX_TIM3_Init();
+    MX_TIM4_Init();
+    MX_ADC1_Init();
+    MX_USART1_UART_Init();
+    MX_SPI2_Init();
 
-	/* init Tasks */
-	usbCom.initialize();
+    /* init Tasks */
+    usbCom.initialize();
 
-	configReader.initialize(&status);
-	mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
-	mpu9150.startReception();
-	rcReceiver.initialize();
-	ppmgenerator.initialize();
-	akku.initialize();
-	baro.initialize();
-	gpsReceiver.initialize();
+    configReader.initialize(&status);
+    mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
+    mpu9150.startReception();
+    rcReceiver.initialize();
+    ppmgenerator.initialize();
+    akku.initialize();
+    baro.initialize();
+    gpsReceiver.initialize();
 
-	imu.initialize();
-	altimeter.initialize();
+    imu.initialize();
+    altimeter.initialize();
 
-	/* Initialize PID for X Y and Z axis */
-	pidAngleX.initialize(&status.pidSettingsAngleXY);
-	pidAngleY.initialize(&status.pidSettingsAngleXY);
-	pidRateZ.initialize(&status.pidSettingsRotationZ);
+    /* Initialize PID for X Y and Z axis */
+    pidAngleX.initialize(&status.pidSettingsAngleXY);
+    pidAngleY.initialize(&status.pidSettingsAngleXY);
+    pidRateZ.initialize(&status.pidSettingsRotationZ);
 
-	/* blinking flight led, to indicate running cpu */
-	leds.setFrequency(FLIGHT_LED, 1);
+    /* blinking flight led, to indicate running cpu */
+    leds.setFrequency(FLIGHT_LED, 1);
 
-	/* activate flight LEDs*/
-	flightLEDs.initialize();
+    /* activate flight LEDs*/
+    flightLEDs.initialize();
 
-	/* create tasks and start scheduler */
-	Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &imu,
-			&altimeter, &pidAngleX, &pidAngleY, &pidRateZ, &gpsReceiver,
-			&usbCom, &akku, &baro, &leds, &beep1, &flightLEDs };
-	scheduler.start(taskarray, sizeof(taskarray) / 4);
+    /* create tasks and start scheduler */
+    Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &imu,
+            &altimeter, &pidAngleX, &pidAngleY, &pidRateZ, &gpsReceiver,
+            &usbCom, &akku, &baro, &leds, &beep1, &flightLEDs };
+    scheduler.start(taskarray, sizeof(taskarray) / 4);
 
-	/* don't stop beliieeeving */
+    /* don't stop beliieeeving */
 //    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
 //    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
 //    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
@@ -227,142 +227,139 @@ void FlightMode() {
 //    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
 //    status.addToneToQueue(&status.buzzerQueue1, BUZZER_E4, 250);
 //    HAL_Delay(2000);
-	while (1) {
+    while (1) {
 
-		if (GET_FLAG(status.globalFlags, RESET_REQUEST)) {
-			SoftwareReset();
-		}
-	}
+        if (GET_FLAG(status.globalFlags, RESET_REQUEST)) {
+            SoftwareReset();
+        }
+    }
 }
 
 void SoftwareReset() {
-	/* No need to deinit Hardware reinitializing resets peripherals*/
-	/* kill processes*/
-	scheduler.kill();
+    /* No need to deinit Hardware reinitializing resets peripherals*/
+    /* kill processes*/
+    scheduler.kill();
 
-	RESET_FLAG(status.globalFlags, RESET_REQUEST);
+    RESET_FLAG(status.globalFlags, RESET_REQUEST);
 
-	if (GET_FLAG(status.globalFlags, (RESET_TO_CONFIG))) {
-		/* clear reset request */
-		RESET_FLAG(status.globalFlags, (RESET_TO_CONFIG));
-		/* goto config mode */
-		ConfigMode();
-	} else {
-		/* clear reset request */
-		RESET_FLAG(status.globalFlags, (RESET_TO_FLIGHT));
-		/* recall flight mode */
-		FlightMode();
-	}
+    if (GET_FLAG(status.globalFlags, (RESET_TO_CONFIG))) {
+        /* clear reset request */
+        RESET_FLAG(status.globalFlags, (RESET_TO_CONFIG));
+        /* goto config mode */
+        ConfigMode();
+    } else {
+        /* clear reset request */
+        RESET_FLAG(status.globalFlags, (RESET_TO_FLIGHT));
+        /* recall flight mode */
+        FlightMode();
+    }
 }
 
 void ConfigMode() {
-	/* Enter Config Mode:
-	 *
-	 * Stop Sensor Functions
-	 * Disable Motors
-	 *
-	 * Restart scheduler only for usb task
-	 *
-	 */
-	scheduler.reset();
+    /* Enter Config Mode:
+     *
+     * Stop Sensor Functions
+     * Disable Motors
+     *
+     * Restart scheduler only for usb task
+     *
+     */
+    scheduler.reset();
 
-	SET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
-	RESET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
+    SET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
+    RESET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
 
-	/* kill all sensors
-	 * and switch off engine
-	 */
-	mpu9150.kill();
-	baro.kill();
-	rcReceiver.kill();
-	ppmgenerator.kill();
+    /* kill all sensors
+     * and switch off engine
+     */
+    mpu9150.kill();
+    baro.kill();
+    rcReceiver.kill();
+    ppmgenerator.kill();
 
-	leds.off(ALL);
-	leds.on(POWER_LED);
-	/* only blinking led to indicate running cpu
-	 * and usb Task needed
-	 * */
-	leds.setFrequency(CONFIG_LED, 1);
-	usbCom.initialize();
+    leds.off(ALL);
+    leds.on(POWER_LED);
+    /* only blinking led to indicate running cpu
+     * and usb Task needed
+     * */
+    leds.setFrequency(CONFIG_LED, 1);
+    usbCom.initialize();
 
-	Task* tasks_config[] = { &usbCom, &leds, &beep1};
-	scheduler.start(tasks_config, sizeof(tasks_config) / 4);
+    Task* tasks_config[] = { &usbCom, &leds, &beep1 };
+    scheduler.start(tasks_config, sizeof(tasks_config) / 4);
 
-	while (1) {
-		if (GET_FLAG(status.globalFlags, RESET_REQUEST)) {
-			/* config finished */
-			configReader.saveConfiguration(&status);
-			SoftwareReset();
-		}
-	}
+    while (1) {
+        if (GET_FLAG(status.globalFlags, RESET_REQUEST)) {
+            /* config finished */
+            configReader.saveConfiguration(&status);
+            SoftwareReset();
+        }
+    }
 }
 
 /** System Clock Configuration
-*/
-void SystemClock_Config(void)
-{
+ */
+void SystemClock_Config(void) {
 
-  RCC_OscInitTypeDef RCC_OscInitStruct;
-  RCC_ClkInitTypeDef RCC_ClkInitStruct;
-  RCC_PeriphCLKInitTypeDef PeriphClkInit;
-
-    /**Initializes the CPU, AHB and APB busses clocks 
-    */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = 16;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
+    RCC_OscInitTypeDef RCC_OscInitStruct;
+    RCC_ClkInitTypeDef RCC_ClkInitStruct;
+    RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
     /**Initializes the CPU, AHB and APB busses clocks 
-    */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+     */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI
+            | RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+    RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+    RCC_OscInitStruct.HSICalibrationValue = 16;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+        _Error_Handler(__FILE__, __LINE__);
+    }
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
+    /**Initializes the CPU, AHB and APB busses clocks 
+     */
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+            | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB|RCC_PERIPHCLK_USART1
-                              |RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_I2C1
-                              |RCC_PERIPHCLK_I2C2|RCC_PERIPHCLK_ADC12;
-  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
-  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
-  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
-  PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
-  PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_HSI;
-  PeriphClkInit.USBClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
+        _Error_Handler(__FILE__, __LINE__);
+    }
+
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB
+            | RCC_PERIPHCLK_USART1 | RCC_PERIPHCLK_USART2 | RCC_PERIPHCLK_I2C1
+            | RCC_PERIPHCLK_I2C2 | RCC_PERIPHCLK_ADC12;
+    PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+    PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+    PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
+    PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
+    PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_HSI;
+    PeriphClkInit.USBClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
+        _Error_Handler(__FILE__, __LINE__);
+    }
 
     /**Enables the Clock Security System 
-    */
-  HAL_RCC_EnableCSS();
+     */
+    HAL_RCC_EnableCSS();
 
     /**Configure the Systick interrupt time 
-    */
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+     */
+    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
 
     /**Configure the Systick 
-    */
-  HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+     */
+    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
-  /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+    /* SysTick_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
 /* USER CODE BEGIN 4 */
@@ -370,46 +367,44 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
-void _Error_Handler(char * file, int line)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  while(1) 
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */ 
+ * @brief  This function is executed in case of error occurrence.
+ * @param  None
+ * @retval None
+ */
+void _Error_Handler(char * file, int line) {
+    /* USER CODE BEGIN Error_Handler_Debug */
+    /* User can add his own implementation to report the HAL error return state */
+    while (1) {
+    }
+    /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef USE_FULL_ASSERT
 
 /**
-   * @brief Reports the name of the source file and the source line number
-   * where the assert_param error has occurred.
-   * @param file: pointer to the source file name
-   * @param line: assert_param error line source number
-   * @retval None
-   */
+ * @brief Reports the name of the source file and the source line number
+ * where the assert_param error has occurred.
+ * @param file: pointer to the source file name
+ * @param line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t* file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-    ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+    /* USER CODE BEGIN 6 */
+    /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    /* USER CODE END 6 */
 
 }
 
 #endif
 
 /**
-  * @}
-  */ 
+ * @}
+ */
 
 /**
-  * @}
-*/ 
+ * @}
+ */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -140,50 +140,50 @@
 
 class QCcoms: public Task {
 public:
-	QCcoms(Status* statusPtr, uint8_t defaultPrio, ConfigReader* _confReader,
-			RxTxHandler* _rxtxHandler, FlightLED* _flightLEDs);
-	virtual ~QCcoms();
+    QCcoms(Status* statusPtr, uint8_t defaultPrio, ConfigReader* _confReader,
+            RxTxHandler* _rxtxHandler, FlightLED* _flightLEDs);
+    virtual ~QCcoms();
 
-	void initialize();
-	void update();
-	void reset();
+    void initialize();
+    void update();
+    void reset();
 
 private:
 
-	RxTxHandler* rxtxHandler;
-	ConfigReader* confReader;
-	FlightLED* flightLEDs;
+    RxTxHandler* rxtxHandler;
+    ConfigReader* confReader;
+    FlightLED* flightLEDs;
 
-	/* loopback for communication test */
-	void loopback();
+    /* loopback for communication test */
+    void loopback();
 
-	/* reply to custom frame request */
-	void answerCusomFrame();
+    /* reply to custom frame request */
+    void answerCusomFrame();
 
-	/* confirm command
-	 * for commands without return
-	 */
-	void sendConfirmation();
+    /* confirm command
+     * for commands without return
+     */
+    void sendConfirmation();
 
-	/* config */
-	void decodeConfigMSG();
-	void updateConfig();
+    /* config */
+    void decodeConfigMSG();
+    void updateConfig();
 
-	/* fillBuffer returns next free pos in buffer*/
-	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, float var);
-	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint32_t var);
-	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int32_t var);
-	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int16_t var);
-	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint16_t var);
-	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int8_t var);
-	uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint8_t var);
-	void readEEPROM(uint8_t byteCount);
-	void writeEEPROM(uint8_t byteCount);
+    /* fillBuffer returns next free pos in buffer*/
+    uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, float var);
+    uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint32_t var);
+    uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int32_t var);
+    uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int16_t var);
+    uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint16_t var);
+    uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int8_t var);
+    uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint8_t var);
+    void readEEPROM(uint8_t byteCount);
+    void writeEEPROM(uint8_t byteCount);
 
-	/* used to create packages of RXTX buffsize*/
-	uint16_t checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd);
-	uint16_t bufferOverrun;
-	uint16_t customFramePos;
+    /* used to create packages of RXTX buffsize*/
+    uint16_t checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd);
+    uint16_t bufferOverrun;
+    uint16_t customFramePos;
 };
 
 #endif /* QCCOMS_H_ */

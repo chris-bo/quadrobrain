@@ -46,7 +46,8 @@ private:
     void appendUBXChecksumTX(uint8_t bufferSize);
     void receive(uint8_t msgLength);
 
-    uint8_t updateReceiverConfig(uint8_t configID, uint8_t* buffer, uint16_t payloadLength);
+    uint8_t updateReceiverConfig(uint8_t configID, uint8_t* buffer,
+            uint16_t payloadLength);
 //    void getReceiverConfig(uint8_t configID, uint8_t* buffer, uint16_t payloadLength);
     void decodeRX();
     void decodeUBX_NAV();

@@ -8,7 +8,7 @@
 #include "Scheduler.h"
 
 Scheduler::Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim,
-            DiscoveryLEDs* _leds) {
+        DiscoveryLEDs* _leds) {
     status = systemStatus;
     taskArray = 0;
     numberOfTasks = 0;
@@ -68,8 +68,8 @@ void Scheduler::executeTasks() {
         for (uint8_t k = 0; k < numberOfTasks; k++) {
             // Wenn Task aktuelle Priorit�t hat und aktiv (erstes Statusbit) ist
             if ((taskArray[k]->priority == prio)
-                        && !(GET_FLAG(taskArray[k]->taskStatusFlags,
-                                    TASK_FLAG_CHECKED))) {
+                    && !(GET_FLAG(taskArray[k]->taskStatusFlags,
+                            TASK_FLAG_CHECKED))) {
                 /* increase checkedTasks counter, and set Task as Checked*/
                 checkedTasks++;
                 SET_FLAG(taskArray[k]->taskStatusFlags, TASK_FLAG_CHECKED);
@@ -78,7 +78,7 @@ void Scheduler::executeTasks() {
                 /* check time
                  * */
                 if ((timerTmp > taskArray[k]->duration)
-                            || (taskArray[k]->priority < 2)) {
+                        || (taskArray[k]->priority < 2)) {
                     /* timeLeft > maxDuration or priority < 2
                      * Priority 0 and 1 are executed always
                      *
@@ -100,7 +100,7 @@ void Scheduler::executeTasks() {
                          * decrease duration: (90% old + 10% new)
                          */
                         taskArray[k]->duration = (taskArray[k]->duration * 9
-                                    + timerTmp) / 10;
+                                + timerTmp) / 10;
                     }
                 } else {
                     /* not enough time to complete task
@@ -129,9 +129,9 @@ void Scheduler::executeTasks() {
      *
      * */
     status->cpuLoad = (float) (status->cpuLoad * (CPU_LOAD_HISTORY - 1)
-                + ((float) (SCHEDULER_TIMER_PERIOD
-                            - __HAL_TIM_GetCounter(scheduler_htim))
-                            / (float) (SCHEDULER_TIMER_PERIOD ))) / CPU_LOAD_HISTORY;
+            + ((float) (SCHEDULER_TIMER_PERIOD
+                    - __HAL_TIM_GetCounter(scheduler_htim))
+                    / (float) (SCHEDULER_TIMER_PERIOD ))) / CPU_LOAD_HISTORY;
 
 }
 void Scheduler::timerIRQ() {
@@ -163,7 +163,7 @@ void Scheduler::checkTaskDurations(uint8_t taskIndex) {
             if (taskArray[i]->priority != 0) {
                 // Wenn Prio 0 Tasks zusammen mit einer anderen Task zusammen nicht in eine Periode passen
                 if ((timeSum + taskArray[i]->duration)
-                            >= SCHEDULER_INTERVALL_ms * 1000) {
+                        >= SCHEDULER_INTERVALL_ms * 1000) {
                     // Emergency-Flag setzen
                     SET_FLAG(status->globalFlags, EMERGENCY_FLAG);
                     break;
@@ -200,7 +200,7 @@ void Scheduler::errorHandler() {
 
     /* Flight Data Reception */
     if (GET_FLAGS(status->globalFlags,
-                (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
+            (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
         leds->on(FLIGHT_DATA_RECEPTION_LED);
     } else {
         leds->off(FLIGHT_DATA_RECEPTION_LED);
@@ -219,8 +219,9 @@ void Scheduler::errorHandler() {
      *
      */
     if ((!GET_FLAG(status->globalFlags,
-                (LOW_VOLTAGE_FLAG | USB_ERROR_FLAG | CPU_OVERLOAD_FLAG)))
-                && GET_FLAGS(status->globalFlags, (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
+            (LOW_VOLTAGE_FLAG | USB_ERROR_FLAG | CPU_OVERLOAD_FLAG)))
+            && GET_FLAGS(status->globalFlags,
+                    (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
 
         /* at this time, there are no error flags set
          * -> reset error_flag and switch led error off

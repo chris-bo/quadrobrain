@@ -8,8 +8,8 @@
 #include "RCreceiver.h"
 
 RCreceiver::RCreceiver(Status* statusPtr, uint8_t defaultPrio,
-            TIM_HandleTypeDef* htim)
-            : Task(statusPtr, defaultPrio) {
+        TIM_HandleTypeDef* htim) :
+        Task(statusPtr, defaultPrio) {
     currentChannel = 0;
     rawReceiverValues[0] = 0;
     rawReceiverValues[1] = 0;
@@ -49,11 +49,15 @@ void RCreceiver::update() {
         signalLostTime++;
         if (GET_FLAG(taskStatusFlags, RC_RECEIVER_HAD_SIGNAL)) {
             if (status->qcSettings.enableBuzzerWarningRCLost) {
-                if (signalLostBuzzerCounter++ == SCHEDULER_INTERVALL_ms * 1000) {
+                if (signalLostBuzzerCounter++
+                        == SCHEDULER_INTERVALL_ms * 1000) {
                     signalLostBuzzerCounter = 0;
-                    status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5, 300);
-                    status->addToneToQueue(&status->buzzerQueue1, BUZZER_PAUSE, 100);
-                    status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5, 300);
+                    status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5,
+                            300);
+                    status->addToneToQueue(&status->buzzerQueue1, BUZZER_PAUSE,
+                            100);
+                    status->addToneToQueue(&status->buzzerQueue1, BUZZER_B5,
+                            300);
                 } else {
                     signalLostBuzzerCounter++;
                 }
@@ -75,7 +79,7 @@ void RCreceiver::computeValues() {
 
         tmp = (int16_t) (rawReceiverValues[i] - RC_RECEIVER_MinHighTime_us);
         tmp = (int16_t) (tmp * 10000
-                    / (RC_RECEIVER_MaxHighTime_us - RC_RECEIVER_MinHighTime_us));
+                / (RC_RECEIVER_MaxHighTime_us - RC_RECEIVER_MinHighTime_us));
         if (tmp < 0) {
             tmp = 0;
         } else if (tmp > 10000) {
@@ -136,13 +140,13 @@ void RCreceiver::captureIRQ() {
      * */
     if (currentChannel == 8) {
         /* after sync sequence */
-    	__HAL_TIM_SET_COUNTER(RCreceiver_htim, 0x00);
+        __HAL_TIM_SET_COUNTER(RCreceiver_htim, 0x00);
         HAL_TIM_ReadCapturedValue(RCreceiver_htim, RC_RECEIVER_INPUT_CHANNEL);
         currentChannel = 0;
     } else {
-        rawReceiverValues[currentChannel] = (uint16_t) HAL_TIM_ReadCapturedValue(
-                    RCreceiver_htim,
-                    RC_RECEIVER_INPUT_CHANNEL);
+        rawReceiverValues[currentChannel] =
+                (uint16_t) HAL_TIM_ReadCapturedValue(RCreceiver_htim,
+                RC_RECEIVER_INPUT_CHANNEL);
         __HAL_TIM_SET_COUNTER(RCreceiver_htim, 0);
         currentChannel++;
         if (currentChannel == 8) {

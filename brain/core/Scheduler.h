@@ -8,15 +8,14 @@
 #ifndef SCHEDULER_H_
 #define SCHEDULER_H_
 
-
 #include <core/Task.h>
 #include <utility/DiscoveryLEDs.h>
 #include "stm32f3xx_hal.h"
 
-
 class Scheduler {
 public:
-    Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim, DiscoveryLEDs* leds);
+    Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim,
+            DiscoveryLEDs* leds);
 
     void start(Task** tasks, uint8_t taskAmount);
     void pause();

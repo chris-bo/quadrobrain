@@ -8,8 +8,8 @@
 #include "MAfilterF.h"
 
 MAfilterF::MAfilterF(Status* statusPtr, int8_t defaultPrio, float* _input,
-            float* _output, uint16_t _buffersize)
-: Task(statusPtr, defaultPrio) {
+        float* _output, uint16_t _buffersize) :
+        Task(statusPtr, defaultPrio) {
 
     counter = 0;
     input = _input;

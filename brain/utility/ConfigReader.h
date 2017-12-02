@@ -37,7 +37,6 @@
 #define QC_CONFIG_EN_LEDS               0x0032
 #define QC_CONFIG_EN_MOTORS             0x0033
 
-
 #define PID_VEL_P_ADDR                   0x0040
 #define PID_VEL_I_ADDR                   0x0044
 #define PID_VEL_D_ADDR                   0x0048
@@ -71,7 +70,7 @@ private:
     I2C_HandleTypeDef* eeprom_i2c;
     void load(uint8_t* variable, uint16_t address, uint16_t byteCount);
     void save(uint8_t* variable, uint16_t address, uint16_t byteCount,
-                uint8_t nodelay);
+            uint8_t nodelay);
 
 };
 

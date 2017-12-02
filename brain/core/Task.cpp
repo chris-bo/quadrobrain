@@ -12,15 +12,15 @@
  */
 Task::Task(Status* statusPtr, int8_t defaultPrio) {
 
-	status = statusPtr;
-	if (defaultPrio == 1) {
-		defaultPrio = 2;
-	}
+    status = statusPtr;
+    if (defaultPrio == 1) {
+        defaultPrio = 2;
+    }
 
-	defaultPriority = defaultPrio;
-	priority = defaultPriority;
-	duration = 0;
-	taskStatusFlags = 0;
+    defaultPriority = defaultPrio;
+    priority = defaultPriority;
+    duration = 0;
+    taskStatusFlags = 0;
 
 }
 
@@ -29,21 +29,21 @@ Task::~Task() {
 
 void Task::update() {
 
-	/* Standard update function */
+    /* Standard update function */
 
 }
 
 void Task::initialize() {
 
-	/* standard initialization function
-	 *
-	 * set task active */
+    /* standard initialization function
+     *
+     * set task active */
     SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 
 }
 
 void Task::resetPriority() {
-	priority = defaultPriority;
+    priority = defaultPriority;
 }
 
 void Task::reset() {

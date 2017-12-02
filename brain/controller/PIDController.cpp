@@ -8,11 +8,11 @@
 #include "PIDController.h"
 
 PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
-            float _sampleTime, float* _processVariable,
-            float* _derivedProcessVariable, float* _setPoint, float* _controlValue,
-            float _controlValueGain, float _limit, float _sumLimit,
-            bool _useDerivedInput)
-            : Task(statusPtr, defaultPrio) {
+        float _sampleTime, float* _processVariable,
+        float* _derivedProcessVariable, float* _setPoint, float* _controlValue,
+        float _controlValueGain, float _limit, float _sumLimit,
+        bool _useDerivedInput) :
+        Task(statusPtr, defaultPrio) {
     status = statusPtr;
     this->processVariable = _processVariable;
     this->derivedProcessVariable = _derivedProcessVariable;
@@ -54,15 +54,16 @@ void PIDController::update() {
         if (useDerivedInput) {
             // Falls Ableitung vorhanden wird diese direkt verwendet
             temp = (settings->p) * e + (settings->i) * sampleTime * eSum
-                        + (settings->d)
-                                    * (((*setPoint) - oldValue)/sampleTime * (settings->scaleSetPoint)
-                                                - (*derivedProcessVariable));
+                    + (settings->d)
+                            * (((*setPoint) - oldValue) / sampleTime
+                                    * (settings->scaleSetPoint)
+                                    - (*derivedProcessVariable));
             oldValue = *setPoint;
 
         } else {
             // falls nicht wird die Ableitung berechnet
             temp = (settings->p) * e + (settings->i) * sampleTime * eSum
-                        + (settings->d) * (e - oldValue) / sampleTime;
+                    + (settings->d) * (e - oldValue) / sampleTime;
 
             oldValue = e;
         }

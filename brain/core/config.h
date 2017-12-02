@@ -84,7 +84,6 @@
 
 /* uncomment to round processvariable to 3 digits behind . */
 //#define PID_ROUND_PROCESS_VARIABLE
-
 /* HorizontalMotion Control */
 #define HorizontalMotionControl_PRIORITY        0
 
@@ -111,21 +110,18 @@
 #define AKKUMONITOR_DEFAULT_PRIORITY			10
 #define LOW_VOLTAGE_WARNING_THRESHOLD           10.5f // [V]
 #define ONLY_USB_POWER_VOLTAGE_THRESHOLD        4.0f //[V] assume only usb
-                                                     // power below this threshold
+// power below this threshold
 
 /****************************/
 /* Pressure Sensor */
 #define BMP180_DEFAULT_PRIORITY                 10
 #define BMP180_I2C                              I2C2
 
-
 /****************************/
 /* IMU
  *
  */
 #define IMU_DEFAULT_PRIRORITY					0
-
-
 
 /****************************/
 /* IMU
@@ -137,7 +133,6 @@
 /* GPS
  *
  */
-
 
 #define GPS_DEFAULT_PRIORITY                    5
 /****************************/
@@ -154,7 +149,6 @@
 #define OVERLOAD_LED                            LED3
 #define FLIGHT_DATA_RECEPTION_LED               LED9
 #define ERROR_LED                               LED10
-
 
 /* comms
  *
@@ -229,7 +223,6 @@
 #define BUZZER_D2   73.4162f
 #define BUZZER_Cp2  69.2957f
 #define BUZZER_C2   65.4064f
-
 
 /*********************************************************************************/
 /* hard coded settings*/

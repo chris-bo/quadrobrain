@@ -8,7 +8,6 @@
 #ifndef AKKUMONITOR_H_
 #define AKKUMONITOR_H_
 
-
 #include <core/Task.h>
 
 /*********************************************************
@@ -27,7 +26,8 @@
 
 class AkkuMonitor: public Task {
 public:
-    AkkuMonitor(Status* statusPtr, uint8_t defaultPrio, ADC_HandleTypeDef* hadc);
+    AkkuMonitor(Status* statusPtr, uint8_t defaultPrio,
+            ADC_HandleTypeDef* hadc);
     virtual ~AkkuMonitor();
 
     void initialize();

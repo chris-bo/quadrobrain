@@ -8,9 +8,9 @@
 #include "PPMGenerator.h"
 
 PPMGenerator::PPMGenerator(Status* statusPtr, uint8_t defaultPrio,
-            TIM_HandleTypeDef* htim, float* _controllerValueX,
-            float* _controllerValueY, float* _controllerValueZ, float* _throttle)
-            : Task(statusPtr, defaultPrio) {
+        TIM_HandleTypeDef* htim, float* _controllerValueX,
+        float* _controllerValueY, float* _controllerValueZ, float* _throttle) :
+        Task(statusPtr, defaultPrio) {
     PPMGenerator_htim = htim;
     controllerValueX = _controllerValueX;
     controllerValueY = _controllerValueY;
@@ -40,13 +40,13 @@ void PPMGenerator::update() {
         /* todo ppmgen: test sign of controllervalue Z*/
         if (*throttle > PPM_GENERATOR_THROTTLE_THRESHOLD) {
             motorValuesAvg[0] += *throttle * THROTTLE_SCALING
-                        - *controllerValueY + *controllerValueZ;
+                    - *controllerValueY + *controllerValueZ;
             motorValuesAvg[1] += *throttle * THROTTLE_SCALING
-                        + *controllerValueX - *controllerValueZ;
+                    + *controllerValueX - *controllerValueZ;
             motorValuesAvg[2] += *throttle * THROTTLE_SCALING
-                        + *controllerValueY + *controllerValueZ;
+                    + *controllerValueY + *controllerValueZ;
             motorValuesAvg[3] += *throttle * THROTTLE_SCALING
-                        - *controllerValueX - *controllerValueZ;
+                    - *controllerValueX - *controllerValueZ;
             counter++;
         } else {
             // Throttle zu niedrig => Reglerwerte werden nicht beruecksichtig
@@ -69,7 +69,7 @@ void PPMGenerator::update() {
     }
 
     if (__HAL_TIM_GetCounter(PPMGenerator_htim)
-                >= PPM_TIMER_PERIOD * (20 - SCHEDULER_INTERVALL_ms) / 20) {
+            >= PPM_TIMER_PERIOD * (20 - SCHEDULER_INTERVALL_ms) / 20) {
         /* Im letzten Scheduler Intervall vor der neuen PWM Periode werden die neuen
          * Werte gesetzt
          */
@@ -89,23 +89,23 @@ void PPMGenerator::update() {
         // und anschliessend dem Timer uebergeben
         // Motor 1
         uint16_t temp = (uint16_t) (status->motorValues[0]
-                    * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
-                    + PPM_TIMER_MIN_PULSE_LENGTH);
+                * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
+                + PPM_TIMER_MIN_PULSE_LENGTH);
         __HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_1, temp);
         // Motor 2
         temp = (uint16_t) (status->motorValues[1]
-                    * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
-                    + PPM_TIMER_MIN_PULSE_LENGTH);
+                * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
+                + PPM_TIMER_MIN_PULSE_LENGTH);
         __HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_2, temp);
         // Motor 3
         temp = (uint16_t) (status->motorValues[2]
-                    * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
-                    + PPM_TIMER_MIN_PULSE_LENGTH);
+                * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
+                + PPM_TIMER_MIN_PULSE_LENGTH);
         __HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_3, temp);
         // Motor 4
         temp = (uint16_t) (status->motorValues[3]
-                    * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
-                    + PPM_TIMER_MIN_PULSE_LENGTH);
+                * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
+                + PPM_TIMER_MIN_PULSE_LENGTH);
         __HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_4, temp);
 
     }
@@ -124,23 +124,23 @@ void PPMGenerator::initialize() {
     // und anschlie�end dem Timer �bergeben
     // Motor 1
     uint16_t temp = (uint16_t) (status->motorValues[0]
-                * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
-                + PPM_TIMER_MIN_PULSE_LENGTH);
+            * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
+            + PPM_TIMER_MIN_PULSE_LENGTH);
     __HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_1, temp);
     // Motor 2
     temp = (uint16_t) (status->motorValues[1]
-                * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
-                + PPM_TIMER_MIN_PULSE_LENGTH);
+            * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
+            + PPM_TIMER_MIN_PULSE_LENGTH);
     __HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_2, temp);
     // Motor 3
     temp = (uint16_t) (status->motorValues[2]
-                * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
-                + PPM_TIMER_MIN_PULSE_LENGTH);
+            * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
+            + PPM_TIMER_MIN_PULSE_LENGTH);
     __HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_3, temp);
     // Motor 4
     temp = (uint16_t) (status->motorValues[3]
-                * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
-                + PPM_TIMER_MIN_PULSE_LENGTH);
+            * (PPM_TIMER_MAX_PULSE_LENGTH - PPM_TIMER_MIN_PULSE_LENGTH)
+            + PPM_TIMER_MIN_PULSE_LENGTH);
     __HAL_TIM_SetCompare(PPMGenerator_htim, TIM_CHANNEL_4, temp);
 
     // Testen ob sich Motoren korrekt Kalibrieren

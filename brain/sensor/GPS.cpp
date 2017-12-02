@@ -10,8 +10,8 @@
 uint8_t GPS_TX_buffer[GPS_TX_BUFFER_LENGTH];
 uint8_t GPS_RX_buffer[GPS_RX_BUFFER_LENGTH];
 
-GPS::GPS(Status* _status, int8_t _defaultPriority, UART_HandleTypeDef* uart)
-            : Task(_status, _defaultPriority) {
+GPS::GPS(Status* _status, int8_t _defaultPriority, UART_HandleTypeDef* uart) :
+        Task(_status, _defaultPriority) {
 
     gpsData = &status->gpsData;
     gpsUart = uart;
@@ -49,7 +49,7 @@ void GPS::initialize() {
 #endif
 
     /* Check Baudrate by Port config -> ack?*/
-    if (updateReceiverConfig(UBX_CFG_PRT, PORT_Config_115200, 20) == 0 ) {
+    if (updateReceiverConfig(UBX_CFG_PRT, PORT_Config_115200, 20) == 0) {
         /* no ack -> needs fixing*/
         /* solution 1: reset uart and check again */
 
@@ -59,8 +59,7 @@ void GPS::initialize() {
         gpsUart->Init.BaudRate = 115200;
         HAL_UART_Init(gpsUart);
 
-
-        if (updateReceiverConfig(UBX_CFG_PRT, PORT_Config_115200, 20) == 0 ) {
+        if (updateReceiverConfig(UBX_CFG_PRT, PORT_Config_115200, 20) == 0) {
             /* failed again */
             /* solution 2
              * try 9600 baud
@@ -72,8 +71,8 @@ void GPS::initialize() {
             HAL_UART_Init(gpsUart);
             updateReceiverConfig(UBX_CFG_PRT, PORT_Config_115200, 20);
 
-            if ( !GET_FLAG(transferState,GPS_COM_FLAG_TRANSMISSION_ERROR)) {
-                SET_FLAG(transferState,GPS_COM_FLAG_TRANSMISSION_ERROR);
+            if (!GET_FLAG(transferState, GPS_COM_FLAG_TRANSMISSION_ERROR)) {
+                SET_FLAG(transferState, GPS_COM_FLAG_TRANSMISSION_ERROR);
                 /* recall initialization */
                 this->initialize();
             } else {
@@ -86,15 +85,14 @@ void GPS::initialize() {
         }
     }
 
-
     /* now port should be accepted */
 #ifdef SAVE_PORT_SETTINGS_TO_BBR
-                /* Save Settings for next startup*/
-                /* Payload to save Portconfig to BBR(battery backed ram*/
-               static uint8_t save_port_config[] = { 0x00, 0x00, 0x00, 0x00, 0x01,
-                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
+    /* Save Settings for next startup*/
+    /* Payload to save Portconfig to BBR(battery backed ram*/
+    static uint8_t save_port_config[] = {0x00, 0x00, 0x00, 0x00, 0x01,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 
-                updateReceiverConfig(UBX_CFG_CFG, save_port_config, 13);
+    updateReceiverConfig(UBX_CFG_CFG, save_port_config, 13);
 #endif
 
     /* Port Config accepted
@@ -110,20 +108,22 @@ void GPS::initialize() {
      * autoscan
      *
      */
-      static uint8_t use_sbas_config[] = {0x03, 0x07, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00};
-      updateReceiverConfig(UBX_CFG_SBAS, use_sbas_config, 8);
+    static uint8_t use_sbas_config[] = { 0x03, 0x07, 0x03, 0x00, 0x00, 0x00,
+            0x00, 0x00 };
+    updateReceiverConfig(UBX_CFG_SBAS, use_sbas_config, 8);
 #endif
 
 #ifdef INCREASE_MEASUREMENT_RATE
-  static uint8_t inrease_measurement_rate[] = {0xC8, 0x00, 0x01, 0x00, 0x01, 0x00,};
+    static uint8_t inrease_measurement_rate[] = { 0xC8, 0x00, 0x01, 0x00, 0x01,
+            0x00, };
     updateReceiverConfig(UBX_CFG_RATE, inrease_measurement_rate, 6);
 #endif
 
 #ifdef SAVE_ALL_SETTINGS_TO_BBR
 
-    static uint8_t save_all_settings[] = {0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00,
-                                          0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
-       updateReceiverConfig(UBX_CFG_RATE, save_all_settings, 13);
+    static uint8_t save_all_settings[] = { 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
+    updateReceiverConfig(UBX_CFG_RATE, save_all_settings, 13);
 #endif
     transferState = 0;
     setTransferState();
@@ -219,52 +219,52 @@ void GPS::appendUBXChecksumTX(uint8_t bufferSize) {
 void GPS::decodeRX() {
 
     switch (GPS_RX_buffer[2]) {
-        case UBX_ACK: {
-            /*decode ack-msg*/
-            if (GPS_RX_buffer[3] == UBX_ACK_ACK) {
-                lastACK.ack = 1;
-            } else if (GPS_RX_buffer[3] == UBX_ACK_NAK) {
-                lastACK.ack = 0;
-            } else {
-                /* Error */
-                /* wrong protocol */
-            }
-            lastACK.classid = GPS_RX_buffer[6];
-            lastACK.msgid = GPS_RX_buffer[7];
-            break;
-        }
-        case UBX_NAV: {
-            /*decode NAV */
-            switch (GPS_RX_buffer[3]) {
-                case UBX_NAV_TIMEUTC:
-                case UBX_NAV_SOL:
-                case UBX_NAV_POSECEF:
-                case UBX_NAV_VELECEF:
-                case UBX_NAV_VELNED:
-                case UBX_NAV_POSLLH:
-                case UBX_NAV_DOP:
-                case UBX_NAV_STATUS:
-                    decodeUBX_NAV();
-                    break;
-                case UBX_NAV_SBAS:
-                    break;
-                default:
-                    /* Error */
-                    /* wrong protocol */
-                    break;
-            }
-
-            break;
-        }
-        case UBX_CFG: {
-            /* Decode Configurations */
-            break;
-        }
-        default: {
+    case UBX_ACK: {
+        /*decode ack-msg*/
+        if (GPS_RX_buffer[3] == UBX_ACK_ACK) {
+            lastACK.ack = 1;
+        } else if (GPS_RX_buffer[3] == UBX_ACK_NAK) {
+            lastACK.ack = 0;
+        } else {
             /* Error */
             /* wrong protocol */
-
         }
+        lastACK.classid = GPS_RX_buffer[6];
+        lastACK.msgid = GPS_RX_buffer[7];
+        break;
+    }
+    case UBX_NAV: {
+        /*decode NAV */
+        switch (GPS_RX_buffer[3]) {
+        case UBX_NAV_TIMEUTC:
+        case UBX_NAV_SOL:
+        case UBX_NAV_POSECEF:
+        case UBX_NAV_VELECEF:
+        case UBX_NAV_VELNED:
+        case UBX_NAV_POSLLH:
+        case UBX_NAV_DOP:
+        case UBX_NAV_STATUS:
+            decodeUBX_NAV();
+            break;
+        case UBX_NAV_SBAS:
+            break;
+        default:
+            /* Error */
+            /* wrong protocol */
+            break;
+        }
+
+        break;
+    }
+    case UBX_CFG: {
+        /* Decode Configurations */
+        break;
+    }
+    default: {
+        /* Error */
+        /* wrong protocol */
+
+    }
     }
 }
 
@@ -285,93 +285,93 @@ void GPS::decodeUBX_NAV() {
 
     switch (GPS_RX_buffer[3]) {
 
-        case UBX_NAV_POSECEF:
-            gpsData->ecef_data.x = gps_rx_buffer_32offset(4);
-            gpsData->ecef_data.y = gps_rx_buffer_32offset(8);
-            gpsData->ecef_data.z = gps_rx_buffer_32offset(12);
-            gpsData->ecef_data.pAcc = gps_rx_buffer_32offset(16);
-            RESET_FLAG(transferState, GPS_GET_ECEF);
-            break;
-        case UBX_NAV_VELECEF:
-            gpsData->ecef_data.vx = gps_rx_buffer_32offset(4);
-            gpsData->ecef_data.vy = gps_rx_buffer_32offset(8);
-            gpsData->ecef_data.vz = gps_rx_buffer_32offset(12);
-            gpsData->ecef_data.sAcc = gps_rx_buffer_32offset(16);
-            RESET_FLAG(transferState, GPS_GET_VELECEF);
-            break;
-        case UBX_NAV_POSLLH:
-            gpsData->llh_data.lon = gps_rx_buffer_32offset(4);
-            gpsData->llh_data.lat = gps_rx_buffer_32offset(8);
-            gpsData->llh_data.h = gps_rx_buffer_32offset(12);
-            gpsData->llh_data.hMSL = gps_rx_buffer_32offset(16);
-            gpsData->llh_data.hAcc = gps_rx_buffer_32offset(20);
-            gpsData->llh_data.vAcc = gps_rx_buffer_32offset(24);
-            RESET_FLAG(transferState, GPS_GET_LLH);
-            break;
-        case UBX_NAV_VELNED:
-            gpsData->ned_data.vN = gps_rx_buffer_32offset(4);
-            gpsData->ned_data.vE = gps_rx_buffer_32offset(8);
-            gpsData->ned_data.vD = gps_rx_buffer_32offset(12);
-            gpsData->ned_data.speed = gps_rx_buffer_32offset(16);
-            gpsData->ned_data.gSpeed = gps_rx_buffer_32offset(20);
-            gpsData->ned_data.heading = gps_rx_buffer_32offset(24);
-            gpsData->ned_data.sAcc = gps_rx_buffer_32offset(28);
-            gpsData->ned_data.cAcc = gps_rx_buffer_32offset(32);
-            RESET_FLAG(transferState, GPS_GET_VELNED);
-            break;
-        case UBX_NAV_SOL:
-            gpsData->gpsWeek = (int16_t) gps_rx_buffer_16offset(8);
-            gpsData->gpsFix = (GPS_Fix_t) gps_rx_buffer_offset(10);
-            gpsData->navStatusFlags = gps_rx_buffer_offset(11);
-            gpsData->ecef_data.x = gps_rx_buffer_32offset(12);
-            gpsData->ecef_data.y = gps_rx_buffer_32offset(16);
-            gpsData->ecef_data.z = gps_rx_buffer_32offset(20);
-            gpsData->ecef_data.pAcc = gps_rx_buffer_32offset(24);
-            gpsData->ecef_data.vx = gps_rx_buffer_32offset(28);
-            gpsData->ecef_data.vy = gps_rx_buffer_32offset(32);
-            gpsData->ecef_data.vz = gps_rx_buffer_32offset(36);
-            gpsData->ecef_data.sAcc = gps_rx_buffer_32offset(40);
+    case UBX_NAV_POSECEF:
+        gpsData->ecef_data.x = gps_rx_buffer_32offset(4);
+        gpsData->ecef_data.y = gps_rx_buffer_32offset(8);
+        gpsData->ecef_data.z = gps_rx_buffer_32offset(12);
+        gpsData->ecef_data.pAcc = gps_rx_buffer_32offset(16);
+        RESET_FLAG(transferState, GPS_GET_ECEF);
+        break;
+    case UBX_NAV_VELECEF:
+        gpsData->ecef_data.vx = gps_rx_buffer_32offset(4);
+        gpsData->ecef_data.vy = gps_rx_buffer_32offset(8);
+        gpsData->ecef_data.vz = gps_rx_buffer_32offset(12);
+        gpsData->ecef_data.sAcc = gps_rx_buffer_32offset(16);
+        RESET_FLAG(transferState, GPS_GET_VELECEF);
+        break;
+    case UBX_NAV_POSLLH:
+        gpsData->llh_data.lon = gps_rx_buffer_32offset(4);
+        gpsData->llh_data.lat = gps_rx_buffer_32offset(8);
+        gpsData->llh_data.h = gps_rx_buffer_32offset(12);
+        gpsData->llh_data.hMSL = gps_rx_buffer_32offset(16);
+        gpsData->llh_data.hAcc = gps_rx_buffer_32offset(20);
+        gpsData->llh_data.vAcc = gps_rx_buffer_32offset(24);
+        RESET_FLAG(transferState, GPS_GET_LLH);
+        break;
+    case UBX_NAV_VELNED:
+        gpsData->ned_data.vN = gps_rx_buffer_32offset(4);
+        gpsData->ned_data.vE = gps_rx_buffer_32offset(8);
+        gpsData->ned_data.vD = gps_rx_buffer_32offset(12);
+        gpsData->ned_data.speed = gps_rx_buffer_32offset(16);
+        gpsData->ned_data.gSpeed = gps_rx_buffer_32offset(20);
+        gpsData->ned_data.heading = gps_rx_buffer_32offset(24);
+        gpsData->ned_data.sAcc = gps_rx_buffer_32offset(28);
+        gpsData->ned_data.cAcc = gps_rx_buffer_32offset(32);
+        RESET_FLAG(transferState, GPS_GET_VELNED);
+        break;
+    case UBX_NAV_SOL:
+        gpsData->gpsWeek = (int16_t) gps_rx_buffer_16offset(8);
+        gpsData->gpsFix = (GPS_Fix_t) gps_rx_buffer_offset(10);
+        gpsData->navStatusFlags = gps_rx_buffer_offset(11);
+        gpsData->ecef_data.x = gps_rx_buffer_32offset(12);
+        gpsData->ecef_data.y = gps_rx_buffer_32offset(16);
+        gpsData->ecef_data.z = gps_rx_buffer_32offset(20);
+        gpsData->ecef_data.pAcc = gps_rx_buffer_32offset(24);
+        gpsData->ecef_data.vx = gps_rx_buffer_32offset(28);
+        gpsData->ecef_data.vy = gps_rx_buffer_32offset(32);
+        gpsData->ecef_data.vz = gps_rx_buffer_32offset(36);
+        gpsData->ecef_data.sAcc = gps_rx_buffer_32offset(40);
 
-            gpsData->dop.pDOP = (uint16_t) gps_rx_buffer_16offset(44);
-            gpsData->numSV = (uint8_t) gps_rx_buffer_offset(47);
-            RESET_FLAG(transferState, GPS_GET_NAV_SOL);
-            break;
-        case UBX_NAV_DOP:
-            gpsData->dop.pDOP = (uint16_t) gps_rx_buffer_16offset(4);
-            gpsData->dop.gDOP = (uint16_t) gps_rx_buffer_16offset(6);
-            gpsData->dop.tDOP = (uint16_t) gps_rx_buffer_16offset(8);
-            gpsData->dop.vDOP = (uint16_t) gps_rx_buffer_16offset(10);
-            gpsData->dop.hDOP = (uint16_t) gps_rx_buffer_16offset(12);
-            gpsData->dop.nDOP = (uint16_t) gps_rx_buffer_16offset(14);
-            gpsData->dop.eDOP = (uint16_t) gps_rx_buffer_16offset(16);
-            RESET_FLAG(transferState, GPS_GET_NAV_DOP);
-            break;
-        case UBX_NAV_STATUS:
-            gpsData->gpsFix = (GPS_Fix_t) gps_rx_buffer_offset(4);
-            gpsData->navStatusFlags = gps_rx_buffer_offset(5);
-            gpsData->FixStatus = gps_rx_buffer_offset(6);
-            gpsData->psmState = (PSM_State_t) gps_rx_buffer_offset(7);
-            gpsData->ttff = gps_rx_buffer_32offset(8);
-            gpsData->msss = gps_rx_buffer_32offset(12);
-            RESET_FLAG(transferState, GPS_GET_NAV_STATUS);
-            break;
-        case UBX_NAV_TIMEUTC:
-            gpsData->date.year = (uint16_t) gps_rx_buffer_16offset(12);
-            gpsData->date.month = gps_rx_buffer_offset(14);
-            gpsData->date.day = gps_rx_buffer_offset(15);
-            gpsData->time.hours = gps_rx_buffer_offset(16);
-            gpsData->time.minutes = gps_rx_buffer_offset(17);
-            gpsData->time.seconds = gps_rx_buffer_offset(18);
-            gpsData->time.validity = gps_rx_buffer_offset(19);
-            RESET_FLAG(transferState, GPS_GET_DATE);
-            break;
-        default:
-            break;
+        gpsData->dop.pDOP = (uint16_t) gps_rx_buffer_16offset(44);
+        gpsData->numSV = (uint8_t) gps_rx_buffer_offset(47);
+        RESET_FLAG(transferState, GPS_GET_NAV_SOL);
+        break;
+    case UBX_NAV_DOP:
+        gpsData->dop.pDOP = (uint16_t) gps_rx_buffer_16offset(4);
+        gpsData->dop.gDOP = (uint16_t) gps_rx_buffer_16offset(6);
+        gpsData->dop.tDOP = (uint16_t) gps_rx_buffer_16offset(8);
+        gpsData->dop.vDOP = (uint16_t) gps_rx_buffer_16offset(10);
+        gpsData->dop.hDOP = (uint16_t) gps_rx_buffer_16offset(12);
+        gpsData->dop.nDOP = (uint16_t) gps_rx_buffer_16offset(14);
+        gpsData->dop.eDOP = (uint16_t) gps_rx_buffer_16offset(16);
+        RESET_FLAG(transferState, GPS_GET_NAV_DOP);
+        break;
+    case UBX_NAV_STATUS:
+        gpsData->gpsFix = (GPS_Fix_t) gps_rx_buffer_offset(4);
+        gpsData->navStatusFlags = gps_rx_buffer_offset(5);
+        gpsData->FixStatus = gps_rx_buffer_offset(6);
+        gpsData->psmState = (PSM_State_t) gps_rx_buffer_offset(7);
+        gpsData->ttff = gps_rx_buffer_32offset(8);
+        gpsData->msss = gps_rx_buffer_32offset(12);
+        RESET_FLAG(transferState, GPS_GET_NAV_STATUS);
+        break;
+    case UBX_NAV_TIMEUTC:
+        gpsData->date.year = (uint16_t) gps_rx_buffer_16offset(12);
+        gpsData->date.month = gps_rx_buffer_offset(14);
+        gpsData->date.day = gps_rx_buffer_offset(15);
+        gpsData->time.hours = gps_rx_buffer_offset(16);
+        gpsData->time.minutes = gps_rx_buffer_offset(17);
+        gpsData->time.seconds = gps_rx_buffer_offset(18);
+        gpsData->time.validity = gps_rx_buffer_offset(19);
+        RESET_FLAG(transferState, GPS_GET_DATE);
+        break;
+    default:
+        break;
     }
 }
 
 void GPS::generateUBXHeader(uint8_t msgClass, uint8_t msgID,
-            uint16_t payloadLength) {
+        uint16_t payloadLength) {
 
     GPS_TX_buffer[0] = UBX_HEADER_0;
     GPS_TX_buffer[1] = UBX_HEADER_1;
@@ -442,42 +442,42 @@ void GPS::setTransferState() {
 uint8_t GPS::getUBXMsgLength(uint8_t classid, uint8_t msgid) {
     /* returns length with header and checksum*/
     switch (classid) {
-        case UBX_NAV:
-            switch (msgid) {
-                case UBX_NAV_SOL:
-                    return UBX_MSG_LENGTH_NAV_SOL;
-                    break;
-                case UBX_NAV_POSLLH:
-                    return UBX_MSG_LENGTH_NAV_POSLLH;
-                    break;
-                case UBX_NAV_POSECEF:
-                    return UBX_MSG_LENGTH_NAV_POSECEF;
-                    break;
-                case UBX_NAV_VELNED:
-                    return UBX_MSG_LENGTH_NAV_VELNED;
-                    break;
-                case UBX_NAV_VELECEF:
-                    return UBX_MSG_LENGTH_NAV_VELECEF;
-                    break;
-                case UBX_NAV_TIMEUTC:
-                    return UBX_MSG_LENGTH_NAV_TIMEUTC;
-                    break;
-                case UBX_NAV_STATUS:
-                    return UBX_MSG_LENGTH_NAV_STATUS;
-                    break;
-                case UBX_NAV_DOP:
-                    return UBX_MSG_LENGTH_NAV_DOP;
-                    break;
-                default:
-                    return 0;
-            }
+    case UBX_NAV:
+        switch (msgid) {
+        case UBX_NAV_SOL:
+            return UBX_MSG_LENGTH_NAV_SOL;
             break;
-        case UBX_ACK:
-            return UBX_MSG_LENGTH_ACK;
+        case UBX_NAV_POSLLH:
+            return UBX_MSG_LENGTH_NAV_POSLLH;
+            break;
+        case UBX_NAV_POSECEF:
+            return UBX_MSG_LENGTH_NAV_POSECEF;
+            break;
+        case UBX_NAV_VELNED:
+            return UBX_MSG_LENGTH_NAV_VELNED;
+            break;
+        case UBX_NAV_VELECEF:
+            return UBX_MSG_LENGTH_NAV_VELECEF;
+            break;
+        case UBX_NAV_TIMEUTC:
+            return UBX_MSG_LENGTH_NAV_TIMEUTC;
+            break;
+        case UBX_NAV_STATUS:
+            return UBX_MSG_LENGTH_NAV_STATUS;
+            break;
+        case UBX_NAV_DOP:
+            return UBX_MSG_LENGTH_NAV_DOP;
             break;
         default:
             return 0;
-            break;
+        }
+        break;
+    case UBX_ACK:
+        return UBX_MSG_LENGTH_ACK;
+        break;
+    default:
+        return 0;
+        break;
     }
     return 0;
 }
@@ -493,24 +493,26 @@ void GPS::kill() {
 
 }
 
-uint8_t GPS::updateReceiverConfig(uint8_t configID, uint8_t* buffer, uint16_t payloadLength) {
+uint8_t GPS::updateReceiverConfig(uint8_t configID, uint8_t* buffer,
+        uint16_t payloadLength) {
 
     /* Generate Header and copy buffer to TX_buffer*/
     generateUBXHeader(UBX_CFG, configID, payloadLength);
     for (uint16_t i = 0; i < payloadLength; i++) {
         GPS_TX_buffer[i + 6] = buffer[i];
     }
-    appendUBXChecksumTX(payloadLength+6);
+    appendUBXChecksumTX(payloadLength + 6);
 
     /* start transmission */
-    HAL_UART_Transmit(gpsUart,GPS_TX_buffer, payloadLength + 8, GPS_UART_TIMEOUT);
+    HAL_UART_Transmit(gpsUart, GPS_TX_buffer, payloadLength + 8,
+    GPS_UART_TIMEOUT);
 
     /* receive ack*/
     receive(UBX_MSG_LENGTH_ACK);
     uint32_t timeout = GPS_UART_TIMEOUT * 100;
     while ( GET_FLAG(transferState, GPS_COM_FLAG_RX_RUNNING) && (timeout > 0)) {
 
-       timeout --;
+        timeout--;
     }
 
     if (lastACK.ack == 1) {

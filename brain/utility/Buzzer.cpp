@@ -7,8 +7,9 @@
 
 #include "Buzzer.h"
 
-Buzzer::Buzzer(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim,Buzzer_Queue_t* _queue)
-            : Task( statusPtr, defaultPrio) {
+Buzzer::Buzzer(Status* statusPtr, uint8_t defaultPrio, TIM_HandleTypeDef* htim,
+        Buzzer_Queue_t* _queue) :
+        Task(statusPtr, defaultPrio) {
     buzzerHtim = htim;
     elapsedLengthBuzzer = 0;
     toneLengthBuzzer = 0;
@@ -38,15 +39,14 @@ void Buzzer::playTone(float frequency, uint16_t length) {
 
 uint16_t Buzzer::calculateReloadValue(float frequency) {
     // nreload = 72Mhz / nprescaler / frequency
-    uint32_t tmp = ((HAL_RCC_GetSysClockFreq() / (BUZZER_PRESCALER + 1)) / frequency);
+    uint32_t tmp = ((HAL_RCC_GetSysClockFreq() / (BUZZER_PRESCALER + 1))
+            / frequency);
     return (uint16_t) (tmp);
 }
 
 Buzzer::~Buzzer() {
 
 }
-
-
 
 void Buzzer::playNextTone() {
 
@@ -60,7 +60,8 @@ void Buzzer::playNextTone() {
     toneLengthBuzzer = queue->lenght[queue->currentTone];
     // set pwm timer
     if (queue->frequency[queue->currentTone] > 0) {
-        uint16_t temp = calculateReloadValue(queue->frequency[queue->currentTone]);
+        uint16_t temp = calculateReloadValue(
+                queue->frequency[queue->currentTone]);
         __HAL_TIM_SET_AUTORELOAD(buzzerHtim, temp);
         __HAL_TIM_SET_COMPARE(buzzerHtim, TIM_CHANNEL_1, temp / 2);
 

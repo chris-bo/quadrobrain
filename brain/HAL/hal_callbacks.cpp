@@ -61,11 +61,11 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
     switch (GPIO_Pin) {
-        case MPU9150_INTERRUPT_PIN:
-            mpu9150.getRawData();
-            break;
-        default:
-            break;
+    case MPU9150_INTERRUPT_PIN:
+        mpu9150.getRawData();
+        break;
+    default:
+        break;
     }
 }
 
@@ -103,15 +103,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 }
 
 /**
-  * @brief Tx Transfer completed callbacks
-  * @param hspi: SPI handle
-  * @retval None
-  */
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
-{
- if (hspi == &hspi2 ) {
-     // disable spi to force cs low-high edge
-     __HAL_SPI_DISABLE(hspi);
+ * @brief Tx Transfer completed callbacks
+ * @param hspi: SPI handle
+ * @retval None
+ */
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
+    if (hspi == &hspi2) {
+        // disable spi to force cs low-high edge
+        __HAL_SPI_DISABLE(hspi);
 
- }
+    }
 }

@@ -201,7 +201,7 @@ void Status::restoreConfig() {
 }
 
 void Status::addToneToQueue(Buzzer_Queue_t* queue, float frequency,
-            uint16_t length) {
+        uint16_t length) {
 
     /* goto next address */
     queue->index++;

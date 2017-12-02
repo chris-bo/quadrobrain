@@ -145,7 +145,7 @@ void GYRO_IO_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);
 void COMPASSACCELERO_IO_Init(void);
 void COMPASSACCELERO_IO_ITConfig(void);
 void COMPASSACCELERO_IO_Write(uint16_t DeviceAddr, uint8_t RegisterAddr,
-		uint8_t Value);
+        uint8_t Value);
 uint8_t COMPASSACCELERO_IO_Read(uint16_t DeviceAddr, uint8_t RegisterAddr);
 #endif
 
@@ -163,7 +163,7 @@ uint8_t COMPASSACCELERO_IO_Read(uint16_t DeviceAddr, uint8_t RegisterAddr);
  * @retval version : 0xXYZR (8bits for each decimal, R for RC)
  */
 uint32_t BSP_GetVersion(void) {
-	return __STM32F3_DISCO_BSP_VERSION;
+    return __STM32F3_DISCO_BSP_VERSION;
 }
 
 /** @defgroup STM32F3_DISCOVERY_LOW_LEVEL_LED_Functions
@@ -185,20 +185,20 @@ uint32_t BSP_GetVersion(void) {
  * @retval None
  */
 void BSP_LED_Init(Led_TypeDef Led) {
-	GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitTypeDef GPIO_InitStruct;
 
-	/* Enable the GPIO_LED Clock */
-	LEDx_GPIO_CLK_ENABLE(Led);
+    /* Enable the GPIO_LED Clock */
+    LEDx_GPIO_CLK_ENABLE(Led);
 
-	/* Configure the GPIO_LED pin */
-	GPIO_InitStruct.Pin = LED_PIN[Led];
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    /* Configure the GPIO_LED pin */
+    GPIO_InitStruct.Pin = LED_PIN[Led];
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 
-	HAL_GPIO_Init(LED_PORT[Led], &GPIO_InitStruct);
+    HAL_GPIO_Init(LED_PORT[Led], &GPIO_InitStruct);
 
-	HAL_GPIO_WritePin(LED_PORT[Led], LED_PIN[Led], GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_PORT[Led], LED_PIN[Led], GPIO_PIN_RESET);
 }
 
 /**
@@ -216,7 +216,7 @@ void BSP_LED_Init(Led_TypeDef Led) {
  * @retval None
  */
 void BSP_LED_On(Led_TypeDef Led) {
-	HAL_GPIO_WritePin(LED_PORT[Led], LED_PIN[Led], GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_PORT[Led], LED_PIN[Led], GPIO_PIN_SET);
 }
 
 /**
@@ -234,7 +234,7 @@ void BSP_LED_On(Led_TypeDef Led) {
  * @retval None
  */
 void BSP_LED_Off(Led_TypeDef Led) {
-	HAL_GPIO_WritePin(LED_PORT[Led], LED_PIN[Led], GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_PORT[Led], LED_PIN[Led], GPIO_PIN_RESET);
 }
 
 /**
@@ -252,7 +252,7 @@ void BSP_LED_Off(Led_TypeDef Led) {
  * @retval None
  */
 void BSP_LED_Toggle(Led_TypeDef Led) {
-	HAL_GPIO_TogglePin(LED_PORT[Led], LED_PIN[Led]);
+    HAL_GPIO_TogglePin(LED_PORT[Led], LED_PIN[Led]);
 }
 
 /**
@@ -275,33 +275,34 @@ void BSP_LED_Toggle(Led_TypeDef Led) {
  * @retval None
  */
 void BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef ButtonMode) {
-	GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitTypeDef GPIO_InitStruct;
 
-	/* Enable the BUTTON Clock */
-	BUTTONx_GPIO_CLK_ENABLE(Button);
-	__SYSCFG_CLK_ENABLE();
+    /* Enable the BUTTON Clock */
+    BUTTONx_GPIO_CLK_ENABLE(Button);
+    __SYSCFG_CLK_ENABLE()
+    ;
 
-	if (ButtonMode == BUTTON_MODE_GPIO) {
-		/* Configure Button pin as input */
-		GPIO_InitStruct.Pin = BUTTON_PIN[Button];
-		GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-		HAL_GPIO_Init(BUTTON_PORT[Button], &GPIO_InitStruct);
-	}
+    if (ButtonMode == BUTTON_MODE_GPIO) {
+        /* Configure Button pin as input */
+        GPIO_InitStruct.Pin = BUTTON_PIN[Button];
+        GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+        GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(BUTTON_PORT[Button], &GPIO_InitStruct);
+    }
 
-	if (ButtonMode == BUTTON_MODE_EXTI) {
-		/* Configure Button pin as input with External interrupt */
-		GPIO_InitStruct.Pin = BUTTON_PIN[Button];
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
-		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-		HAL_GPIO_Init(BUTTON_PORT[Button], &GPIO_InitStruct);
+    if (ButtonMode == BUTTON_MODE_EXTI) {
+        /* Configure Button pin as input with External interrupt */
+        GPIO_InitStruct.Pin = BUTTON_PIN[Button];
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+        GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+        HAL_GPIO_Init(BUTTON_PORT[Button], &GPIO_InitStruct);
 
-		/* Enable and set Button EXTI Interrupt to the lowest priority */
-		HAL_NVIC_SetPriority((IRQn_Type) (BUTTON_IRQn[Button]), 0x0F, 0x00);
-		HAL_NVIC_EnableIRQ((IRQn_Type) (BUTTON_IRQn[Button]));
-	}
+        /* Enable and set Button EXTI Interrupt to the lowest priority */
+        HAL_NVIC_SetPriority((IRQn_Type) (BUTTON_IRQn[Button]), 0x0F, 0x00);
+        HAL_NVIC_EnableIRQ((IRQn_Type) (BUTTON_IRQn[Button]));
+    }
 }
 
 /**
@@ -311,7 +312,7 @@ void BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef ButtonMode) {
  * @retval The Button GPIO pin value.
  */
 uint32_t BSP_PB_GetState(Button_TypeDef Button) {
-	return HAL_GPIO_ReadPin(BUTTON_PORT[Button], BUTTON_PIN[Button]);
+    return HAL_GPIO_ReadPin(BUTTON_PORT[Button], BUTTON_PIN[Button]);
 }
 
 /**
@@ -331,21 +332,23 @@ uint32_t BSP_PB_GetState(Button_TypeDef Button) {
  */
 static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c) {
 
-	GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Enable SCK and SDA GPIO clocks */
-	DISCOVERY_I2Cx_GPIO_CLK_ENABLE();
+    /* Enable SCK and SDA GPIO clocks */
+    DISCOVERY_I2Cx_GPIO_CLK_ENABLE()
+    ;
 
-	/* I2Cx SD1 & SCK pin configuration */
-	GPIO_InitStructure.Pin = (DISCOVERY_I2Cx_SDA_PIN | DISCOVERY_I2Cx_SCL_PIN);
-	GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitStructure.Pull = GPIO_PULLDOWN;
-	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
-	GPIO_InitStructure.Alternate = DISCOVERY_I2Cx_AF;
-	HAL_GPIO_Init(DISCOVERY_I2Cx_GPIO_PORT, &GPIO_InitStructure);
+    /* I2Cx SD1 & SCK pin configuration */
+    GPIO_InitStructure.Pin = (DISCOVERY_I2Cx_SDA_PIN | DISCOVERY_I2Cx_SCL_PIN);
+    GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStructure.Pull = GPIO_PULLDOWN;
+    GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+    GPIO_InitStructure.Alternate = DISCOVERY_I2Cx_AF;
+    HAL_GPIO_Init(DISCOVERY_I2Cx_GPIO_PORT, &GPIO_InitStructure);
 
-	/* Enable the I2C clock */
-	DISCOVERY_I2Cx_CLK_ENABLE();
+    /* Enable the I2C clock */
+    DISCOVERY_I2Cx_CLK_ENABLE()
+    ;
 }
 
 /**
@@ -354,19 +357,19 @@ static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c) {
  * @retval None
  */
 static void I2Cx_Init(void) {
-	if (HAL_I2C_GetState(&I2cHandle) == HAL_I2C_STATE_RESET) {
-		I2cHandle.Instance = DISCOVERY_I2Cx;
-		I2cHandle.Init.OwnAddress1 = ACCELERO_I2C_ADDRESS;
-		I2cHandle.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-		I2cHandle.Init.DualAddressMode = I2C_DUALADDRESS_DISABLED;
-		I2cHandle.Init.OwnAddress2 = 0;
-		I2cHandle.Init.GeneralCallMode = I2C_GENERALCALL_DISABLED;
-		I2cHandle.Init.NoStretchMode = I2C_NOSTRETCH_DISABLED;
+    if (HAL_I2C_GetState(&I2cHandle) == HAL_I2C_STATE_RESET) {
+        I2cHandle.Instance = DISCOVERY_I2Cx;
+        I2cHandle.Init.OwnAddress1 = ACCELERO_I2C_ADDRESS;
+        I2cHandle.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+        I2cHandle.Init.DualAddressMode = I2C_DUALADDRESS_DISABLED;
+        I2cHandle.Init.OwnAddress2 = 0;
+        I2cHandle.Init.GeneralCallMode = I2C_GENERALCALL_DISABLED;
+        I2cHandle.Init.NoStretchMode = I2C_NOSTRETCH_DISABLED;
 
-		/* Init the I2C */
-		I2Cx_MspInit(&I2cHandle);
-		HAL_I2C_Init(&I2cHandle);
-	}
+        /* Init the I2C */
+        I2Cx_MspInit(&I2cHandle);
+        HAL_I2C_Init(&I2cHandle);
+    }
 }
 
 /**
@@ -377,16 +380,16 @@ static void I2Cx_Init(void) {
  * @retval  None
  */
 static void I2Cx_WriteData(uint16_t Addr, uint8_t Reg, uint8_t Value) {
-	HAL_StatusTypeDef status = HAL_OK;
+    HAL_StatusTypeDef status = HAL_OK;
 
-	status = HAL_I2C_Mem_Write(&I2cHandle, Addr, (uint16_t) Reg,
-	I2C_MEMADD_SIZE_8BIT, &Value, 1, I2cxTimeout);
+    status = HAL_I2C_Mem_Write(&I2cHandle, Addr, (uint16_t) Reg,
+    I2C_MEMADD_SIZE_8BIT, &Value, 1, I2cxTimeout);
 
-	/* Check the communication status */
-	if (status != HAL_OK) {
-		/* Execute user timeout callback */
-		I2Cx_Error();
-	}
+    /* Check the communication status */
+    if (status != HAL_OK) {
+        /* Execute user timeout callback */
+        I2Cx_Error();
+    }
 }
 
 /**
@@ -396,19 +399,19 @@ static void I2Cx_WriteData(uint16_t Addr, uint8_t Reg, uint8_t Value) {
  * @retval Data read at register @
  */
 static uint8_t I2Cx_ReadData(uint16_t Addr, uint8_t Reg) {
-	HAL_StatusTypeDef status = HAL_OK;
-	uint8_t value = 0;
+    HAL_StatusTypeDef status = HAL_OK;
+    uint8_t value = 0;
 
-	status = HAL_I2C_Mem_Read(&I2cHandle, Addr, Reg, I2C_MEMADD_SIZE_8BIT,
-			&value, 1, I2cxTimeout);
+    status = HAL_I2C_Mem_Read(&I2cHandle, Addr, Reg, I2C_MEMADD_SIZE_8BIT,
+            &value, 1, I2cxTimeout);
 
-	/* Check the communication status */
-	if (status != HAL_OK) {
-		/* Execute user timeout callback */
-		I2Cx_Error();
+    /* Check the communication status */
+    if (status != HAL_OK) {
+        /* Execute user timeout callback */
+        I2Cx_Error();
 
-	}
-	return value;
+    }
+    return value;
 }
 
 /**
@@ -417,11 +420,11 @@ static uint8_t I2Cx_ReadData(uint16_t Addr, uint8_t Reg) {
  * @retval None
  */
 static void I2Cx_Error(void) {
-	/* De-initialize the I2C comunication BUS */
-	HAL_I2C_DeInit(&I2cHandle);
+    /* De-initialize the I2C comunication BUS */
+    HAL_I2C_DeInit(&I2cHandle);
 
-	/* Re- Initiaize the I2C comunication BUS */
-	I2Cx_Init();
+    /* Re- Initiaize the I2C comunication BUS */
+    I2Cx_Init();
 }
 #endif
 
@@ -433,30 +436,30 @@ static void I2Cx_Error(void) {
  * @retval None
  */
 static void SPIx_Init(void) {
-	if (HAL_SPI_GetState(&SpiHandle) == HAL_SPI_STATE_RESET) {
-		/* SPI Config */
-		SpiHandle.Instance = DISCOVERY_SPIx;
-		/* SPI baudrate is set to 5.6 MHz (PCLK2/SPI_BaudRatePrescaler = 90/16 = 5.625 MHz) 
-		 to verify these constraints:
-		 ILI9341 LCD SPI interface max baudrate is 10MHz for write and 6.66MHz for read
-		 l3gd20 SPI interface max baudrate is 10MHz for write/read
-		 PCLK2 frequency is set to 90 MHz 
-		 */
-		SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
-		SpiHandle.Init.Direction = SPI_DIRECTION_2LINES;
-		SpiHandle.Init.CLKPhase = SPI_PHASE_1EDGE;
-		SpiHandle.Init.CLKPolarity = SPI_POLARITY_LOW;
-		SpiHandle.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
-		SpiHandle.Init.CRCPolynomial = 7;
-		SpiHandle.Init.DataSize = SPI_DATASIZE_8BIT;
-		SpiHandle.Init.FirstBit = SPI_FIRSTBIT_MSB;
-		SpiHandle.Init.NSS = SPI_NSS_SOFT;
-		SpiHandle.Init.TIMode = SPI_TIMODE_DISABLED;
-		SpiHandle.Init.Mode = SPI_MODE_MASTER;
+    if (HAL_SPI_GetState(&SpiHandle) == HAL_SPI_STATE_RESET) {
+        /* SPI Config */
+        SpiHandle.Instance = DISCOVERY_SPIx;
+        /* SPI baudrate is set to 5.6 MHz (PCLK2/SPI_BaudRatePrescaler = 90/16 = 5.625 MHz) 
+         to verify these constraints:
+         ILI9341 LCD SPI interface max baudrate is 10MHz for write and 6.66MHz for read
+         l3gd20 SPI interface max baudrate is 10MHz for write/read
+         PCLK2 frequency is set to 90 MHz 
+         */
+        SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+        SpiHandle.Init.Direction = SPI_DIRECTION_2LINES;
+        SpiHandle.Init.CLKPhase = SPI_PHASE_1EDGE;
+        SpiHandle.Init.CLKPolarity = SPI_POLARITY_LOW;
+        SpiHandle.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
+        SpiHandle.Init.CRCPolynomial = 7;
+        SpiHandle.Init.DataSize = SPI_DATASIZE_8BIT;
+        SpiHandle.Init.FirstBit = SPI_FIRSTBIT_MSB;
+        SpiHandle.Init.NSS = SPI_NSS_SOFT;
+        SpiHandle.Init.TIMode = SPI_TIMODE_DISABLED;
+        SpiHandle.Init.Mode = SPI_MODE_MASTER;
 
-		SPIx_MspInit(&SpiHandle);
-		HAL_SPI_Init(&SpiHandle);
-	}
+        SPIx_MspInit(&SpiHandle);
+        HAL_SPI_Init(&SpiHandle);
+    }
 }
 
 /**
@@ -467,16 +470,16 @@ static void SPIx_Init(void) {
  */
 static uint8_t SPIx_WriteRead(uint8_t Byte) {
 
-	uint8_t receivedbyte = 0;
+    uint8_t receivedbyte = 0;
 
-	/* Send a Byte through the SPI peripheral */
-	/* Read byte from the SPI bus */
-	if (HAL_SPI_TransmitReceive(&SpiHandle, (uint8_t*) &Byte,
-			(uint8_t*) &receivedbyte, 1, SpixTimeout) != HAL_OK) {
-		SPIx_Error();
-	}
+    /* Send a Byte through the SPI peripheral */
+    /* Read byte from the SPI bus */
+    if (HAL_SPI_TransmitReceive(&SpiHandle, (uint8_t*) &Byte,
+            (uint8_t*) &receivedbyte, 1, SpixTimeout) != HAL_OK) {
+        SPIx_Error();
+    }
 
-	return receivedbyte;
+    return receivedbyte;
 }
 
 /**
@@ -485,11 +488,11 @@ static uint8_t SPIx_WriteRead(uint8_t Byte) {
  * @retval None
  */
 static void SPIx_Error(void) {
-	/* De-initialize the SPI comunication BUS */
-	HAL_SPI_DeInit(&SpiHandle);
+    /* De-initialize the SPI comunication BUS */
+    HAL_SPI_DeInit(&SpiHandle);
 
-	/* Re- Initiaize the SPI comunication BUS */
-	SPIx_Init();
+    /* Re- Initiaize the SPI comunication BUS */
+    SPIx_Init();
 }
 
 /**
@@ -498,22 +501,23 @@ static void SPIx_Error(void) {
  * @retval None
  */
 static void SPIx_MspInit(SPI_HandleTypeDef *hspi) {
-	GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Enable SPI1 clock  */
-	DISCOVERY_SPIx_CLK_ENABLE();
+    /* Enable SPI1 clock  */
+    DISCOVERY_SPIx_CLK_ENABLE()
+    ;
 
-	/* enable SPI1 gpio clock */
-	DISCOVERY_SPIx_GPIO_CLK_ENABLE();
+    /* enable SPI1 gpio clock */
+    DISCOVERY_SPIx_GPIO_CLK_ENABLE();
 
-	/* configure SPI1 SCK, MOSI and MISO */
-	GPIO_InitStructure.Pin = (DISCOVERY_SPIx_SCK_PIN | DISCOVERY_SPIx_MOSI_PIN
-			| DISCOVERY_SPIx_MISO_PIN);
-	GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitStructure.Pull = GPIO_NOPULL; /* or GPIO_PULLDOWN */
-	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
-	GPIO_InitStructure.Alternate = DISCOVERY_SPIx_AF;
-	HAL_GPIO_Init(DISCOVERY_SPIx_GPIO_PORT, &GPIO_InitStructure);
+    /* configure SPI1 SCK, MOSI and MISO */
+    GPIO_InitStructure.Pin = (DISCOVERY_SPIx_SCK_PIN | DISCOVERY_SPIx_MOSI_PIN
+            | DISCOVERY_SPIx_MISO_PIN);
+    GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStructure.Pull = GPIO_NOPULL; /* or GPIO_PULLDOWN */
+    GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+    GPIO_InitStructure.Alternate = DISCOVERY_SPIx_AF;
+    HAL_GPIO_Init(DISCOVERY_SPIx_GPIO_PORT, &GPIO_InitStructure);
 }
 
 /******************************************************************************
@@ -527,29 +531,29 @@ static void SPIx_MspInit(SPI_HandleTypeDef *hspi) {
  * @retval None
  */
 void GYRO_IO_Init(void) {
-	GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Configure the Gyroscope Control pins ------------------------------------------*/
-	/* Enable CS GPIO clock and  Configure GPIO PIN for Gyroscope Chip select */
-	GYRO_CS_GPIO_CLK_ENABLE();
-	GPIO_InitStructure.Pin = GYRO_CS_PIN;
-	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStructure.Pull = GPIO_NOPULL;
-	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
-	HAL_GPIO_Init(GYRO_CS_GPIO_PORT, &GPIO_InitStructure);
+    /* Configure the Gyroscope Control pins ------------------------------------------*/
+    /* Enable CS GPIO clock and  Configure GPIO PIN for Gyroscope Chip select */
+    GYRO_CS_GPIO_CLK_ENABLE();
+    GPIO_InitStructure.Pin = GYRO_CS_PIN;
+    GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStructure.Pull = GPIO_NOPULL;
+    GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GYRO_CS_GPIO_PORT, &GPIO_InitStructure);
 
-	/* Deselect : Chip Select high */
-	GYRO_CS_HIGH();
+    /* Deselect : Chip Select high */
+    GYRO_CS_HIGH();
 
-	/* Enable INT1, INT2 GPIO clock and Configure GPIO PINs to detect Interrupts */
-	GYRO_INT_GPIO_CLK_ENABLE();
-	GPIO_InitStructure.Pin = GYRO_INT1_PIN | GYRO_INT2_PIN;
-	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
-	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
-	GPIO_InitStructure.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(GYRO_INT_GPIO_PORT, &GPIO_InitStructure);
+    /* Enable INT1, INT2 GPIO clock and Configure GPIO PINs to detect Interrupts */
+    GYRO_INT_GPIO_CLK_ENABLE();
+    GPIO_InitStructure.Pin = GYRO_INT1_PIN | GYRO_INT2_PIN;
+    GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+    GPIO_InitStructure.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GYRO_INT_GPIO_PORT, &GPIO_InitStructure);
 
-	SPIx_Init();
+    SPIx_Init();
 }
 
 /**
@@ -560,28 +564,28 @@ void GYRO_IO_Init(void) {
  * @retval None
  */
 void GYRO_IO_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite) {
-	/* Configure the MS bit: 
-	 - When 0, the address will remain unchanged in multiple read/write commands.
-	 - When 1, the address will be auto incremented in multiple read/write commands.
-	 */
-	if (NumByteToWrite > 0x01) {
-		WriteAddr |= (uint8_t) MULTIPLEBYTE_CMD;
-	}
-	/* Set chip select Low at the start of the transmission */
-	GYRO_CS_LOW();
+    /* Configure the MS bit: 
+     - When 0, the address will remain unchanged in multiple read/write commands.
+     - When 1, the address will be auto incremented in multiple read/write commands.
+     */
+    if (NumByteToWrite > 0x01) {
+        WriteAddr |= (uint8_t) MULTIPLEBYTE_CMD;
+    }
+    /* Set chip select Low at the start of the transmission */
+    GYRO_CS_LOW();
 
-	/* Send the Address of the indexed register */
-	SPIx_WriteRead(WriteAddr);
+    /* Send the Address of the indexed register */
+    SPIx_WriteRead(WriteAddr);
 
-	/* Send the data that will be written into the device (MSB First) */
-	while (NumByteToWrite >= 0x01) {
-		SPIx_WriteRead(*pBuffer);
-		NumByteToWrite--;
-		pBuffer++;
-	}
+    /* Send the data that will be written into the device (MSB First) */
+    while (NumByteToWrite >= 0x01) {
+        SPIx_WriteRead(*pBuffer);
+        NumByteToWrite--;
+        pBuffer++;
+    }
 
-	/* Set chip select High at the end of the transmission */
-	GYRO_CS_HIGH();
+    /* Set chip select High at the end of the transmission */
+    GYRO_CS_HIGH();
 }
 
 /**
@@ -592,27 +596,27 @@ void GYRO_IO_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite)
  * @retval None
  */
 void GYRO_IO_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead) {
-	if (NumByteToRead > 0x01) {
-		ReadAddr |= (uint8_t) (READWRITE_CMD | MULTIPLEBYTE_CMD);
-	} else {
-		ReadAddr |= (uint8_t) READWRITE_CMD;
-	}
-	/* Set chip select Low at the start of the transmission */
-	GYRO_CS_LOW();
+    if (NumByteToRead > 0x01) {
+        ReadAddr |= (uint8_t) (READWRITE_CMD | MULTIPLEBYTE_CMD);
+    } else {
+        ReadAddr |= (uint8_t) READWRITE_CMD;
+    }
+    /* Set chip select Low at the start of the transmission */
+    GYRO_CS_LOW();
 
-	/* Send the Address of the indexed register */
-	SPIx_WriteRead(ReadAddr);
+    /* Send the Address of the indexed register */
+    SPIx_WriteRead(ReadAddr);
 
-	/* Receive the data that will be read from the device (MSB First) */
-	while (NumByteToRead > 0x00) {
-		/* Send dummy byte (0x00) to generate the SPI clock to GYROSCOPE (Slave device) */
-		*pBuffer = SPIx_WriteRead(DUMMY_BYTE);
-		NumByteToRead--;
-		pBuffer++;
-	}
+    /* Receive the data that will be read from the device (MSB First) */
+    while (NumByteToRead > 0x00) {
+        /* Send dummy byte (0x00) to generate the SPI clock to GYROSCOPE (Slave device) */
+        *pBuffer = SPIx_WriteRead(DUMMY_BYTE);
+        NumByteToRead--;
+        pBuffer++;
+    }
 
-	/* Set chip select High at the end of the transmission */
-	GYRO_CS_HIGH();
+    /* Set chip select High at the end of the transmission */
+    GYRO_CS_HIGH();
 }
 #endif /* HAL_SPI_MODULE_ENABLED */
 
@@ -624,33 +628,33 @@ void GYRO_IO_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead) {
  * @retval None
  */
 void COMPASSACCELERO_IO_Init(void) {
-	GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Enable DRDY clock */
-	ACCELERO_DRDY_GPIO_CLK_ENABLE();
+    /* Enable DRDY clock */
+    ACCELERO_DRDY_GPIO_CLK_ENABLE();
 
-	/* Enable INT1 & INT2 GPIO clock */
-	ACCELERO_INT_GPIO_CLK_ENABLE();
+    /* Enable INT1 & INT2 GPIO clock */
+    ACCELERO_INT_GPIO_CLK_ENABLE();
 
-	/* Mems DRDY pin configuration */
-	GPIO_InitStructure.Pin = ACCELERO_DRDY_PIN;
-	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
-	GPIO_InitStructure.Pull = GPIO_NOPULL;
-	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
-	HAL_GPIO_Init(ACCELERO_DRDY_GPIO_PORT, &GPIO_InitStructure);
+    /* Mems DRDY pin configuration */
+    GPIO_InitStructure.Pin = ACCELERO_DRDY_PIN;
+    GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStructure.Pull = GPIO_NOPULL;
+    GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(ACCELERO_DRDY_GPIO_PORT, &GPIO_InitStructure);
 
-	/* Enable and set Button EXTI Interrupt to the lowest priority */
-	HAL_NVIC_SetPriority(ACCELERO_DRDY_EXTI_IRQn, 0x00, 0x00);
-	HAL_NVIC_EnableIRQ(ACCELERO_DRDY_EXTI_IRQn);
+    /* Enable and set Button EXTI Interrupt to the lowest priority */
+    HAL_NVIC_SetPriority(ACCELERO_DRDY_EXTI_IRQn, 0x00, 0x00);
+    HAL_NVIC_EnableIRQ(ACCELERO_DRDY_EXTI_IRQn);
 
-	/* Configure GPIO PINs to detect Interrupts */
-	GPIO_InitStructure.Pin = ACCELERO_INT1_PIN | ACCELERO_INT2_PIN;
-	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
-	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
-	GPIO_InitStructure.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(ACCELERO_INT_GPIO_PORT, &GPIO_InitStructure);
+    /* Configure GPIO PINs to detect Interrupts */
+    GPIO_InitStructure.Pin = ACCELERO_INT1_PIN | ACCELERO_INT2_PIN;
+    GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+    GPIO_InitStructure.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(ACCELERO_INT_GPIO_PORT, &GPIO_InitStructure);
 
-	I2Cx_Init();
+    I2Cx_Init();
 }
 
 /**
@@ -659,21 +663,21 @@ void COMPASSACCELERO_IO_Init(void) {
  * @retval None
  */
 void COMPASSACCELERO_IO_ITConfig(void) {
-	GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Enable INT1 & INT2 GPIO clock */
-	ACCELERO_INT_GPIO_CLK_ENABLE();
+    /* Enable INT1 & INT2 GPIO clock */
+    ACCELERO_INT_GPIO_CLK_ENABLE();
 
-	/* Configure GPIO PINs to detect Interrupts */
-	GPIO_InitStructure.Pin = ACCELERO_INT1_PIN | ACCELERO_INT2_PIN;
-	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
-	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
-	GPIO_InitStructure.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(ACCELERO_INT_GPIO_PORT, &GPIO_InitStructure);
+    /* Configure GPIO PINs to detect Interrupts */
+    GPIO_InitStructure.Pin = ACCELERO_INT1_PIN | ACCELERO_INT2_PIN;
+    GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
+    GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+    GPIO_InitStructure.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(ACCELERO_INT_GPIO_PORT, &GPIO_InitStructure);
 
-	/* Enable and set Button EXTI Interrupt to the lowest priority */
-	HAL_NVIC_SetPriority(ACCELERO_INT1_EXTI_IRQn, 0x00, 0x00);
-	HAL_NVIC_EnableIRQ(ACCELERO_INT1_EXTI_IRQn);
+    /* Enable and set Button EXTI Interrupt to the lowest priority */
+    HAL_NVIC_SetPriority(ACCELERO_INT1_EXTI_IRQn, 0x00, 0x00);
+    HAL_NVIC_EnableIRQ(ACCELERO_INT1_EXTI_IRQn);
 
 }
 
@@ -685,9 +689,9 @@ void COMPASSACCELERO_IO_ITConfig(void) {
  * @retval   None
  */
 void COMPASSACCELERO_IO_Write(uint16_t DeviceAddr, uint8_t RegisterAddr,
-		uint8_t Value) {
-	/* call I2Cx Read data bus function */
-	I2Cx_WriteData(DeviceAddr, RegisterAddr, Value);
+        uint8_t Value) {
+    /* call I2Cx Read data bus function */
+    I2Cx_WriteData(DeviceAddr, RegisterAddr, Value);
 }
 
 /**
@@ -697,8 +701,8 @@ void COMPASSACCELERO_IO_Write(uint16_t DeviceAddr, uint8_t RegisterAddr,
  * @retval ACCELEROMETER register value
  */
 uint8_t COMPASSACCELERO_IO_Read(uint16_t DeviceAddr, uint8_t RegisterAddr) {
-	/* call I2Cx Read data bus function */
-	return I2Cx_ReadData(DeviceAddr, RegisterAddr);
+    /* call I2Cx Read data bus function */
+    return I2Cx_ReadData(DeviceAddr, RegisterAddr);
 }
 #endif /* HAL_I2C_MODULE_ENABLED */
 

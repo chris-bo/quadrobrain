@@ -7,8 +7,8 @@
 
 #include "DiscoveryLEDs.h"
 
-DiscoveryLEDs::DiscoveryLEDs(Status* statusPtr, uint8_t defaultPrio)
-            : Task(statusPtr, defaultPrio) {
+DiscoveryLEDs::DiscoveryLEDs(Status* statusPtr, uint8_t defaultPrio) :
+        Task(statusPtr, defaultPrio) {
     for (uint8_t i = 0; i < 8; i++) {
         frequency[i] = 1;
         toggle[i] = (uint16_t) (500 / SCHEDULER_INTERVALL_ms);
@@ -48,9 +48,9 @@ void DiscoveryLEDs::update() {
 void DiscoveryLEDs::kill() {
     reset();
     off(ALL);
-   /* don t reset active flag, because leds wont get initialized after kill
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
-    */
+    /* don t reset active flag, because leds wont get initialized after kill
+     RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+     */
 }
 
 void DiscoveryLEDs::setFrequency(Led_TypeDef _led, float freq) {
@@ -62,8 +62,8 @@ void DiscoveryLEDs::setFrequency(Led_TypeDef _led, float freq) {
         } else {
             frequency[_led] = freq;
         }
-        toggle[_led] = (uint16_t) ((500 / SCHEDULER_INTERVALL_ms) / frequency[_led]
-                    - 1);
+        toggle[_led] = (uint16_t) ((500 / SCHEDULER_INTERVALL_ms)
+                / frequency[_led] - 1);
     } else {
         for (uint8_t i = 0; i < 8; i++) {
             if (freq < 0.001f) {
@@ -73,9 +73,9 @@ void DiscoveryLEDs::setFrequency(Led_TypeDef _led, float freq) {
             } else {
                 frequency[i] = freq;
             }
-            toggle[i] =
-                        (uint16_t) (((float)(500 / SCHEDULER_INTERVALL_ms) / frequency[i] )- 1);
-         }
+            toggle[i] = (uint16_t) (((float) (500 / SCHEDULER_INTERVALL_ms)
+                    / frequency[i]) - 1);
+        }
     }
 }
 

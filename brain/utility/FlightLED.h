@@ -12,11 +12,9 @@
 #include "spi.h"
 #include "stm32f3xx_hal_spi.h"
 
-typedef enum{
-    off,
-    on,
-    toggle
-}switch_option;
+typedef enum {
+    off, on, toggle
+} switch_option;
 
 class FlightLED: public Task {
 public:
@@ -28,12 +26,11 @@ public:
     void kill();
 
     uint16_t getLEDpattern();
-    void switchLED(uint8_t nr, switch_option s );
+    void switchLED(uint8_t nr, switch_option s);
     void setLEDpattern(uint16_t pattern);
 private:
     SPI_HandleTypeDef* ledSpi;
     uint16_t ledPattern;
-
 
     void updateShiftRegisters();
 };

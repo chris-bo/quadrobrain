@@ -8,7 +8,6 @@
 #ifndef BMP180_H_
 #define BMP180_H_
 
-
 #include <core/Task.h>
 #include "stm32f3xx_hal.h"
 #include "i2c.h"
@@ -91,7 +90,6 @@
 
 /* End Flags */
 /********************************************************************/
-
 
 class BMP180: public Task {
 public:

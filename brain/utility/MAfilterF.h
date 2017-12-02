@@ -12,8 +12,8 @@
 
 class MAfilterF: public Task {
 public:
-    MAfilterF(Status* status, int8_t defaultPriority, float* input, float* output,
-                uint16_t buffersize);
+    MAfilterF(Status* status, int8_t defaultPriority, float* input,
+            float* output, uint16_t buffersize);
     virtual ~MAfilterF();
     void update();
     void kill();

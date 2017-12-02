@@ -40,7 +40,6 @@ protected:
 
     Status* status;
 
-
 };
 
 #endif /* TASK_H_ */

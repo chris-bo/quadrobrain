@@ -8,7 +8,6 @@
 #ifndef GPS_DEFINES_H_
 #define GPS_DEFINES_H_
 
-
 /**********************************************************************************/
 
 /* Check Timeouts !! */
@@ -27,7 +26,6 @@
 #define POLL_NAV_VELNED
 #define POLL_NAV_DOP
 #define POLL_NAV_STATUS
-
 
 /* Infinite and continuous reception */
 #define CONTINUOUS_RECEPTION
@@ -53,9 +51,6 @@
 #define UBX_MSG_LENGTH_NAV_STATUS           (16+8)
 
 #define UBX_MSG_LENGTH_ACK                  (2+8)
-
-
-
 
 /*   Transferstate
  * 2lsb: flags
@@ -100,27 +95,24 @@
 #define POLL_NAV_SOL
 #endif
 
-
-
-
 /**********************************************************************************/
 typedef enum {
-    NO_FIX          = 0x00,
-    DEAD_RECKONING  = 0x01,
-    GPS_FIX_2D      = 0x02,
-    GPS_FIX_3D      = 0x03,
-    GPS_FIX         = 0x04,
-    TIME_ONLY       = 0x05
+    NO_FIX = 0x00,
+    DEAD_RECKONING = 0x01,
+    GPS_FIX_2D = 0x02,
+    GPS_FIX_3D = 0x03,
+    GPS_FIX = 0x04,
+    TIME_ONLY = 0x05
 
-}GPS_Fix_t;
+} GPS_Fix_t;
 
-typedef enum{
-    ACCQUISITION    = 0x00,
-    TRACKING        = 0x01,
+typedef enum {
+    ACCQUISITION = 0x00,
+    TRACKING = 0x01,
     OPTIMIZED_TRACKING = 0x02,
-    INACTIVE        = 0x03
+    INACTIVE = 0x03
 
-}PSM_State_t;
+} PSM_State_t;
 
 /* Nav status flags */
 #define NAV_STATUS_FLAGS_FIX_OK         0x01
@@ -133,7 +125,6 @@ typedef struct {
     uint8_t classid;
     uint8_t ack;
 } GPS_ACK_t;
-
 
 /**
  * Date struct for GPS
@@ -178,7 +169,7 @@ typedef struct {
     int32_t vz;     // Velocity Z [cm/s]
     uint32_t sAcc;  // Speed Accuracy Estimate [cm/s]
 
-}GPS_ECEF_t;
+} GPS_ECEF_t;
 
 /**
  * struct for NED Data
@@ -194,7 +185,7 @@ typedef struct {
     uint32_t sAcc;      // Speed Accuracy Estimate [cm/s]
     uint32_t cAcc;      // Heading Accuracy Estimate [1e-5 deg]
 
-}GPS_NED_t;
+} GPS_NED_t;
 
 /**
  * struct for LLH Data
@@ -210,7 +201,7 @@ typedef struct {
     uint32_t hAcc;  // Horizontal Accuracy Estimate [mm]
     uint32_t vAcc;  // Vertical Accuracy Estimate [mm]
 
-}GPS_LLH_t;
+} GPS_LLH_t;
 
 /**
  * struct for dilution of precision (DOP) Data
@@ -224,7 +215,7 @@ typedef struct {
     uint16_t hDOP;  // Horizontal DOP scale 0.01
     uint16_t nDOP;  // Northing DOP scale 0.01
     uint16_t eDOP;  // Easting DOP scale 0.01
-}GPS_DOP_t;
+} GPS_DOP_t;
 
 /**
  * Main struct to work with GPS
@@ -263,7 +254,6 @@ typedef struct {
 #define UBX_HEADER_0    0xB5
 #define UBX_HEADER_1    0x62
 
-
 /* UBX Protocoll Classes */
 #define UBX_NAV         0x01
 #define UBX_RXM         0x02
@@ -274,7 +264,6 @@ typedef struct {
 #define UBX_AID         0x0B
 #define UBX_TIM         0x0D
 #define UBX_ESF         0x10
-
 
 /* UBX_NAV CLASS */
 /*
@@ -299,7 +288,6 @@ typedef struct {
 #define UBX_NAV_TIMEUTC         0x21
 #define UBX_NAV_VELECEF         0x11
 #define UBX_NAV_VELNED          0x12
-
 
 /*  UBX_GFG CLASS */
 /*
@@ -338,7 +326,6 @@ typedef struct {
 #define UBX_CFG_TP          0x07
 #define UBX_CFG_USB         0x1B
 
-
 /* UBX_ACK CLASS */
 /*
  * Ack/Nack Messages: i.e. as replies to CFG Input Messages.
@@ -348,7 +335,6 @@ typedef struct {
  */
 #define UBX_ACK_ACK             0x01
 #define UBX_ACK_NAK             0x00
-
 
 /* UBX_RXM CLASS */
 /*
@@ -362,7 +348,6 @@ typedef struct {
 #define UBX_RXM_RAW             0x10
 #define UBX_RXM_SFRB            0x11
 #define UBX_RXM_SVSI            0x20
-
 
 /* UBX_TIM CLASS*/
 /*
@@ -398,7 +383,6 @@ typedef struct {
  *  NOT USED
  */
 
-
 /* UBX_MON CLASS */
 /*
  * Monitoring Messages: i.e. Comunication Status, CPU Load, Stack Usage, Task
@@ -407,7 +391,6 @@ typedef struct {
  *
  *  NOT USED
  */
-
 
 /* NMEA Message IDs for UBX protocol*/
 #define NEO6_UBX_NMEA_DTM_0         0xF0

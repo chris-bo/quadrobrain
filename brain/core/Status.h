@@ -49,7 +49,8 @@ public:
 
     void reset();
     void restoreConfig();
-    void addToneToQueue(Buzzer_Queue_t* queue, float frequency, uint16_t length);
+    void addToneToQueue(Buzzer_Queue_t* queue, float frequency,
+            uint16_t length);
 
     /****************************/
     /* position and sensor data */
@@ -69,7 +70,6 @@ public:
      * */
     XYZ_Data angle;
     XYZ_Data angleSetpoint;
-
 
     XYZ_Data horizontalAcceleration;
     XYZ_Data accelerationSetpoint;

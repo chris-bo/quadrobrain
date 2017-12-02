@@ -8,18 +8,16 @@
 #ifndef IMU_H_
 #define IMU_H_
 
-
 #include <core/Task.h>
 
 #include <sensor/ComplementaryFilter.h>
 #include <sensor/Compass.h>
 #include <utility/MAfilterF.h>
 
-
-class IMU : public Task {
+class IMU: public Task {
 public:
-	IMU(Status* _status, int8_t _defaultPrio);
-	virtual ~IMU();
+    IMU(Status* _status, int8_t _defaultPrio);
+    virtual ~IMU();
 
     void initialize();
     void update();
@@ -39,9 +37,6 @@ private:
 //    MAfilterF* accelerationFilterX;
 //    MAfilterF* accelerationFilterY;
 //    MAfilterF* accelerationFilterZ;
-
-
-
 };
 
 #endif /* IMU_H_ */

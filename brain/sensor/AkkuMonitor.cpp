@@ -8,8 +8,8 @@
 #include "AkkuMonitor.h"
 
 AkkuMonitor::AkkuMonitor(Status* statusPtr, uint8_t defaultPrio,
-            ADC_HandleTypeDef* hadc)
-            : Task(statusPtr, defaultPrio) {
+        ADC_HandleTypeDef* hadc) :
+        Task(statusPtr, defaultPrio) {
     counter = 0;
     akkumonitor_adc = hadc;
 
@@ -24,7 +24,8 @@ void AkkuMonitor::initialize() {
     /* calibration */
     HAL_ADCEx_Calibration_Start(akkumonitor_adc, ADC_SINGLE_ENDED);
     HAL_Delay(5);
-    uint32_t tmp = HAL_ADCEx_Calibration_GetValue(akkumonitor_adc, ADC_SINGLE_ENDED);
+    uint32_t tmp = HAL_ADCEx_Calibration_GetValue(akkumonitor_adc,
+    ADC_SINGLE_ENDED);
     HAL_ADCEx_Calibration_SetValue(akkumonitor_adc, ADC_SINGLE_ENDED, tmp);
 }
 

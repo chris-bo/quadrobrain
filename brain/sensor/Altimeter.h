@@ -12,13 +12,12 @@
 
 class Altimeter: public Task {
 public:
-	Altimeter(Status* _status, int8_t _defaultPrio);
-	virtual ~Altimeter();
+    Altimeter(Status* _status, int8_t _defaultPrio);
+    virtual ~Altimeter();
 
     void initialize();
     void update();
     void reset();
-
 
 private:
     float height_start;
