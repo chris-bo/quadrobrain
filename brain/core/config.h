@@ -160,8 +160,9 @@
  *
  */
 
-/* do not change */
+/* do not change usb buffer */
 #define USB_RXTX_BUFF_SIZE 							64
+#define UART_RXTX_BUFF_SIZE							64
 /* Flight LEDs
  *
  */

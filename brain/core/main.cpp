@@ -123,9 +123,10 @@ int main(void) {
 	/* Configure the system clock */
 	SystemClock_Config();
 
-	/* Initialize GPIO and USB*/
+	/* Initialize GPIO and USB and UART for bluetooth*/
 	MX_GPIO_Init();
 	MX_USB_DEVICE_Init();
+	MX_USART2_UART_Init();
 
 	usb.initialize();
 

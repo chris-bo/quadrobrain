@@ -14,6 +14,8 @@ USBHandler::USBHandler(Status* statusPtr, uint8_t defaultPrio,
 	usb_state = USBD_BUSY;
 	usb_handle = husb;
 	usbTransmitBusyCounter = 0;
+
+	initializeBuffers(UserRxBufferFS, UserTxBufferFS, &number_received_data, USB_RXTX_BUFF_SIZE);
 }
 
 USBHandler::~USBHandler() {
@@ -45,8 +47,6 @@ void USBHandler::resetTransmissionState() {
 }
 
 void USBHandler::initialize() {
-
-	initializeBuffers(UserRxBufferFS, UserTxBufferFS, &number_received_data, USB_RXTX_BUFF_SIZE);
 
 	SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }
