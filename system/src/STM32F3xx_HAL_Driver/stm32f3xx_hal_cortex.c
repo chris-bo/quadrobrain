@@ -2,13 +2,10 @@
   ******************************************************************************
   * @file    stm32f3xx_hal_cortex.c
   * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    12-Sept-2014
   * @brief   CORTEX HAL module driver.
-  *
   *          This file provides firmware functions to manage the following
   *          functionalities of the CORTEX:
-  *           + Initialization/de-initialization functions
+  *           + Initialization and de-initialization functions
   *           + Peripheral Control functions
   *
   *  @verbatim
@@ -17,36 +14,14 @@
   ==============================================================================
 
     [..]
-    *** How to configure Interrupts using Cortex HAL driver ***
+    *** How to configure Interrupts using CORTEX HAL driver ***
     ===========================================================
     [..]
-    This section provide functions allowing to configure the NVIC interrupts (IRQ).
+    This section provides functions allowing to configure the NVIC interrupts (IRQ).
     The Cortex-M4 exceptions are managed by CMSIS functions.
 
-    (#) Configure the NVIC Priority Grouping using HAL_NVIC_SetPriorityGrouping()
-        function according to the following table.
+    (#) Configure the NVIC Priority Grouping using HAL_NVIC_SetPriorityGrouping() function
 
-     @brief  CORTEX_NVIC_Priority_Table
-     The table below gives the allowed values of the pre-emption priority and subpriority according
-     to the Priority Grouping configuration performed by HAL_NVIC_SetPriorityGrouping() function
-       ==========================================================================================================================
-         NVIC_PriorityGroup   | NVIC_IRQChannelPreemptionPriority | NVIC_IRQChannelSubPriority  |       Description
-       ==========================================================================================================================
-        NVIC_PRIORITYGROUP_0  |                0                  |            0-15             | 0 bits for pre-emption priority
-                              |                                   |                             | 4 bits for subpriority
-       --------------------------------------------------------------------------------------------------------------------------
-        NVIC_PRIORITYGROUP_1  |                0-1                |            0-7              | 1 bits for pre-emption priority
-                              |                                   |                             | 3 bits for subpriority
-       --------------------------------------------------------------------------------------------------------------------------
-        NVIC_PRIORITYGROUP_2  |                0-3                |            0-3              | 2 bits for pre-emption priority
-                              |                                   |                             | 2 bits for subpriority
-       --------------------------------------------------------------------------------------------------------------------------
-        NVIC_PRIORITYGROUP_3  |                0-7                |            0-1              | 3 bits for pre-emption priority
-                              |                                   |                             | 1 bits for subpriority
-       --------------------------------------------------------------------------------------------------------------------------
-        NVIC_PRIORITYGROUP_4  |                0-15               |            0                | 4 bits for pre-emption priority
-                              |                                   |                             | 0 bits for subpriority
-       ==========================================================================================================================
      (#)  Configure the priority of the selected IRQ Channels using HAL_NVIC_SetPriority()
 
      (#)  Enable the selected IRQ Channels using HAL_NVIC_EnableIRQ()
@@ -61,15 +36,15 @@
         (+@) Lowest hardware priority (IRQ number)
 
     [..]
-    *** How to configure Systick using Cortex HAL driver ***
+    *** How to configure Systick using CORTEX HAL driver ***
     ========================================================
     [..]
-    Setup SysTick Timer for time base.
+    Setup SysTick Timer for time base 
            
    (+) The HAL_SYSTICK_Config()function calls the SysTick_Config() function which
        is a CMSIS function that:
         (++) Configures the SysTick Reload register with value passed as function parameter.
-        (++) Configures the SysTick IRQ priority to the lowest value (0x0F).
+        (++) Configures the SysTick IRQ priority to the lowest value (0x0FU).
         (++) Resets the SysTick Counter register.
         (++) Configures the SysTick Counter clock source to be Core Clock Source (HCLK).
         (++) Enables the SysTick Interrupt.
@@ -94,7 +69,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -121,6 +96,31 @@
   ******************************************************************************  
   */
 
+/*
+  Additional Tables: CORTEX_NVIC_Priority_Table
+     The table below gives the allowed values of the pre-emption priority and subpriority according
+     to the Priority Grouping configuration performed by HAL_NVIC_SetPriorityGrouping() function
+       ==========================================================================================================================
+         NVIC_PriorityGroup   | NVIC_IRQChannelPreemptionPriority | NVIC_IRQChannelSubPriority  |       Description
+       ==========================================================================================================================
+        NVIC_PRIORITYGROUP_0  |                0                  |            0U-15             | 0 bits for pre-emption priority
+                              |                                   |                             | 4 bits for subpriority
+       --------------------------------------------------------------------------------------------------------------------------
+        NVIC_PRIORITYGROUP_1  |                0U-1                |            0U-7              | 1 bits for pre-emption priority
+                              |                                   |                             | 3 bits for subpriority
+       --------------------------------------------------------------------------------------------------------------------------
+        NVIC_PRIORITYGROUP_2  |                0U-3                |            0U-3              | 2 bits for pre-emption priority
+                              |                                   |                             | 2 bits for subpriority
+       --------------------------------------------------------------------------------------------------------------------------
+        NVIC_PRIORITYGROUP_3  |                0U-7                |            0U-1              | 3 bits for pre-emption priority
+                              |                                   |                             | 1 bits for subpriority
+       --------------------------------------------------------------------------------------------------------------------------
+        NVIC_PRIORITYGROUP_4  |                0U-15               |            0                | 4 bits for pre-emption priority
+                              |                                   |                             | 0 bits for subpriority
+       ==========================================================================================================================
+
+*/
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
 
@@ -128,8 +128,8 @@
   * @{
   */
 
-/** @defgroup CORTEX CORTEX HAL module driver
-  * @brief CORTEX HAL module driver
+/** @defgroup CORTEX CORTEX
+  * @brief CORTEX CORTEX HAL module driver
   * @{
   */
 
@@ -140,7 +140,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
+/* Exported functions ---------------------------------------------------------*/
 
 /** @defgroup CORTEX_Exported_Functions CORTEX Exported Functions
   * @{
@@ -155,7 +155,7 @@
               ##### Initialization and de-initialization functions #####
   ==============================================================================
     [..]
-      This section provide the Cortex HAL driver functions allowing to configure Interrupts
+      This section provides the CORTEX HAL driver functions allowing to configure Interrupts
       Systick functionalities
 
 @endverbatim
@@ -166,7 +166,7 @@
 /**
   * @brief  Sets the priority grouping field (pre-emption priority and subpriority)
   *         using the required unlock sequence.
-  * @param  PriorityGroup: The priority grouping bits length.
+  * @param  PriorityGroup The priority grouping bits length.
   *         This parameter can be one of the following values:
   *         @arg NVIC_PRIORITYGROUP_0: 0 bits for pre-emption priority
   *                                    4 bits for subpriority
@@ -193,20 +193,20 @@ void HAL_NVIC_SetPriorityGrouping(uint32_t PriorityGroup)
 
 /**
   * @brief  Sets the priority of an interrupt.
-  * @param  IRQn: External interrupt number
+  * @param  IRQn External interrupt number
   *         This parameter can be an enumerator of IRQn_Type enumeration
   *         (For the complete STM32 Devices IRQ Channels list, please refer to the appropriate CMSIS device file (stm32f3xxxx.h))
-  * @param  PreemptPriority: The pre-emption priority for the IRQn channel.
+  * @param  PreemptPriority The pre-emption priority for the IRQn channel.
   *         This parameter can be a value between 0 and 15 as described in the table CORTEX_NVIC_Priority_Table
   *         A lower priority value indicates a higher priority
-  * @param  SubPriority: the subpriority level for the IRQ channel.
+  * @param  SubPriority the subpriority level for the IRQ channel.
   *         This parameter can be a value between 0 and 15 as described in the table CORTEX_NVIC_Priority_Table
   *         A lower priority value indicates a higher priority.
   * @retval None
   */
 void HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority)
 {
-  uint32_t prioritygroup = 0x00;
+  uint32_t prioritygroup = 0x00U;
   
   /* Check the parameters */
   assert_param(IS_NVIC_SUB_PRIORITY(SubPriority));
@@ -228,6 +228,9 @@ void HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t Sub
   */
 void HAL_NVIC_EnableIRQ(IRQn_Type IRQn)
 {
+  /* Check the parameters */
+  assert_param(IS_NVIC_DEVICE_IRQ(IRQn));
+  
   /* Enable interrupt */
   NVIC_EnableIRQ(IRQn);
 }
@@ -241,6 +244,9 @@ void HAL_NVIC_EnableIRQ(IRQn_Type IRQn)
   */
 void HAL_NVIC_DisableIRQ(IRQn_Type IRQn)
 {
+  /* Check the parameters */
+  assert_param(IS_NVIC_DEVICE_IRQ(IRQn));
+  
   /* Disable interrupt */
   NVIC_DisableIRQ(IRQn);
 }
@@ -258,7 +264,7 @@ void HAL_NVIC_SystemReset(void)
 /**
   * @brief  Initializes the System Timer and its interrupt, and starts the System Tick Timer.
   *         Counter is in free running mode to generate periodic interrupts.
-  * @param  TicksNumb: Specifies the ticks Number of ticks between two interrupts.
+  * @param  TicksNumb Specifies the ticks Number of ticks between two interrupts.
   * @retval status:  - 0  Function succeeded.
   *                  - 1  Function failed.
   */
@@ -279,12 +285,93 @@ uint32_t HAL_SYSTICK_Config(uint32_t TicksNumb)
   ==============================================================================
     [..]
       This subsection provides a set of functions allowing to control the CORTEX
-      (NVIC, SYSTICK) functionalities.
+      (NVIC, SYSTICK, MPU) functionalities.
 
 
 @endverbatim
   * @{
   */
+
+#if (__MPU_PRESENT == 1U)
+	
+/**
+  * @brief  Disables the MPU also clears the HFNMIENA bit (ARM recommendation) 
+  * @retval None
+  */
+void HAL_MPU_Disable(void)
+{
+  /* Disable fault exceptions */
+  SCB->SHCSR &= ~SCB_SHCSR_MEMFAULTENA_Msk;
+  
+  /* Disable the MPU */
+  MPU->CTRL = 0U;
+}
+
+/**
+  * @brief  Enables the MPU
+  * @param  MPU_Control Specifies the control mode of the MPU during hard fault, 
+  *          NMI, FAULTMASK and privileged access to the default memory 
+  *          This parameter can be one of the following values:
+  *            @arg MPU_HFNMI_PRIVDEF_NONE
+  *            @arg MPU_HARDFAULT_NMI
+  *            @arg MPU_PRIVILEGED_DEFAULT
+  *            @arg MPU_HFNMI_PRIVDEF
+  * @retval None
+  */
+void HAL_MPU_Enable(uint32_t MPU_Control)
+{
+  /* Enable the MPU */
+  MPU->CTRL   = MPU_Control | MPU_CTRL_ENABLE_Msk;
+  
+  /* Enable fault exceptions */
+  SCB->SHCSR |= SCB_SHCSR_MEMFAULTENA_Msk;
+}
+	
+	/**
+  * @brief  Initializes and configures the Region and the memory to be protected.
+  * @param  MPU_Init Pointer to a MPU_Region_InitTypeDef structure that contains
+  *                the initialization and configuration information.
+  * @retval None
+  */
+void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init)
+{
+  /* Check the parameters */
+  assert_param(IS_MPU_REGION_NUMBER(MPU_Init->Number));
+  assert_param(IS_MPU_REGION_ENABLE(MPU_Init->Enable));
+
+  /* Set the Region number */
+  MPU->RNR = MPU_Init->Number;
+
+  if ((MPU_Init->Enable) != RESET)
+  {
+    /* Check the parameters */
+    assert_param(IS_MPU_INSTRUCTION_ACCESS(MPU_Init->DisableExec));
+    assert_param(IS_MPU_REGION_PERMISSION_ATTRIBUTE(MPU_Init->AccessPermission));
+    assert_param(IS_MPU_TEX_LEVEL(MPU_Init->TypeExtField));
+    assert_param(IS_MPU_ACCESS_SHAREABLE(MPU_Init->IsShareable));
+    assert_param(IS_MPU_ACCESS_CACHEABLE(MPU_Init->IsCacheable));
+    assert_param(IS_MPU_ACCESS_BUFFERABLE(MPU_Init->IsBufferable));
+    assert_param(IS_MPU_SUB_REGION_DISABLE(MPU_Init->SubRegionDisable));
+    assert_param(IS_MPU_REGION_SIZE(MPU_Init->Size));
+    
+    MPU->RBAR = MPU_Init->BaseAddress;
+    MPU->RASR = ((uint32_t)MPU_Init->DisableExec             << MPU_RASR_XN_Pos)   |
+                ((uint32_t)MPU_Init->AccessPermission        << MPU_RASR_AP_Pos)   |
+                ((uint32_t)MPU_Init->TypeExtField            << MPU_RASR_TEX_Pos)  |
+                ((uint32_t)MPU_Init->IsShareable             << MPU_RASR_S_Pos)    |
+                ((uint32_t)MPU_Init->IsCacheable             << MPU_RASR_C_Pos)    |
+                ((uint32_t)MPU_Init->IsBufferable            << MPU_RASR_B_Pos)    |
+                ((uint32_t)MPU_Init->SubRegionDisable        << MPU_RASR_SRD_Pos)  |
+                ((uint32_t)MPU_Init->Size                    << MPU_RASR_SIZE_Pos) |
+                ((uint32_t)MPU_Init->Enable                  << MPU_RASR_ENABLE_Pos);
+  }
+  else
+  {
+    MPU->RBAR = 0x00U;
+    MPU->RASR = 0x00U;
+  }
+}
+#endif /* __MPU_PRESENT */
 
 /**
   * @brief  Gets the priority grouping field from the NVIC Interrupt Controller.
@@ -298,7 +385,7 @@ uint32_t HAL_NVIC_GetPriorityGrouping(void)
 
 /**
   * @brief  Gets the priority of an interrupt.
-  * @param  IRQn: External interrupt number
+  * @param  IRQn External interrupt number
   *         This parameter can be an enumerator of IRQn_Type enumeration
   *         (For the complete STM32 Devices IRQ Channels list, please refer to the appropriate CMSIS device file (stm32f3xxxx.h))
   * @param   PriorityGroup: the priority grouping bits length.
@@ -313,8 +400,8 @@ uint32_t HAL_NVIC_GetPriorityGrouping(void)
   *                                      1 bits for subpriority
   *           @arg NVIC_PRIORITYGROUP_4: 4 bits for pre-emption priority
   *                                      0 bits for subpriority
-  * @param  pPreemptPriority: Pointer on the Preemptive priority value (starting from 0).
-  * @param  pSubPriority: Pointer on the Subpriority value (starting from 0).
+  * @param  pPreemptPriority Pointer on the Preemptive priority value (starting from 0).
+  * @param  pSubPriority Pointer on the Subpriority value (starting from 0).
   * @retval None
   */
 void HAL_NVIC_GetPriority(IRQn_Type IRQn, uint32_t PriorityGroup, uint32_t* pPreemptPriority, uint32_t* pSubPriority)
@@ -349,7 +436,7 @@ void HAL_NVIC_SetPendingIRQ(IRQn_Type IRQn)
   */
 uint32_t HAL_NVIC_GetPendingIRQ(IRQn_Type IRQn)
 {
-  /* Return 1 if pending else 0 */
+  /* Return 1 if pending else 0U */
   return NVIC_GetPendingIRQ(IRQn);
 }
 
@@ -376,13 +463,13 @@ void HAL_NVIC_ClearPendingIRQ(IRQn_Type IRQn)
   */
 uint32_t HAL_NVIC_GetActive(IRQn_Type IRQn)
 {
-  /* Return 1 if active else 0 */
+  /* Return 1 if active else 0U */
   return NVIC_GetActive(IRQn);
 }
 
 /**
   * @brief  Configures the SysTick clock source.
-  * @param  CLKSource: specifies the SysTick clock source.
+  * @param  CLKSource specifies the SysTick clock source.
   *         This parameter can be one of the following values:
   *             @arg SYSTICK_CLKSOURCE_HCLK_DIV8: AHB clock divided by 8 selected as SysTick clock source.
   *             @arg SYSTICK_CLKSOURCE_HCLK: AHB clock selected as SysTick clock source.

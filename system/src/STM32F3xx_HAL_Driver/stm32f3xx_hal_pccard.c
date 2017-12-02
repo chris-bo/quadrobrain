@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32f3xx_hal_pccard.c
   * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    12-Sept-2014
   * @brief   PCCARD HAL module driver.
   *          This file provides a generic firmware to drive PCCARD memories mounted 
   *          as external device.
@@ -14,7 +12,7 @@
  ===============================================================================  
    [..]
      This driver is a generic layered driver which contains a set of APIs used to 
-     control PCCARD/compact flash memories. It uses the FMC/FSMC layer functions 
+     control PCCARD/compact flash memories. It uses the FMC layer functions 
      to interface with PCCARD devices. This driver is used for:
     
     (+) PCCARD/compact flash memory configuration sequence using the function 
@@ -22,18 +20,18 @@
         attribute spaces.
             
     (+) Read PCCARD/compact flash memory maker and device IDs using the function
-        HAL_CF_Read_ID(). The read information is stored in the CompactFlash_ID 
+        HAL_PCCARD_Read_ID(). The read information is stored in the CompactFlash_ID 
         structure declared by the function caller. 
         
     (+) Access PCCARD/compact flash memory by read/write operations using the functions
-        HAL_CF_Read_Sector()/HAL_CF_Write_Sector(), to read/write sector. 
+        HAL_PCCARD_Read_Sector()/HAL_PCCARD_Write_Sector(), to read/write sector. 
         
-    (+) Perform PCCARD/compact flash Reset chip operation using the function HAL_CF_Reset().
+    (+) Perform PCCARD/compact flash Reset chip operation using the function HAL_PCCARD_Reset().
         
     (+) Perform PCCARD/compact flash erase sector operation using the function 
-        HAL_CF_Erase_Sector().
+        HAL_PCCARD_Erase_Sector().
     
-    (+) Read the PCCARD/compact flash status operation using the function HAL_CF_ReadStatus().
+    (+) Read the PCCARD/compact flash status operation using the function HAL_PCCARD_ReadStatus().
      
     (+) You can monitor the PCCARD/compact flash  device HAL state by calling the function
         HAL_PCCARD_GetState()     
@@ -47,7 +45,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -77,19 +75,34 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
 
+#if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)
 /** @addtogroup STM32F3xx_HAL_Driver
   * @{
   */
 
-/** @defgroup PCCARD PCCARD HAL module driver
+#ifdef HAL_PCCARD_MODULE_ENABLED
+
+/** @defgroup PCCARD PCCARD
   * @brief PCCARD HAL module driver
   * @{
   */
-#ifdef HAL_PCCARD_MODULE_ENABLED
-#if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+/** @defgroup PCCARD_Private_Constants PCCARD Private Constants
+  * @{
+  */
+
+#define PCCARD_TIMEOUT_READ_ID      0x0000FFFF
+#define PCCARD_TIMEOUT_SECTOR       0x0000FFFF
+#define PCCARD_TIMEOUT_STATUS       0x01000000
+
+#define PCCARD_STATUS_OK            (uint8_t)0x58
+#define PCCARD_STATUS_WRITE_OK      (uint8_t)0x50
+/**
+  * @}
+  */ 
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -116,11 +129,11 @@
     
 /**
   * @brief  Perform the PCCARD memory Initialization sequence
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
-  * @param  ComSpaceTiming: Common space timing structure
-  * @param  AttSpaceTiming: Attribute space timing structure
-  * @param  IOSpaceTiming: IO space timing structure     
+  * @param  ComSpaceTiming Common space timing structure
+  * @param  AttSpaceTiming Attribute space timing structure
+  * @param  IOSpaceTiming IO space timing structure     
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_PCCARD_Init(PCCARD_HandleTypeDef *hpccard, FMC_NAND_PCC_TimingTypeDef *ComSpaceTiming, FMC_NAND_PCC_TimingTypeDef *AttSpaceTiming, FMC_NAND_PCC_TimingTypeDef *IOSpaceTiming)
@@ -133,6 +146,9 @@ HAL_StatusTypeDef HAL_PCCARD_Init(PCCARD_HandleTypeDef *hpccard, FMC_NAND_PCC_Ti
   
   if(hpccard->State == HAL_PCCARD_STATE_RESET)
   {  
+    /* Allocate lock resource and initialize it */
+    hpccard->Lock = HAL_UNLOCKED;
+    
     /* Initialize the low level hardware (MSP) */
     HAL_PCCARD_MspInit(hpccard);
   }
@@ -164,7 +180,7 @@ HAL_StatusTypeDef HAL_PCCARD_Init(PCCARD_HandleTypeDef *hpccard, FMC_NAND_PCC_Ti
 
 /**
   * @brief  Perform the PCCARD memory De-initialization sequence
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
   * @retval HAL status
   */
@@ -187,12 +203,15 @@ HAL_StatusTypeDef  HAL_PCCARD_DeInit(PCCARD_HandleTypeDef *hpccard)
 
 /**
   * @brief  PCCARD MSP Init
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
   * @retval None
   */
 __weak void HAL_PCCARD_MspInit(PCCARD_HandleTypeDef *hpccard)
 {
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hpccard);
+
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_PCCARD_MspInit could be implemented in the user file
    */ 
@@ -200,12 +219,15 @@ __weak void HAL_PCCARD_MspInit(PCCARD_HandleTypeDef *hpccard)
 
 /**
   * @brief  PCCARD MSP DeInit
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
   * @retval None
   */
 __weak void HAL_PCCARD_MspDeInit(PCCARD_HandleTypeDef *hpccard)
 {
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hpccard);
+
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_PCCARD_MspDeInit could be implemented in the user file
    */ 
@@ -231,17 +253,17 @@ __weak void HAL_PCCARD_MspDeInit(PCCARD_HandleTypeDef *hpccard)
   
 /**
   * @brief  Read Compact Flash's ID.
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
-  * @param  CompactFlash_ID: Compact flash ID structure.  
-  * @param  pStatus: pointer to compact flash status         
+  * @param  CompactFlash_ID Compact flash ID structure.  
+  * @param  pStatus pointer to compact flash status         
   * @retval HAL status
   *   
   */ 
-HAL_StatusTypeDef HAL_CF_Read_ID(PCCARD_HandleTypeDef *hpccard, uint8_t CompactFlash_ID[], uint8_t *pStatus)
+HAL_StatusTypeDef HAL_PCCARD_Read_ID(PCCARD_HandleTypeDef *hpccard, uint8_t CompactFlash_ID[], uint8_t *pStatus)
 {
-  uint32_t timeout = 0xFFFF, index;
-  uint8_t status;
+  uint32_t timeout = PCCARD_TIMEOUT_READ_ID, index = 0U;
+  uint8_t status = 0U;
   
   /* Process Locked */
   __HAL_LOCK(hpccard);  
@@ -256,30 +278,30 @@ HAL_StatusTypeDef HAL_CF_Read_ID(PCCARD_HandleTypeDef *hpccard, uint8_t CompactF
   hpccard->State = HAL_PCCARD_STATE_BUSY;
   
   /* Initialize the CF status */
-  *pStatus = CF_READY;  
+  *pStatus = PCCARD_READY;  
   
   /* Send the Identify Command */
-  *(__IO uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD)  = 0xECEC;
+  *(__IO uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD)  = 0xECEC;
     
   /* Read CF IDs and timeout treatment */
   do 
   {
      /* Read the CF status */
-     status = *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+     status = *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
      
      timeout--;
-  }while((status != 0x58) && timeout); 
+  }while((status != PCCARD_STATUS_OK) && timeout); 
   
-  if(timeout == 0)
+  if(timeout == 0U)
   {
-    *pStatus = CF_TIMEOUT_ERROR;
+    *pStatus = PCCARD_TIMEOUT_ERROR;
   }
   else
   {
      /* Read CF ID bytes */
-    for(index = 0; index < 16; index++)
+    for(index = 0U; index < 16U; index++)
     {
-      CompactFlash_ID[index] = *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_DATA);
+      CompactFlash_ID[index] = *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_DATA);
     }    
   }
   
@@ -294,17 +316,17 @@ HAL_StatusTypeDef HAL_CF_Read_ID(PCCARD_HandleTypeDef *hpccard, uint8_t CompactF
    
 /**
   * @brief  Read sector from PCCARD memory
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
-  * @param  pBuffer: pointer to destination read buffer
-  * @param  SectorAddress: Sector address to read
-  * @param  pStatus: pointer to CF status
+  * @param  pBuffer pointer to destination read buffer
+  * @param  SectorAddress Sector address to read
+  * @param  pStatus pointer to CF status
   * @retval HAL status
   */    
-HAL_StatusTypeDef HAL_CF_Read_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t *pBuffer, uint16_t SectorAddress, uint8_t *pStatus)
+HAL_StatusTypeDef HAL_PCCARD_Read_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t *pBuffer, uint16_t SectorAddress, uint8_t *pStatus)
 {
-  uint32_t timeout = 0xFFFF, index = 0;
-  uint8_t status;
+  uint32_t timeout = PCCARD_TIMEOUT_SECTOR, index = 0U;
+  uint8_t status = 0U;
 
   /* Process Locked */
   __HAL_LOCK(hpccard);
@@ -319,43 +341,43 @@ HAL_StatusTypeDef HAL_CF_Read_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t *pB
   hpccard->State = HAL_PCCARD_STATE_BUSY;
 
   /* Initialize CF status */
-  *pStatus = CF_READY;
+  *pStatus = PCCARD_READY;
 
   /* Set the parameters to write a sector */
-  *(__IO uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_CYLINDER_HIGH) = (uint16_t)0x00;
-  *(__IO uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_SECTOR_COUNT)  = ((uint16_t)0x0100 ) | ((uint16_t)SectorAddress);
-  *(__IO uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD)    = (uint16_t)0xE4A0;  
+  *(__IO uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_CYLINDER_HIGH) = (uint16_t)0x00;
+  *(__IO uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_SECTOR_COUNT)  = ((uint16_t)0x0100 ) | ((uint16_t)SectorAddress);
+  *(__IO uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD)    = (uint16_t)0xE4A0;  
 
   do
   {
-    /* wait till the Status = 0x80 */
-    status =  *(__IO uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+    /* wait till the Status = 0x80U */
+    status =  *(__IO uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
     timeout--;
-  }while((status == 0x80) && timeout);
+  }while((status == 0x80U) && timeout);
   
-  if(timeout == 0)
+  if(timeout == 0U)
   {
-    *pStatus = CF_TIMEOUT_ERROR;
+    *pStatus = PCCARD_TIMEOUT_ERROR;
   }
   
-  timeout = 0xFFFF;
+  timeout = 0xFFFFU;
 
   do
   {
-    /* wait till the Status = 0x58 */
-    status =  *(__IO uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+    /* wait till the Status = PCCARD_STATUS_OK */
+    status =  *(__IO uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
     timeout--;
-  }while((status != 0x58) && timeout);
+  }while((status != PCCARD_STATUS_OK) && timeout);
   
-  if(timeout == 0)
+  if(timeout == 0U)
   {
-    *pStatus = CF_TIMEOUT_ERROR;
+    *pStatus = PCCARD_TIMEOUT_ERROR;
   }
   
   /* Read bytes */
-  for(; index < CF_SECTOR_SIZE; index++)
+  for(; index < PCCARD_SECTOR_SIZE; index++)
   {
-    *(uint16_t *)pBuffer++ = *(uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR);
+    *(uint16_t *)pBuffer++ = *(uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR);
   } 
 
   /* Update the PCCARD controller state */
@@ -370,17 +392,17 @@ HAL_StatusTypeDef HAL_CF_Read_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t *pB
 
 /**
   * @brief  Write sector to PCCARD memory
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
-  * @param  pBuffer: pointer to source write buffer
-  * @param  SectorAddress: Sector address to write
-  * @param  pStatus: pointer to CF status
+  * @param  pBuffer pointer to source write buffer
+  * @param  SectorAddress Sector address to write
+  * @param  pStatus pointer to CF status
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_CF_Write_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t *pBuffer, uint16_t SectorAddress,  uint8_t *pStatus)
+HAL_StatusTypeDef HAL_PCCARD_Write_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t *pBuffer, uint16_t SectorAddress,  uint8_t *pStatus)
 {
-  uint32_t timeout = 0xFFFF, index = 0;
-  uint8_t status;
+  uint32_t timeout = PCCARD_TIMEOUT_SECTOR, index = 0U;
+  uint8_t status = 0U;
 
   /* Process Locked */
   __HAL_LOCK(hpccard);  
@@ -395,41 +417,41 @@ HAL_StatusTypeDef HAL_CF_Write_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t *p
   hpccard->State = HAL_PCCARD_STATE_BUSY;
     
   /* Initialize CF status */
-  *pStatus = CF_READY;  
+  *pStatus = PCCARD_READY;  
     
   /* Set the parameters to write a sector */
-  *(__IO uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_CYLINDER_HIGH) = (uint16_t)0x00;
-  *(__IO uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_SECTOR_COUNT)  = ((uint16_t)0x0100 ) | ((uint16_t)SectorAddress);
-  *(__IO uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD)    = (uint16_t)0x30A0;
+  *(__IO uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_CYLINDER_HIGH) = (uint16_t)0x00;
+  *(__IO uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_SECTOR_COUNT)  = ((uint16_t)0x0100 ) | ((uint16_t)SectorAddress);
+  *(__IO uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD)    = (uint16_t)0x30A0;
   
   do
   {
-    /* Wait till the Status = 0x58 */
-    status =  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+    /* Wait till the Status = PCCARD_STATUS_OK */
+    status =  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
     timeout--;
-  }while((status != 0x58) && timeout);
+  }while((status != PCCARD_STATUS_OK) && timeout);
   
-  if(timeout == 0)
+  if(timeout == 0U)
   {
-    *pStatus = CF_TIMEOUT_ERROR;
+    *pStatus = PCCARD_TIMEOUT_ERROR;
   }
   
   /* Write bytes */
-  for(; index < CF_SECTOR_SIZE; index++)
+  for(; index < PCCARD_SECTOR_SIZE; index++)
   {
-    *(uint16_t *)(CF_IO_SPACE_PRIMARY_ADDR) = *(uint16_t *)pBuffer++;
+    *(uint16_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR) = *(uint16_t *)pBuffer++;
   }
 
   do
   {
-    /* Wait till the Status = 0x50 */
-    status =  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+    /* Wait till the Status = PCCARD_STATUS_WRITE_OK */
+    status =  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
     timeout--;
-  }while((status != 0x50) && timeout);
+  }while((status != PCCARD_STATUS_WRITE_OK) && timeout);
 
-  if(timeout == 0)
+  if(timeout == 0U)
   {
-    *pStatus = CF_TIMEOUT_ERROR;
+    *pStatus = PCCARD_TIMEOUT_ERROR;
   }  
 
   /* Update the PCCARD controller state */
@@ -444,16 +466,16 @@ HAL_StatusTypeDef HAL_CF_Write_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t *p
 
 /**
   * @brief  Erase sector from PCCARD memory 
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
-  * @param  SectorAddress: Sector address to erase
-  * @param  pStatus: pointer to CF status
+  * @param  SectorAddress Sector address to erase
+  * @param  pStatus pointer to CF status
   * @retval HAL status
   */
-HAL_StatusTypeDef  HAL_CF_Erase_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t SectorAddress, uint8_t *pStatus)
+HAL_StatusTypeDef  HAL_PCCARD_Erase_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t SectorAddress, uint8_t *pStatus)
 {
-  uint32_t timeout = 0x400;
-  uint8_t status;
+  uint32_t timeout = 0x400U;
+  uint8_t status = 0U;
   
   /* Process Locked */
   __HAL_LOCK(hpccard);  
@@ -468,28 +490,28 @@ HAL_StatusTypeDef  HAL_CF_Erase_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t S
   hpccard->State = HAL_PCCARD_STATE_BUSY;
   
   /* Initialize CF status */ 
-  *pStatus = CF_READY;
+  *pStatus = PCCARD_READY;
     
   /* Set the parameters to write a sector */
-  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_CYLINDER_LOW)  = 0x00;
-  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_CYLINDER_HIGH) = 0x00;
-  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_SECTOR_NUMBER) = SectorAddress;
-  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_SECTOR_COUNT)  = 0x01;
-  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_CARD_HEAD)     = 0xA0;
-  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD)    = CF_ERASE_SECTOR_CMD;
+  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_CYLINDER_LOW)  = 0x00;
+  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_CYLINDER_HIGH) = 0x00;
+  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_SECTOR_NUMBER) = SectorAddress;
+  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_SECTOR_COUNT)  = 0x01;
+  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_CARD_HEAD)     = 0xA0;
+  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD)    = ATA_ERASE_SECTOR_CMD;
   
   /* wait till the CF is ready */
-  status =  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+  status =  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
   
-  while((status != 0x50) && timeout)
+  while((status != PCCARD_STATUS_WRITE_OK) && timeout)
   {
-    status =  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+    status =  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
     timeout--;
   } 
   
-  if(timeout == 0)
+  if(timeout == 0U)
   {
-    *pStatus = CF_TIMEOUT_ERROR;
+    *pStatus = PCCARD_TIMEOUT_ERROR;
   }
   
   /* Check the PCCARD controller state */
@@ -503,13 +525,12 @@ HAL_StatusTypeDef  HAL_CF_Erase_Sector(PCCARD_HandleTypeDef *hpccard, uint16_t S
 
 /**
   * @brief  Reset the PCCARD memory 
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_CF_Reset(PCCARD_HandleTypeDef *hpccard)
+HAL_StatusTypeDef HAL_PCCARD_Reset(PCCARD_HandleTypeDef *hpccard)
 {
-
   /* Process Locked */
   __HAL_LOCK(hpccard);  
   
@@ -520,16 +541,16 @@ HAL_StatusTypeDef HAL_CF_Reset(PCCARD_HandleTypeDef *hpccard)
   }
 
   /* Provide an SW reset and Read and verify the:
-   - CF Configuration Option Register at address 0x98000200 --> 0x80
-   - Card Configuration and Status Register	at address 0x98000202 --> 0x00
-   - Pin Replacement Register  at address 0x98000204 --> 0x0C
-   - Socket and Copy Register at address 0x98000206 --> 0x00
+   - CF Configuration Option Register at address 0x98000200U --> 0x80
+   - Card Configuration and Status Register	at address 0x98000202U --> 0x00
+   - Pin Replacement Register  at address 0x98000204U --> 0x0C
+   - Socket and Copy Register at address 0x98000206U --> 0x00
   */
 
   /* Check the PCCARD controller state */
   hpccard->State = HAL_PCCARD_STATE_BUSY;
   
-  *(__IO uint8_t *)(0x98000202) = 0x01;
+  *(__IO uint8_t *)(PCCARD_ATTRIBUTE_SPACE_ADDRESS | ATA_CARD_CONFIGURATION) = 0x01;
     
   /* Check the PCCARD controller state */
   hpccard->State = HAL_PCCARD_STATE_READY;
@@ -542,7 +563,7 @@ HAL_StatusTypeDef HAL_CF_Reset(PCCARD_HandleTypeDef *hpccard)
 
 /**
   * @brief  This function handles PCCARD device interrupt request.
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
   * @retval HAL status
 */
@@ -592,12 +613,15 @@ void HAL_PCCARD_IRQHandler(PCCARD_HandleTypeDef *hpccard)
 
 /**
   * @brief  PCCARD interrupt feature callback
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
   * @retval None
   */
 __weak void HAL_PCCARD_ITCallback(PCCARD_HandleTypeDef *hpccard)
 {
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hpccard);
+
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_PCCARD_ITCallback could be implemented in the user file
    */
@@ -624,7 +648,7 @@ __weak void HAL_PCCARD_ITCallback(PCCARD_HandleTypeDef *hpccard)
   
 /**
   * @brief  return the PCCARD controller state
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.
   * @retval HAL state
   */
@@ -635,7 +659,7 @@ HAL_PCCARD_StateTypeDef HAL_PCCARD_GetState(PCCARD_HandleTypeDef *hpccard)
  
 /**
   * @brief  Get the compact flash memory status
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.       
   * @retval New status of the CF operation. This parameter can be:
   *          - CompactFlash_TIMEOUT_ERROR: when the previous operation generate 
@@ -643,65 +667,65 @@ HAL_PCCARD_StateTypeDef HAL_PCCARD_GetState(PCCARD_HandleTypeDef *hpccard)
   *          - CompactFlash_READY: when memory is ready for the next operation     
   *                
   */
-CF_StatusTypedef HAL_CF_GetStatus(PCCARD_HandleTypeDef *hpccard)
+HAL_PCCARD_StatusTypeDef HAL_PCCARD_GetStatus(PCCARD_HandleTypeDef *hpccard)
 {
-  uint32_t timeout = 0x1000000, status_CF;  
+  uint32_t timeout = PCCARD_TIMEOUT_STATUS, status_cf = 0U;  
   
   /* Check the PCCARD controller state */
   if(hpccard->State == HAL_PCCARD_STATE_BUSY)
   {
-     return CF_ONGOING;
+     return HAL_PCCARD_STATUS_ONGOING;
   }
 
-  status_CF =  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+  status_cf =  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
   
-  while((status_CF == CF_BUSY) && timeout)
+  while((status_cf == PCCARD_BUSY) && timeout)
   {
-    status_CF =  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+    status_cf =  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
     timeout--;
   }
 
-  if(timeout == 0)
+  if(timeout == 0U)
   {          
-    status_CF =  CF_TIMEOUT_ERROR;      
+    status_cf =  PCCARD_TIMEOUT_ERROR;      
   }   
 
   /* Return the operation status */
-  return (CF_StatusTypedef) status_CF;      
+  return (HAL_PCCARD_StatusTypeDef) status_cf;      
 }
   
 /**
   * @brief  Reads the Compact Flash memory status using the Read status command
-  * @param  hpccard: pointer to a PCCARD_HandleTypeDef structure that contains
+  * @param  hpccard pointer to a PCCARD_HandleTypeDef structure that contains
   *                the configuration information for PCCARD module.      
   * @retval The status of the Compact Flash memory. This parameter can be:
   *          - CompactFlash_BUSY: when memory is busy
   *          - CompactFlash_READY: when memory is ready for the next operation    
   *          - CompactFlash_ERROR: when the previous operation gererates error                
   */
-CF_StatusTypedef HAL_CF_ReadStatus(PCCARD_HandleTypeDef *hpccard)
+HAL_PCCARD_StatusTypeDef HAL_PCCARD_ReadStatus(PCCARD_HandleTypeDef *hpccard)
 {
-  uint8_t data = 0, status_CF = CF_BUSY;
+  uint8_t data = 0U, status_cf = PCCARD_BUSY;
   
   /* Check the PCCARD controller state */
   if(hpccard->State == HAL_PCCARD_STATE_BUSY)
   {
-     return CF_ONGOING;
+     return HAL_PCCARD_STATUS_ONGOING;
   } 
 
   /* Read status operation */
-  data =  *(__IO uint8_t *)(CF_IO_SPACE_PRIMARY_ADDR | CF_STATUS_CMD_ALTERNATE);
+  data =  *(__IO uint8_t *)(PCCARD_IO_SPACE_PRIMARY_ADDR | ATA_STATUS_CMD_ALTERNATE);
 
-  if((data & CF_TIMEOUT_ERROR) == CF_TIMEOUT_ERROR)
+  if((data & PCCARD_TIMEOUT_ERROR) == PCCARD_TIMEOUT_ERROR)
   {
-    status_CF = CF_TIMEOUT_ERROR;
+    status_cf = PCCARD_TIMEOUT_ERROR;
   } 
-  else if((data & CF_READY) == CF_READY)
+  else if((data & PCCARD_READY) == PCCARD_READY)
   {
-    status_CF = CF_READY;
+    status_cf = PCCARD_READY;
   }
   
-  return (CF_StatusTypedef) status_CF;
+  return (HAL_PCCARD_StatusTypeDef) status_cf;
 }  
  
 /**
@@ -711,15 +735,15 @@ CF_StatusTypedef HAL_CF_ReadStatus(PCCARD_HandleTypeDef *hpccard)
 /**
   * @}
   */
-#endif /* STM32F302xE || STM32F303xE || STM32F398xx */
+/**
+  * @}
+  */
+
 #endif /* HAL_PCCARD_MODULE_ENABLED */  
 
 /**
   * @}
   */
-
-/**
-  * @}
-  */
+#endif /* STM32F302xE || STM32F303xE || STM32F398xx */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

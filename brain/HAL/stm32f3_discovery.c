@@ -194,7 +194,7 @@ void BSP_LED_Init(Led_TypeDef Led) {
 	GPIO_InitStruct.Pin = LED_PIN[Led];
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 
 	HAL_GPIO_Init(LED_PORT[Led], &GPIO_InitStruct);
 
@@ -286,7 +286,7 @@ void BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef ButtonMode) {
 		GPIO_InitStruct.Pin = BUTTON_PIN[Button];
 		GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 		HAL_GPIO_Init(BUTTON_PORT[Button], &GPIO_InitStruct);
 	}
 
@@ -294,7 +294,7 @@ void BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef ButtonMode) {
 		/* Configure Button pin as input with External interrupt */
 		GPIO_InitStruct.Pin = BUTTON_PIN[Button];
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
 		HAL_GPIO_Init(BUTTON_PORT[Button], &GPIO_InitStruct);
 
@@ -340,7 +340,7 @@ static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c) {
 	GPIO_InitStructure.Pin = (DISCOVERY_I2Cx_SDA_PIN | DISCOVERY_I2Cx_SCL_PIN);
 	GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStructure.Pull = GPIO_PULLDOWN;
-	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
 	GPIO_InitStructure.Alternate = DISCOVERY_I2Cx_AF;
 	HAL_GPIO_Init(DISCOVERY_I2Cx_GPIO_PORT, &GPIO_InitStructure);
 
@@ -511,7 +511,7 @@ static void SPIx_MspInit(SPI_HandleTypeDef *hspi) {
 			| DISCOVERY_SPIx_MISO_PIN);
 	GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStructure.Pull = GPIO_NOPULL; /* or GPIO_PULLDOWN */
-	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
 	GPIO_InitStructure.Alternate = DISCOVERY_SPIx_AF;
 	HAL_GPIO_Init(DISCOVERY_SPIx_GPIO_PORT, &GPIO_InitStructure);
 }
@@ -535,7 +535,7 @@ void GYRO_IO_Init(void) {
 	GPIO_InitStructure.Pin = GYRO_CS_PIN;
 	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
-	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(GYRO_CS_GPIO_PORT, &GPIO_InitStructure);
 
 	/* Deselect : Chip Select high */
@@ -545,7 +545,7 @@ void GYRO_IO_Init(void) {
 	GYRO_INT_GPIO_CLK_ENABLE();
 	GPIO_InitStructure.Pin = GYRO_INT1_PIN | GYRO_INT2_PIN;
 	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
-	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GYRO_INT_GPIO_PORT, &GPIO_InitStructure);
 
@@ -636,7 +636,7 @@ void COMPASSACCELERO_IO_Init(void) {
 	GPIO_InitStructure.Pin = ACCELERO_DRDY_PIN;
 	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
-	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(ACCELERO_DRDY_GPIO_PORT, &GPIO_InitStructure);
 
 	/* Enable and set Button EXTI Interrupt to the lowest priority */
@@ -646,7 +646,7 @@ void COMPASSACCELERO_IO_Init(void) {
 	/* Configure GPIO PINs to detect Interrupts */
 	GPIO_InitStructure.Pin = ACCELERO_INT1_PIN | ACCELERO_INT2_PIN;
 	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
-	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(ACCELERO_INT_GPIO_PORT, &GPIO_InitStructure);
 
@@ -667,7 +667,7 @@ void COMPASSACCELERO_IO_ITConfig(void) {
 	/* Configure GPIO PINs to detect Interrupts */
 	GPIO_InitStructure.Pin = ACCELERO_INT1_PIN | ACCELERO_INT2_PIN;
 	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
-	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(ACCELERO_INT_GPIO_PORT, &GPIO_InitStructure);
 

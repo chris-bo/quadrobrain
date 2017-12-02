@@ -20,6 +20,7 @@
 #include "adc.h"
 #include "usart.h"
 #include "spi.h"
+#include "hal_defines.h"
 
 /* classes  ---------------------------------------------------------*/
 #include <core/config.h>
@@ -63,4 +64,17 @@ extern Buzzer beep1;
 extern Buzzer beep2;
 extern GPS gpsReceiver;
 extern FlightLED flightLEDs;
+
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
+void _Error_Handler(char *, int);
+
+#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
+#ifdef __cplusplus
+}
+#endif
+
+
 #endif /* MAIN_H_ */

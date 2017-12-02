@@ -69,11 +69,13 @@
 									<listOptionValue builtIn="false" value="&quot;../system/inc/cmsis&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/device&quot;"/>
 									<listOptionValue builtIn="false" value="../brain/HAL"/>
+									<listOptionValue builtIn="false" value="../system/inc/STM32F3xx_HAL_Driver/Legacy"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.2062733492" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" useByScannerDiscovery="true" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F303xC"/>
+									<listOptionValue builtIn="false" value="USE_LEGACY"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.1180667643" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
 							</tool>
@@ -87,6 +89,7 @@
 									<listOptionValue builtIn="false" value="&quot;../system/inc/cmsis&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/device&quot;"/>
 									<listOptionValue builtIn="false" value="../brain/HAL"/>
+									<listOptionValue builtIn="false" value="../system/inc/STM32F3xx_HAL_Driver/Legacy"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.warning.missingprototypes.446788853" name="Warn if a global function has no prototype (-Wmissing-prototypes)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.warning.missingprototypes" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.warning.strictprototypes.1673015814" name="Warn if a function has no arg type (-Wstrict-prototypes)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.warning.strictprototypes" useByScannerDiscovery="true" value="true" valueType="boolean"/>
@@ -95,6 +98,7 @@
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F303xC"/>
+									<listOptionValue builtIn="false" value="USE_LEGACY"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.856321277" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
@@ -108,6 +112,7 @@
 									<listOptionValue builtIn="false" value="&quot;../system/inc/cmsis&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../system/inc/device&quot;"/>
 									<listOptionValue builtIn="false" value="../brain/HAL"/>
+									<listOptionValue builtIn="false" value="../system/inc/STM32F3xx_HAL_Driver/Legacy"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.2046541360" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.515735083" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>
@@ -123,6 +128,7 @@
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F303xC"/>
+									<listOptionValue builtIn="false" value="USE_LEGACY"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1983348555" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>
@@ -175,7 +181,7 @@
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2064364755.886362447" name="stm32f3xx_hal_conf_template.h" rcbsApplicability="disable" resourcePath="system/inc/STM32F3xx_HAL_Driver/stm32f3xx_hal_conf_template.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="brain"/>
-						<entry excluding="inc/STM32F3xx_HAL_Driver/stm32f3xx_hal_conf_template.h|STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h|STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h|STM32_USB_Device_Library/Core/Src/usbd_conf_template.c|STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.c|inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
+						<entry excluding="src/cmsis/system_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_timebase_tim_template.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_timebase_rtc_wakeup_template.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_timebase_rtc_alarm_template.c|inc/STM32F3xx_HAL_Driver/stm32f3xx_hal_conf_template.h|STM32_USB_Device_Library/Core/Inc/usbd_conf_template.h|STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc_if_template.h|STM32_USB_Device_Library/Core/Src/usbd_conf_template.c|STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.c|inc/cmsis/core_sc300.h|inc/cmsis/core_sc000.h|inc/cmsis/core_cm0plus.h|inc/cmsis/core_cm3.h|inc/cmsis/core_cm0.h|src/cmsis/vectors_stm32f3xx.c|src/STM32F3xx_HAL_Driver/stm32f3xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

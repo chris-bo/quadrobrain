@@ -1,40 +1,56 @@
 /**
   ******************************************************************************
   * @file           : usbd_cdc_if.c
-  * @author         : MCD Application Team
-  * @version        : V1.1.0
-  * @date           : 19-March-2012
   * @brief          :
   ******************************************************************************
-  * COPYRIGHT(c) 2015 STMicroelectronics
+  * This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  * 1. Redistributions of source code must retain the above copyright notice,
-  * this list of conditions and the following disclaimer.
+  * Copyright (c) 2017 STMicroelectronics International N.V. 
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without 
+  * modification, are permitted, provided that the following conditions are met:
+  *
+  * 1. Redistribution of source code must retain the above copyright notice, 
+  *    this list of conditions and the following disclaimer.
   * 2. Redistributions in binary form must reproduce the above copyright notice,
-  * this list of conditions and the following disclaimer in the documentation
-  * and/or other materials provided with the distribution.
-  * 3. Neither the name of STMicroelectronics nor the names of its contributors
-  * may be used to endorse or promote products derived from this software
-  * without specific prior written permission.
+  *    this list of conditions and the following disclaimer in the documentation
+  *    and/or other materials provided with the distribution.
+  * 3. Neither the name of STMicroelectronics nor the names of other 
+  *    contributors to this software may be used to endorse or promote products 
+  *    derived from this software without specific written permission.
+  * 4. This software, including modifications and/or derivative works of this 
+  *    software, must execute solely and exclusively on microcontroller or
+  *    microprocessor devices manufactured by or for STMicroelectronics.
+  * 5. Redistribution and use of this software other than as permitted under 
+  *    this license is void and will automatically terminate your rights under 
+  *    this license. 
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * THIS SOFTWARE IS PROVIDED BY STMICROELECTRONICS AND CONTRIBUTORS "AS IS" 
+  * AND ANY EXPRESS, IMPLIED OR STATUTORY WARRANTIES, INCLUDING, BUT NOT 
+  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+  * PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY INTELLECTUAL PROPERTY
+  * RIGHTS ARE DISCLAIMED TO THE FULLEST EXTENT PERMITTED BY LAW. IN NO EVENT 
+  * SHALL STMICROELECTRONICS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+  * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
 */
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
+/* USER CODE BEGIN INCLUDE */
+/* USER CODE END INCLUDE */
+
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
   * @{
   */
@@ -47,8 +63,8 @@
 /** @defgroup USBD_CDC_Private_TypesDefinitions
   * @{
   */ 
-  /* USER CODE BEGIN 0 */ 
-  /* USER CODE END 0 */ 
+/* USER CODE BEGIN PRIVATE_TYPES */
+/* USER CODE END PRIVATE_TYPES */ 
 /**
   * @}
   */ 
@@ -56,11 +72,12 @@
 /** @defgroup USBD_CDC_Private_Defines
   * @{
   */ 
-  /* USER CODE BEGIN 1 */
+/* USER CODE BEGIN PRIVATE_DEFINES */
 /* Define size for the receive and transmit buffer over CDC */
 /* It's up to user to redefine and/or remove those define */
-
-  /* USER CODE END 1 */  
+#define APP_RX_DATA_SIZE  2048
+#define APP_TX_DATA_SIZE  2048
+/* USER CODE END PRIVATE_DEFINES */
 /**
   * @}
   */ 
@@ -68,32 +85,38 @@
 /** @defgroup USBD_CDC_Private_Macros
   * @{
   */ 
-  /* USER CODE BEGIN 2 */ 
-  /* USER CODE END 2 */
+/* USER CODE BEGIN PRIVATE_MACRO */
+/* USER CODE END PRIVATE_MACRO */
+
 /**
   * @}
   */ 
   
-
 /** @defgroup USBD_CDC_Private_Variables
   * @{
   */
 /* Create buffer for reception and transmission           */
 /* It's up to user to redefine and/or remove those define */
 /* Received Data over USB are stored in this buffer       */
-uint8_t UserRxBufferFS[USB_RXTX_BUFF_SIZE] = {0};
+uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 
 /* Send Data over USB CDC are stored in this buffer       */
-uint8_t UserTxBufferFS[USB_RXTX_BUFF_SIZE] = {0};
+uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
 uint16_t number_received_data;
-/* USB handler declaration */
-/* Handle for USB Full Speed IP */
-USBD_HandleTypeDef  *hUsbDevice_0;
+/* USER CODE BEGIN PRIVATE_VARIABLES */
+/* USER CODE END PRIVATE_VARIABLES */
 
-extern USBD_HandleTypeDef hUsbDeviceFS;
-
-
+/**
+  * @}
+  */ 
+  
+/** @defgroup USBD_CDC_IF_Exported_Variables
+  * @{
+  */ 
+  extern USBD_HandleTypeDef hUsbDeviceFS;
+/* USER CODE BEGIN EXPORTED_VARIABLES */
+/* USER CODE END EXPORTED_VARIABLES */
 
 /**
   * @}
@@ -107,6 +130,13 @@ static int8_t CDC_DeInit_FS   (void);
 static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length);
 static int8_t CDC_Receive_FS  (uint8_t* pbuf, uint32_t *Len);
 
+/* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */
+/* USER CODE END PRIVATE_FUNCTIONS_DECLARATION */
+
+/**
+  * @}
+  */ 
+  
 USBD_CDC_ItfTypeDef USBD_Interface_fops_FS = 
 {
   CDC_Init_FS,
@@ -114,14 +144,6 @@ USBD_CDC_ItfTypeDef USBD_Interface_fops_FS =
   CDC_Control_FS,  
   CDC_Receive_FS
 };
-
-USBD_CDC_LineCodingTypeDef linecoding =
-  {
-    115200, /* baud rate*/
-    0x00,   /* stop bits-1*/
-    0x00,   /* parity - none*/
-    0x08    /* nb. of bits 8*/
-  };
 
 /* Private functions ---------------------------------------------------------*/
 /**
@@ -131,12 +153,11 @@ USBD_CDC_LineCodingTypeDef linecoding =
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
   */
 static int8_t CDC_Init_FS(void)
-{
-  hUsbDevice_0 = &hUsbDeviceFS;
+{ 
   /* USER CODE BEGIN 3 */ 
   /* Set Application Buffers */
-  USBD_CDC_SetTxBuffer(hUsbDevice_0, UserTxBufferFS, 0);
-  USBD_CDC_SetRxBuffer(hUsbDevice_0, UserRxBufferFS);
+  USBD_CDC_SetTxBuffer(&hUsbDeviceFS, UserTxBufferFS, 0);
+  USBD_CDC_SetRxBuffer(&hUsbDeviceFS, UserRxBufferFS);
   return (USBD_OK);
   /* USER CODE END 3 */ 
 }
@@ -204,23 +225,14 @@ static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
   /*                                        4 - Space                            */
   /* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
   /*******************************************************************************/
-  case CDC_SET_LINE_CODING:
-    linecoding.bitrate    = (uint32_t)(pbuf[0] | (pbuf[1] << 8) | (pbuf[2] << 16) | (pbuf[3] << 24));
-    linecoding.format     = pbuf[4];
-    linecoding.paritytype = pbuf[5];
-    linecoding.datatype   = pbuf[6];
+  case CDC_SET_LINE_CODING:   
+	
+    break;
+
+  case CDC_GET_LINE_CODING:     
 
     break;
 
-  case CDC_GET_LINE_CODING:
-    pbuf[0] = (uint8_t)(linecoding.bitrate);
-    pbuf[1] = (uint8_t)(linecoding.bitrate >> 8);
-    pbuf[2] = (uint8_t)(linecoding.bitrate >> 16);
-    pbuf[3] = (uint8_t)(linecoding.bitrate >> 24);
-    pbuf[4] = linecoding.format;
-    pbuf[5] = linecoding.paritytype;
-    pbuf[6] = linecoding.datatype;
-    break;
   case CDC_SET_CONTROL_LINE_STATE:
 
     break;
@@ -255,9 +267,9 @@ static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
 static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
-
-	number_received_data = *Len;
-	return (USBD_OK);
+  USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
+  USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+  return (USBD_OK);
   /* USER CODE END 6 */ 
 }
 
@@ -276,15 +288,18 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 {
   uint8_t result = USBD_OK;
   /* USER CODE BEGIN 7 */ 
-  USBD_CDC_SetTxBuffer(hUsbDevice_0, Buf, Len);   
-  result = USBD_CDC_TransmitPacket(hUsbDevice_0);
+  USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
+  if (hcdc->TxState != 0){
+    return USBD_BUSY;
+  }
+  USBD_CDC_SetTxBuffer(&hUsbDeviceFS, Buf, Len);
+  result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
   /* USER CODE END 7 */ 
   return result;
 }
 
-/**
-  * @}
-  */ 
+/* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
+/* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
 /**
   * @}

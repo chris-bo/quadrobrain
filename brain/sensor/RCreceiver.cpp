@@ -136,14 +136,14 @@ void RCreceiver::captureIRQ() {
      * */
     if (currentChannel == 8) {
         /* after sync sequence */
-        __HAL_TIM_SetCounter(RCreceiver_htim, 0x00);
+    	__HAL_TIM_SET_COUNTER(RCreceiver_htim, 0x00);
         HAL_TIM_ReadCapturedValue(RCreceiver_htim, RC_RECEIVER_INPUT_CHANNEL);
         currentChannel = 0;
     } else {
         rawReceiverValues[currentChannel] = (uint16_t) HAL_TIM_ReadCapturedValue(
                     RCreceiver_htim,
                     RC_RECEIVER_INPUT_CHANNEL);
-        __HAL_TIM_SetCounter(RCreceiver_htim, 0);
+        __HAL_TIM_SET_COUNTER(RCreceiver_htim, 0);
         currentChannel++;
         if (currentChannel == 8) {
             /* all pulses detected and saved */

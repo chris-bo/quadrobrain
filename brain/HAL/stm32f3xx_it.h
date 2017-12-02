@@ -1,11 +1,10 @@
 /**
   ******************************************************************************
   * @file    stm32f3xx_it.h
-  * @date    23/03/2015 09:51:32
   * @brief   This file contains the headers of the interrupt handlers.
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2015 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -41,25 +40,25 @@
 #endif 
 
 /* Includes ------------------------------------------------------------------*/
+#include "stm32f3xx_hal.h"
+#include "hal_defines.h"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
 void NMI_Handler(void);
-void EXTI0_IRQHandler(void);
 void SysTick_Handler(void);
-void TIM2_IRQHandler(void);
-void TIM4_IRQHandler(void);
-void I2C1_ER_IRQHandler(void);
-void I2C1_EV_IRQHandler(void);
-void I2C2_EV_IRQHandler(void);
+void EXTI0_IRQHandler(void);
 void DMA1_Channel4_IRQHandler(void);
 void DMA1_Channel5_IRQHandler(void);
 void DMA1_Channel7_IRQHandler(void);
-void USB_LP_CAN_RX0_IRQHandler(void);
 void ADC1_2_IRQHandler(void);
-void SPI2_IRQHandler(void);
+void USB_LP_CAN_RX0_IRQHandler(void);
+void TIM2_IRQHandler(void);
+void TIM4_IRQHandler(void);
+void I2C1_EV_IRQHandler(void);
+void I2C1_ER_IRQHandler(void);
 void USART2_IRQHandler(void);
 
 #ifdef __cplusplus

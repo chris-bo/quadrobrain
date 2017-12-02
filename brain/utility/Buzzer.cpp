@@ -61,8 +61,8 @@ void Buzzer::playNextTone() {
     // set pwm timer
     if (queue->frequency[queue->currentTone] > 0) {
         uint16_t temp = calculateReloadValue(queue->frequency[queue->currentTone]);
-        __HAL_TIM_SetAutoreload(buzzerHtim, temp);
-        __HAL_TIM_SetCompare(buzzerHtim, TIM_CHANNEL_1, temp / 2);
+        __HAL_TIM_SET_AUTORELOAD(buzzerHtim, temp);
+        __HAL_TIM_SET_COMPARE(buzzerHtim, TIM_CHANNEL_1, temp / 2);
 
         /* start timer */
         HAL_TIM_PWM_Start(buzzerHtim, TIM_CHANNEL_1);
