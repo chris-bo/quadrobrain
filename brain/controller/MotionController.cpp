@@ -112,7 +112,7 @@ void MotionController::initialize(PID_Settings* _velocityPIDsettings,
     accelerationPIDy->initialize(_accelerationPIDsettings);
     accelerationPIDz->initialize(_accelerationPIDsettings);
 
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
 
 }
 

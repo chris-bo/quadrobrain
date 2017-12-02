@@ -52,36 +52,8 @@
 
 #define UBX_MSG_LENGTH_ACK                  (2+8)
 
-/*   Transferstate
- * 2lsb: flags
- * 2mbs configuration flags to update all config settings
- */
-#define GPS_COM_FLAG_TX_RUNNING             0x01
-#define GPS_COM_FLAG_RX_RUNNING             0x02
-#define GPS_COM_FLAG_DECODE_COMPLETE        0x04
-#define GPS_COM_FLAG_LAST_UPDATE_COMPLETE   0x08
-#define GPS_COM_FLAG_RECEPTION_ERROR        0x10
-#define GPS_COM_FLAG_TRANSMISSION_ERROR     0x20
-#define GPS_COM_FLAG_TIMEOUT                0x40
-#define GPS_COM_FLAG_ERROR                  0x80
-
 /* configuration
  * */
-
-#define GPS_GET_NAV_SOL                     0x00010000
-#define GPS_GET_LLH                         0x00020000
-#define GPS_GET_VELNED                      0x00040000
-#define GPS_GET_ECEF                        0x00080000
-
-#define GPS_GET_VELECEF                     0x00100000
-#define GPS_GET_DATE                        0x00200000
-#define GPS_GET_NAV_DOP                     0x00400000
-#define GPS_GET_NAV_STATUS                  0x00800000
-
-#define GPS_GET_DATA_BITMASK                0x0FFF0000
-
-#define GPS_HANDLER_HALT                    0x40000000
-#define GPS_CONTINUOUS_REC                  0x80000000
 
 /* Optimization of Polling Defines */
 #ifdef POLL_NAV_SOL
@@ -113,12 +85,6 @@ typedef enum {
     INACTIVE = 0x03
 
 } PSM_State_t;
-
-/* Nav status flags */
-#define NAV_STATUS_FLAGS_FIX_OK         0x01
-#define NAV_STATUS_FLAGS_DGPS_USED      0x02
-#define NAV_STATUS_FLAGS_GPS_WEEK_VALID 0x04
-#define NAV_STATUS_FLAGS_GPS_ITOW_VALID 0x08
 
 typedef struct {
     uint8_t msgid;

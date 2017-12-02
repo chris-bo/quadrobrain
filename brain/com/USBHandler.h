@@ -35,7 +35,7 @@ public:
     virtual ~USBHandler();
 
 //      void update();
-    void initialize();
+//    void initialize();
     void kill();
     void startRX();
 

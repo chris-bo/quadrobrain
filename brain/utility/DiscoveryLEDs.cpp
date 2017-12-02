@@ -29,7 +29,7 @@ void DiscoveryLEDs::initialize() {
     BSP_LED_Init(LED9);
     BSP_LED_Init(LED10);
 
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
 }
 
 void DiscoveryLEDs::update() {

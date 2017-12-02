@@ -21,7 +21,7 @@ void Altimeter::initialize() {
     status->height = 0;
     height_start = 0;
     status->height_rel = 0;
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
 }
 
 void Altimeter::update() {
@@ -32,7 +32,7 @@ void Altimeter::update() {
     float x2 = (1 - powf(x1, 0.190294957f));
     x2 = x2 * 44330;
 
-    if (!GET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE)) {
+    if (taskActive == false) {
         // initializing routine
         status->height = x2;
         height_start = x2;
@@ -49,5 +49,4 @@ void Altimeter::reset() {
 
     height_start = 0;
 
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
 }

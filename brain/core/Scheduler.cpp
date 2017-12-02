@@ -56,10 +56,10 @@ void Scheduler::executeTasks() {
     // Alle Tasks auf "unchecked" setzen, ausser Tasks mit Prio -1
     for (uint8_t i = 0; i < numberOfTasks; i++) {
         if (taskArray[i]->priority == -1) {
-            SET_FLAG(taskArray[i]->taskStatusFlags, TASK_FLAG_CHECKED);
+            taskArray[i]->taskChecked = true;
             checkedTasks++;
         } else {
-            RESET_FLAG(taskArray[i]->taskStatusFlags, TASK_FLAG_CHECKED);
+            taskArray[i]->taskChecked = false;
         }
     }
 
@@ -68,11 +68,10 @@ void Scheduler::executeTasks() {
         for (uint8_t k = 0; k < numberOfTasks; k++) {
             // Wenn Task aktuelle Priorit�t hat und aktiv (erstes Statusbit) ist
             if ((taskArray[k]->priority == prio)
-                    && !(GET_FLAG(taskArray[k]->taskStatusFlags,
-                            TASK_FLAG_CHECKED))) {
+                    && !(taskArray[k]->taskChecked)) {
                 /* increase checkedTasks counter, and set Task as Checked*/
                 checkedTasks++;
-                SET_FLAG(taskArray[k]->taskStatusFlags, TASK_FLAG_CHECKED);
+                taskArray[k]->taskChecked = true;
                 /* check timer and save starting time of task*/
                 uint32_t timerTmp = __HAL_TIM_GetCounter(scheduler_htim);
                 /* check time
@@ -165,7 +164,7 @@ void Scheduler::checkTaskDurations(uint8_t taskIndex) {
                 if ((timeSum + taskArray[i]->duration)
                         >= SCHEDULER_INTERVALL_ms * 1000) {
                     // Emergency-Flag setzen
-                    SET_FLAG(status->globalFlags, EMERGENCY_FLAG);
+                    status->globalFlags.emergency = true;
                     break;
                 }
             }
@@ -177,7 +176,7 @@ void Scheduler::checkTaskDurations(uint8_t taskIndex) {
         // Wenn Ausfuehrdauer nicht in Periodendauer passt
         if (timeSum >= SCHEDULER_INTERVALL_ms * 1000) {
             // Emergency-Flag setzen
-            SET_FLAG(status->globalFlags, EMERGENCY_FLAG);
+            status->globalFlags.emergency = true;
         }
     }
 }
@@ -187,28 +186,29 @@ void Scheduler::errorHandler() {
     if (status->cpuLoad > 0.80f) {
         /* over 80% cpu load */
         leds->on(OVERLOAD_LED);
-        SET_FLAG(status->globalFlags, CPU_OVERLOAD_FLAG);
+        status->globalFlags.cpuOverload = true;
         if (status->cpuLoad > 0.9f) {
             /* add error if cpu load over 90%*/
-            SET_FLAG(status->globalFlags, ERROR_FLAG);
+            status->globalFlags.error = true;
         }
     } else {
         /* enough cpu time left */
         leds->off(OVERLOAD_LED);
-        RESET_FLAG(status->globalFlags, CPU_OVERLOAD_FLAG);
+        status->globalFlags.cpuOverload = false;
     }
 
     /* Flight Data Reception */
-    if (GET_FLAGS(status->globalFlags,
-            (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
+    if (status->globalFlags.MPU9150ok && status->globalFlags.BMP180ok
+            && status->globalFlags.RCReceiverOk
+            && status->globalFlags.EEPROMok) {
         leds->on(FLIGHT_DATA_RECEPTION_LED);
     } else {
         leds->off(FLIGHT_DATA_RECEPTION_LED);
-        SET_FLAG(status->globalFlags, ERROR_FLAG);
+        status->globalFlags.error = true;
     }
 
     /* Error FLAGS */
-    if (GET_FLAG(status->globalFlags, ERROR_FLAG)) {
+    if (status->globalFlags.error) {
         /* some error is detected */
         /* check errors, etc */
         leds->on(ERROR_LED);
@@ -218,15 +218,16 @@ void Scheduler::errorHandler() {
      *                  switching led off
      *
      */
-    if ((!GET_FLAG(status->globalFlags,
-            (LOW_VOLTAGE_FLAG | USB_ERROR_FLAG | CPU_OVERLOAD_FLAG)))
-            && GET_FLAGS(status->globalFlags,
-                    (MPU9150_OK_FLAG | BMP180_OK_FLAG | RC_RECEIVER_OK_FLAG | EEPROM_OK_FLAG))) {
-
+    if (((status->globalFlags.lowVoltage == false)
+            && (status->globalFlags.usbError == false)
+            && (status->globalFlags.cpuOverload == false))
+            && (status->globalFlags.MPU9150ok && status->globalFlags.BMP180ok
+                    && status->globalFlags.RCReceiverOk
+                    && status->globalFlags.EEPROMok)) {
         /* at this time, there are no error flags set
          * -> reset error_flag and switch led error off
          */
-        RESET_FLAG(status->globalFlags, ERROR_FLAG);
+        status->globalFlags.error = false;
         leds->off(ERROR_LED);
     }
 

@@ -97,7 +97,7 @@ void PIDController::update() {
 
 void PIDController::initialize(PID_Settings* _settings) {
     // Task aktivieren
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
     settings = _settings;
 }
 
@@ -106,5 +106,5 @@ void PIDController::kill() {
     reset();
     eSum = 0.0f;
     oldValue = 0.0f;
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = false;
 }

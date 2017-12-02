@@ -79,16 +79,6 @@
 
 /* End Settings */
 /********************************************************************/
-/* Flags */
-
-#define BMP180_IDLE										0x0100
-#define BMP180_FLAG_I2C_BUSY							0x0200
-#define BMP180_READING_TEMP								0x0400
-#define BMP180_READING_PRESSURE							0x0800
-#define BMP180_READING_DATA_COMPLETE					0x1000
-#define BMP180_FLAG_ERROR								0x8000
-
-/* End Flags */
 /********************************************************************/
 
 class BMP180: public Task {
@@ -134,6 +124,12 @@ private:
     uint8_t cycle_counter;
     uint8_t pressure_counter;
 
+    bool idle :1;
+    bool i2cBusy :1;
+    bool readingTemp :1;
+    bool readingPressure :1;
+    bool readingComplete :1;
+    bool error :1;
 };
 
 #endif /* BMP180_H_ */

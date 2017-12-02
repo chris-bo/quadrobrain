@@ -42,6 +42,29 @@ typedef struct {
     uint8_t enableMotors;
 } Quadrocopter_Settings_t;
 
+typedef struct {
+
+    bool flightMode :1;
+    bool configMode :1;
+    bool error :1;
+    bool usbError :1;
+
+    bool cpuOverload :1;
+    bool noRCSignal :1;
+    bool lowVoltage :1;
+
+    bool MPU9150ok :1;
+    bool BMP180ok :1;
+    bool RCReceiverOk :1;
+    bool EEPROMok :1;
+
+    bool emergency :1;
+
+    bool resetToConfig :1;
+    bool resetToFlight :1;
+    bool resetRequested :1;
+} Global_Flags_t;
+
 class Status {
 public:
     Status();
@@ -115,7 +138,7 @@ public:
     float akkuVoltage;
 
     /* status flags */
-    uint32_t globalFlags;
+    Global_Flags_t globalFlags;
 
     /* cpu load calculated via idle time*/
     float cpuLoad;  // %

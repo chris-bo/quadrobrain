@@ -45,7 +45,7 @@ void ComplementaryFilter::update() {
 
 void ComplementaryFilter::initialize() {
 
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
 }
 
 void ComplementaryFilter::kill() {
@@ -55,5 +55,5 @@ void ComplementaryFilter::kill() {
     tmp_acc_angle = 0;
     *out = 0;
 
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = false;
 }

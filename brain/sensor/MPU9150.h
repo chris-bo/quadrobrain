@@ -282,6 +282,10 @@ private:
     void disableMagnetData();
     void getMagnetScale();
 
+    bool continousReception :1;
+    bool mpuError :1;
+    bool AK8975Cavailable :1;
+
 };
 
 #endif /* MPU9150_H_ */

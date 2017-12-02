@@ -31,6 +31,13 @@ BMP180::BMP180(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c) :
 
     cycle_counter = 0;
     pressure_counter = 0;
+
+    idle = true;
+    i2cBusy = true;
+    readingTemp = false;
+    readingPressure = false;
+    readingComplete = false;
+    error = false;
 }
 
 BMP180::~BMP180() {
@@ -39,23 +46,20 @@ BMP180::~BMP180() {
 
 void BMP180::update() {
 
-    if (GET_FLAG(taskStatusFlags, BMP180_READING_DATA_COMPLETE)) {
-        RESET_FLAG(taskStatusFlags, BMP180_READING_DATA_COMPLETE);
+    if (readingComplete) {
+        readingComplete = false;
         /* Data Reception was Completed */
-        if (GET_FLAG(taskStatusFlags, BMP180_READING_PRESSURE)) {
+        if (readingPressure) {
             calculatePressure();
         } else {
             calculateTemp();
         }
-        SET_FLAG(taskStatusFlags, BMP180_IDLE);
-    } else if (GET_FLAG(taskStatusFlags,
-            BMP180_READING_PRESSURE) || GET_FLAG(taskStatusFlags,BMP180_READING_TEMP)) {
-        if (!GET_FLAG(taskStatusFlags, BMP180_FLAG_I2C_BUSY)) {
+        idle = true;
+    } else if (readingPressure || readingTemp) {
+        if (!i2cBusy) {
             /* Do this only if you are currently not reading anything*/
-            if ((cycle_counter == BMP180_P_READOUT_DELAY
-                    && GET_FLAG(taskStatusFlags, BMP180_READING_PRESSURE))
-                    || (cycle_counter == BMP180_T_READOUT_DELAY
-                            && GET_FLAG(taskStatusFlags, BMP180_READING_TEMP))) {
+            if ((cycle_counter == BMP180_P_READOUT_DELAY && readingPressure)
+                    || (cycle_counter == BMP180_T_READOUT_DELAY && readingTemp)) {
 
                 /* TWO cases:
                  * 1. reading pressure is set and waited readout delay for pressure
@@ -63,14 +67,14 @@ void BMP180::update() {
                  */
                 cycle_counter = 0;
                 /* Measurement Triggered -> readout data*/
-                SET_FLAG(taskStatusFlags, BMP180_FLAG_I2C_BUSY);
+                i2cBusy = true;
                 HAL_I2C_Mem_Read_IT(bmp_i2c, BMP180_I2C_ADDRESS, BMP180_OUT_MSB,
                 I2C_MEMADD_SIZE_8BIT, i2c2_buffer, 3);
             } else {
                 cycle_counter++;
             }
         }
-    } else if (GET_FLAG(taskStatusFlags, BMP180_IDLE)) {
+    } else if (idle) {
         /* no measurement triggered, no data read, no reading in progress */
         if (cycle_counter == BMP180_READOUT_CYCLE) {
             if (pressure_counter == BMP180_PRESSURE_TEMP_RATIO) {
@@ -81,7 +85,7 @@ void BMP180::update() {
                 pressure_counter++;
             }
             cycle_counter = 0;
-            RESET_FLAG(taskStatusFlags, BMP180_IDLE);
+            idle = false;
         } else {
             cycle_counter++;
         }
@@ -92,7 +96,7 @@ void BMP180::initialize() {
 
     if (getIdentification() == 0) {
 
-        SET_FLAG(taskStatusFlags, BMP180_FLAG_ERROR);
+        error = true;
         return;
 
     }
@@ -126,14 +130,14 @@ void BMP180::initialize() {
     I2C_MEMADD_SIZE_8BIT, i2c2_buffer, 3, BMP180_I2C_TIMEOUT);
     calculatePressure();
 
-    SET_FLAG(taskStatusFlags, BMP180_IDLE);
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
-    SET_FLAG(status->globalFlags, BMP180_OK_FLAG);
+    idle = true;
+    taskActive = true;
+    status->globalFlags.BMP180ok = true;
 }
 
 void BMP180::receptionCompleteCallback() {
-    RESET_FLAG(taskStatusFlags, BMP180_FLAG_I2C_BUSY);
-    SET_FLAG(taskStatusFlags, BMP180_READING_DATA_COMPLETE);
+    i2cBusy = false;
+    readingComplete = true;
 }
 
 uint8_t BMP180::getIdentification() {
@@ -145,7 +149,7 @@ uint8_t BMP180::getIdentification() {
         return 1;
     }
     return 0;
-    RESET_FLAG(status->globalFlags, BMP180_OK_FLAG);
+    status->globalFlags.BMP180ok = false;
 }
 
 void BMP180::getCalibrationData() {
@@ -184,19 +188,19 @@ void BMP180::getTemp() {
     i2c2_buffer[0] = 0x2E;
     HAL_I2C_Mem_Write_IT(bmp_i2c, BMP180_I2C_ADDRESS, BMP180_CTRL_MEAS,
     I2C_MEMADD_SIZE_8BIT, i2c2_buffer, 1);
-    SET_FLAG(taskStatusFlags, BMP180_READING_TEMP);
+    readingTemp = true;
 }
 
 void BMP180::getPressure() {
     i2c2_buffer[0] = (uint8_t) (0x34 | ( BMP180_OSS << 6));
     HAL_I2C_Mem_Write_IT(bmp_i2c, BMP180_I2C_ADDRESS, BMP180_CTRL_MEAS,
     I2C_MEMADD_SIZE_8BIT, i2c2_buffer, 1);
-    SET_FLAG(taskStatusFlags, BMP180_READING_PRESSURE);
+    readingPressure = true;
 }
 
 void BMP180::calculateTemp() {
 
-    RESET_FLAG(taskStatusFlags, BMP180_READING_TEMP);
+    readingTemp = false;
     uint32_t ut;
     int32_t x1;
     int32_t x2;
@@ -212,7 +216,7 @@ void BMP180::calculateTemp() {
 }
 
 void BMP180::calculatePressure() {
-    RESET_FLAG(taskStatusFlags, BMP180_READING_PRESSURE);
+    readingPressure = false;
 
     uint32_t up;
     int32_t x1;
@@ -245,7 +249,7 @@ void BMP180::calculatePressure() {
     x1 = (x1 * 3038) / 65536;
     x2 = (-7357 * p) / 65536;
     p = p + (x1 + x2 + 3791) / 16;
-    if (GET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE) == 0) {
+    if (!taskActive) {
         // initializing routine
         status->pressure = p;
     } else {
@@ -275,6 +279,6 @@ void BMP180::kill() {
     cycle_counter = 0;
     pressure_counter = 0;
 
-    RESET_FLAG(status->globalFlags, BMP180_OK_FLAG);
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    status->globalFlags.BMP180ok = false;
+    taskActive = false;
 }

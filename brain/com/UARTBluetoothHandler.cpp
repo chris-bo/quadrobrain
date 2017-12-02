@@ -27,7 +27,7 @@ UARTBluetoothHandler::~UARTBluetoothHandler() {
 
 void UARTBluetoothHandler::initialize() {
 
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
 }
 
 void UARTBluetoothHandler::startRX() {

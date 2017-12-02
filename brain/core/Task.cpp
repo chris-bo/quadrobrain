@@ -20,7 +20,8 @@ Task::Task(Status* statusPtr, int8_t defaultPrio) {
     defaultPriority = defaultPrio;
     priority = defaultPriority;
     duration = 0;
-    taskStatusFlags = 0;
+    taskActive = false;
+    taskChecked = false;
 
 }
 
@@ -38,7 +39,7 @@ void Task::initialize() {
     /* standard initialization function
      *
      * set task active */
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
 
 }
 
@@ -50,11 +51,11 @@ void Task::reset() {
 
     priority = defaultPriority;
     duration = 0;
-    taskStatusFlags = 0;
+    //  taskActive = false;
 
 }
 
 void Task::kill() {
     this->reset();
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = false;
 }

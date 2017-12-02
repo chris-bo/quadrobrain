@@ -147,6 +147,8 @@ void PPMGenerator::initialize() {
     for (uint32_t i = 0; i < PPM_SETUP_TIME; i++) {
         __asm__("nop");
     }
+
+    taskActive = true;
 }
 
 void PPMGenerator::disableMotors() {
@@ -163,5 +165,5 @@ void PPMGenerator::kill() {
 
     reset();
     disableMotors();
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = false;
 }

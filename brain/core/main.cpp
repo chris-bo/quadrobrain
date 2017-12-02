@@ -158,8 +158,8 @@ void FlightMode() {
     leds.on(POWER_LED);
     leds.on(FLIGHT_LED);
 
-    RESET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
-    SET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
+    status.globalFlags.configMode = false;
+    status.globalFlags.flightMode = true;
 
     /* init peripherals */
     MX_DMA_Init();
@@ -229,7 +229,7 @@ void FlightMode() {
 //    HAL_Delay(2000);
     while (1) {
 
-        if (GET_FLAG(status.globalFlags, RESET_REQUEST)) {
+        if (status.globalFlags.resetRequested) {
             SoftwareReset();
         }
     }
@@ -240,16 +240,16 @@ void SoftwareReset() {
     /* kill processes*/
     scheduler.kill();
 
-    RESET_FLAG(status.globalFlags, RESET_REQUEST);
+    status.globalFlags.resetRequested = false;
 
-    if (GET_FLAG(status.globalFlags, (RESET_TO_CONFIG))) {
+    if (status.globalFlags.resetToConfig) {
         /* clear reset request */
-        RESET_FLAG(status.globalFlags, (RESET_TO_CONFIG));
+        status.globalFlags.resetToConfig = false;
         /* goto config mode */
         ConfigMode();
     } else {
         /* clear reset request */
-        RESET_FLAG(status.globalFlags, (RESET_TO_FLIGHT));
+        status.globalFlags.resetToFlight = false;
         /* recall flight mode */
         FlightMode();
     }
@@ -266,8 +266,8 @@ void ConfigMode() {
      */
     scheduler.reset();
 
-    SET_FLAG(status.globalFlags, CONFIG_MODE_FLAG);
-    RESET_FLAG(status.globalFlags, FLIGHT_MODE_FLAG);
+    status.globalFlags.configMode = true;
+    status.globalFlags.flightMode = false;
 
     /* kill all sensors
      * and switch off engine
@@ -289,7 +289,7 @@ void ConfigMode() {
     scheduler.start(tasks_config, sizeof(tasks_config) / 4);
 
     while (1) {
-        if (GET_FLAG(status.globalFlags, RESET_REQUEST)) {
+        if (status.globalFlags.resetRequested) {
             /* config finished */
             configReader.saveConfiguration(&status);
             SoftwareReset();

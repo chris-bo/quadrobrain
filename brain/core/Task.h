@@ -28,14 +28,9 @@ public:
     uint32_t duration;
     int8_t priority;
     int8_t defaultPriority;
-    /* status bits */
-    /* first byte: child class specific flags
-     *
-     * second byte:
-     * flags handled by scheduler:
-     * 	|		|free	|free	|free	|free	|free	|checked| active| */
-    uint16_t taskStatusFlags;
 
+    bool taskActive :1;
+    bool taskChecked :1;
 protected:
 
     Status* status;

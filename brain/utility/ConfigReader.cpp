@@ -56,7 +56,7 @@ void ConfigReader::loadConfiguration(Status* status) {
     loadVariable(&status->qcSettings.enableMotors, QC_CONFIG_EN_MOTORS);
 
     if (HAL_I2C_GetError(eeprom_i2c) == HAL_I2C_ERROR_NONE) {
-        SET_FLAG((status->globalFlags), EEPROM_OK_FLAG);
+        status->globalFlags.EEPROMok = true;
     } else {
         /*reload hardcoded values*/
         status->restoreConfig();

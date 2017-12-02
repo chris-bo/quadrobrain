@@ -260,11 +260,10 @@
 /*global macros */
 
 /* flag macros */
-#define GET_FLAG(var, flag)			(var & flag)
-#define GET_FLAGS(var, flags)       ((var & flags) == flags)
-#define SET_FLAG(var, flag)			(var |= flag)
-#define RESET_FLAG(var, flag)		(var &= ~flag)
-
+//#define GET_FLAG(var, flag)			(var & flag)
+//#define GET_FLAGS(var, flags)       ((var & flags) == flags)
+//#define SET_FLAG(var, flag)			(var |= flag)
+//#define RESET_FLAG(var, flag)		(var &= ~flag)
 /*********************************************************************************/
 /*global flags */
 

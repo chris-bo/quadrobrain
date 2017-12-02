@@ -29,11 +29,12 @@ void USBHandler::sendTXBuffer(uint16_t byte_count) {
         usbTransmitBusyCounter++;
         if (usbTransmitBusyCounter == USB_TRANSMIT_BUSY_MAX) {
             resetTransmissionState();
-            SET_FLAG(status->globalFlags, USB_ERROR_FLAG | ERROR_FLAG);
+            status->globalFlags.usbError = true;
+            status->globalFlags.error = true;
         }
     } else {
         usbTransmitBusyCounter = 0;
-        RESET_FLAG(status->globalFlags, USB_ERROR_FLAG);
+        status->globalFlags.usbError = false;
     }
 }
 
@@ -46,12 +47,6 @@ void USBHandler::resetTransmissionState() {
     usbTransmitBusyCounter = 0;
     usb_state = USBD_OK;
 }
-
-void USBHandler::initialize() {
-
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
-}
-
 void USBHandler::kill() {
     /* override default kill function
      * usb must not be killed

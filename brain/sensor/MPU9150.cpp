@@ -56,7 +56,9 @@ MPU9150::MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
     biasAccel[0] = 0;
     biasAccel[1] = 0;
     biasAccel[2] = 0;
-
+    continousReception = false;
+    mpuError = false;
+    AK8975Cavailable = false;
 }
 
 MPU9150::~MPU9150() {
@@ -64,8 +66,9 @@ MPU9150::~MPU9150() {
 }
 
 void MPU9150::update() {
-    if (GET_FLAG(taskStatusFlags, MPU9150_FLAG_ERROR)) {
-        RESET_FLAG(taskStatusFlags, MPU9150_FLAG_ERROR);
+    if (mpuError) {
+        /* try again */
+        mpuError = false;
         getRawData();
     }
 }
@@ -82,9 +85,8 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
         /* Wrong Chip with same address
          * or communication not working
          *  */
-        SET_FLAG(taskStatusFlags, MPU9150_FLAG_ERROR);
+        status->globalFlags.MPU9150ok = false;
         return;
-
     }
 
     /* reset MPU9150*/
@@ -146,8 +148,8 @@ void MPU9150::initialize(uint8_t gyro_full_scale, uint8_t accel_full_scale) {
 
     enableMagnetData();
 
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
-    SET_FLAG(status->globalFlags, MPU9150_OK_FLAG);
+    taskActive = true;
+    status->globalFlags.MPU9150ok = true;
 
 }
 
@@ -192,7 +194,8 @@ void MPU9150::scaleRawData() {
 
     /* use temp measurement of bmp180 */
     //status->temp = rawTempData * MPU9150_TEMPERATURE_SCALE_FACTOR + 35;
-    if (GET_FLAG(taskStatusFlags, MPU9150_FLAG_CONTINUOUS_RECEPTION)) {
+    if (continousReception) {
+        /* start next recepition */
         getRawData();
     }
 }
@@ -247,7 +250,7 @@ void MPU9150::getMagnetScale() {
     I2C_MEMADD_SIZE_8BIT, i2c_buffer, 1, MPU9150_INIT_TIMEOUT);
 
     if (i2c_buffer[0] == I_AM_AK8975C) {
-        SET_FLAG(taskStatusFlags, MPU9150_FLAG_AK8975C_AVAILABLE);
+        AK8975Cavailable = true;
 
         /* power down compass*/
         i2c_buffer[0] = 0x00;
@@ -298,7 +301,7 @@ void MPU9150::getRawData() {
     if (HAL_I2C_Mem_Read_DMA(mpu9150_i2c, MPU9150_I2C_ADDRESS,
     MPU9150_ACCEL_XOUT_H,
     I2C_MEMADD_SIZE_8BIT, i2c_buffer, 24) != HAL_OK) {
-        SET_FLAG(taskStatusFlags, MPU9150_FLAG_ERROR);
+        mpuError = true;
     }
 
 }
@@ -572,12 +575,12 @@ void MPU9150::configFullScale(uint8_t gyro_full_scale,
 
 void MPU9150::startReception() {
 
-    SET_FLAG(taskStatusFlags, MPU9150_FLAG_CONTINUOUS_RECEPTION);
+    continousReception = true;
     getRawData();
 }
 
 void MPU9150::stopReception() {
-    RESET_FLAG(taskStatusFlags, MPU9150_FLAG_CONTINUOUS_RECEPTION);
+    continousReception = false;
 }
 
 void MPU9150::kill() {
@@ -609,6 +612,6 @@ void MPU9150::kill() {
     biasAccel[1] = 0;
     biasAccel[2] = 0;
 
-    RESET_FLAG(status->globalFlags, MPU9150_OK_FLAG);
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    status->globalFlags.MPU9150ok = false;
+    taskActive = false;
 }

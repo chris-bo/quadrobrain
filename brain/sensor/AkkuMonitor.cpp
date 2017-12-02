@@ -27,6 +27,8 @@ void AkkuMonitor::initialize() {
     uint32_t tmp = HAL_ADCEx_Calibration_GetValue(akkumonitor_adc,
     ADC_SINGLE_ENDED);
     HAL_ADCEx_Calibration_SetValue(akkumonitor_adc, ADC_SINGLE_ENDED, tmp);
+
+    taskActive = true;
 }
 
 void AkkuMonitor::update() {
@@ -50,7 +52,9 @@ void AkkuMonitor::conversionComplete() {
         if (status->akkuVoltage < LOW_VOLTAGE_WARNING_THRESHOLD) {
             lowVoltageWarning();
         } else {
-            RESET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
+            /* voltage okay */
+            status->globalFlags.lowVoltage = false;
+            status->globalFlags.error = false;
         }
     }
     // else ignore akku voltage
@@ -58,7 +62,8 @@ void AkkuMonitor::conversionComplete() {
 
 void AkkuMonitor::lowVoltageWarning() {
     /* akkuVoltate below threshold */
-    SET_FLAG(status->globalFlags, (LOW_VOLTAGE_FLAG | ERROR_FLAG));
+    status->globalFlags.lowVoltage = true;
+    status->globalFlags.error = true;
     if (status->qcSettings.enableBuzzerWarningLowVoltage) {
         status->addToneToQueue(&status->buzzerQueue2, BUZZER_PAUSE, 10);
         status->addToneToQueue(&status->buzzerQueue2, BUZZER_A5, 100);

@@ -33,7 +33,7 @@ QCcoms::~QCcoms() {
 void QCcoms::initialize() {
 
     rxtxHandler->startRX();
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
 }
 
 void QCcoms::update() {
@@ -74,13 +74,13 @@ void QCcoms::update() {
             /*entering config mode */
             /* trigger quadrocopter reset */
             /* switch current mode */
-            if (GET_FLAG(status->globalFlags, CONFIG_MODE_FLAG)) {
-                SET_FLAG(status->globalFlags, RESET_TO_FLIGHT);
+            if (status->globalFlags.configMode) {
+                status->globalFlags.resetToFlight = true;
             } else {
-                SET_FLAG(status->globalFlags, RESET_TO_CONFIG);
+                status->globalFlags.resetToConfig = true;
             }
             /* request reset */
-            SET_FLAG(status->globalFlags, RESET_REQUEST);
+            status->globalFlags.resetRequested = true;
             sendConfirmation();
             break;
         case QC_CMD_READ_CONFIG:
@@ -105,13 +105,13 @@ void QCcoms::update() {
         case QC_CMD_RESET:
             /* trigger quadrocopter reset */
             /* keep current mode */
-            if (GET_FLAG(status->globalFlags, FLIGHT_MODE_FLAG)) {
-                SET_FLAG(status->globalFlags, RESET_TO_FLIGHT);
+            if (status->globalFlags.flightMode) {
+                status->globalFlags.resetToFlight = true;
             } else {
-                SET_FLAG(status->globalFlags, RESET_TO_CONFIG);
+                status->globalFlags.resetToConfig = true;
             }
             /* request reset */
-            SET_FLAG(status->globalFlags, RESET_REQUEST);
+            status->globalFlags.resetRequested = true;
             sendConfirmation();
             break;
         default:
@@ -119,7 +119,7 @@ void QCcoms::update() {
             /* falls im config mode
              *
              */
-            if (GET_FLAG(status->globalFlags, CONFIG_MODE_FLAG)) {
+            if (status->globalFlags.configMode) {
                 decodeConfigMSG();
             }
             break;
@@ -507,9 +507,10 @@ void QCcoms::answerCusomFrame() {
             }
             break;
         case DATA_ID_GLOBAL_FLAGS:
+            // todo global flags übertragung
             if (!checkTXBufferOverrun(bufferPos, 4)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
-                        status->globalFlags);
+                uint32_t x = 0;
+                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos, x);
             }
             break;
         case DATA_ID_EOF:
@@ -546,7 +547,7 @@ void QCcoms::sendConfirmation() {
 
 void QCcoms::decodeConfigMSG() {
     /* only in config mode */
-    if (GET_FLAG(status->globalFlags, CONFIG_MODE_FLAG)) {
+    if (status->globalFlags.configMode) {
 
         switch (rxtxHandler->RxBuffer[0]) {
         case QC_CMD_READ_CONFIG:

@@ -26,6 +26,12 @@ RCreceiver::RCreceiver(Status* statusPtr, uint8_t defaultPrio,
     signalLostBuzzerCounter = 0;
     RCreceiver_htim = htim;
 
+    sync = false;
+    sequenceComplete = false;
+    noSignal = true;
+    hadSignal = false;
+    error = false;
+
 }
 
 RCreceiver::~RCreceiver() {
@@ -33,10 +39,10 @@ RCreceiver::~RCreceiver() {
 
 void RCreceiver::update() {
 
-    if (GET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL)) {
+    if (noSignal) {
 
-        RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
-        SET_FLAG(status->globalFlags, ERROR_FLAG);
+        status->globalFlags.RCReceiverOk = false;
+        status->globalFlags.error = true;
         /* disable control*/
         status->rcSignalNick = 0;
         status->rcSignalRoll = 0;
@@ -47,7 +53,7 @@ void RCreceiver::update() {
             status->rcSignalThrottle = 0.2f;
         }
         signalLostTime++;
-        if (GET_FLAG(taskStatusFlags, RC_RECEIVER_HAD_SIGNAL)) {
+        if (hadSignal) {
             if (status->qcSettings.enableBuzzerWarningRCLost) {
                 if (signalLostBuzzerCounter++
                         == SCHEDULER_INTERVALL_ms * 1000) {
@@ -65,7 +71,7 @@ void RCreceiver::update() {
         }  // else ignore signal lost (never had signal)
 
     } else {
-        SET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
+        status->globalFlags.RCReceiverOk = true;
         computeValues();
         signalLostTime = 0;
         signalLostBuzzerCounter = 0;
@@ -118,7 +124,7 @@ void RCreceiver::computeValues() {
     }
 
     /* set had signal */
-    SET_FLAG(taskStatusFlags, RC_RECEIVER_HAD_SIGNAL);
+    hadSignal = true;
 
 }
 
@@ -129,7 +135,7 @@ void RCreceiver::overrunIRQ() {
     if (currentChannel == 8) {
 
     } else {
-        SET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
+        noSignal = true;
         currentChannel = 8;
     }
 }
@@ -153,7 +159,7 @@ void RCreceiver::captureIRQ() {
             /* all pulses detected and saved */
             /* waiting for overrun interrupt to resync */
             /* reset no signal flag*/
-            RESET_FLAG(taskStatusFlags, RC_RECEIVER_FLAG_NO_SIGNAL);
+            noSignal = false;
         }
     }
 }
@@ -168,7 +174,7 @@ void RCreceiver::initialize() {
     __HAL_TIM_ENABLE_IT(RCreceiver_htim, TIM_IT_UPDATE);
     HAL_TIM_IC_Start_IT(RCreceiver_htim, RC_RECEIVER_INPUT_CHANNEL);
 
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
 
 }
 
@@ -200,6 +206,6 @@ void RCreceiver::kill() {
     signalLostTime = 0;
 
     reset();
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
-    RESET_FLAG(status->globalFlags, RC_RECEIVER_OK_FLAG);
+    taskActive = false;
+    status->globalFlags.RCReceiverOk = false;
 }

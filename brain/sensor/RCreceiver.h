@@ -14,15 +14,6 @@
 /*****************
  * Capture Pin: PB8
  * */
-
-/* receiver Flags */
-#define RC_RECEIVER_FLAG_SYNC					0x0100
-#define RC_RECEIVER_FLAG_SEQUENCE_COMPLETE 		0x0200
-
-#define RC_RECEIVER_FLAG_NO_SIGNAL		 		0x0400
-#define RC_RECEIVER_HAD_SIGNAL                  0x0800
-#define RC_RECEIVER_FLAG_ERROR					0x8000
-
 /* number of stored rec channels */
 #define RECEIVER_CHANNELS						7
 
@@ -59,6 +50,11 @@ private:
     uint32_t signalLostTime;
     uint16_t signalLostBuzzerCounter;
 
+    bool sync :1;
+    bool sequenceComplete :1;
+    bool noSignal :1;
+    bool hadSignal :1;
+    bool error :1;
 };
 
 #endif /* RCRECEIVER_H_ */

@@ -49,8 +49,27 @@ Status::Status() {
 
     uptime = 0;
     akkuVoltage = 0;
-    globalFlags = 0;
     cpuLoad = 0;
+
+    globalFlags.flightMode = true;
+    globalFlags.configMode = false;
+    globalFlags.error = false;
+    globalFlags.usbError = false;
+
+    globalFlags.cpuOverload = false;
+    globalFlags.noRCSignal = true;
+    globalFlags.lowVoltage = true;
+
+    globalFlags.MPU9150ok = false;
+    globalFlags.BMP180ok = false;
+    globalFlags.RCReceiverOk = false;
+    globalFlags.EEPROMok = false;
+
+    globalFlags.emergency= false;
+
+    globalFlags.resetToConfig= false;
+    globalFlags.resetToFlight= false;
+    globalFlags.resetRequested= false;
 
     buzzerQueue1 = {};
     buzzerQueue2 = {};
@@ -145,7 +164,26 @@ void Status::reset() {
     /* do not reset uptime and flags */
     akkuVoltage = 0;
     // TODO flag reset verbessern
-    // globalFlags = 0;
+//    globalFlags.flightMode = true;
+//    globalFlags.configMode = false;
+//    globalFlags.error = false;
+//    globalFlags.usbError = false;
+//
+//    globalFlags.cpuOverload = false;
+//    globalFlags.noRCSignal = true;
+//    globalFlags.lowVoltage = true;
+//
+//
+//    globalFlags.MPU9150ok = false;
+//    globalFlags.BMP180ok = false;
+//    globalFlags.RCReceiverOk = false;
+//    globalFlags.EEPROMok = false;
+//
+//    globalFlags.emergency= false;
+//
+//    globalFlags.resetToConfig= false;
+//    globalFlags.resetToFlight= false;
+//    globalFlags.resetRequested= false;
     cpuLoad = 0;
 
     buzzerQueue1 = {};

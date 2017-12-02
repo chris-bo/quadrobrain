@@ -34,7 +34,7 @@ void FlightLED::initialize() {
     ledPattern = 0x0000;
     updateShiftRegisters();
 
-    SET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = true;
 }
 
 void FlightLED::kill() {
@@ -44,7 +44,7 @@ void FlightLED::kill() {
     ledPattern = 0;
     updateShiftRegisters();
     this->reset();
-    RESET_FLAG(taskStatusFlags, TASK_FLAG_ACTIVE);
+    taskActive = false;
 }
 
 /* set led pattern
