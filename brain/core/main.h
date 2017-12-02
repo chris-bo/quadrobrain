@@ -13,7 +13,6 @@
 /* HAL Stuff */
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx_it.h"
-#include "diag/Trace.h"
 #include "i2c.h"
 #include "dma.h"
 #include "tim.h"
