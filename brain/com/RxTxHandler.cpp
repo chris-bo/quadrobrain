@@ -17,6 +17,7 @@ RxTxHandler::RxTxHandler(Status* statusPtr, uint8_t defaultPrio,
     RxBuffer = NULL;
     TxBuffer = NULL;
     rxtxBuffersize = 0;
+    receptionComplete = true;
 }
 
 void RxTxHandler::sendTXBuffer(uint16_t byte_count) {

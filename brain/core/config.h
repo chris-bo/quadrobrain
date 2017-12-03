@@ -96,12 +96,6 @@
 /* acceleration pid limit ^= angle setpoint limit */
 #define ACCELERATION_PID_LIMIT                  5
 #define ACCELERATION_PID_SUM_LIMIT              INFINITY
-/****************************/
-/* USB
- *
- */
-#define USB_DEFAULT_PRIORITY					2
-#define USB_TRANSMIT_BUSY_MAX                   2
 
 /****************************/
 /* ADC to Check akku voltage
@@ -141,7 +135,7 @@
  */
 #define LEDs_DEFAULT_PRIORITY                   20
 
-#define USB_RECEIVE_LED                         LED7
+#define UART_TRANSMIT_LED                       LED7
 #define USB_TRANSMIT_LED                        LED5
 #define CONFIG_LED                              LED8
 #define POWER_LED                               LED4
@@ -150,11 +144,27 @@
 #define FLIGHT_DATA_RECEPTION_LED               LED9
 #define ERROR_LED                               LED10
 
+
+/****************************/
 /* comms
  *
  */
 
+/* USB
+ *
+ */
+#define USB_DEFAULT_PRIORITY                    2
+#define USB_TRANSMIT_BUSY_MAX                   2
+
+
 #define USB_RXTX_BUFF_SIZE 							256
+
+
+/* UART
+ *
+ */
+#define UART_DEFAULT_PRIORITY                    2
+
 #define UART_RXTX_BUFF_SIZE							64
 /* Flight LEDs
  *

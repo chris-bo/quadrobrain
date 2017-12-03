@@ -34,6 +34,7 @@ public:
     uint8_t* RxBuffer;
     uint8_t* TxBuffer;
     uint16_t rxtxBuffersize;
+    bool receptionComplete:1;
 
     Led_TypeDef led;
 };

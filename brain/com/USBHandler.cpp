@@ -17,6 +17,7 @@ USBHandler::USBHandler(Status* statusPtr, uint8_t defaultPrio,
 
     initializeBuffers(UserRxBufferFS, UserTxBufferFS, &number_received_data,
     USB_RXTX_BUFF_SIZE);
+    receptionComplete = true;
 }
 
 USBHandler::~USBHandler() {

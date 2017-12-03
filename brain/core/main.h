@@ -48,6 +48,7 @@
 #include <com/QCcoms.h>
 #include <com/RxTxHandler.h>
 #include <com/USBHandler.h>
+#include <com/UARTBluetoothHandler.h>
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -63,6 +64,7 @@ extern Buzzer beep1;
 extern Buzzer beep2;
 extern GPS gpsReceiver;
 extern FlightLED flightLEDs;
+extern UARTBluetoothHandler uartBT;
 
 #ifdef __cplusplus
 extern "C" {

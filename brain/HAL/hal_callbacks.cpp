@@ -38,9 +38,9 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
  *                the configuration information for the specified I2C.
  * @retval None
  */
-void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
-
-}
+//void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
+//
+//}
 
 /**
  * @brief  Memory Rx Transfer completed callbacks.
@@ -99,6 +99,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart == &huart1) {
         gpsReceiver.RXCompleteCallback();
+    }
+    if (huart == &huart2) {
+        uartBT.byteReceived();
     }
 }
 

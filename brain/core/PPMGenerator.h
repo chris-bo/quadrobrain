@@ -8,8 +8,8 @@
 #ifndef PPMGENERATOR_H_
 #define PPMGENERATOR_H_
 
-#include "config.h"
-#include "Task.h"
+#include <core/config.h>
+#include <core/Task.h>
 
 /**TIM3 GPIO Configuration
  PC6     ------> TIM3_CH1

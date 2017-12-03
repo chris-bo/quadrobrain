@@ -22,6 +22,8 @@ public:
 
     void sendTXBuffer(uint16_t byte_count);
 
+    void byteReceived();
+
 private:
     UART_HandleTypeDef* uart;
 

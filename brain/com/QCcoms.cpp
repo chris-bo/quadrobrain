@@ -46,7 +46,7 @@ void QCcoms::update() {
          * RX is still blocked
          */
         answerCusomFrame();
-    } else if (*rxtxHandler->numberReceivedData > 0) {
+    } else if ((*rxtxHandler->numberReceivedData > 0) && rxtxHandler->receptionComplete) {
         /* go trough fist received byte */
         switch (rxtxHandler->RxBuffer[0]) {
         case QC_CMD_LOOP:
