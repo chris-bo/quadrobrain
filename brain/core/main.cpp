@@ -63,11 +63,13 @@ ConfigReader configReader(&hi2c1);
 USBHandler usb(&status, USB_DEFAULT_PRIORITY, &leds, USB_TRANSMIT_LED,
         &hUsbDeviceFS);
 
-UARTBluetoothHandler uartBT(&status, UART_DEFAULT_PRIORITY, &leds, UART_TRANSMIT_LED, &huart2);
+UARTBluetoothHandler uartBT(&status, UART_DEFAULT_PRIORITY, &leds,
+        UART_TRANSMIT_LED, &huart2);
 
 QCcoms usbCom(&status, USB_DEFAULT_PRIORITY, &configReader, &usb, &flightLEDs);
 
-QCcoms uartCom(&status, USB_DEFAULT_PRIORITY, &configReader, &uartBT, &flightLEDs);
+QCcoms uartCom(&status, USB_DEFAULT_PRIORITY, &configReader, &uartBT,
+        &flightLEDs);
 /* GPS Receiver */
 GPS gpsReceiver(&status, GPS_DEFAULT_PRIORITY, &huart1);
 

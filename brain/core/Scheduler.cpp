@@ -16,6 +16,9 @@ Scheduler::Scheduler(Status* systemStatus, TIM_HandleTypeDef* htim,
     scheduler_htim = htim;
 
     leds = _leds;
+
+    /* dummy padding variable */
+    pad = 0;
 }
 
 void Scheduler::start(Task** tasks, uint8_t taskAmount) {

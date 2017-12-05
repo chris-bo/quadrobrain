@@ -22,16 +22,19 @@ public:
 
     void sendTXBuffer(uint16_t byte_count);
 
-    void byteReceived();
-
-    void rxCallBack();
+    void rxCallback();
 
 private:
     UART_HandleTypeDef* uart;
 
+    uint16_t uart_bytes_received;
+
+    /* dummy padding variable */
+    int pad :16;
+
     uint8_t UartRXbuf[UART_RXTX_BUFF_SIZE];
     uint8_t UartTXbuf[UART_RXTX_BUFF_SIZE];
-    uint16_t uart_bytes_received;
+
 };
 
 #endif /* UARTBLUETOOTHHANDLER_H_ */

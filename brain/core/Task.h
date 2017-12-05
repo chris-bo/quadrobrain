@@ -11,9 +11,6 @@
 #include <core/Status.h>
 #include <core/config.h>
 
-#define TASK_FLAG_ACTIVE		0x0001
-#define TASK_FLAG_CHECKED		0x0002
-
 class Task {
 public:
 
@@ -32,6 +29,9 @@ public:
     bool taskActive :1;
     bool taskChecked :1;
 protected:
+
+    /* dummy padding variable */
+    int pad :14;
 
     Status* status;
 

@@ -18,6 +18,9 @@ RxTxHandler::RxTxHandler(Status* statusPtr, uint8_t defaultPrio,
     TxBuffer = NULL;
     rxtxBuffersize = 0;
     receptionComplete = true;
+
+    /* padding variable */
+    pad = 0;
 }
 
 void RxTxHandler::sendTXBuffer(uint16_t byte_count) {

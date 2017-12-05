@@ -34,7 +34,11 @@ public:
     uint8_t* RxBuffer;
     uint8_t* TxBuffer;
     uint16_t rxtxBuffersize;
-    bool receptionComplete:1;
+
+    bool receptionComplete :1;
+
+    /* dummy padding variable */
+    int pad :7;
 
     Led_TypeDef led;
 };

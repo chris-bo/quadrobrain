@@ -23,6 +23,8 @@ Task::Task(Status* statusPtr, int8_t defaultPrio) {
     taskActive = false;
     taskChecked = false;
 
+    /* dummy padding variable */
+    pad = 0;
 }
 
 Task::~Task() {

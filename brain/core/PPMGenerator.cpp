@@ -22,6 +22,9 @@ PPMGenerator::PPMGenerator(Status* statusPtr, uint8_t defaultPrio,
     motorValuesAvg[1] = 0;
     motorValuesAvg[2] = 0;
     motorValuesAvg[3] = 0;
+
+    /* dummy padding variable */
+    pad = 0;
 }
 
 PPMGenerator::~PPMGenerator() {

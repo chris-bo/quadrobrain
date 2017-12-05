@@ -16,7 +16,6 @@
 
 /**************************************************************************/
 
-
 /*
  *  Protocoll structure
  * RX:
@@ -25,7 +24,6 @@
  *  number of following bytes  = cmd + payload
  *
  */
-
 
 /* resend received */
 #define QC_CMD_LOOP				0x01
@@ -39,7 +37,7 @@
  * PC sends custom frame command and identifiers for requested data
  * terminated by one byte of DATA_ID_EOF
  *
- * USBHandler responds with requested data
+ * RXTXHandler responds with requested data
  * if inserting data will cause buffer overrun. the remaining buffer
  * will be 0xFF
  *

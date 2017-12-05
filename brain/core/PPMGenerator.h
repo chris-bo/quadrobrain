@@ -42,6 +42,9 @@ private:
     float motorValuesAvg[4];
     uint8_t counter;
 
+    /* dummy padding variable */
+    int pad :24;
+
 };
 
 #endif /* PPMGENERATOR_H_ */

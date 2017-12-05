@@ -116,6 +116,9 @@ Status::Status() {
 #endif
     qcSettings.enableFlightLeds = 1;
     qcSettings.enableMotors = 1;
+
+    /* dummy padding variable */
+    pad = 0;
 }
 
 Status::~Status() {

@@ -31,6 +31,9 @@ private:
     uint8_t numberOfTasks;
     uint8_t checkedTasks;
 
+    /* dummy padding variable */
+    int pad :16;
+
     void executeTasks();
     void checkTaskDurations(uint8_t taskIndex);
     void initializeTaskDurations();

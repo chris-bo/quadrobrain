@@ -33,6 +33,9 @@ typedef struct {
     uint16_t lenght[BUZZER_QUEUE_SIZE];
     uint8_t index;
     uint8_t currentTone;
+
+    /* dummy padding variable */
+    int pad :16;
 } Buzzer_Queue_t;
 
 typedef struct {
@@ -63,6 +66,9 @@ typedef struct {
     bool resetToConfig :1;
     bool resetToFlight :1;
     bool resetRequested :1;
+
+    /* dummy padding variable */
+    int pad :17;
 } Global_Flags_t;
 
 class Status {
@@ -118,10 +124,14 @@ public:
     uint8_t rcSignalEnable;		// 0 -> motors inactive
                                 // 1 -> motors active
 
+    /* dummy padding variable */
+    int pad :16;
+
     /* Motor values
      * 1.0f ^= max
      * 0.0f ^= min
      */
+
     float motorValues[4];
     XYZ_Data motorSetpoint;
 

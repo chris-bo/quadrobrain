@@ -144,7 +144,6 @@
 #define FLIGHT_DATA_RECEPTION_LED               LED9
 #define ERROR_LED                               LED10
 
-
 /****************************/
 /* comms
  *
@@ -156,9 +155,7 @@
 #define USB_DEFAULT_PRIORITY                    2
 #define USB_TRANSMIT_BUSY_MAX                   2
 
-
 #define USB_RXTX_BUFF_SIZE 							256
-
 
 /* UART
  *

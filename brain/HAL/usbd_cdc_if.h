@@ -50,8 +50,6 @@
 #ifndef __USBD_CDC_IF_H
 #define __USBD_CDC_IF_H
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -82,12 +80,10 @@ extern uint8_t UserTxBufferFS[USB_RXTX_BUFF_SIZE];
 
 extern uint16_t number_received_data;
 
-
 /** @defgroup USBD_CDC_IF_Exported_Types
  * */
 
-
- /* USER CODE END EXPORTED_DEFINES */
+/* USER CODE END EXPORTED_DEFINES */
 
 /**
  * @}
