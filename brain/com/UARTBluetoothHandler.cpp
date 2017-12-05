@@ -34,6 +34,7 @@ void UARTBluetoothHandler::startRX() {
 
     if (HAL_UART_GetState(uart) != HAL_UART_STATE_BUSY_RX){
         /* restart receive process if not already running */
+        *numberReceivedData = 0;
         receptionComplete = false;
         HAL_UART_Receive_IT(uart, RxBuffer, 1);
     }
