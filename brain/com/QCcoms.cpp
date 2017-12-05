@@ -23,7 +23,7 @@ QCcoms::QCcoms(Status* statusPtr, uint8_t defaultPrio,
     rxtxHandler = _rxtxHandler;
     flightLEDs = _flightLEDs;
     bufferOverrun = 0;
-    customFramePos = 1;
+    customFramePos = 2;
 }
 
 QCcoms::~QCcoms() {
@@ -46,9 +46,9 @@ void QCcoms::update() {
          * RX is still blocked
          */
         answerCusomFrame();
-    } else if ((*rxtxHandler->numberReceivedData > 0) && rxtxHandler->receptionComplete) {
+    } else if ((*rxtxHandler->numberReceivedData > 1) && rxtxHandler->receptionComplete) {
         /* go trough fist received byte */
-        switch (rxtxHandler->RxBuffer[0]) {
+        switch (rxtxHandler->RxBuffer[1]) {
         case QC_CMD_LOOP:
             /* loop received stuff */
             loopback();
@@ -58,16 +58,16 @@ void QCcoms::update() {
             break;
         case QC_CMD_GLOBAL_FLAGS:
             /* create new frame with global flags */
-            rxtxHandler->RxBuffer[1] = DATA_ID_GLOBAL_FLAGS;
-            rxtxHandler->RxBuffer[2] = DATA_ID_EOF;
-            *rxtxHandler->numberReceivedData = 3;
+            rxtxHandler->RxBuffer[2] = DATA_ID_GLOBAL_FLAGS;
+            rxtxHandler->RxBuffer[3] = DATA_ID_EOF;
+            *rxtxHandler->numberReceivedData = 4;
             answerCusomFrame();
             break;
         case QC_CMD_SET_FLIGHT_LED_PATTERN:
             /* change flight led pattern */
             flightLEDs->setLEDpattern(
-                    (uint16_t) (rxtxHandler->RxBuffer[1] << 8)
-                            | rxtxHandler->RxBuffer[2]);
+                    (uint16_t) (rxtxHandler->RxBuffer[3] << 8)
+                            | rxtxHandler->RxBuffer[4]);
             sendConfirmation();
             break;
         case QC_CMD_CONFIG_MODE:
@@ -86,20 +86,20 @@ void QCcoms::update() {
         case QC_CMD_READ_CONFIG:
             /* create custom frame */
             /* pid xy */
-            rxtxHandler->RxBuffer[1] = DATA_ID_PID_ANGLE_XY;
+            rxtxHandler->RxBuffer[2] = DATA_ID_PID_ANGLE_XY;
             /* pid z  */
-            rxtxHandler->RxBuffer[2] = DATA_ID_PID_ROT_Z;
+            rxtxHandler->RxBuffer[3] = DATA_ID_PID_ROT_Z;
             /* comp filter */
-            rxtxHandler->RxBuffer[3] = DATA_ID_COMP_FILTER;
+            rxtxHandler->RxBuffer[4] = DATA_ID_COMP_FILTER;
             /* pid accel  */
-            rxtxHandler->RxBuffer[4] = DATA_ID_PID_ACCEL;
+            rxtxHandler->RxBuffer[5] = DATA_ID_PID_ACCEL;
             /* pid vel */
-            rxtxHandler->RxBuffer[5] = DATA_ID_PID_VEL;
+            rxtxHandler->RxBuffer[6] = DATA_ID_PID_VEL;
             /* qc settings*/
-            rxtxHandler->RxBuffer[6] = DATA_ID_QC_SETTINGS;
+            rxtxHandler->RxBuffer[7] = DATA_ID_QC_SETTINGS;
 
-            rxtxHandler->RxBuffer[7] = DATA_ID_EOF;
-            *rxtxHandler->numberReceivedData = 8;
+            rxtxHandler->RxBuffer[8] = DATA_ID_EOF;
+            *rxtxHandler->numberReceivedData = 9;
             answerCusomFrame();
             break;
         case QC_CMD_RESET:
@@ -140,7 +140,7 @@ void QCcoms::reset() {
 
 void QCcoms::answerCusomFrame() {
 
-    uint16_t bufferPos = 0;
+    uint16_t txBufferPos = 0;
     bufferOverrun = 0;
     /* start loop at beginning of data ids or last position before overrun */
     for (uint16_t i = customFramePos; i < *rxtxHandler->numberReceivedData;
@@ -150,367 +150,367 @@ void QCcoms::answerCusomFrame() {
          */
         switch (rxtxHandler->RxBuffer[i]) {
         case DATA_ID_GYRO:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rate.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rate.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rate.z);
             }
             break;
         case DATA_ID_ACCEL:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->accel.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->accel.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->accel.z);
             }
             break;
         case DATA_ID_MAGNETOMETER:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->magnetfield.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->magnetfield.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->magnetfield.z);
             }
             break;
         case DATA_ID_ANGLE:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->angle.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->angle.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->angle.z);
             }
             break;
         case DATA_ID_ANGLE_SP:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->angleSetpoint.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->angleSetpoint.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->angleSetpoint.z);
             }
             break;
         case DATA_ID_HOR_ACCEL:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->horizontalAcceleration.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->horizontalAcceleration.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->horizontalAcceleration.z);
             }
             break;
         case DATA_ID_ACCEL_SP:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->accelerationSetpoint.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->accelerationSetpoint.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->accelerationSetpoint.z);
             }
             break;
         case DATA_ID_VELOCITY:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->velocity.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->velocity.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->velocity.z);
             }
             break;
         case DATA_ID_VELOCITY_SP:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->velocitySetpoint.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->velocitySetpoint.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->velocitySetpoint.z);
             }
             break;
         case DATA_ID_HEIGHT:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->height);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->height_rel);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->d_h);
             }
             break;
         case DATA_ID_RC:
-            if (!checkTXBufferOverrun(bufferPos, 22)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 22)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rcSignalNick);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rcSignalRoll);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rcSignalYaw);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rcSignalThrottle);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rcSignalLinPoti);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rcSignalEnable);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->rcSignalSwitch);
             }
             break;
         case DATA_ID_MOTOR_SP:
-            if (!checkTXBufferOverrun(bufferPos, 12)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 12)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->motorSetpoint.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->motorSetpoint.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->motorSetpoint.z);
             }
             break;
         case DATA_ID_MOTOR:
-            if (!checkTXBufferOverrun(bufferPos, 16)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 16)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->motorValues[0]);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->motorValues[1]);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->motorValues[2]);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->motorValues[3]);
             }
             break;
         case DATA_ID_CPU:
-            if (!checkTXBufferOverrun(bufferPos, 4)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 4)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->cpuLoad);
             }
             break;
         case DATA_ID_AKKU:
-            if (!checkTXBufferOverrun(bufferPos, 4)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 4)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->akkuVoltage);
             }
             break;
         case DATA_ID_TEMP:
-            if (!checkTXBufferOverrun(bufferPos, 4)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 4)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->temp);
             }
             break;
         case DATA_ID_UPTIME:
-            if (!checkTXBufferOverrun(bufferPos, 4)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 4)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->uptime);
             }
             break;
         case DATA_ID_GPS_LLH:
-            if (!checkTXBufferOverrun(bufferPos, 56)) {
+            if (!checkTXBufferOverrun(txBufferPos, 56)) {
                 /* postition llh with accuracy*/
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.llh_data.lat);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.llh_data.lon);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.llh_data.h);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.llh_data.hMSL);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.llh_data.vAcc);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.llh_data.hAcc);
                 /* ned*/
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ned_data.vN);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ned_data.vE);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ned_data.vD);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ned_data.speed);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ned_data.gSpeed);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ned_data.sAcc);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ned_data.heading);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ned_data.cAcc);
 
             }
             break;
         case DATA_ID_GPS_ECEF:
-            if (!checkTXBufferOverrun(bufferPos, 32)) {
+            if (!checkTXBufferOverrun(txBufferPos, 32)) {
                 /* position ecef */
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ecef_data.x);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ecef_data.y);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ecef_data.z);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ecef_data.vx);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ecef_data.vy);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ecef_data.vz);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ecef_data.pAcc);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.ecef_data.sAcc);
             }
             break;
         case DATA_ID_GPS_DOP:
-            if (!checkTXBufferOverrun(bufferPos, 14)) {
+            if (!checkTXBufferOverrun(txBufferPos, 14)) {
                 /* dilution of precission*/
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.dop.pDOP);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.dop.gDOP);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.dop.tDOP);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.dop.vDOP);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.dop.hDOP);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.dop.nDOP);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.dop.eDOP);
             }
             break;
         case DATA_ID_GPS_TIME:
-            if (!checkTXBufferOverrun(bufferPos, 15)) {
+            if (!checkTXBufferOverrun(txBufferPos, 15)) {
                 /* gps time of week*/
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.iTOW);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.gpsWeek);
                 /* gps time */
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.time.hours);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.time.minutes);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.time.seconds);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.time.hundredths);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.time.validity);
                 /* gps date*/
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.date.year);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.date.month);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.date.day);
             }
             break;
         case DATA_ID_GPS_FIX:
             /* fix + flags*/
-            if (!checkTXBufferOverrun(bufferPos, 5)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 5)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         (uint8_t) status->gpsData.gpsFix);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.FixStatus);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.numSV);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->gpsData.navStatusFlags);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         (uint8_t) status->gpsData.psmState);
             }
             break;
         case DATA_ID_COMP_FILTER:
-            if (!checkTXBufferOverrun(bufferPos, 8)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 8)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->filterCoefficientXY);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->filterCoefficientZ);
             }
             break;
         case DATA_ID_PID_ANGLE_XY:
-            if (!checkTXBufferOverrun(bufferPos, 20)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 20)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAngleXY.p);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAngleXY.i);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAngleXY.d);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAngleXY.gain);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAngleXY.scaleSetPoint);
             }
             break;
         case DATA_ID_PID_ROT_Z:
-            if (!checkTXBufferOverrun(bufferPos, 20)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 20)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsRotationZ.p);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsRotationZ.i);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsRotationZ.d);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsRotationZ.gain);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsRotationZ.scaleSetPoint);
             }
             break;
         case DATA_ID_PID_VEL:
-            if (!checkTXBufferOverrun(bufferPos, 20)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 20)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsVelocity.p);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsVelocity.i);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsVelocity.d);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsVelocity.gain);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsVelocity.scaleSetPoint);
             }
             break;
         case DATA_ID_PID_ACCEL:
-            if (!checkTXBufferOverrun(bufferPos, 20)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 20)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAcceleration.p);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAcceleration.i);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAcceleration.d);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAcceleration.gain);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->pidSettingsAcceleration.scaleSetPoint);
             }
             break;
         case DATA_ID_QC_SETTINGS:
-            if (!checkTXBufferOverrun(bufferPos, 4)) {
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+            if (!checkTXBufferOverrun(txBufferPos, 4)) {
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->qcSettings.enableBuzzerWarningLowVoltage);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->qcSettings.enableBuzzerWarningRCLost);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->qcSettings.enableFlightLeds);
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos,
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
                         status->qcSettings.enableMotors);
             }
             break;
         case DATA_ID_GLOBAL_FLAGS:
             // todo global flags übertragung
-            if (!checkTXBufferOverrun(bufferPos, 4)) {
+            if (!checkTXBufferOverrun(txBufferPos, 4)) {
                 uint32_t x = 0;
-                bufferPos = fillBuffer(rxtxHandler->TxBuffer, bufferPos, x);
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos, x);
             }
             break;
         case DATA_ID_EOF:
@@ -518,8 +518,8 @@ void QCcoms::answerCusomFrame() {
              * reset position for next request
              * send buffer */
             bufferOverrun = 0;
-            customFramePos = 1;
-            rxtxHandler->sendTXBuffer(bufferPos);
+            customFramePos = 2;
+            rxtxHandler->sendTXBuffer(txBufferPos);
             break;
         default:
             /* unknown id */
@@ -533,7 +533,7 @@ void QCcoms::answerCusomFrame() {
              * next update will continue sending data
              */
             customFramePos = i;
-            rxtxHandler->sendTXBuffer(bufferPos);
+            rxtxHandler->sendTXBuffer(txBufferPos);
             return;
         }
     }
@@ -541,7 +541,7 @@ void QCcoms::answerCusomFrame() {
 
 void QCcoms::sendConfirmation() {
     /* send last command as confirmation */
-    rxtxHandler->TxBuffer[0] = rxtxHandler->RxBuffer[0];
+    rxtxHandler->TxBuffer[0] = rxtxHandler->RxBuffer[1];
     rxtxHandler->sendTXBuffer(1);
 }
 
@@ -549,24 +549,24 @@ void QCcoms::decodeConfigMSG() {
     /* only in config mode */
     if (status->globalFlags.configMode) {
 
-        switch (rxtxHandler->RxBuffer[0]) {
+        switch (rxtxHandler->RxBuffer[1]) {
         case QC_CMD_READ_CONFIG:
             /* create custom frame */
             /* pid xy */
-            rxtxHandler->RxBuffer[1] = DATA_ID_PID_ANGLE_XY;
+            rxtxHandler->RxBuffer[2] = DATA_ID_PID_ANGLE_XY;
             /* pid z  */
-            rxtxHandler->RxBuffer[2] = DATA_ID_PID_ROT_Z;
+            rxtxHandler->RxBuffer[3] = DATA_ID_PID_ROT_Z;
             /* comp filter */
-            rxtxHandler->RxBuffer[3] = DATA_ID_COMP_FILTER;
+            rxtxHandler->RxBuffer[4] = DATA_ID_COMP_FILTER;
             /* pid accel  */
-            rxtxHandler->RxBuffer[4] = DATA_ID_PID_ACCEL;
+            rxtxHandler->RxBuffer[5] = DATA_ID_PID_ACCEL;
             /* pid vel */
-            rxtxHandler->RxBuffer[5] = DATA_ID_PID_VEL;
+            rxtxHandler->RxBuffer[6] = DATA_ID_PID_VEL;
             /* qc settings*/
-            rxtxHandler->RxBuffer[6] = DATA_ID_QC_SETTINGS;
+            rxtxHandler->RxBuffer[7] = DATA_ID_QC_SETTINGS;
 
-            rxtxHandler->RxBuffer[7] = DATA_ID_EOF;
-            *rxtxHandler->numberReceivedData = 8;
+            rxtxHandler->RxBuffer[8] = DATA_ID_EOF;
+            *rxtxHandler->numberReceivedData = 9;
             answerCusomFrame();
             break;
 
@@ -593,24 +593,24 @@ void QCcoms::decodeConfigMSG() {
             break;
 
         case QC_CMD_QUADROCONFIG:
-            if (*rxtxHandler->numberReceivedData == 2) {
+            if (*rxtxHandler->numberReceivedData == 3) {
                 /* check and set settings */
-                if (rxtxHandler->RxBuffer[1] & QUADROCONFIG_ENABLE_LOW_VOLT) {
+                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_LOW_VOLT) {
                     status->qcSettings.enableBuzzerWarningLowVoltage = 1;
                 } else {
                     status->qcSettings.enableBuzzerWarningLowVoltage = 0;
                 }
-                if (rxtxHandler->RxBuffer[1] & QUADROCONFIG_ENABLE_RC_LOST) {
+                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_RC_LOST) {
                     status->qcSettings.enableBuzzerWarningRCLost = 1;
                 } else {
                     status->qcSettings.enableBuzzerWarningRCLost = 0;
                 }
-                if (rxtxHandler->RxBuffer[1] & QUADROCONFIG_ENABLE_FLIGHTLED) {
+                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_FLIGHTLED) {
                     status->qcSettings.enableFlightLeds = 1;
                 } else {
                     status->qcSettings.enableFlightLeds = 0;
                 }
-                if (rxtxHandler->RxBuffer[1] & QUADROCONFIG_ENABLE_MOTORS) {
+                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_MOTORS) {
                     status->qcSettings.enableMotors = 1;
                 } else {
                     status->qcSettings.enableMotors = 0;
@@ -620,7 +620,7 @@ void QCcoms::decodeConfigMSG() {
                 sendConfirmation();
             } else {
                 /* reply with current setting*/
-                rxtxHandler->TxBuffer[0] = rxtxHandler->RxBuffer[0];
+                rxtxHandler->TxBuffer[0] = rxtxHandler->RxBuffer[1];
                 rxtxHandler->TxBuffer[1] =
                         (uint8_t) ((status->qcSettings.enableMotors
                                 * QUADROCONFIG_ENABLE_MOTORS)
@@ -658,88 +658,88 @@ void QCcoms::updateConfig() {
     /* set position to 1
      * select first idetifier
      */
-    uint16_t bufferpos = 1;
-    while (bufferpos < *rxtxHandler->numberReceivedData) {
+    uint16_t txBufferPos = 2;
+    while (txBufferPos < *rxtxHandler->numberReceivedData) {
 
-        switch (rxtxHandler->RxBuffer[bufferpos]) {
+        switch (rxtxHandler->RxBuffer[txBufferPos]) {
         /* each case:
          *   jump to first value:
-         *   bufferpos++
+         *   txBufferPos++
          *   then set values with byteToFloat function
-         *   byteToFloat increases bufferpos by 4
+         *   byteToFloat increases txBufferPos by 4
          */
         case DATA_ID_PID_ANGLE_XY:
-            bufferpos++;
+            txBufferPos++;
             status->pidSettingsAngleXY.p = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsAngleXY.i = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsAngleXY.d = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsAngleXY.gain = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsAngleXY.scaleSetPoint = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             break;
         case DATA_ID_PID_ROT_Z:
-            bufferpos++;
+            txBufferPos++;
             status->pidSettingsRotationZ.p = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsRotationZ.i = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsRotationZ.d = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsRotationZ.gain = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             break;
         case DATA_ID_COMP_FILTER:
-            bufferpos++;
+            txBufferPos++;
             status->filterCoefficientXY = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->filterCoefficientZ = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             break;
         case DATA_ID_PID_ACCEL:
-            bufferpos++;
+            txBufferPos++;
             status->pidSettingsAcceleration.p = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             status->pidSettingsAcceleration.i = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             status->pidSettingsAcceleration.d = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             status->pidSettingsAcceleration.gain = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             status->pidSettingsAcceleration.scaleSetPoint = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             break;
         case DATA_ID_PID_VEL:
-            bufferpos++;
+            txBufferPos++;
             status->pidSettingsVelocity.p = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsVelocity.i = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsVelocity.d = byteToFloat(rxtxHandler->RxBuffer,
-                    &bufferpos);
+                    &txBufferPos);
             status->pidSettingsVelocity.gain = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             status->pidSettingsVelocity.scaleSetPoint = byteToFloat(
-                    rxtxHandler->RxBuffer, &bufferpos);
+                    rxtxHandler->RxBuffer, &txBufferPos);
             break;
         case DATA_ID_QC_SETTINGS:
-            bufferpos++;
+            txBufferPos++;
             status->qcSettings.enableBuzzerWarningRCLost =
-                    rxtxHandler->RxBuffer[bufferpos++];
+                    rxtxHandler->RxBuffer[txBufferPos++];
             status->qcSettings.enableBuzzerWarningLowVoltage =
-                    rxtxHandler->RxBuffer[bufferpos++];
+                    rxtxHandler->RxBuffer[txBufferPos++];
             status->qcSettings.enableFlightLeds =
-                    rxtxHandler->RxBuffer[bufferpos++];
+                    rxtxHandler->RxBuffer[txBufferPos++];
             status->qcSettings.enableMotors =
-                    rxtxHandler->RxBuffer[bufferpos++];
+                    rxtxHandler->RxBuffer[txBufferPos++];
             break;
         case DATA_ID_EOF:
-            bufferpos++;
+            txBufferPos++;
             /* send Confirmation*/
             sendConfirmation();
             break;
@@ -807,16 +807,16 @@ void QCcoms::readEEPROM(uint8_t byteCount) {
     case 1: {
         uint8_t tmp;
         confReader->loadVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[1] << 8
-                        | rxtxHandler->RxBuffer[2]));
+                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
+                        | rxtxHandler->RxBuffer[3]));
         rxtxHandler->TxBuffer[0] = tmp;
         break;
     }
     case 2: {
         uint16_t tmp;
         confReader->loadVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[1] << 8
-                        | rxtxHandler->RxBuffer[2]));
+                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
+                        | rxtxHandler->RxBuffer[3]));
         rxtxHandler->TxBuffer[0] = (uint8_t) ((tmp >> 8) & 0xff);
         rxtxHandler->TxBuffer[1] = (uint8_t) (tmp & 0xff);
         break;
@@ -824,8 +824,8 @@ void QCcoms::readEEPROM(uint8_t byteCount) {
     case 4: {
         uint32_t tmp;
         confReader->loadVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[1] << 8
-                        | rxtxHandler->RxBuffer[2]));
+                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
+                        | rxtxHandler->RxBuffer[3]));
         rxtxHandler->TxBuffer[0] = (uint8_t) ((tmp >> 24) & 0xff);
         rxtxHandler->TxBuffer[1] = (uint8_t) ((tmp >> 16) & 0xff);
         rxtxHandler->TxBuffer[2] = (uint8_t) ((tmp >> 8) & 0xff);
@@ -841,28 +841,28 @@ void QCcoms::writeEEPROM(uint8_t byteCount) {
     /* direct write to eeprom */
     switch (byteCount) {
     case 1: {
-        uint8_t tmp = rxtxHandler->RxBuffer[3];
+        uint8_t tmp = rxtxHandler->RxBuffer[4];
         confReader->saveVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[1] << 8
-                        | rxtxHandler->RxBuffer[2]), 0);
+                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
+                        | rxtxHandler->RxBuffer[3]), 0);
         break;
     }
     case 2: {
-        uint16_t tmp = (uint16_t) ((rxtxHandler->RxBuffer[3] << 8)
-                | rxtxHandler->RxBuffer[4]);
+        uint16_t tmp = (uint16_t) ((rxtxHandler->RxBuffer[4] << 8)
+                | rxtxHandler->RxBuffer[5]);
         confReader->saveVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[1] << 8
-                        | rxtxHandler->RxBuffer[2]), 0);
+                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
+                        | rxtxHandler->RxBuffer[3]), 0);
         break;
     }
 
     case 4: {
-        uint32_t tmp = ((rxtxHandler->RxBuffer[3] << 24)
-                | (rxtxHandler->RxBuffer[4] << 16)
-                | (rxtxHandler->RxBuffer[5] << 8) | rxtxHandler->RxBuffer[6]);
+        uint32_t tmp = ((rxtxHandler->RxBuffer[4] << 24)
+                | (rxtxHandler->RxBuffer[5] << 16)
+                | (rxtxHandler->RxBuffer[6] << 8) | rxtxHandler->RxBuffer[7]);
         confReader->saveVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[1] << 8
-                        | rxtxHandler->RxBuffer[2]), 0);
+                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
+                        | rxtxHandler->RxBuffer[3]), 0);
         break;
     }
     }

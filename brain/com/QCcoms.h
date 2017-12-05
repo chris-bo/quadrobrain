@@ -16,6 +16,17 @@
 
 /**************************************************************************/
 
+
+/*
+ *  Protocoll structure
+ * RX:
+ * | number of following bytes | CMD | payload |
+ *
+ *  number of following bytes  = cmd + payload
+ *
+ */
+
+
 /* resend received */
 #define QC_CMD_LOOP				0x01
 

@@ -33,7 +33,7 @@ void UARTBluetoothHandler::initialize() {
 void UARTBluetoothHandler::startRX() {
 
     if (HAL_UART_GetState(uart) != HAL_UART_STATE_BUSY_RX){
-        /* restart receive process if not already running */
+        /* start receiving */
         *numberReceivedData = 0;
         receptionComplete = false;
         HAL_UART_Receive_IT(uart, RxBuffer, 1);
@@ -49,8 +49,20 @@ void UARTBluetoothHandler::sendTXBuffer(uint16_t byte_count) {
 
 void UARTBluetoothHandler::byteReceived() {
 
-    *numberReceivedData = *numberReceivedData + 1;
+    *numberReceivedData = (uint16_t) (*numberReceivedData + ((uint16_t) 1));
     /* wait for next byte */
     HAL_UART_Receive_IT(uart, RxBuffer+*numberReceivedData, 1);
     //todo check for end of frame and set reception complete
+}
+
+void UARTBluetoothHandler::rxCallBack() {
+
+    if (*numberReceivedData == 0) {
+        *numberReceivedData = RxBuffer[0]+1;
+        HAL_UART_Receive_IT(uart, &RxBuffer[1],RxBuffer[0]);
+
+    } else {
+        receptionComplete = true;
+    }
+
 }

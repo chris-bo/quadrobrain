@@ -24,6 +24,8 @@ public:
 
     void byteReceived();
 
+    void rxCallBack();
+
 private:
     UART_HandleTypeDef* uart;
 
