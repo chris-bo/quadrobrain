@@ -147,6 +147,30 @@
 #define QUADROCONFIG_ENABLE_FLIGHTLED   0x04
 #define QUADROCONFIG_ENABLE_MOTORS      0x08
 
+
+/* global flags */
+
+#define FLIGHT_MODE_FLAG            0x00000001
+#define CONFIG_MODE_FLAG            0x00000002
+#define ERROR_FLAG                  0x00000004
+#define USB_ERROR_FLAG              0x00000008
+
+#define CPU_OVERLOAD_FLAG           0x00000010
+#define NO_RC_SIGNAL_FLAG           0x00000020
+#define LOW_VOLTAGE_FLAG            0x00000040
+#define FREE_FLAG3                  0x00000080
+
+#define MPU9150_OK_FLAG             0x00000100
+#define RC_RECEIVER_OK_FLAG         0x00000200
+#define BMP180_OK_FLAG              0x00000400
+#define EEPROM_OK_FLAG              0x00000800
+
+#define EMERGENCY_FLAG              0x80000000
+
+
+
+
+
 class QCcoms: public Task {
 public:
     QCcoms(Status* statusPtr, uint8_t defaultPrio, ConfigReader* _confReader,

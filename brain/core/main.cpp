@@ -135,6 +135,7 @@ int main(void) {
     MX_USART2_UART_Init();
 
     usb.initialize();
+    uartCom.initialize();
 
     /* onboard leds*/
     leds.initialize();
@@ -207,7 +208,7 @@ void FlightMode() {
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &imu,
             &altimeter, &pidAngleX, &pidAngleY, &pidRateZ, &gpsReceiver,
-            &usbCom, &akku, &baro, &leds, &beep1, &flightLEDs };
+            &usbCom, &uartCom, &akku, &baro, &leds, &beep1, &flightLEDs };
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
     /* don't stop beliieeeving */

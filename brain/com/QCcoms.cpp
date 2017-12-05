@@ -508,10 +508,46 @@ void QCcoms::answerCusomFrame() {
             }
             break;
         case DATA_ID_GLOBAL_FLAGS:
-            // todo global flags übertragung
+            /* global flags übertragung */
             if (!checkTXBufferOverrun(txBufferPos, 4)) {
-                uint32_t x = 0;
-                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos, x);
+                uint32_t tmp = 0;
+                /* shitcode */
+                if (status->globalFlags.flightMode) {
+                    tmp |= FLIGHT_MODE_FLAG;
+                } else {
+                    tmp |= CONFIG_MODE_FLAG;
+                }
+                if (status->globalFlags.error) {
+                    tmp |= ERROR_FLAG;
+                }
+                if (status->globalFlags.usbError) {
+                    tmp |= USB_ERROR_FLAG;
+                }
+                if (status->globalFlags.cpuOverload) {
+                    tmp |= CPU_OVERLOAD_FLAG;
+                }
+                if (status->globalFlags.noRCSignal) {
+                    tmp |= NO_RC_SIGNAL_FLAG;
+                }
+                if (status->globalFlags.lowVoltage) {
+                    tmp |= LOW_VOLTAGE_FLAG;
+                }
+                if (status->globalFlags.MPU9150ok) {
+                    tmp |= MPU9150_OK_FLAG;
+                }
+                if (status->globalFlags.BMP180ok) {
+                    tmp |= BMP180_OK_FLAG;
+                }
+                if (status->globalFlags.RCReceiverOk) {
+                    tmp |= RC_RECEIVER_OK_FLAG;
+                }
+                if (status->globalFlags.EEPROMok) {
+                    tmp |= EEPROM_OK_FLAG;
+                }
+                if (status->globalFlags.emergency) {
+                    tmp |= EMERGENCY_FLAG;
+                }
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos, tmp);
             }
             break;
         case DATA_ID_EOF:
