@@ -135,7 +135,7 @@ int main(void) {
     MX_USART2_UART_Init();
 
     usb.initialize();
-    uartCom.initialize();
+
 
     /* onboard leds*/
     leds.initialize();
@@ -181,10 +181,13 @@ void FlightMode() {
 
     /* init Tasks */
     usbCom.initialize();
+    uartCom.initialize();
 
     configReader.initialize(&status);
+
     mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
     mpu9150.startReception();
+
     rcReceiver.initialize();
     ppmgenerator.initialize();
     akku.initialize();
@@ -235,7 +238,6 @@ void FlightMode() {
 //    status.addToneToQueue(&status.buzzerQueue1, BUZZER_E4, 250);
 //    HAL_Delay(2000);
     while (1) {
-
         if (status.globalFlags.resetRequested) {
             SoftwareReset();
         }
@@ -287,12 +289,13 @@ void ConfigMode() {
     leds.off(ALL);
     leds.on(POWER_LED);
     /* only blinking led to indicate running cpu
-     * and usb Task needed
+     * and comminication tasks needed
      * */
     leds.setFrequency(CONFIG_LED, 1);
     usbCom.initialize();
+    uartCom.initialize();
 
-    Task* tasks_config[] = { &usbCom, &leds, &beep1 };
+    Task* tasks_config[] = { &usbCom, &uartCom, &leds, &beep1 };
     scheduler.start(tasks_config, sizeof(tasks_config) / 4);
 
     while (1) {

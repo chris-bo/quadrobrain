@@ -50,10 +50,10 @@ void QCcoms::update() {
             && rxtxHandler->receptionComplete) {
         /* go trough fist received byte */
         switch (rxtxHandler->RxBuffer[1]) {
-        case QC_CMD_LOOP:
-            /* loop received stuff */
-            loopback();
-            break;
+//        case QC_CMD_LOOP:
+//            /* loop received stuff */
+//            loopback();
+//            break;
         case QC_CMD_SEND_CUSTOM_FRAME:
             answerCusomFrame();
             break;
@@ -72,13 +72,24 @@ void QCcoms::update() {
             sendConfirmation();
             break;
         case QC_CMD_CONFIG_MODE:
-            /*entering config mode */
             /* trigger quadrocopter reset */
-            /* switch current mode */
-            if (status->globalFlags.configMode) {
-                status->globalFlags.resetToFlight = true;
+
+            /* switch mode */
+            if (*rxtxHandler->numberReceivedData > 2) {
+                if (rxtxHandler->RxBuffer[2] == 1) {
+                    /* enter config mode */
+                    status->globalFlags.resetToConfig = true;
+                } else if (rxtxHandler->RxBuffer[2] == 0) {
+                    /* leave config mode */
+                    status->globalFlags.resetToFlight = true;
+                }
             } else {
-                status->globalFlags.resetToConfig = true;
+                /* toggle mode */
+                if (status->globalFlags.configMode) {
+                    status->globalFlags.resetToFlight = true;
+                } else {
+                    status->globalFlags.resetToConfig = true;
+                }
             }
             /* request reset */
             status->globalFlags.resetRequested = true;
@@ -116,11 +127,12 @@ void QCcoms::update() {
             sendConfirmation();
             break;
         default:
+            /* ignore unknown command */
 
-            /* falls im config mode
-             *
-             */
             if (status->globalFlags.configMode) {
+                /* falls im config mode
+                 *
+                 */
                 decodeConfigMSG();
             }
             break;
@@ -547,7 +559,8 @@ void QCcoms::answerCusomFrame() {
                 if (status->globalFlags.emergency) {
                     tmp |= EMERGENCY_FLAG;
                 }
-                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos, tmp);
+                txBufferPos = fillBuffer(rxtxHandler->TxBuffer, txBufferPos,
+                        tmp);
             }
             break;
         case DATA_ID_EOF:
