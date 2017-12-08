@@ -45,6 +45,10 @@ GPS::GPS(Status* _status, int8_t _defaultPriority, UART_HandleTypeDef* uart) :
 
     handlerHalt = true;
     continousReception = false;
+
+    /* dummy padding variable */
+    pad1 = 0;
+    pad2 = 0;
 }
 
 GPS::~GPS() {
@@ -556,10 +560,10 @@ uint8_t GPS::updateReceiverConfig(uint8_t configID, uint8_t* buffer,
     for (uint16_t i = 0; i < payloadLength; i++) {
         GPS_TX_buffer[i + 6] = buffer[i];
     }
-    appendUBXChecksumTX(payloadLength + 6);
+    appendUBXChecksumTX((uint8_t) (payloadLength + 6));
 
     /* start transmission */
-    HAL_UART_Transmit(gpsUart, GPS_TX_buffer, payloadLength + 8,
+    HAL_UART_Transmit(gpsUart, GPS_TX_buffer, (uint8_t) (payloadLength + 8),
     GPS_UART_TIMEOUT);
 
     /* receive ack*/

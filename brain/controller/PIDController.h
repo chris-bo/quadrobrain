@@ -44,7 +44,10 @@ private:
     float sumLimit; /* e_sum limit*/
     float sampleTime;
     /* use derived input for differential part*/
-    bool useDerivedInput;
+    bool useDerivedInput :1;
+
+    /* dummy padding variable */
+    int pad :31;
 };
 
 #endif /* PIDCONTROLLER_H_ */

@@ -27,6 +27,9 @@ PIDController::PIDController(Status* statusPtr, uint8_t defaultPrio,
     oldValue = 0.0f;
 
     this->useDerivedInput = _useDerivedInput;
+
+    /* dummy padding variable */
+    pad = 0;
 }
 
 PIDController::~PIDController() {

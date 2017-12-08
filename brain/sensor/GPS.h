@@ -37,8 +37,6 @@ private:
 
     GPS_Data_t* gpsData;
 
-    GPS_ACK_t lastACK;
-
     void generateUBXHeader(uint8_t msgClass, uint8_t msgID, uint16_t payload);
     void pollUBXMessage(uint8_t msgClass, uint8_t msgID);
     void appendUBXChecksumTX(uint8_t bufferSize);
@@ -54,6 +52,11 @@ private:
 
     uint8_t getUBXMsgLength(uint8_t classid, uint8_t msgid);
 
+    GPS_ACK_t lastACK;
+
+    /* dummy padding variable */
+    int pad1 :8;
+
     bool fixOk :1;
     bool dGPSUsed :1;
     bool weekValid :1;
@@ -63,6 +66,7 @@ private:
     bool rxRunning :1;
     bool decodeComplete :1;
     bool lastUpdateComplete :1;
+
     bool receptionError :1;
     bool transmissionError :1;
     bool timeoutError :1;
@@ -84,6 +88,9 @@ private:
 
     bool handlerHalt :1;
     bool continousReception :1;
+
+    /* dummy padding variable */
+    int pad2 :9;
 };
 
 #endif /* GPS_H_ */

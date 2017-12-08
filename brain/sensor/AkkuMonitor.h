@@ -38,6 +38,8 @@ private:
     ADC_HandleTypeDef* akkumonitor_adc;
     uint16_t counter;
 
+    /* dummy padding variable */
+    int pad :16;
     void lowVoltageWarning();
 };
 

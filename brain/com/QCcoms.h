@@ -147,7 +147,6 @@
 #define QUADROCONFIG_ENABLE_FLIGHTLED   0x04
 #define QUADROCONFIG_ENABLE_MOTORS      0x08
 
-
 /* global flags */
 
 #define FLIGHT_MODE_FLAG            0x00000001
@@ -166,10 +165,6 @@
 #define EEPROM_OK_FLAG              0x00000800
 
 #define EMERGENCY_FLAG              0x80000000
-
-
-
-
 
 class QCcoms: public Task {
 public:

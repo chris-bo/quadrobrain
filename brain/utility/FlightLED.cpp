@@ -14,6 +14,9 @@ FlightLED::FlightLED(Status* statusPtr, uint8_t defaultPrio,
     ledSpi = spi;
     ledPattern = 0;
 
+    /* dummy padding variable */
+    pad = 0;
+
 }
 
 FlightLED::~FlightLED() {

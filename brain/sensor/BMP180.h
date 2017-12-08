@@ -130,6 +130,9 @@ private:
     bool readingPressure :1;
     bool readingComplete :1;
     bool error :1;
+
+    /* dummy padding variable */
+    int pad :26;
 };
 
 #endif /* BMP180_H_ */

@@ -47,6 +47,9 @@ private:
     USBD_StatusTypeDef usb_state;
     uint8_t usbTransmitBusyCounter;
 
+    /* dummy padding variable */
+    int pad :16;
+
     void resetTransmissionState();
 
 };

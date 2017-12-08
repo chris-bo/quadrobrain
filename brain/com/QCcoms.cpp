@@ -67,8 +67,8 @@ void QCcoms::update() {
         case QC_CMD_SET_FLIGHT_LED_PATTERN:
             /* change flight led pattern */
             flightLEDs->setLEDpattern(
-                    (uint16_t) (rxtxHandler->RxBuffer[3] << 8)
-                            | rxtxHandler->RxBuffer[4]);
+                    (uint16_t) ((rxtxHandler->RxBuffer[3] << 8)
+                            | rxtxHandler->RxBuffer[4]));
             sendConfirmation();
             break;
         case QC_CMD_CONFIG_MODE:

@@ -32,6 +32,9 @@ private:
     SPI_HandleTypeDef* ledSpi;
     uint16_t ledPattern;
 
+    /* dummy padding variable */
+    int pad :16;
+
     void updateShiftRegisters();
 };
 

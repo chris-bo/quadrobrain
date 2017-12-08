@@ -38,6 +38,9 @@ BMP180::BMP180(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c) :
     readingPressure = false;
     readingComplete = false;
     error = false;
+
+    /* dummy padding variable */
+    pad = 0;
 }
 
 BMP180::~BMP180() {

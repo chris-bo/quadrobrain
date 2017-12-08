@@ -13,6 +13,8 @@ AkkuMonitor::AkkuMonitor(Status* statusPtr, uint8_t defaultPrio,
     counter = 0;
     akkumonitor_adc = hadc;
 
+    /* dummy padding variable */
+    pad = 0;
 }
 
 AkkuMonitor::~AkkuMonitor() {

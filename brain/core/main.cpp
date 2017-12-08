@@ -64,7 +64,7 @@ USBHandler usb(&status, USB_DEFAULT_PRIORITY, &leds, USB_TRANSMIT_LED,
         &hUsbDeviceFS);
 
 UARTBluetoothHandler uartBT(&status, UART_DEFAULT_PRIORITY, &leds,
-        UART_TRANSMIT_LED, &huart2);
+UART_TRANSMIT_LED, &huart2);
 
 QCcoms usbCom(&status, USB_DEFAULT_PRIORITY, &configReader, &usb, &flightLEDs);
 
@@ -135,7 +135,6 @@ int main(void) {
     MX_USART2_UART_Init();
 
     usb.initialize();
-
 
     /* onboard leds*/
     leds.initialize();
