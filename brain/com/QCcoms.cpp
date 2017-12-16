@@ -114,8 +114,8 @@ void QCcoms::update() {
             *rxtxHandler->numberReceivedData = 9;
             answerCusomFrame();
             break;
-        case QC_CMD_RESET:
-            /* trigger quadrocopter reset */
+        case QC_CMD_SOFT_RESET:
+            /* trigger quadrocopter software reset */
             /* keep current mode */
             if (status->globalFlags.flightMode) {
                 status->globalFlags.resetToFlight = true;
@@ -125,6 +125,10 @@ void QCcoms::update() {
             /* request reset */
             status->globalFlags.resetRequested = true;
             sendConfirmation();
+            break;
+        case QC_CMD_HARD_RESET:
+            /* trigger system reset */
+            HAL_NVIC_SystemReset();
             break;
         default:
             /* ignore unknown command */

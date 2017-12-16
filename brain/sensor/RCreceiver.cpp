@@ -32,6 +32,9 @@ RCreceiver::RCreceiver(Status* statusPtr, uint8_t defaultPrio,
     hadSignal = false;
     error = false;
 
+    /* dummy padding variable */
+    pad = 0;
+
 }
 
 RCreceiver::~RCreceiver() {

@@ -269,7 +269,7 @@ void ConfigMode() {
      * Stop Sensor Functions
      * Disable Motors
      *
-     * Restart scheduler only for usb task
+     * Restart scheduler only for usb und uart task
      *
      */
     scheduler.reset();

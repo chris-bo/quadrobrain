@@ -59,6 +59,9 @@ MPU9150::MPU9150(Status* statusPtr, uint8_t defaultPrio, I2C_HandleTypeDef* i2c)
     continousReception = false;
     mpuError = false;
     AK8975Cavailable = false;
+
+    /* dummy padding variable */
+    pad = 0;
 }
 
 MPU9150::~MPU9150() {

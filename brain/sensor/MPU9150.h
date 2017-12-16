@@ -266,6 +266,13 @@ private:
     int16_t rawTempData;
     uint8_t MagnetScaleRegister[3];
 
+    bool continousReception :1;
+    bool mpuError :1;
+    bool AK8975Cavailable :1;
+
+    /* dummy padding variable */
+    int pad :5;
+
     float scaleAccel;
     float scaleGyro;
     float scaleMagnet[3];
@@ -281,10 +288,6 @@ private:
     void enableMagnetData();
     void disableMagnetData();
     void getMagnetScale();
-
-    bool continousReception :1;
-    bool mpuError :1;
-    bool AK8975Cavailable :1;
 
 };
 

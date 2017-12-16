@@ -46,15 +46,20 @@ private:
     TIM_HandleTypeDef* RCreceiver_htim;
     uint16_t rawReceiverValues[8];
     uint16_t rawRCvalues[RECEIVER_CHANNELS];
-    uint8_t currentChannel;
-    uint32_t signalLostTime;
     uint16_t signalLostBuzzerCounter;
+    uint32_t signalLostTime;
+    uint8_t currentChannel;
+
 
     bool sync :1;
     bool sequenceComplete :1;
     bool noSignal :1;
     bool hadSignal :1;
     bool error :1;
+
+    /* dummy padding variable */
+    int pad :19;
+
 };
 
 #endif /* RCRECEIVER_H_ */

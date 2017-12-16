@@ -93,7 +93,8 @@
 #define QC_CMD_RESTORE_HARDCODED_CONFIG     0xCF
 
 /*******************/
-#define QC_CMD_RESET               0xFF
+#define QC_CMD_SOFT_RESET               0xFF /* recall flight or config mode */
+#define QC_CMD_HARD_RESET               0xFE /* reset cpu -> software restarts at main entry point */
 
 /*******************/
 /*
