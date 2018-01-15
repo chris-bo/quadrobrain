@@ -162,7 +162,7 @@
  */
 #define UART_DEFAULT_PRIORITY                    2
 
-#define UART_RXTX_BUFF_SIZE							64
+#define UART_RXTX_BUFF_SIZE							256
 /* Flight LEDs
  *
  */
@@ -232,7 +232,7 @@
 
 /*********************************************************************************/
 /* hard coded settings*/
-#define PID_XY_P                            0.66f
+#define PID_XY_P                            0.5f
 #define PID_XY_I                            0.9f
 #define PID_XY_D                            0.5f
 #define PID_XY_GAIN                         0.1f

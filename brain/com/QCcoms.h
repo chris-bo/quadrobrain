@@ -65,35 +65,22 @@
 #define QC_CMD_READ_CONFIG          0xC1
 #define QC_CMD_UPDATE_CONFIG      	0xC2
 
-/* direct EEPROM access
- * only working if you are in config mode
- *
- * needs Address: MSB first
- * structure: QC_CMD; ADDR_MSB; ADDR_LSB; DATA;
- * */
-#define QC_CMD_EEPROM_READ_BYTE           	0xC3
-#define QC_CMD_EEPROM_READ_2BYTES         	0xC4
-#define QC_CMD_EEPROM_READ_4BYTES         	0xC5
 
-#define QC_CMD_EEPROM_WRITE_BYTE          	0xC6
-#define QC_CMD_EEPROM_WRITE_2BYTES        	0xC7
-#define QC_CMD_EEPROM_WRITE_4BYTES        	0xC8
-
-#define QC_CMD_RELOAD_CONFIG_FROM_EEPROM  	0xC9
 
 /* random config flags */
 #define QC_CMD_QUADROCONFIG		        	0xCA
 
-/* save config
+/* save or reload config
  * triggers reset
  */
 #define QC_CMD_SAVE_CONFIG_TO_EEPROM        0xCE
+#define QC_CMD_RELOAD_CONFIG_FROM_EEPROM    0xC9
 
 /* restore hardcoded config values*/
 #define QC_CMD_RESTORE_HARDCODED_CONFIG     0xCF
 
 /*******************/
-#define QC_CMD_SOFT_RESET               0xFF /* recall flight or config mode */
+#define QC_CMD_SOFT_RESET               0xFF /* reset flight mode */
 #define QC_CMD_HARD_RESET               0xFE /* reset cpu -> software restarts at main entry point */
 
 /*******************/
@@ -187,7 +174,7 @@ private:
     void loopback();
 
     /* reply to custom frame request */
-    void answerCusomFrame();
+    void answerCustomFrame();
 
     /* confirm command
      * for commands without return
@@ -206,8 +193,6 @@ private:
     uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint16_t var);
     uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, int8_t var);
     uint16_t fillBuffer(uint8_t* buffer, uint16_t pos, uint8_t var);
-    void readEEPROM(uint8_t byteCount);
-    void writeEEPROM(uint8_t byteCount);
 
     /* used to create packages of RXTX buffsize*/
     uint16_t checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd);

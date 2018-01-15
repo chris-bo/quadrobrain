@@ -66,10 +66,15 @@ USBHandler usb(&status, USB_DEFAULT_PRIORITY, &leds, USB_TRANSMIT_LED,
 UARTBluetoothHandler uartBT(&status, UART_DEFAULT_PRIORITY, &leds,
 UART_TRANSMIT_LED, &huart2);
 
-QCcoms usbCom(&status, USB_DEFAULT_PRIORITY, &configReader, &usb, &flightLEDs);
+//QCcoms usbCom(&status, USB_DEFAULT_PRIORITY, &configReader, &usb, &flightLEDs);
+
+//QCcoms uartCom(&status, USB_DEFAULT_PRIORITY, &configReader, &uartBT,
+//        &flightLEDs);
+
+QCcoms usbCom(&status, USB_DEFAULT_PRIORITY, &configReader, &usb, NULL);
 
 QCcoms uartCom(&status, USB_DEFAULT_PRIORITY, &configReader, &uartBT,
-        &flightLEDs);
+NULL);
 /* GPS Receiver */
 GPS gpsReceiver(&status, GPS_DEFAULT_PRIORITY, &huart1);
 
@@ -92,7 +97,7 @@ PIDController pidAngleY(&status, PID_DEFAULT_PRIORITY,
         PID_XY_CONTROL_VALUE_GAIN,
         PID_LIMIT, PID_SUM_LIMIT, true);
 PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
-        (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rate.z, 0,
+        (float) SCHEDULER_INTERVALL_ms / 1000.0f, &status.rate.z, NULL,
         &status.rcSignalYaw, &status.motorSetpoint.z, PID_Z_CONTROL_VALUE_GAIN,
         PID_LIMIT, PID_SUM_LIMIT, false);
 
@@ -106,14 +111,15 @@ PIDController pidRateZ(&status, PID_DEFAULT_PRIORITY,
 DiscoveryLEDs leds(&status, LEDs_DEFAULT_PRIORITY);
 Buzzer beep1(&status, BUZZER_DEFAULT_PRIORITY, &htim15, &status.buzzerQueue1);
 //Buzzer beep2(&status, BUZZER_DEFAULT_PRIORITY, &htim17, &status.buzzerQueue2);
-FlightLED flightLEDs(&status, LEDs_DEFAULT_PRIORITY, &hspi2);
+//FlightLED flightLEDs(&status, LEDs_DEFAULT_PRIORITY, &hspi2);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
 /* Main functions */
 void FlightMode();
-void ConfigMode();
+//void ConfigMode();
 void SoftwareReset();
+void DontStopBelieeeeving();
 
 /* USER CODE END PFP */
 
@@ -182,6 +188,7 @@ void FlightMode() {
     usbCom.initialize();
     uartCom.initialize();
 
+    /* reload config from EEPROM */
     configReader.initialize(&status);
 
     mpu9150.initialize(MPU9150_GYRO_FULL_SCALE, MPU9150_ACCEL_FULL_SCALE);
@@ -204,38 +211,17 @@ void FlightMode() {
     /* blinking flight led, to indicate running cpu */
     leds.setFrequency(FLIGHT_LED, 1);
 
-    /* activate flight LEDs*/
-    flightLEDs.initialize();
+//    /* activate flight LEDs*/
+//    flightLEDs.initialize();
 
     /* create tasks and start scheduler */
     Task* taskarray[] = { &mpu9150, &rcReceiver, &ppmgenerator, &imu,
             &altimeter, &pidAngleX, &pidAngleY, &pidRateZ, &gpsReceiver,
-            &usbCom, &uartCom, &akku, &baro, &leds, &beep1, &flightLEDs };
+            &usbCom, &uartCom, &akku, &baro, &leds, &beep1 };
     scheduler.start(taskarray, sizeof(taskarray) / 4);
 
-    /* don't stop beliieeeving */
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 125);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 250);
-//    HAL_Delay(2000);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 500);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 125);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 125);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 250);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 63);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 62);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
-//    status.addToneToQueue(&status.buzzerQueue1, BUZZER_E4, 250);
-//    HAL_Delay(2000);
+//    DontStopBelieeeeving();
+
     while (1) {
         if (status.globalFlags.resetRequested) {
             SoftwareReset();
@@ -248,62 +234,90 @@ void SoftwareReset() {
     /* kill processes*/
     scheduler.kill();
 
+    /* clear reset request */
     status.globalFlags.resetRequested = false;
 
-    if (status.globalFlags.resetToConfig) {
-        /* clear reset request */
-        status.globalFlags.resetToConfig = false;
-        /* goto config mode */
-        ConfigMode();
-    } else {
-        /* clear reset request */
-        status.globalFlags.resetToFlight = false;
-        /* recall flight mode */
-        FlightMode();
+    if (status.globalFlags.saveConfigBeforeReset) {
+        /* clear save request */
+        status.globalFlags.saveConfigBeforeReset = false;
+        /* save configuration*/
+        configReader.saveConfiguration(&status);
     }
+
+    /* recall flight mode */
+    FlightMode();
 }
 
-void ConfigMode() {
-    /* Enter Config Mode:
-     *
-     * Stop Sensor Functions
-     * Disable Motors
-     *
-     * Restart scheduler only for usb und uart task
-     *
-     */
-    scheduler.reset();
+//
+//void ConfigMode() {
+//    /* Enter Config Mode:
+//     *
+//     * Stop Sensor Functions
+//     * Disable Motors
+//     *
+//     * Restart scheduler only for usb und uart task
+//     *
+//     */
+//    scheduler.reset();
+//
+//    status.globalFlags.configMode = true;
+//    status.globalFlags.flightMode = false;
+//
+//    /* kill all sensors
+//     * and switch off engine
+//     */
+//    mpu9150.kill();
+//    baro.kill();
+//    rcReceiver.kill();
+//    ppmgenerator.kill();
+//
+//    leds.off(ALL);
+//    leds.on(POWER_LED);
+//    /* only blinking led to indicate running cpu
+//     * and comminication tasks needed
+//     * */
+//    leds.setFrequency(CONFIG_LED, 1);
+//    usbCom.initialize();
+//    uartCom.initialize();
+//
+//    Task* tasks_config[] = { &usbCom, &uartCom, &leds, &beep1 };
+//    scheduler.start(tasks_config, sizeof(tasks_config) / 4);
+//
+//    while (1) {
+//        if (status.globalFlags.resetRequested) {
+//            /* config finished */
+//            configReader.saveConfiguration(&status);
+//            SoftwareReset();
+//        }
+//    }
+//}
 
-    status.globalFlags.configMode = true;
-    status.globalFlags.flightMode = false;
+void DontStopBelieeeeving() {
 
-    /* kill all sensors
-     * and switch off engine
-     */
-    mpu9150.kill();
-    baro.kill();
-    rcReceiver.kill();
-    ppmgenerator.kill();
+    /* don't stop beliieeeving */
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 375);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 250);
+    HAL_Delay(2000);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_PAUSE, 500);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_A4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_B4, 63);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Cp5, 62);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Gp4, 250);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_Fp4, 125);
+    status.addToneToQueue(&status.buzzerQueue1, BUZZER_E4, 250);
+    HAL_Delay(2000);
 
-    leds.off(ALL);
-    leds.on(POWER_LED);
-    /* only blinking led to indicate running cpu
-     * and comminication tasks needed
-     * */
-    leds.setFrequency(CONFIG_LED, 1);
-    usbCom.initialize();
-    uartCom.initialize();
-
-    Task* tasks_config[] = { &usbCom, &uartCom, &leds, &beep1 };
-    scheduler.start(tasks_config, sizeof(tasks_config) / 4);
-
-    while (1) {
-        if (status.globalFlags.resetRequested) {
-            /* config finished */
-            configReader.saveConfiguration(&status);
-            SoftwareReset();
-        }
-    }
 }
 
 /** System Clock Configuration

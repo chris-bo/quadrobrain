@@ -45,54 +45,26 @@ void QCcoms::update() {
         /* continue transmission if needed to be splitted 
          * RX is still blocked
          */
-        answerCusomFrame();
+        answerCustomFrame();
     } else if ((*rxtxHandler->numberReceivedData > 1)
             && rxtxHandler->receptionComplete) {
         /* go trough fist received byte */
         switch (rxtxHandler->RxBuffer[1]) {
-//        case QC_CMD_LOOP:
-//            /* loop received stuff */
-//            loopback();
-//            break;
         case QC_CMD_SEND_CUSTOM_FRAME:
-            answerCusomFrame();
+            answerCustomFrame();
             break;
         case QC_CMD_GLOBAL_FLAGS:
             /* create new frame with global flags */
             rxtxHandler->RxBuffer[2] = DATA_ID_GLOBAL_FLAGS;
             rxtxHandler->RxBuffer[3] = DATA_ID_EOF;
             *rxtxHandler->numberReceivedData = 4;
-            answerCusomFrame();
+            answerCustomFrame();
             break;
         case QC_CMD_SET_FLIGHT_LED_PATTERN:
             /* change flight led pattern */
             flightLEDs->setLEDpattern(
                     (uint16_t) ((rxtxHandler->RxBuffer[3] << 8)
                             | rxtxHandler->RxBuffer[4]));
-            sendConfirmation();
-            break;
-        case QC_CMD_CONFIG_MODE:
-            /* trigger quadrocopter reset */
-
-            /* switch mode */
-            if (*rxtxHandler->numberReceivedData > 2) {
-                if (rxtxHandler->RxBuffer[2] == 1) {
-                    /* enter config mode */
-                    status->globalFlags.resetToConfig = true;
-                } else if (rxtxHandler->RxBuffer[2] == 0) {
-                    /* leave config mode */
-                    status->globalFlags.resetToFlight = true;
-                }
-            } else {
-                /* toggle mode */
-                if (status->globalFlags.configMode) {
-                    status->globalFlags.resetToFlight = true;
-                } else {
-                    status->globalFlags.resetToConfig = true;
-                }
-            }
-            /* request reset */
-            status->globalFlags.resetRequested = true;
             sendConfirmation();
             break;
         case QC_CMD_READ_CONFIG:
@@ -112,16 +84,72 @@ void QCcoms::update() {
 
             rxtxHandler->RxBuffer[8] = DATA_ID_EOF;
             *rxtxHandler->numberReceivedData = 9;
-            answerCusomFrame();
+            answerCustomFrame();
+            break;
+        case QC_CMD_UPDATE_CONFIG:
+            updateConfig();
+            break;
+        case QC_CMD_QUADROCONFIG:
+            if (*rxtxHandler->numberReceivedData == 3) {
+                /* check and set settings */
+                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_LOW_VOLT) {
+                    status->qcSettings.enableBuzzerWarningLowVoltage = 1;
+                } else {
+                    status->qcSettings.enableBuzzerWarningLowVoltage = 0;
+                }
+                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_RC_LOST) {
+                    status->qcSettings.enableBuzzerWarningRCLost = 1;
+                } else {
+                    status->qcSettings.enableBuzzerWarningRCLost = 0;
+                }
+                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_FLIGHTLED) {
+                    status->qcSettings.enableFlightLeds = 1;
+                } else {
+                    status->qcSettings.enableFlightLeds = 0;
+                }
+                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_MOTORS) {
+                    status->qcSettings.enableMotors = 1;
+                } else {
+                    status->qcSettings.enableMotors = 0;
+                }
+
+                /* send confirmation */
+                sendConfirmation();
+            } else {
+                /* reply with current setting*/
+                rxtxHandler->TxBuffer[0] = rxtxHandler->RxBuffer[1];
+                rxtxHandler->TxBuffer[1] =
+                        (uint8_t) ((status->qcSettings.enableMotors
+                                * QUADROCONFIG_ENABLE_MOTORS)
+                                | (status->qcSettings.enableFlightLeds
+                                        * QUADROCONFIG_ENABLE_FLIGHTLED)
+                                | (status->qcSettings.enableBuzzerWarningRCLost
+                                        * QUADROCONFIG_ENABLE_RC_LOST)
+                                | (status->qcSettings.enableBuzzerWarningLowVoltage
+                                        * QUADROCONFIG_ENABLE_LOW_VOLT));
+                rxtxHandler->sendTXBuffer(2);
+            }
+            break;
+        case QC_CMD_RELOAD_CONFIG_FROM_EEPROM:
+            /* trigger reset, which reloads config */
+            status->globalFlags.resetRequested = true;
+            /* send confirmation */
+            sendConfirmation();
+            break;
+        case QC_CMD_SAVE_CONFIG_TO_EEPROM:
+            /* trigger reset, and save config */
+            status->globalFlags.resetRequested = true;
+            status->globalFlags.saveConfigBeforeReset = true;
+            /* send confirmation */
+            sendConfirmation();
+            break;
+        case QC_CMD_RESTORE_HARDCODED_CONFIG:
+            status->restoreConfig();
+            /* send confirmation */
+            sendConfirmation();
             break;
         case QC_CMD_SOFT_RESET:
             /* trigger quadrocopter software reset */
-            /* keep current mode */
-            if (status->globalFlags.flightMode) {
-                status->globalFlags.resetToFlight = true;
-            } else {
-                status->globalFlags.resetToConfig = true;
-            }
             /* request reset */
             status->globalFlags.resetRequested = true;
             sendConfirmation();
@@ -133,12 +161,6 @@ void QCcoms::update() {
         default:
             /* ignore unknown command */
 
-            if (status->globalFlags.configMode) {
-                /* falls im config mode
-                 *
-                 */
-                decodeConfigMSG();
-            }
             break;
         }
     }
@@ -155,7 +177,7 @@ void QCcoms::reset() {
     rxtxHandler->reset();
 }
 
-void QCcoms::answerCusomFrame() {
+void QCcoms::answerCustomFrame() {
 
     uint16_t txBufferPos = 0;
     bufferOverrun = 0;
@@ -595,205 +617,97 @@ void QCcoms::answerCusomFrame() {
 
 void QCcoms::sendConfirmation() {
     /* send last command as confirmation */
+    bufferOverrun = 0;
     rxtxHandler->TxBuffer[0] = rxtxHandler->RxBuffer[1];
     rxtxHandler->sendTXBuffer(1);
 }
 
-void QCcoms::decodeConfigMSG() {
-    /* only in config mode */
-    if (status->globalFlags.configMode) {
-
-        switch (rxtxHandler->RxBuffer[1]) {
-        case QC_CMD_READ_CONFIG:
-            /* create custom frame */
-            /* pid xy */
-            rxtxHandler->RxBuffer[2] = DATA_ID_PID_ANGLE_XY;
-            /* pid z  */
-            rxtxHandler->RxBuffer[3] = DATA_ID_PID_ROT_Z;
-            /* comp filter */
-            rxtxHandler->RxBuffer[4] = DATA_ID_COMP_FILTER;
-            /* pid accel  */
-            rxtxHandler->RxBuffer[5] = DATA_ID_PID_ACCEL;
-            /* pid vel */
-            rxtxHandler->RxBuffer[6] = DATA_ID_PID_VEL;
-            /* qc settings*/
-            rxtxHandler->RxBuffer[7] = DATA_ID_QC_SETTINGS;
-
-            rxtxHandler->RxBuffer[8] = DATA_ID_EOF;
-            *rxtxHandler->numberReceivedData = 9;
-            answerCusomFrame();
-            break;
-
-        case QC_CMD_UPDATE_CONFIG:
-            updateConfig();
-            break;
-        case QC_CMD_EEPROM_READ_BYTE:
-            readEEPROM(1);
-            break;
-        case QC_CMD_EEPROM_READ_2BYTES:
-            readEEPROM(2);
-            break;
-        case QC_CMD_EEPROM_READ_4BYTES:
-            readEEPROM(4);
-            break;
-        case QC_CMD_EEPROM_WRITE_BYTE:
-            writeEEPROM(1);
-            break;
-        case QC_CMD_EEPROM_WRITE_2BYTES:
-            writeEEPROM(2);
-            break;
-        case QC_CMD_EEPROM_WRITE_4BYTES:
-            writeEEPROM(4);
-            break;
-
-        case QC_CMD_QUADROCONFIG:
-            if (*rxtxHandler->numberReceivedData == 3) {
-                /* check and set settings */
-                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_LOW_VOLT) {
-                    status->qcSettings.enableBuzzerWarningLowVoltage = 1;
-                } else {
-                    status->qcSettings.enableBuzzerWarningLowVoltage = 0;
-                }
-                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_RC_LOST) {
-                    status->qcSettings.enableBuzzerWarningRCLost = 1;
-                } else {
-                    status->qcSettings.enableBuzzerWarningRCLost = 0;
-                }
-                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_FLIGHTLED) {
-                    status->qcSettings.enableFlightLeds = 1;
-                } else {
-                    status->qcSettings.enableFlightLeds = 0;
-                }
-                if (rxtxHandler->RxBuffer[2] & QUADROCONFIG_ENABLE_MOTORS) {
-                    status->qcSettings.enableMotors = 1;
-                } else {
-                    status->qcSettings.enableMotors = 0;
-                }
-
-                /* send confirmation */
-                sendConfirmation();
-            } else {
-                /* reply with current setting*/
-                rxtxHandler->TxBuffer[0] = rxtxHandler->RxBuffer[1];
-                rxtxHandler->TxBuffer[1] =
-                        (uint8_t) ((status->qcSettings.enableMotors
-                                * QUADROCONFIG_ENABLE_MOTORS)
-                                | (status->qcSettings.enableFlightLeds
-                                        * QUADROCONFIG_ENABLE_FLIGHTLED)
-                                | (status->qcSettings.enableBuzzerWarningRCLost
-                                        * QUADROCONFIG_ENABLE_RC_LOST)
-                                | (status->qcSettings.enableBuzzerWarningLowVoltage
-                                        * QUADROCONFIG_ENABLE_LOW_VOLT));
-                rxtxHandler->sendTXBuffer(2);
-            }
-            break;
-        case QC_CMD_RELOAD_CONFIG_FROM_EEPROM:
-            confReader->loadConfiguration(status);
-            /* send confirmation */
-            sendConfirmation();
-            break;
-        case QC_CMD_SAVE_CONFIG_TO_EEPROM:
-            confReader->saveConfiguration(status);
-            /* send confirmation */
-            sendConfirmation();
-            break;
-        case QC_CMD_RESTORE_HARDCODED_CONFIG:
-            status->restoreConfig();
-            /* send confirmation */
-            sendConfirmation();
-            break;
-        default:
-            break;
-        }
-    }
-}
-
 void QCcoms::updateConfig() {
-    /* set position to 1
+    /* set position to 2
      * select first idetifier
      */
-    uint16_t txBufferPos = 2;
-    while (txBufferPos < *rxtxHandler->numberReceivedData) {
+    uint16_t rxBufferPos = 2;
+    while (rxBufferPos < *rxtxHandler->numberReceivedData) {
 
-        switch (rxtxHandler->RxBuffer[txBufferPos]) {
+        switch (rxtxHandler->RxBuffer[rxBufferPos]) {
         /* each case:
          *   jump to first value:
-         *   txBufferPos++
+         *   rxBufferPos++
          *   then set values with byteToFloat function
          *   byteToFloat increases txBufferPos by 4
          */
         case DATA_ID_PID_ANGLE_XY:
-            txBufferPos++;
+            rxBufferPos++;
             status->pidSettingsAngleXY.p = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsAngleXY.i = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsAngleXY.d = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsAngleXY.gain = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsAngleXY.scaleSetPoint = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             break;
         case DATA_ID_PID_ROT_Z:
-            txBufferPos++;
+            rxBufferPos++;
             status->pidSettingsRotationZ.p = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsRotationZ.i = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsRotationZ.d = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsRotationZ.gain = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             status->pidSettingsRotationZ.scaleSetPoint = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             break;
         case DATA_ID_COMP_FILTER:
-            txBufferPos++;
+            rxBufferPos++;
             status->filterCoefficientXY = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->filterCoefficientZ = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             break;
         case DATA_ID_PID_ACCEL:
-            txBufferPos++;
+            rxBufferPos++;
             status->pidSettingsAcceleration.p = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             status->pidSettingsAcceleration.i = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             status->pidSettingsAcceleration.d = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             status->pidSettingsAcceleration.gain = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             status->pidSettingsAcceleration.scaleSetPoint = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             break;
         case DATA_ID_PID_VEL:
-            txBufferPos++;
+            rxBufferPos++;
             status->pidSettingsVelocity.p = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsVelocity.i = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsVelocity.d = byteToFloat(rxtxHandler->RxBuffer,
-                    &txBufferPos);
+                    &rxBufferPos);
             status->pidSettingsVelocity.gain = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             status->pidSettingsVelocity.scaleSetPoint = byteToFloat(
-                    rxtxHandler->RxBuffer, &txBufferPos);
+                    rxtxHandler->RxBuffer, &rxBufferPos);
             break;
         case DATA_ID_QC_SETTINGS:
-            txBufferPos++;
+            rxBufferPos++;
             status->qcSettings.enableBuzzerWarningRCLost =
-                    rxtxHandler->RxBuffer[txBufferPos++];
+                    rxtxHandler->RxBuffer[rxBufferPos++];
             status->qcSettings.enableBuzzerWarningLowVoltage =
-                    rxtxHandler->RxBuffer[txBufferPos++];
+                    rxtxHandler->RxBuffer[rxBufferPos++];
             status->qcSettings.enableFlightLeds =
-                    rxtxHandler->RxBuffer[txBufferPos++];
+                    rxtxHandler->RxBuffer[rxBufferPos++];
             status->qcSettings.enableMotors =
-                    rxtxHandler->RxBuffer[txBufferPos++];
+                    rxtxHandler->RxBuffer[rxBufferPos++];
             break;
         case DATA_ID_EOF:
-            txBufferPos++;
+            rxBufferPos++;
             /* send Confirmation*/
             sendConfirmation();
             break;
@@ -853,75 +767,6 @@ uint16_t QCcoms::fillBuffer(uint8_t* buffer, uint16_t pos, int8_t var) {
 uint16_t QCcoms::fillBuffer(uint8_t* buffer, uint16_t pos, uint8_t var) {
     buffer[pos++] = var;
     return pos;
-}
-
-void QCcoms::readEEPROM(uint8_t byteCount) {
-
-    switch (byteCount) {
-    case 1: {
-        uint8_t tmp;
-        confReader->loadVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
-                        | rxtxHandler->RxBuffer[3]));
-        rxtxHandler->TxBuffer[0] = tmp;
-        break;
-    }
-    case 2: {
-        uint16_t tmp;
-        confReader->loadVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
-                        | rxtxHandler->RxBuffer[3]));
-        rxtxHandler->TxBuffer[0] = (uint8_t) ((tmp >> 8) & 0xff);
-        rxtxHandler->TxBuffer[1] = (uint8_t) (tmp & 0xff);
-        break;
-    }
-    case 4: {
-        uint32_t tmp;
-        confReader->loadVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
-                        | rxtxHandler->RxBuffer[3]));
-        rxtxHandler->TxBuffer[0] = (uint8_t) ((tmp >> 24) & 0xff);
-        rxtxHandler->TxBuffer[1] = (uint8_t) ((tmp >> 16) & 0xff);
-        rxtxHandler->TxBuffer[2] = (uint8_t) ((tmp >> 8) & 0xff);
-        rxtxHandler->TxBuffer[3] = (uint8_t) (tmp & 0xff);
-        break;
-    }
-    }
-    /* send eeprom content*/
-    rxtxHandler->sendTXBuffer(byteCount);
-}
-
-void QCcoms::writeEEPROM(uint8_t byteCount) {
-    /* direct write to eeprom */
-    switch (byteCount) {
-    case 1: {
-        uint8_t tmp = rxtxHandler->RxBuffer[4];
-        confReader->saveVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
-                        | rxtxHandler->RxBuffer[3]), 0);
-        break;
-    }
-    case 2: {
-        uint16_t tmp = (uint16_t) ((rxtxHandler->RxBuffer[4] << 8)
-                | rxtxHandler->RxBuffer[5]);
-        confReader->saveVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
-                        | rxtxHandler->RxBuffer[3]), 0);
-        break;
-    }
-
-    case 4: {
-        uint32_t tmp = ((rxtxHandler->RxBuffer[4] << 24)
-                | (rxtxHandler->RxBuffer[5] << 16)
-                | (rxtxHandler->RxBuffer[6] << 8) | rxtxHandler->RxBuffer[7]);
-        confReader->saveVariable(&tmp,
-                (uint16_t) (rxtxHandler->RxBuffer[2] << 8
-                        | rxtxHandler->RxBuffer[3]), 0);
-        break;
-    }
-    }
-    /* send confirmation */
-    sendConfirmation();
 }
 
 uint16_t QCcoms::checkTXBufferOverrun(uint16_t currentPos, uint16_t dataToAdd) {

@@ -63,8 +63,7 @@ typedef struct {
 
     bool emergency :1;
 
-    bool resetToConfig :1;
-    bool resetToFlight :1;
+    bool saveConfigBeforeReset :1;
     bool resetRequested :1;
 
     /* dummy padding variable */

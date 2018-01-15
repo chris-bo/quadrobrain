@@ -63,7 +63,7 @@ extern DiscoveryLEDs leds;
 extern Buzzer beep1;
 extern Buzzer beep2;
 extern GPS gpsReceiver;
-extern FlightLED flightLEDs;
+//extern FlightLED flightLEDs;
 extern UARTBluetoothHandler uartBT;
 
 #ifdef __cplusplus

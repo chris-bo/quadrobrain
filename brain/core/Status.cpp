@@ -67,8 +67,7 @@ Status::Status() {
 
     globalFlags.emergency= false;
 
-    globalFlags.resetToConfig= false;
-    globalFlags.resetToFlight= false;
+    globalFlags.saveConfigBeforeReset= false;
     globalFlags.resetRequested= false;
 
     buzzerQueue1 = {};

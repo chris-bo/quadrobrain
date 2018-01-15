@@ -59,6 +59,7 @@ void ConfigReader::loadConfiguration(Status* status) {
         status->globalFlags.EEPROMok = true;
     } else {
         /*reload hardcoded values*/
+        status->globalFlags.EEPROMok = false;
         status->restoreConfig();
     }
 }
